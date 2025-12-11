@@ -18,3 +18,13 @@ export const getHelloWorld = async () => {
     throw error;
   }
 };
+
+export const login = async (email, password) => {
+  try {
+    const response = await api.post('/api/login', { email, password });
+    return response.data;
+  } catch (error) {
+    console.error('Error logging in:', error);
+    throw error;
+  }
+};
