@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
-
-import { login } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { authAPI } from '../services/authApi';
 
 function LoginPage() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -11,6 +15,8 @@ function LoginPage() {
   const [resetEmail, setResetEmail] = useState('');
   const [showBrandingModal, setShowBrandingModal] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const brandingRef = useRef(null);
   const headlineRef = useRef(null);
@@ -121,21 +127,39 @@ function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
 
     try {
-      const loginData = await login(email, password);
-      console.log('Login Data: ', loginData.message);
+      await login(email, password);
+      navigate('/dashboard');
     } catch (err) {
-      console.log('Prijava nije uspjela. Pokušajte ponovo.');
+      setError(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleForgotPassword = (e) => {
+  const handleForgotPassword = async (e) => {
     e.preventDefault();
-    console.log('Password reset requested for:', resetEmail);
-    // TODO: Call API to send reset link
-    alert('Link za resetovanje lozinke je poslat na vaš email!');
-    setResetEmail('');
+    setError('');
+    setLoading(true);
+
+    try {
+      await authAPI.forgotPassword(resetEmail);
+      alert('Link za resetovanje lozinke je poslat na vaš email!');
+      setResetEmail('');
+      // Optionally switch back to login after success
+      setTimeout(() => {
+        switchToLogin({ preventDefault: () => {} });
+      }, 2000);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || 'Greška pri slanju emaila za resetovanje'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const switchToForgotPassword = (e) => {
@@ -308,8 +332,8 @@ function LoginPage() {
                     <polyline points="9 12 11 14 15 10" />
                   </svg>
                 </div>
-                <div className="flex flex-1 flex-col justify-center gap-[6px]">
-                  <div className="flex items-center justify-between gap-[10px]">
+                <div className="flex flex-1 flex-col justify-center gap-1.5">
+                  <div className="flex items-center justify-between gap-2.5">
                     <span className="text-[16px] font-semibold tracking-[-0.2px] text-white">
                       Sigurna komunikacija
                     </span>
@@ -363,7 +387,7 @@ function LoginPage() {
               </p>
             </div>
             <button
-              className="max-mdx:flex max-mdx:items-center max-mdx:justify-center max-mdx:mt-5 max-mdx:gap-2 max-mdx:w-full max-mdx:h-14 max-mdx:py-4.5 max-mdx:px-6 max-mdx:bg-linear-135 max-mdx:text-white max-mdx:font-semibold max-mdx:text-[16px] max-mdx:border-none max-mdx:rounded-[10px] max-mdx:cursor-pointer max-mdx:shadow-[0_4px_12px_rgba(0,0,0,0.15)] max-mdx:transition-all max-mdx:duration-300 max-mdx:ease-in-out max-mdx:tracking[0.3px] max-mdx:hover:bg-linear-135 max-mdx:hover:transform max-mdx:hover:-translate-y-0.5 max-mdx:hover:shadow-[0_6px_20px_rgba(0,65,121,0.35)] max-mdx:active:translate-y-0 z-10 hidden cursor-pointer border-none bg-none from-[#003366] from-[#004179] to-[#002244] to-[#003366] text-[16px] text-white"
+              className="max-mdx:flex max-mdx:items-center max-mdx:justify-center max-mdx:mt-5 max-mdx:gap-2 max-mdx:w-full max-mdx:h-14 max-mdx:py-4.5 max-mdx:px-6 max-mdx:bg-linear-135 max-mdx:text-white max-mdx:font-semibold max-mdx:text-[16px] max-mdx:border-none max-mdx:rounded-[10px] max-mdx:cursor-pointer max-mdx:shadow-[0_4px_12px_rgba(0,0,0,0.15)] max-mdx:transition-all max-mdx:duration-300 max-mdx:ease-in-out max-mdx:tracking[0.3px] max-mdx:hover:bg-linear-135 max-mdx:hover:transform max-mdx:hover:-translate-y-0.5 max-mdx:hover:shadow-[0_6px_20px_rgba(0,65,121,0.35)] max-mdx:active:translate-y-0 z-10 hidden cursor-pointer border-none bg-linear-to-br from-[#004179] to-[#003366] text-[16px] text-white"
               onClick={closeBrandingModal}
             >
               <span>Nastavi</span>
@@ -590,7 +614,7 @@ function LoginPage() {
 
                 <button
                   type="submit"
-                  className="submit-btn max-smx:py-3 max-smx:px-4 max-smx:text-[14px] from[#003366] foucus:shadow-[0_0_0_3px_rgba(0,65,121,0.3)] flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] bg-linear-to-br from-[#004179] to-[#002244] to-[#003366] px-5 py-4 text-[16px] font-semibold text-white transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:transform hover:bg-linear-to-br hover:shadow-[0_6px_20px_rgba(0,65,121,0.35)] focus:outline-none active:translate-y-0"
+                  className="submit-btn max-smx:py-3 max-smx:px-4 max-smx:text-[14px] from[#003366] foucus:shadow-[0_0_0_3px_rgba(0,65,121,0.3)] flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] bg-linear-to-br from-[#004179] to-[#002244] px-5 py-4 text-[16px] font-semibold text-white transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:transform hover:bg-linear-to-br hover:shadow-[0_6px_20px_rgba(0,65,121,0.35)] focus:outline-none active:translate-y-0"
                 >
                   <span>Prijavite se</span>
                   <svg
