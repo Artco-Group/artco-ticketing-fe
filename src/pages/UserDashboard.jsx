@@ -85,7 +85,7 @@ function UserDashboard() {
     setCurrentView('detail');
     // Fetch comments for this ticket
     try {
-      const response = await commentAPI.getComments(ticket._id);
+      const response = await commentAPI.getComments(ticket.ticketId);
       setComments(response.data);
     } catch (error) {
       console.error('Failed to fetch comments:', error);

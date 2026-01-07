@@ -40,7 +40,7 @@ function EngLeadTicketDetail({
 
   const handleAssign = () => {
     if (selectedDeveloper && selectedDeveloper !== ticket.assignedTo) {
-      onAssignTicket(ticket._id, selectedDeveloper);
+      onAssignTicket(ticket.ticketId, selectedDeveloper);
     }
   };
 
@@ -49,7 +49,7 @@ function EngLeadTicketDetail({
     
     setIsClosing(true);
     try {
-      await onStatusUpdate(ticket._id, 'Closed');
+      await onStatusUpdate(ticket.ticketId, 'Closed');
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
@@ -132,7 +132,7 @@ function EngLeadTicketDetail({
                       <dt className="text-sm font-medium text-gray-500">
                         Ticket ID
                       </dt>
-                      <dd className="text-sm text-gray-900">{ticket._id}</dd>
+                      <dd className="text-sm text-gray-900">{ticket.ticketId}</dd>
                     </div>
                     <div>
                       <dt className="text-sm font-medium text-gray-500">
@@ -281,7 +281,7 @@ function EngLeadTicketDetail({
                       <AttachmentItem
                         key={index}
                         attachment={attachment}
-                        ticketId={ticket._id}
+                        ticketId={ticket.ticketId}
                         index={index}
                       />
                     ))}
@@ -346,7 +346,7 @@ function EngLeadTicketDetail({
                   </label>
                   <select
                     value={ticket.priority}
-                    onChange={(e) => onPriorityUpdate(ticket._id, e.target.value)}
+                    onChange={(e) => onPriorityUpdate(ticket.ticketId, e.target.value)}
                     disabled={ticket.status !== 'Open' && ticket.status !== 'In Progress'}
                     className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   >

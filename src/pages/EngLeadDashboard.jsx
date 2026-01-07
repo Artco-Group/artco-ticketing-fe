@@ -123,7 +123,7 @@ function EngLeadDashboard() {
     
     // Fetch comments for this ticket
     try {
-      const response = await commentAPI.getComments(ticket._id);
+      const response = await commentAPI.getComments(ticket.ticketId);
       setComments(response.data);
     } catch (error) {
       console.error('Failed to fetch comments:', error);
@@ -185,7 +185,7 @@ function EngLeadDashboard() {
       const updatedTicket = response.data;
 
       setTickets((prev) =>
-        prev.map((ticket) => (ticket._id === ticketId ? updatedTicket : ticket))
+        prev.map((ticket) => (ticket.ticketId === ticketId ? updatedTicket : ticket))
       );
 
       if (selectedTicket && selectedTicket._id === ticketId) {
@@ -203,7 +203,7 @@ function EngLeadDashboard() {
       const updatedTicket = response.data;
 
       setTickets((prev) =>
-        prev.map((ticket) => (ticket._id === ticketId ? updatedTicket : ticket))
+        prev.map((ticket) => (ticket.ticketId === ticketId ? updatedTicket : ticket))
       );
 
       if (selectedTicket && selectedTicket._id === ticketId) {
@@ -221,7 +221,7 @@ function EngLeadDashboard() {
       const updatedTicket = response.data;
 
       setTickets((prev) =>
-        prev.map((ticket) => (ticket._id === ticketId ? updatedTicket : ticket))
+        prev.map((ticket) => (ticket.ticketId === ticketId ? updatedTicket : ticket))
       );
 
       if (selectedTicket && selectedTicket._id === ticketId) {
