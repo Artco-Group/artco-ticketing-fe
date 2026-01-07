@@ -31,7 +31,7 @@ function DeveloperTicketDetail({
     
     setIsUpdating(true);
     try {
-      await onStatusUpdate(ticket._id, 'Resolved');
+      await onStatusUpdate(ticket.ticketId, 'Resolved');
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
@@ -82,7 +82,7 @@ function DeveloperTicketDetail({
           </div>
 
           {/* Ticket ID */}
-          <p className="mb-6 text-sm text-gray-400">#{ticket._id}</p>
+          <p className="mb-6 text-sm text-gray-400">#{ticket.ticketId}</p>
 
           {/* Meta Info Grid */}
           <div className="mb-8 grid grid-cols-2 gap-6 border-b border-gray-100 pb-8 md:grid-cols-4">
@@ -142,7 +142,7 @@ function DeveloperTicketDetail({
                   <AttachmentItem
                     key={index}
                     attachment={attachment}
-                    ticketId={ticket._id}
+                    ticketId={ticket.ticketId}
                     index={index}
                   />
                 ))}

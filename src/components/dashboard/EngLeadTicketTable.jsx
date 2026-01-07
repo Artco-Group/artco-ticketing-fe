@@ -46,7 +46,7 @@ function EngLeadTicketTable({ tickets, users, onViewTicket }) {
           <tbody className="divide-y divide-gray-200 bg-white">
             {tickets.map((ticket) => (
               <tr
-                key={ticket._id}
+                key={ticket.ticketId}
                 onClick={() => onViewTicket(ticket)}
                 className="ticket-row cursor-pointer transition-colors hover:bg-gray-50"
               >

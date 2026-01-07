@@ -122,7 +122,7 @@ function TicketDetail({
                   <AttachmentItem
                     key={index}
                     attachment={attachment}
-                    ticketId={ticket._id}
+                    ticketId={ticket.ticketId}
                     index={index}
                   />
                 ))}
