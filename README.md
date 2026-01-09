@@ -16,3 +16,26 @@ The React Compiler is not enabled on this template because of its impact on dev 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 
 # SSH Test
+
+
+## Pull Requests
+ 
+### Creating a PR
+1. Ensure your branch follows the naming convention: `type/ARTCOCRM-XXX/description`
+2. Fill out the PR template completely.
+3. Link the related JIRA ticket.
+4. Request reviewers.
+ 
+### PR Title Format
+ 
+type(scope): ARTCOCRM-XXX description
+ 
+**Examples:**
+- `feat(auth): ARTCOCRM-123 add login functionality`
+- `fix(api): ARTCOCRM-45 resolve null pointer exception`
+ 
+### Review Process
+- Minimum 1 approval required before merging.
+- All CI checks must pass.
+- Resolve all review comments before merging.
+ 
