@@ -5,7 +5,7 @@ import { TicketList, TicketForm, TicketDetail } from '../components/dashboard';
 import { initialFormData } from '../utils/ticketHelpers';
 
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ticketAPI } from '../services/ticketApi';
 import { commentAPI } from '../services/commentApi';
 
@@ -18,9 +18,14 @@ function UserDashboard() {
 
   const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Form state for new ticket
   const [formData, setFormData] = useState(initialFormData);
+
+  // Screen recording state
+  const [screenRecording, setScreenRecording] = useState(null);
+  const [recordingDuration, setRecordingDuration] = useState(0);
 
   // Comment state
   const [newComment, setNewComment] = useState('');
@@ -43,6 +48,23 @@ function UserDashboard() {
 
     fetchTickets();
   }, []);
+
+  // Open ticket from URL param if present
+  useEffect(() => {
+    const ticketId = searchParams.get('ticket');
+    if (ticketId && tickets.length > 0 && !selectedTicket) {
+      const ticket = tickets.find((t) => t._id === ticketId);
+      if (ticket) {
+        // Ticket found in user's accessible list - open it
+        handleViewTicket(ticket);
+      } else {
+        // Ticket NOT in user's list = user has no permission
+        // Clear the invalid param silently
+        searchParams.delete('ticket');
+        setSearchParams(searchParams);
+      }
+    }
+  }, [searchParams, tickets, selectedTicket]);
 
   useEffect(() => {
     // GSAP animations on mount
@@ -83,9 +105,13 @@ function UserDashboard() {
   const handleViewTicket = async (ticket) => {
     setSelectedTicket(ticket);
     setCurrentView('detail');
+    
+    // Update URL with ticket param
+    setSearchParams({ ticket: ticket._id });
+    
     // Fetch comments for this ticket
     try {
-      const response = await commentAPI.getComments(ticket.ticketId);
+      const response = await commentAPI.getComments(ticket._id);
       setComments(response.data);
     } catch (error) {
       console.error('Failed to fetch comments:', error);
@@ -97,6 +123,10 @@ function UserDashboard() {
     setCurrentView('list');
     setSelectedTicket(null);
     setComments([]);
+    
+    // Remove ticket param from URL
+    searchParams.delete('ticket');
+    setSearchParams(searchParams);
   };
 
   const handleFormChange = (e) => {
@@ -127,13 +157,24 @@ function UserDashboard() {
       formDataToSend.append('actualResult', formData.actualResult || '');
       formDataToSend.append('priority', formData.priority || 'Low');
 
-      // Append files
+      // Append regular attachments
       files.forEach((file) => {
         formDataToSend.append('attachments', file);
       });
 
+      // Append screen recording if present
+      if (screenRecording) {
+        formDataToSend.append('screenRecording', screenRecording);
+        formDataToSend.append('recordingDuration', recordingDuration);
+      }
+
       const response = await ticketAPI.createTicket(formDataToSend);
       setTickets((prev) => [response.data, ...prev]);
+      
+      // Reset screen recording state
+      setScreenRecording(null);
+      setRecordingDuration(0);
+      
       setCurrentView('list');
     } catch (error) {
       console.error('Failed to create ticket:', error);
@@ -194,6 +235,11 @@ function UserDashboard() {
           onFormChange={handleFormChange}
           onSubmit={handleSubmitTicket}
           onCancel={handleCancelCreate}
+          screenRecording={screenRecording}
+          onScreenRecordingChange={(file, duration) => {
+            setScreenRecording(file);
+            setRecordingDuration(duration);
+          }}
         />
       )}
       {currentView === 'detail' && selectedTicket && (

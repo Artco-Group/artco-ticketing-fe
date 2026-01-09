@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import DashboardHeader from './DashboardHeader';
 import FileUpload from './FileUpload';
+import ScreenRecorder from './ScreenRecorder';
 
 function TicketForm({
   formData,
@@ -9,6 +10,8 @@ function TicketForm({
   onFormChange,
   onSubmit,
   onCancel,
+  screenRecording,
+  onScreenRecordingChange,
 }) {
   const [files, setFiles] = useState([]);
   return (
@@ -128,6 +131,17 @@ function TicketForm({
           {/* Attachments */}
           <FormField label="Prilozi">
             <FileUpload files={files} onFilesChange={setFiles} />
+          </FormField>
+
+          {/* Screen Recording */}
+          <FormField label="Snimak Ekrana (Opciono)">
+            <ScreenRecorder
+              onRecordingComplete={onScreenRecordingChange}
+              disabled={false}
+            />
+            <p className="mt-2 text-xs text-gray-500">
+              Snimite ekran da pokažete problem (maksimalno 3 minute)
+            </p>
           </FormField>
 
           {/* Priority */}

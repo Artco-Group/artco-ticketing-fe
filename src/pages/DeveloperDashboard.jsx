@@ -7,7 +7,7 @@ import {
 } from '../components/dashboard';
 
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ticketAPI } from '../services/ticketApi';
 import { commentAPI } from '../services/commentApi';
 
@@ -27,6 +27,7 @@ function DeveloperDashboard() {
 
   const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Comment state
   const [newComment, setNewComment] = useState('');
@@ -50,6 +51,23 @@ function DeveloperDashboard() {
 
     fetchTickets();
   }, [user?.email]);
+
+  // Open ticket from URL param if present
+  useEffect(() => {
+    const ticketId = searchParams.get('ticket');
+    if (ticketId && tickets.length > 0 && !selectedTicket) {
+      const ticket = tickets.find((t) => t._id === ticketId);
+      if (ticket) {
+        // Ticket found in user's accessible list - open it
+        openTicketDetail(ticket);
+      } else {
+        // Ticket NOT in user's list = user has no permission
+        // Clear the invalid param silently
+        searchParams.delete('ticket');
+        setSearchParams(searchParams);
+      }
+    }
+  }, [searchParams, tickets, selectedTicket]);
 
   useEffect(() => {
     // GSAP animations on mount
@@ -96,9 +114,12 @@ function DeveloperDashboard() {
     setSelectedTicket(ticket);
     setCurrentView('detail');
     
+    // Update URL with ticket param
+    setSearchParams({ ticket: ticket._id });
+    
     // Fetch comments for this ticket
     try {
-      const response = await commentAPI.getComments(ticket.ticketId);
+      const response = await commentAPI.getComments(ticket._id);
       setComments(response.data);
     } catch (error) {
       console.error('Failed to fetch comments:', error);
@@ -137,6 +158,10 @@ function DeveloperDashboard() {
     setCurrentView('list');
     setSelectedTicket(null);
     setComments([]);
+    
+    // Remove ticket param from URL
+    searchParams.delete('ticket');
+    setSearchParams(searchParams);
   };
 
   const handleFilterChange = (filterType, value) => {
@@ -149,7 +174,7 @@ function DeveloperDashboard() {
       const updatedTicket = response.data;
 
       setTickets((prev) =>
-        prev.map((ticket) => (ticket.ticketId === ticketId ? updatedTicket : ticket))
+        prev.map((ticket) => (ticket._id === ticketId ? updatedTicket : ticket))
       );
 
       if (selectedTicket && selectedTicket._id === ticketId) {
