@@ -89,3 +89,96 @@ chmod +x .husky/*
 **Bypass hooks (emergency only):**
 git commit --no-verify -m "message"
  
+
+## Git Hooks (Husky)
+
+This project uses Husky to enforce code quality standards.
+
+### Setup
+Hooks are automatically installed when you run `npm install`.
+
+### Branch Naming Convention
+Branches must include the JIRA ticket ID and follow this pattern:
+type/ARTCOCRM-XXX/description
+
+**Allowed types:** `feature`, `bugfix`, `hotfix`, `release`, `chore`
+
+**Examples:**
+- ✅ `feature/ARTCOCRM-123/add-login-page`
+- ✅ `bugfix/ARTCOCRM-45/fix-null-pointer`
+- ❌ `feature/add-login` (missing ticket ID)
+
+**Excluded branches:** `main`, `master`, `develop`
+
+### Commit Message Format
+We use [Conventional Commits](https://www.conventionalcommits.org/) with required ticket ID:
+type(scope): ARTCOCRM-XXX description
+
+**Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `build`, `ci`
+
+**Examples:**
+- ✅ `feat(auth): ARTCOCRM-123 add login functionality`
+- ✅ `fix(api): ARTCOCRM-45 resolve null pointer exception`
+- ✅ `docs: ARTCOCRM-67 update README`
+- ❌ `feat: add login` (missing ticket ID)
+
+### Pre-commit Checks
+Before each commit, the following checks run automatically:
+1. **Linting** — ESLint/Prettier on staged files
+2. **Build verification** — ensures code compiles
+
+### Troubleshooting
+
+**Hooks not running?**
+```bash
+npx husky install
+
+**Permission denied?**
+chmod +x .husky/*
+
+**Bypass hooks (emergency only):**
+git commit --no-verify -m "message"
+ 
+ ## CI/CD
+
+![CI](https://github.com/Artco-Group/artco-ticketing-fe/actions/workflows/ci.yml/badge.svg)
+
+### Automated Checks
+
+Every Pull Request automatically runs:
+
+| Check | Description |
+|-------|-------------|
+| 🔍 Validate Branch Name | Ensures branch follows `type/ARTCOCRM-XXX/description` format |
+| 📝 Validate Commits | Ensures commits follow conventional commit format with ticket ID |
+| 🧹 Lint | Runs ESLint/Prettier |
+| 🔨 Build | Ensures project builds successfully |
+| 🧪 Test | Runs test suite |
+
+### Merge Requirements
+
+- All CI checks must pass
+- At least one approval required
+- Branch must be up to date with the target branch
+
+## CI/CD
+
+![CI](https://github.com/Artco-Group/artco-ticketing-fe/actions/workflows/ci.yml/badge.svg)
+
+### Automated Checks
+
+Every Pull Request automatically runs:
+
+| Check | Description |
+|-------|-------------|
+| 🔍 Validate Branch Name | Ensures branch follows `type/ARTCOCRM-XXX/description` format |
+| 📝 Validate Commits | Ensures commits follow conventional commit format with ticket ID |
+| 🧹 Lint | Runs ESLint/Prettier |
+| 🔨 Build | Ensures project builds successfully |
+| 🧪 Test | Runs test suite |
+
+### Merge Requirements
+
+- All CI checks must pass
+- At least one approval required
+- Branch must be up to date with the target branch
