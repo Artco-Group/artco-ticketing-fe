@@ -1,0 +1,4 @@
+echo "Running pre-push hook"
+
+#Validating branch name
+.husky/validate-branch.sh
