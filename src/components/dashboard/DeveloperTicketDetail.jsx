@@ -7,7 +7,6 @@ import {
   categoryColors,
   formatDateTime,
 } from '../../utils/ticketHelpers';
-import { useAuth } from '../../context/AuthContext';
 import { fileAPI } from '../../services/fileApi';
 import { formatTime } from '../../hooks/useScreenRecorder';
 
@@ -22,14 +21,14 @@ function DeveloperTicketDetail({
   onAddComment,
   currentUser,
 }) {
-  if (!ticket) return null;
-  const { user } = useAuth();
   const [isUpdating, setIsUpdating] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  if (!ticket) return null;
+
   const handleResolve = async () => {
     if (ticket.status !== 'In Progress') return;
-    
+
     setIsUpdating(true);
     try {
       await onStatusUpdate(ticket.ticketId, 'Resolved');
@@ -164,7 +163,8 @@ function DeveloperTicketDetail({
                       📹 {ticket.screenRecording.originalName}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {(ticket.screenRecording.size / (1024 * 1024)).toFixed(2)} MB
+                      {(ticket.screenRecording.size / (1024 * 1024)).toFixed(2)}{' '}
+                      MB
                       {ticket.screenRecording.duration && (
                         <> • {formatTime(ticket.screenRecording.duration)}</>
                       )}
@@ -178,7 +178,7 @@ function DeveloperTicketDetail({
                       ticket.screenRecording.originalName
                     );
                   }}
-                  className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white hover:bg-[#003366] transition-colors"
+                  className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
                 >
                   ⬇️ Preuzmi Video
                 </button>
@@ -192,7 +192,7 @@ function DeveloperTicketDetail({
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
             Ticket Actions
           </h2>
-          
+
           <div className="flex flex-col gap-3">
             <button
               onClick={handleResolve}
@@ -223,7 +223,7 @@ function DeveloperTicketDetail({
                 'Mark as Resolved'
               )}
             </button>
-            
+
             {ticket.status !== 'In Progress' && (
               <p className="text-xs text-gray-500">
                 This button is only enabled when ticket status is "In Progress"
@@ -298,7 +298,7 @@ function AttachmentItem({ attachment, ticketId, index }) {
         index,
         attachment.filename || attachment.originalName
       );
-    } catch (error) {
+    } catch {
       alert('Failed to download file');
     }
   };

@@ -12,7 +12,6 @@ function EngLeadTicketList({
   onViewTicket,
   onNavigateToUsers,
   onFilterChange,
-  onAssignTicket,
 }) {
   return (
     <div className="flex min-h-screen bg-gray-50">

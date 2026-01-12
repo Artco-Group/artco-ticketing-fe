@@ -10,7 +10,6 @@ function TicketForm({
   onFormChange,
   onSubmit,
   onCancel,
-  screenRecording,
   onScreenRecordingChange,
 }) {
   const [files, setFiles] = useState([]);

@@ -64,6 +64,7 @@ function UserDashboard() {
         setSearchParams(searchParams);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, tickets, selectedTicket]);
 
   useEffect(() => {
@@ -105,10 +106,10 @@ function UserDashboard() {
   const handleViewTicket = async (ticket) => {
     setSelectedTicket(ticket);
     setCurrentView('detail');
-    
+
     // Update URL with ticket param
     setSearchParams({ ticket: ticket._id });
-    
+
     // Fetch comments for this ticket
     try {
       const response = await commentAPI.getComments(ticket._id);
@@ -123,7 +124,7 @@ function UserDashboard() {
     setCurrentView('list');
     setSelectedTicket(null);
     setComments([]);
-    
+
     // Remove ticket param from URL
     searchParams.delete('ticket');
     setSearchParams(searchParams);
@@ -170,11 +171,11 @@ function UserDashboard() {
 
       const response = await ticketAPI.createTicket(formDataToSend);
       setTickets((prev) => [response.data, ...prev]);
-      
+
       // Reset screen recording state
       setScreenRecording(null);
       setRecordingDuration(0);
-      
+
       setCurrentView('list');
     } catch (error) {
       console.error('Failed to create ticket:', error);
@@ -235,7 +236,6 @@ function UserDashboard() {
           onFormChange={handleFormChange}
           onSubmit={handleSubmitTicket}
           onCancel={handleCancelCreate}
-          screenRecording={screenRecording}
           onScreenRecordingChange={(file, duration) => {
             setScreenRecording(file);
             setRecordingDuration(duration);
