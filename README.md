@@ -89,56 +89,6 @@ chmod +x .husky/*
 **Bypass hooks (emergency only):**
 git commit --no-verify -m "message"
  
-
-## Git Hooks (Husky)
-
-This project uses Husky to enforce code quality standards.
-
-### Setup
-Hooks are automatically installed when you run `npm install`.
-
-### Branch Naming Convention
-Branches must include the JIRA ticket ID and follow this pattern:
-type/ARTCOCRM-XXX/description
-
-**Allowed types:** `feature`, `bugfix`, `hotfix`, `release`, `chore`
-
-**Examples:**
-- ✅ `feature/ARTCOCRM-123/add-login-page`
-- ✅ `bugfix/ARTCOCRM-45/fix-null-pointer`
-- ❌ `feature/add-login` (missing ticket ID)
-
-**Excluded branches:** `main`, `master`, `develop`
-
-### Commit Message Format
-We use [Conventional Commits](https://www.conventionalcommits.org/) with required ticket ID:
-type(scope): ARTCOCRM-XXX description
-
-**Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `build`, `ci`
-
-**Examples:**
-- ✅ `feat(auth): ARTCOCRM-123 add login functionality`
-- ✅ `fix(api): ARTCOCRM-45 resolve null pointer exception`
-- ✅ `docs: ARTCOCRM-67 update README`
-- ❌ `feat: add login` (missing ticket ID)
-
-### Pre-commit Checks
-Before each commit, the following checks run automatically:
-1. **Linting** — ESLint/Prettier on staged files
-2. **Build verification** — ensures code compiles
-
-### Troubleshooting
-
-**Hooks not running?**
-```bash
-npx husky install
-
-**Permission denied?**
-chmod +x .husky/*
-
-**Bypass hooks (emergency only):**
-git commit --no-verify -m "message"
- 
  ## CI/CD
 
 ![CI](https://github.com/Artco-Group/artco-ticketing-fe/actions/workflows/ci.yml/badge.svg)
