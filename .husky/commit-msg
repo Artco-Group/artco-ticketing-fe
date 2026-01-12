@@ -1,0 +1,4 @@
+echo "Running commit-msg hook..."
+
+# validate commit message using commitlint
+./node_modules/.bin/commitlint --edit "$1"
