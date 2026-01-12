@@ -3,6 +3,7 @@ import EngLeadSidebar from './EngLeadSidebar';
 import CommentThread from './CommentThread';
 import { statusColors, priorityConfig } from '../../utils/ticketHelpers';
 import { fileAPI } from '../../services/fileApi';
+import { formatTime } from '../../hooks/useScreenRecorder';
 
 function EngLeadTicketDetail({
   ticket,
@@ -40,7 +41,7 @@ function EngLeadTicketDetail({
 
   const handleAssign = () => {
     if (selectedDeveloper && selectedDeveloper !== ticket.assignedTo) {
-      onAssignTicket(ticket.ticketId, selectedDeveloper);
+      onAssignTicket(ticket._id, selectedDeveloper);
     }
   };
 
@@ -281,10 +282,45 @@ function EngLeadTicketDetail({
                       <AttachmentItem
                         key={index}
                         attachment={attachment}
-                        ticketId={ticket.ticketId}
+                        ticketId={ticket._id}
                         index={index}
                       />
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Screen Recording */}
+              {ticket.screenRecording && ticket.screenRecording.originalName && (
+                <div className="mt-4">
+                  <h4 className="mb-3 text-sm font-semibold text-gray-700">
+                    Snimak Ekrana
+                  </h4>
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                    <div className="mb-3 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          📹 {ticket.screenRecording.originalName}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {(ticket.screenRecording.size / (1024 * 1024)).toFixed(2)} MB
+                          {ticket.screenRecording.duration && (
+                            <> • {formatTime(ticket.screenRecording.duration)}</>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        fileAPI.downloadScreenRecording(
+                          ticket._id,
+                          ticket.screenRecording.originalName
+                        );
+                      }}
+                      className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white hover:bg-[#003366] transition-colors"
+                    >
+                      ⬇️ Preuzmi Video
+                    </button>
                   </div>
                 </div>
               )}
@@ -346,7 +382,7 @@ function EngLeadTicketDetail({
                   </label>
                   <select
                     value={ticket.priority}
-                    onChange={(e) => onPriorityUpdate(ticket.ticketId, e.target.value)}
+                    onChange={(e) => onPriorityUpdate(ticket._id, e.target.value)}
                     disabled={ticket.status !== 'Open' && ticket.status !== 'In Progress'}
                     className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   >

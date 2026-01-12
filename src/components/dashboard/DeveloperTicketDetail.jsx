@@ -9,6 +9,7 @@ import {
 } from '../../utils/ticketHelpers';
 import { useAuth } from '../../context/AuthContext';
 import { fileAPI } from '../../services/fileApi';
+import { formatTime } from '../../hooks/useScreenRecorder';
 
 function DeveloperTicketDetail({
   ticket,
@@ -142,10 +143,45 @@ function DeveloperTicketDetail({
                   <AttachmentItem
                     key={index}
                     attachment={attachment}
-                    ticketId={ticket.ticketId}
+                    ticketId={ticket._id}
                     index={index}
                   />
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Screen Recording */}
+          {ticket.screenRecording && ticket.screenRecording.originalName && (
+            <div className="mt-4">
+              <h3 className="mb-3 text-sm font-semibold text-gray-700">
+                Snimak Ekrana
+              </h3>
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      📹 {ticket.screenRecording.originalName}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {(ticket.screenRecording.size / (1024 * 1024)).toFixed(2)} MB
+                      {ticket.screenRecording.duration && (
+                        <> • {formatTime(ticket.screenRecording.duration)}</>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    fileAPI.downloadScreenRecording(
+                      ticket._id,
+                      ticket.screenRecording.originalName
+                    );
+                  }}
+                  className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white hover:bg-[#003366] transition-colors"
+                >
+                  ⬇️ Preuzmi Video
+                </button>
               </div>
             </div>
           )}

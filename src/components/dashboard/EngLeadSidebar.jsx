@@ -78,7 +78,6 @@ function EngLeadSidebar({
         <div className="flex items-center gap-3 mb-3">
           <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
             <span className="text-gray-600 font-medium text-sm">
-              {userEmail.charAt(0).toUpperCase()}
             </span>
           </div>
           <div className="flex-1 min-w-0">
