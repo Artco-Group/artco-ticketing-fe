@@ -1,9 +1,8 @@
 export { default as DashboardHeader } from './DashboardHeader';
-export { default as TicketCard } from './TicketCard';
+// TicketCard, FileUpload, and CommentThread are now imported from @artco/component-library
 export { default as TicketList } from './TicketList';
 export { default as TicketForm } from './TicketForm';
 export { default as TicketDetail } from './TicketDetail';
-export { default as CommentThread } from './CommentThread';
 export { default as DeveloperTicketList } from './DeveloperTicketList';
 export { default as DeveloperTicketDetail } from './DeveloperTicketDetail';
 export { default as EngLeadSidebar } from './EngLeadSidebar';

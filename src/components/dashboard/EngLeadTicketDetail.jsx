@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import EngLeadSidebar from './EngLeadSidebar';
-import CommentThread from './CommentThread';
+import { CommentThread } from '@artco/component-library';
 import { statusColors, priorityConfig } from '../../utils/ticketHelpers';
 import { fileAPI } from '../../services/fileApi';
 import { formatTime } from '../../hooks/useScreenRecorder';

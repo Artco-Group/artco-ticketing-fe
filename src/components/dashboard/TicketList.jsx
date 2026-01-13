@@ -1,5 +1,5 @@
 import DashboardHeader from './DashboardHeader';
-import TicketCard from './TicketCard';
+import { TicketCard } from '@artco/component-library';
 
 function TicketList({ tickets, userEmail, onLogout, onCreateTicket, onViewTicket }) {
   return (
@@ -35,7 +35,7 @@ function TicketList({ tickets, userEmail, onLogout, onCreateTicket, onViewTicket
         ) : (
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {tickets.map((ticket) => (
-              <TicketCard key={ticket.id} ticket={ticket} onClick={onViewTicket} />
+              <TicketCard key={ticket.id || ticket._id || `ticket-${ticket.title}`} ticket={ticket} onClick={onViewTicket} />
             ))}
           </div>
         )}

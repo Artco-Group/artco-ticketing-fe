@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DashboardHeader from './DashboardHeader';
-import CommentThread from './CommentThread';
+import { CommentThread } from '@artco/component-library';
 import {
   statusColors,
   priorityConfig,

@@ -74,22 +74,29 @@ function UserDashboard() {
         { opacity: 0, y: -20 },
         { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
       );
-      gsap.fromTo(
-        '.ticket-card',
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.4,
-          stagger: 0.1,
-          ease: 'power2.out',
-          delay: 0.2,
+      
+      // Only animate ticket cards if they exist and view is 'list'
+      if (currentView === 'list' && !ticketsLoading && tickets.length > 0) {
+        const ticketCards = containerRef.current?.querySelectorAll('.ticket-card');
+        if (ticketCards && ticketCards.length > 0) {
+          gsap.fromTo(
+            '.ticket-card',
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              stagger: 0.1,
+              ease: 'power2.out',
+              delay: 0.2,
+            }
+          );
         }
-      );
+      }
     }, containerRef);
 
     return () => ctx.revert();
-  }, [currentView, ticketsLoading]);
+  }, [currentView, ticketsLoading, tickets.length]);
 
   const handleLogout = () => {
     logout();

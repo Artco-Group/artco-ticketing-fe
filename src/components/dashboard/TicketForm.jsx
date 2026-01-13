@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DashboardHeader from './DashboardHeader';
-import FileUpload from './FileUpload';
+import { FileUpload } from '@artco/component-library';
 import ScreenRecorder from './ScreenRecorder';
 
 function TicketForm({
