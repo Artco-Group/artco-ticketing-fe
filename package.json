@@ -13,6 +13,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@artco-group/component-library": "^0.0.1",
     "@tailwindcss/postcss": "^4.1.17",
     "axios": "^1.13.2",
     "gsap": "^3.13.0",
@@ -44,8 +45,11 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "4.1.17",
     "vite": "^7.2.4"
-  }, 
+  },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"]
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
