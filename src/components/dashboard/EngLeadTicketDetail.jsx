@@ -29,7 +29,7 @@ function EngLeadTicketDetail({
 
   const developers = users.filter((user) => user.role === 'developer');
 
-  const getAssignedTicketsCount = (developerId) => {
+  const getAssignedTicketsCount = () => {
     // Ova funkcija treba da prima ID umjesto email
     return Math.floor(Math.random() * 10); // placeholder
   };
@@ -47,7 +47,7 @@ function EngLeadTicketDetail({
 
   const handleClose = async () => {
     if (ticket.status !== 'Resolved') return;
-    
+
     setIsClosing(true);
     try {
       await onStatusUpdate(ticket.ticketId, 'Closed');
@@ -133,7 +133,9 @@ function EngLeadTicketDetail({
                       <dt className="text-sm font-medium text-gray-500">
                         Ticket ID
                       </dt>
-                      <dd className="text-sm text-gray-900">{ticket.ticketId}</dd>
+                      <dd className="text-sm text-gray-900">
+                        {ticket.ticketId}
+                      </dd>
                     </div>
                     <div>
                       <dt className="text-sm font-medium text-gray-500">
@@ -291,39 +293,47 @@ function EngLeadTicketDetail({
               )}
 
               {/* Screen Recording */}
-              {ticket.screenRecording && ticket.screenRecording.originalName && (
-                <div className="mt-4">
-                  <h4 className="mb-3 text-sm font-semibold text-gray-700">
-                    Snimak Ekrana
-                  </h4>
-                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <div className="mb-3 flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          📹 {ticket.screenRecording.originalName}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {(ticket.screenRecording.size / (1024 * 1024)).toFixed(2)} MB
-                          {ticket.screenRecording.duration && (
-                            <> • {formatTime(ticket.screenRecording.duration)}</>
-                          )}
-                        </p>
+              {ticket.screenRecording &&
+                ticket.screenRecording.originalName && (
+                  <div className="mt-4">
+                    <h4 className="mb-3 text-sm font-semibold text-gray-700">
+                      Snimak Ekrana
+                    </h4>
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            📹 {ticket.screenRecording.originalName}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {(
+                              ticket.screenRecording.size /
+                              (1024 * 1024)
+                            ).toFixed(2)}{' '}
+                            MB
+                            {ticket.screenRecording.duration && (
+                              <>
+                                {' '}
+                                • {formatTime(ticket.screenRecording.duration)}
+                              </>
+                            )}
+                          </p>
+                        </div>
                       </div>
+                      <button
+                        onClick={() => {
+                          fileAPI.downloadScreenRecording(
+                            ticket._id,
+                            ticket.screenRecording.originalName
+                          );
+                        }}
+                        className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
+                      >
+                        ⬇️ Preuzmi Video
+                      </button>
                     </div>
-                    <button
-                      onClick={() => {
-                        fileAPI.downloadScreenRecording(
-                          ticket._id,
-                          ticket.screenRecording.originalName
-                        );
-                      }}
-                      className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white hover:bg-[#003366] transition-colors"
-                    >
-                      ⬇️ Preuzmi Video
-                    </button>
                   </div>
-                </div>
-              )}
+                )}
             </div>
 
             {/* Lead Controls */}
@@ -382,8 +392,13 @@ function EngLeadTicketDetail({
                   </label>
                   <select
                     value={ticket.priority}
-                    onChange={(e) => onPriorityUpdate(ticket._id, e.target.value)}
-                    disabled={ticket.status !== 'Open' && ticket.status !== 'In Progress'}
+                    onChange={(e) =>
+                      onPriorityUpdate(ticket._id, e.target.value)
+                    }
+                    disabled={
+                      ticket.status !== 'Open' &&
+                      ticket.status !== 'In Progress'
+                    }
                     className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <option value="Low">Low</option>
@@ -391,11 +406,13 @@ function EngLeadTicketDetail({
                     <option value="High">High</option>
                     <option value="Critical">Critical</option>
                   </select>
-                  {(ticket.status !== 'Open' && ticket.status !== 'In Progress') && (
-                    <p className="mt-1 text-xs text-gray-500">
-                      Priority can only be updated for Open or In Progress tickets
-                    </p>
-                  )}
+                  {ticket.status !== 'Open' &&
+                    ticket.status !== 'In Progress' && (
+                      <p className="mt-1 text-xs text-gray-500">
+                        Priority can only be updated for Open or In Progress
+                        tickets
+                      </p>
+                    )}
                 </div>
 
                 {/* Close Ticket Section */}
@@ -410,7 +427,10 @@ function EngLeadTicketDetail({
                   >
                     {isClosing ? (
                       <div className="flex items-center justify-center gap-2">
-                        <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                        <svg
+                          className="h-4 w-4 animate-spin"
+                          viewBox="0 0 24 24"
+                        >
                           <circle
                             className="opacity-25"
                             cx="12"
@@ -434,7 +454,8 @@ function EngLeadTicketDetail({
                   </button>
                   {ticket.status !== 'Resolved' && (
                     <p className="mt-1 text-xs text-gray-500">
-                      This button is only enabled when ticket status is "Resolved"
+                      This button is only enabled when ticket status is
+                      "Resolved"
                     </p>
                   )}
                   {showSuccess && (
@@ -482,7 +503,7 @@ function AttachmentItem({ attachment, ticketId, index }) {
         index,
         attachment.filename || attachment.originalName
       );
-    } catch (error) {
+    } catch {
       alert('Failed to download file');
     }
   };
