@@ -12,7 +12,7 @@ function EngLeadTicketList({
   onViewTicket,
   onNavigateToUsers,
   onFilterChange,
-  onAssignTicket,
+  onAssignTicket, // eslint-disable-line no-unused-vars
 }) {
   return (
     <div className="flex min-h-screen bg-gray-50">

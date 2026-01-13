@@ -24,97 +24,97 @@ function PasswordResetPage() {
   const titleRef = useRef(null);
   const formRef = useRef(null);
 
-// useEffect #1 - Token verifikacija
-useEffect(() => {
-  const verifyToken = async () => {
-    try {
-      const response = await authAPI.verifyResetToken(token);
-      if (response.data.valid) {
-        setTokenValid(true);
-      } else {
-        setError(response.data.message || 'Token je nevažeći ili je istekao');
+  // useEffect #1 - Token verifikacija
+  useEffect(() => {
+    const verifyToken = async () => {
+      try {
+        const response = await authAPI.verifyResetToken(token);
+        if (response.data.valid) {
+          setTokenValid(true);
+        } else {
+          setError(response.data.message || 'Token je nevažeći ili je istekao');
+        }
+      } catch (err) {
+        setError(
+          err.response?.data?.message || 'Token je nevažeći ili je istekao'
+        );
+      } finally {
+        setVerifyingToken(false);
       }
-    } catch (err) {
-      setError(
-        err.response?.data?.message || 'Token je nevažeći ili je istekao'
-      );
-    } finally {
-      setVerifyingToken(false);
-    }
-  };
+    };
 
-  verifyToken();
-}, [token]);
+    verifyToken();
+  }, [token]);
 
-// useEffect #2 - GSAP Animacije (pokreću se NAKON što verifikacija završi)
-useEffect(() => {
-  // Čekaj da se verifikacija završi i elementi renderuju
-  if (verifyingToken) return;
+  // useEffect #2 - GSAP Animacije (pokreću se NAKON što verifikacija završi)
+  useEffect(() => {
+    // Čekaj da se verifikacija završi i elementi renderuju
+    if (verifyingToken) return;
 
-  const ctx = gsap.context(() => {
-    // Branding animation
-    if (brandingRef.current) {
-      gsap.fromTo(
-        brandingRef.current,
-        { opacity: 0, y: -20 },
-        { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }
-      );
-    }
+    const ctx = gsap.context(() => {
+      // Branding animation
+      if (brandingRef.current) {
+        gsap.fromTo(
+          brandingRef.current,
+          { opacity: 0, y: -20 },
+          { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }
+        );
+      }
 
-    // Headline animation
-    if (headlineRef.current) {
-      gsap.fromTo(
-        headlineRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, delay: 0.3, ease: 'power3.out' }
-      );
-    }
+      // Headline animation
+      if (headlineRef.current) {
+        gsap.fromTo(
+          headlineRef.current,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 1, delay: 0.3, ease: 'power3.out' }
+        );
+      }
 
-    // Floating cards animation with stagger
-    const cards = document.querySelectorAll('.floating-card');
-    if (cards.length > 0) {
-      gsap.fromTo(
-        cards,
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          delay: 0.5,
-          ease: 'power3.out',
-        }
-      );
-    }
+      // Floating cards animation with stagger
+      const cards = document.querySelectorAll('.floating-card');
+      if (cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            delay: 0.5,
+            ease: 'power3.out',
+          }
+        );
+      }
 
-    // Video overlay animation
-    if (videoOverlayRef.current) {
-      gsap.fromTo(
-        videoOverlayRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 1.5, ease: 'power2.inOut' }
-      );
-    }
+      // Video overlay animation
+      if (videoOverlayRef.current) {
+        gsap.fromTo(
+          videoOverlayRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 1.5, ease: 'power2.inOut' }
+        );
+      }
 
-    // Form animation (title i form)
-    if (titleRef.current && formRef.current) {
-      gsap.fromTo(
-        [titleRef.current, formRef.current],
-        { opacity: 0, x: 20 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          delay: 0.3,
-          ease: 'power3.out',
-        }
-      );
-    }
-  });
+      // Form animation (title i form)
+      if (titleRef.current && formRef.current) {
+        gsap.fromTo(
+          [titleRef.current, formRef.current],
+          { opacity: 0, x: 20 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            delay: 0.3,
+            ease: 'power3.out',
+          }
+        );
+      }
+    });
 
-  return () => ctx.revert();
-}, [verifyingToken]); // ← Pokreće se kad se verifyingToken promijeni (završi verifikacija)
+    return () => ctx.revert();
+  }, [verifyingToken]); // ← Pokreće se kad se verifyingToken promijeni (završi verifikacija)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -146,9 +146,7 @@ useEffect(() => {
         navigate('/');
       }, 2000);
     } catch (err) {
-      setError(
-        err.response?.data?.message || 'Greška pri resetovanju lozinke'
-      );
+      setError(err.response?.data?.message || 'Greška pri resetovanju lozinke');
     } finally {
       setLoading(false);
     }
@@ -218,7 +216,7 @@ useEffect(() => {
 
           {/* Headline at the Bottom */}
           <div className="relative z-10" ref={headlineRef}>
-            <h1 className="max-smx:text-[28px] max-smx:leading-[36px] headline-text text-[42px] font-bold leading-[56px] tracking-[-1px] text-white">
+            <h1 className="max-smx:text-[28px] max-smx:leading-[36px] headline-text text-[42px] leading-[56px] font-bold tracking-[-1px] text-white">
               Resetovanje
               <br />
               lozinke
@@ -238,7 +236,9 @@ useEffect(() => {
               <div className="mb-4">
                 <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[#004179]/20 border-t-[#004179]"></div>
               </div>
-              <p className="text-[16px] text-[#6b7280]">Verificiranje tokena...</p>
+              <p className="text-[16px] text-[#6b7280]">
+                Verificiranje tokena...
+              </p>
             </div>
           ) : !tokenValid ? (
             <div ref={formRef}>
@@ -247,7 +247,8 @@ useEffect(() => {
                   Nevažeći Token
                 </h2>
                 <p className="max-smx:text-[14px] max-smx:mb-6 mb-8 text-[16px] leading-normal text-[#6b7280]">
-                  {error || 'Link za resetovanje lozinke je nevažeći ili je istekao.'}
+                  {error ||
+                    'Link za resetovanje lozinke je nevažeći ili je istekao.'}
                 </p>
               </div>
               <button
@@ -279,7 +280,8 @@ useEffect(() => {
                   Uspješno!
                 </h2>
                 <p className="max-smx:text-[14px] mb-6 text-[16px] leading-normal text-[#6b7280]">
-                  Vaša lozinka je uspješno resetovana. Preusmeravanje na stranicu za prijavu...
+                  Vaša lozinka je uspješno resetovana. Preusmeravanje na
+                  stranicu za prijavu...
                 </p>
               </div>
             </div>
@@ -321,7 +323,7 @@ useEffect(() => {
                       id="new-password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="max-smx:py-3 max-smx:px-4 max-smx:pl-11.5 max-smx:text-[14px] input-field w-full rounded-[10px] border border-[#d1d5db] bg-white py-4 pl-12 pr-12 text-[16px] text-[#111827] transition-all duration-200 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:outline-none focus:ring-2 focus:ring-[#004179]/20"
+                      className="max-smx:py-3 max-smx:px-4 max-smx:pl-11.5 max-smx:text-[14px] input-field w-full rounded-[10px] border border-[#d1d5db] bg-white py-4 pr-12 pl-12 text-[16px] text-[#111827] transition-all duration-200 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/20 focus:outline-none"
                       placeholder="Unesite novu lozinku"
                       required
                       disabled={loading}
@@ -386,14 +388,16 @@ useEffect(() => {
                       id="confirm-password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="max-smx:py-3 max-smx:px-4 max-smx:pl-11.5 max-smx:text-[14px] input-field w-full rounded-[10px] border border-[#d1d5db] bg-white py-4 pl-12 pr-12 text-[16px] text-[#111827] transition-all duration-200 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:outline-none focus:ring-2 focus:ring-[#004179]/20"
+                      className="max-smx:py-3 max-smx:px-4 max-smx:pl-11.5 max-smx:text-[14px] input-field w-full rounded-[10px] border border-[#d1d5db] bg-white py-4 pr-12 pl-12 text-[16px] text-[#111827] transition-all duration-200 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/20 focus:outline-none"
                       placeholder="Potvrdite novu lozinku"
                       required
                       disabled={loading}
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="absolute right-3.5 z-1 cursor-pointer border-none bg-none p-0 text-[#9ca3af] transition-colors duration-200 ease-in-out hover:text-[#004179]"
                     >
                       {showConfirmPassword ? (
@@ -466,7 +470,7 @@ useEffect(() => {
                   <button
                     type="button"
                     onClick={() => navigate('/')}
-                    className="decoration-none border-none bg-none cursor-pointer text-[14px] font-medium text-[#004179] transition-colors duration-200 ease-in-out hover:text-[#003366] hover:underline"
+                    className="decoration-none cursor-pointer border-none bg-none text-[14px] font-medium text-[#004179] transition-colors duration-200 ease-in-out hover:text-[#003366] hover:underline"
                   >
                     ← Nazad na prijavu
                   </button>
@@ -481,4 +485,3 @@ useEffect(() => {
 }
 
 export default PasswordResetPage;
-

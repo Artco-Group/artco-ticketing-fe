@@ -51,7 +51,9 @@ function DeveloperTicketTable({ tickets, onViewTicket }) {
                       <div className="line-clamp-2 font-semibold text-gray-900">
                         {ticket.title}
                       </div>
-                      <div className="text-sm text-gray-500">#{ticket.ticketId}</div>
+                      <div className="text-sm text-gray-500">
+                        #{ticket.ticketId}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {ticket.clientEmail}

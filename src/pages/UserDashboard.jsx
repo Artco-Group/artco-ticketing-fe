@@ -64,6 +64,7 @@ function UserDashboard() {
         setSearchParams(searchParams);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, tickets, selectedTicket]);
 
   useEffect(() => {
@@ -74,10 +75,11 @@ function UserDashboard() {
         { opacity: 0, y: -20 },
         { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
       );
-      
+
       // Only animate ticket cards if they exist and view is 'list'
       if (currentView === 'list' && !ticketsLoading && tickets.length > 0) {
-        const ticketCards = containerRef.current?.querySelectorAll('.ticket-card');
+        const ticketCards =
+          containerRef.current?.querySelectorAll('.ticket-card');
         if (ticketCards && ticketCards.length > 0) {
           gsap.fromTo(
             '.ticket-card',
@@ -112,10 +114,10 @@ function UserDashboard() {
   const handleViewTicket = async (ticket) => {
     setSelectedTicket(ticket);
     setCurrentView('detail');
-    
+
     // Update URL with ticket param
     setSearchParams({ ticket: ticket._id });
-    
+
     // Fetch comments for this ticket
     try {
       const response = await commentAPI.getComments(ticket._id);
@@ -130,7 +132,7 @@ function UserDashboard() {
     setCurrentView('list');
     setSelectedTicket(null);
     setComments([]);
-    
+
     // Remove ticket param from URL
     searchParams.delete('ticket');
     setSearchParams(searchParams);
@@ -177,11 +179,11 @@ function UserDashboard() {
 
       const response = await ticketAPI.createTicket(formDataToSend);
       setTickets((prev) => [response.data, ...prev]);
-      
+
       // Reset screen recording state
       setScreenRecording(null);
       setRecordingDuration(0);
-      
+
       setCurrentView('list');
     } catch (error) {
       console.error('Failed to create ticket:', error);

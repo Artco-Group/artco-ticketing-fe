@@ -144,7 +144,8 @@ function TicketDetail({
                       📹 {ticket.screenRecording.originalName}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {(ticket.screenRecording.size / (1024 * 1024)).toFixed(2)} MB
+                      {(ticket.screenRecording.size / (1024 * 1024)).toFixed(2)}{' '}
+                      MB
                       {ticket.screenRecording.duration && (
                         <> • {formatTime(ticket.screenRecording.duration)}</>
                       )}
@@ -158,7 +159,7 @@ function TicketDetail({
                       ticket.screenRecording.originalName
                     );
                   }}
-                  className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white hover:bg-[#003366] transition-colors"
+                  className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
                 >
                   ⬇️ Preuzmi Video
                 </button>
@@ -214,7 +215,7 @@ function AttachmentItem({ attachment, ticketId, index }) {
         index,
         attachment.filename || attachment.originalName
       );
-    } catch (error) {
+    } catch {
       alert('Failed to download file');
     }
   };

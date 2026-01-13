@@ -11,7 +11,10 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/reset-password/:token" element={<PasswordResetPage />} />
+          <Route
+            path="/reset-password/:token"
+            element={<PasswordResetPage />}
+          />
           <Route
             path="/dashboard"
             element={

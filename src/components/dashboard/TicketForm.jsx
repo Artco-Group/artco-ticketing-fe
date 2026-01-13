@@ -10,7 +10,7 @@ function TicketForm({
   onFormChange,
   onSubmit,
   onCancel,
-  screenRecording,
+  screenRecording, // eslint-disable-line no-unused-vars
   onScreenRecordingChange,
 }) {
   const [files, setFiles] = useState([]);

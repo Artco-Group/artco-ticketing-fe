@@ -29,12 +29,9 @@ export const fileAPI = {
 
   downloadScreenRecording: async (ticketId, filename) => {
     try {
-      const response = await api.get(
-        `/tickets/${ticketId}/screen-recording`,
-        {
-          responseType: 'blob', // Important: tell axios to expect binary data
-        }
-      );
+      const response = await api.get(`/tickets/${ticketId}/screen-recording`, {
+        responseType: 'blob', // Important: tell axios to expect binary data
+      });
 
       // Create a blob URL and trigger download
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -53,4 +50,3 @@ export const fileAPI = {
     }
   },
 };
-

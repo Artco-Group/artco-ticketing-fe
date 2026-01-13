@@ -67,6 +67,7 @@ function DeveloperDashboard() {
         setSearchParams(searchParams);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, tickets, selectedTicket]);
 
   useEffect(() => {
@@ -113,10 +114,10 @@ function DeveloperDashboard() {
   const openTicketDetail = async (ticket) => {
     setSelectedTicket(ticket);
     setCurrentView('detail');
-    
+
     // Update URL with ticket param
     setSearchParams({ ticket: ticket._id });
-    
+
     // Fetch comments for this ticket
     try {
       const response = await commentAPI.getComments(ticket._id);
@@ -129,9 +130,12 @@ function DeveloperDashboard() {
 
   const handleConfirmStatusChange = async () => {
     if (!pendingTicket) return;
-    
+
     try {
-      const response = await ticketAPI.updateTicketStatus(pendingTicket._id, 'In Progress');
+      const response = await ticketAPI.updateTicketStatus(
+        pendingTicket._id,
+        'In Progress'
+      );
       const updatedTicket = response.data;
       setTickets((prev) =>
         prev.map((t) => (t._id === pendingTicket._id ? updatedTicket : t))
@@ -158,7 +162,7 @@ function DeveloperDashboard() {
     setCurrentView('list');
     setSelectedTicket(null);
     setComments([]);
-    
+
     // Remove ticket param from URL
     searchParams.delete('ticket');
     setSearchParams(searchParams);
@@ -214,9 +218,10 @@ function DeveloperDashboard() {
     })
     .sort((a, b) => {
       switch (filters.sortBy) {
-        case 'Priority':
+        case 'Priority': {
           const priorityOrder = { Critical: 4, High: 3, Medium: 2, Low: 1 };
           return priorityOrder[b.priority] - priorityOrder[a.priority];
+        }
         case 'Status':
           return a.status.localeCompare(b.status);
         case 'Created Date':
@@ -259,7 +264,8 @@ function DeveloperDashboard() {
               Change Ticket Status
             </h3>
             <p className="mb-6 text-gray-600">
-              This ticket will be marked as In Progress. Do you want to continue?
+              This ticket will be marked as In Progress. Do you want to
+              continue?
             </p>
             <div className="flex gap-3">
               <button

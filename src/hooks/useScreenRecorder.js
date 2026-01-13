@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 
-export function useScreenRecorder({ 
-  maxDuration = 180,  // 3 minutes (180 seconds)
-  bitrate = 1000000,  // 1 Mbps
-  onComplete 
+export function useScreenRecorder({
+  maxDuration = 180, // 3 minutes (180 seconds)
+  bitrate = 1000000, // 1 Mbps
+  onComplete,
 }) {
   const [recording, setRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [estimatedSize, setEstimatedSize] = useState(0);
   const [error, setError] = useState(null);
-  
+
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
   const timerRef = useRef(null);
@@ -20,7 +20,7 @@ export function useScreenRecorder({
   useEffect(() => {
     if (recording) {
       // Formula: (bitrate in Mbps) * seconds / 8 = MB
-      const sizeMB = (bitrate / 1000000) * recordingTime / 8;
+      const sizeMB = ((bitrate / 1000000) * recordingTime) / 8;
       setEstimatedSize(sizeMB);
     }
   }, [recordingTime, recording, bitrate]);
@@ -28,7 +28,7 @@ export function useScreenRecorder({
   const startRecording = async () => {
     try {
       setError(null);
-      
+
       // Request screen capture WITHOUT audio
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: {
@@ -55,12 +55,17 @@ export function useScreenRecorder({
       ]);
 
       // Store both streams for cleanup
-      streamRef.current = { screen: screenStream, mic: micStream, combined: combinedStream };
+      streamRef.current = {
+        screen: screenStream,
+        mic: micStream,
+        combined: combinedStream,
+      };
+      // eslint-disable-next-line react-hooks/purity
       startTimeRef.current = Date.now();
 
       // Choose best available codec
       const options = { videoBitsPerSecond: bitrate };
-      
+
       if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
         options.mimeType = 'video/webm;codecs=vp9';
       } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
@@ -81,19 +86,19 @@ export function useScreenRecorder({
       };
 
       mediaRecorder.onstop = () => {
-        const actualDuration = Math.floor((Date.now() - startTimeRef.current) / 1000);
-        
-        const blob = new Blob(chunksRef.current, { 
-          type: options.mimeType || 'video/webm' 
-        });
-        
-        // Create File object for upload
-        const file = new File(
-          [blob], 
-          `screen-recording-${Date.now()}.webm`, 
-          { type: blob.type }
+        const actualDuration = Math.floor(
+          (Date.now() - startTimeRef.current) / 1000
         );
-        
+
+        const blob = new Blob(chunksRef.current, {
+          type: options.mimeType || 'video/webm',
+        });
+
+        // Create File object for upload
+        const file = new File([blob], `screen-recording-${Date.now()}.webm`, {
+          type: blob.type,
+        });
+
         // Pass file and actual duration to parent
         onComplete?.(file, actualDuration);
         cleanup();
@@ -118,19 +123,18 @@ export function useScreenRecorder({
       timerRef.current = setInterval(() => {
         setRecordingTime((prev) => {
           const newTime = prev + 1;
-          
+
           if (newTime >= maxDuration) {
             stopRecording();
             alert('Snimanje automatski zaustavljeno nakon 3 minute');
           }
-          
+
           return newTime;
         });
       }, 1000);
-
     } catch (err) {
       console.error('Error starting recording:', err);
-      
+
       if (err.name === 'NotAllowedError') {
         setError('Potrebna je dozvola za snimanje ekrana');
       } else if (err.name === 'NotSupportedError') {
@@ -138,7 +142,7 @@ export function useScreenRecorder({
       } else {
         setError('Greška pri pokretanju snimanja');
       }
-      
+
       cleanup();
     }
   };
@@ -152,7 +156,7 @@ export function useScreenRecorder({
 
   const cleanup = () => {
     clearInterval(timerRef.current);
-    
+
     // Stop all tracks from both screen and microphone streams
     if (streamRef.current?.screen) {
       streamRef.current.screen.getTracks().forEach((track) => track.stop());
@@ -163,7 +167,7 @@ export function useScreenRecorder({
     if (streamRef.current?.combined) {
       streamRef.current.combined.getTracks().forEach((track) => track.stop());
     }
-    
+
     setRecordingTime(0);
     setEstimatedSize(0);
   };
@@ -190,4 +194,3 @@ export function formatTime(seconds) {
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
-

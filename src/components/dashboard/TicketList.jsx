@@ -1,7 +1,13 @@
 import DashboardHeader from './DashboardHeader';
 import { TicketCard } from '@artco/component-library';
 
-function TicketList({ tickets, userEmail, onLogout, onCreateTicket, onViewTicket }) {
+function TicketList({
+  tickets,
+  userEmail,
+  onLogout,
+  onCreateTicket,
+  onViewTicket,
+}) {
   return (
     <div className="min-h-screen bg-gray-50">
       <DashboardHeader
@@ -35,7 +41,11 @@ function TicketList({ tickets, userEmail, onLogout, onCreateTicket, onViewTicket
         ) : (
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {tickets.map((ticket) => (
-              <TicketCard key={ticket.id || ticket._id || `ticket-${ticket.title}`} ticket={ticket} onClick={onViewTicket} />
+              <TicketCard
+                key={ticket.id || ticket._id || `ticket-${ticket.title}`}
+                ticket={ticket}
+                onClick={onViewTicket}
+              />
             ))}
           </div>
         )}
@@ -88,4 +98,3 @@ function EmptyState({ onCreateTicket }) {
 }
 
 export default TicketList;
-
