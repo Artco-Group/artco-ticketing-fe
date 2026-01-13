@@ -2,6 +2,26 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+## Prerequisites
+
+### GitHub Packages Authentication
+
+This project uses private packages from `@artco-group`. You need to configure a GitHub Personal Access Token (PAT) to install dependencies.
+
+1. Get the `NPM_TOKEN` from your team lead or 1Password
+2. Add it to your shell profile (`~/.zshrc` or `~/.bashrc`):
+   ```bash
+   echo 'export NPM_TOKEN=<your-token>' >> ~/.zshrc
+   source ~/.zshrc
+   ```
+3. Verify it's set:
+   ```bash
+   echo $NPM_TOKEN
+   ```
+4. Run `yarn install`
+
+**Note:** If you need to generate your own token, go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) and create a token with `read:packages` scope.
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
