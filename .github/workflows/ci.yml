@@ -34,6 +34,8 @@ jobs:
   validate-commits:
     name: 📝 Validate Commit Messages
     runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,8 +49,6 @@ jobs:
 
       - name: Install commitlint
         run: yarn add -D @commitlint/cli @commitlint/config-conventional
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Validate commits
         run: yarn commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
@@ -56,6 +56,8 @@ jobs:
   lint:
     name: 🧹 Lint
     runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -68,8 +70,6 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Run linter
         run: yarn lint
@@ -78,6 +78,8 @@ jobs:
     name: 🔨 Build
     runs-on: ubuntu-latest
     needs: [lint]
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -90,8 +92,6 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Run build
         run: yarn build
@@ -100,6 +100,8 @@ jobs:
     name: 🧪 Test
     runs-on: ubuntu-latest
     needs: [lint]
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -112,8 +114,6 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Run tests
         run: yarn test --passWithNoTests
