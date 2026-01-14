@@ -1,0 +1,185 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    # Only run on code file changes
+    paths:
+      - 'src/**/*.ts'
+      - 'src/**/*.tsx'
+      - 'src/**/*.js'
+      - 'src/**/*.jsx'
+      - 'src/**/*.css'
+      # Note: Can't use paths-ignore with paths, so exclusions handled by specificity above
+
+# NOTE: Do NOT add concurrency block at workflow level - it breaks pull_request triggers
+# The concurrency block must be inside the job definition
+
+jobs:
+  claude-review:
+    # Skip draft PRs, dependabot, and PRs with 'skip-review' label
+    if: |
+      github.event.pull_request.draft == false &&
+      github.actor != 'dependabot[bot]' &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-review')
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # Cancel in-progress runs when a new commit is pushed
+    # IMPORTANT: This MUST be at job level, NOT workflow level
+    concurrency:
+      group: claude-review-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      id-token: write
+      actions: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR size
+        id: pr-size
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Retry up to 3 times with 5 second delay
+          for i in 1 2 3; do
+            CHANGED_FILES=$(gh pr view ${{ github.event.pull_request.number }} --json files --jq '.files | length') && break
+            echo "Attempt $i failed, retrying in 5s..."
+            sleep 5
+          done
+          echo "changed_files=${CHANGED_FILES:-0}" >> $GITHUB_OUTPUT
+          if [ "${CHANGED_FILES:-0}" -gt 50 ]; then
+            echo "large_pr=true" >> $GITHUB_OUTPUT
+            echo "::warning::Large PR detected ($CHANGED_FILES files). Review may be less thorough."
+          else
+            echo "large_pr=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Minimize previous Claude review comments
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMENTS=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+            --jq '.[] | select(.body | contains("<!-- claude-code-review -->")) | .node_id')
+
+          for NODE_ID in $COMMENTS; do
+            echo "Minimizing comment: $NODE_ID"
+            gh api graphql -f query='
+              mutation MinimizeComment($id: ID!) {
+                minimizeComment(input: {subjectId: $id, classifier: OUTDATED}) {
+                  minimizedComment {
+                    isMinimized
+                  }
+                }
+              }
+            ' -f id="$NODE_ID" || echo "Failed to minimize comment $NODE_ID"
+          done
+
+      - name: Run Claude Code Review
+        id: claude-review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            PR TITLE: ${{ github.event.pull_request.title }}
+            PR AUTHOR: ${{ github.event.pull_request.user.login }}
+            BASE BRANCH: ${{ github.event.pull_request.base.ref }}
+            CHANGED FILES: ${{ steps.pr-size.outputs.changed_files }}
+            LARGE PR: ${{ steps.pr-size.outputs.large_pr }}
+
+            Please review this pull request. Focus on:
+
+            **Critical (must fix):**
+            - Security vulnerabilities (XSS, injection, auth issues)
+            - Data loss or corruption risks
+            - Breaking changes without migration path
+
+            **Important (should fix):**
+            - Potential bugs or logic errors
+            - Performance issues (N+1 queries, memory leaks, unnecessary re-renders)
+            - Missing error handling
+            - TypeScript type safety issues
+
+            **Suggestions (nice to have):**
+            - Code style and readability improvements
+            - Better naming conventions
+            - Opportunities for code reuse
+
+            **Project-Specific Patterns to Enforce:**
+
+            _React & Hooks:_
+            - Custom hooks should be in `src/hooks/` directory
+            - Use `@tanstack/react-query` for data fetching (useQuery, useMutation), not raw useEffect + useState
+            - Prefer custom hooks from `@/hooks/queries/` and `@/hooks/mutations/` for API calls
+            - Context providers should be in `src/context/` directory
+
+            _Imports & Path Aliases:_
+            - Use path aliases: `@/`, `@/components`, `@/hooks`, `@/context`, `@/api`, `@/utils`, `@/interfaces`, `@/constants`
+            - Flag relative imports like `../../../` that could use aliases instead
+            - Imports should be organized: external libs -> internal aliases -> relative imports
+
+            _Ant Design & Forms:_
+            - Forms must use Ant Design's `Form` component with `Form.useForm()`
+            - Use `Form.Item` for all form fields with proper `name` and `rules` props
+            - Async data should use `form.setFieldsValue()` not initial values
+            - Prefer custom form components from `@/components/forms/`
+
+            _TypeScript:_
+            - Interfaces should be in `src/interfaces/` and exported via index
+            - Avoid `any` type - use proper typing or `unknown` with type guards
+            - Props interfaces should be defined for all components
+            - Use existing types from `@/interfaces` rather than redefining
+
+            _Styling:_
+            - Use TailwindCSS classes, not inline styles or CSS modules
+            - Use project color palette: primary, secondary, success, warning, error, neutral (defined in tailwind.config.js)
+            - Spacing should use Tailwind spacing scale (1=4px, 2=8px, etc.)
+
+            _API Services:_
+            - API calls should go through services in `src/api/services/`
+            - Don't make axios calls directly in components
+            - Use proper error handling with try/catch or React Query's onError
+
+            _Consistency Checks:_
+            - Check if similar patterns exist elsewhere in codebase and flag deviations
+            - New utilities should check if similar ones exist in `@/utils`
+            - New components should check for similar existing ones in `@/components`
+            - Flag magic numbers/strings that should be constants
+
+            **Guidelines:**
+            - Use the repository's CLAUDE.md for additional project conventions
+            - Only comment on changed lines, not existing code
+            - Be specific: reference file names and line numbers
+            - Provide code examples for suggested fixes
+            - If the PR looks good, say so briefly - don't invent issues
+            - For large PRs (>50 files), focus only on critical and important issues
+
+            **Review Format:**
+            Structure your review with these sections:
+            - 🔴 **Critical Issues** (if any)
+            - 🟡 **Important Issues** (if any)
+            - 🔵 **Pattern Violations** (if any inconsistencies with codebase patterns)
+            - 🟢 **Suggestions** (if any)
+            - ✅ **Summary** (brief overall assessment)
+
+            IMPORTANT: Start your comment with this hidden marker:
+            <!-- claude-code-review -->
+
+            Use `gh pr comment` to post your review.
+
+          claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Read,Glob,Grep"'
