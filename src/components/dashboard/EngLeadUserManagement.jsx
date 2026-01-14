@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import EngLeadSidebar from './EngLeadSidebar';
+import EngLeadSidebar from '../shared/EngLeadSidebar';
+import Table from '../shared/Table';
+import FilterBar from '../shared/FilterBar';
+import {
+  textColumn,
+  badgeColumn,
+  dateColumn,
+  actionsColumn,
+} from '../shared/tableColumns.jsx';
 
 function EngLeadUserManagement({
   users,
@@ -83,6 +91,102 @@ function EngLeadUserManagement({
     });
   };
 
+  const EditIcon = () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  );
+
+  const DeleteIcon = () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+      <line x1="10" y1="11" x2="10" y2="17" />
+      <line x1="14" y1="11" x2="14" y2="17" />
+    </svg>
+  );
+
+  const columns = [
+    textColumn('name', 'Name', {
+      className: 'font-medium text-gray-900',
+    }),
+    textColumn('email', 'Email', {
+      className: 'text-sm text-gray-900',
+    }),
+    badgeColumn(
+      'role',
+      'Role',
+      (role) => roleColors[role] || 'bg-gray-100 text-gray-800'
+    ),
+    dateColumn('createdAt', 'Created', formatDate, {
+      className: 'text-gray-500',
+    }),
+    actionsColumn('actions', 'Actions', [
+      {
+        icon: EditIcon,
+        onClick: handleEditUser,
+        label: 'Edit user',
+        className: 'p-1.5 text-gray-400 transition-colors hover:text-[#004179]',
+      },
+      {
+        icon: DeleteIcon,
+        onClick: setShowDeleteModal,
+        label: 'Delete user',
+        className: 'p-1.5 text-gray-400 transition-colors hover:text-red-600',
+      },
+    ]),
+  ];
+
+  const filterConfig = [
+    {
+      key: 'role',
+      label: 'Role',
+      type: 'select',
+      value: roleFilter,
+      options: [
+        { value: 'All', label: 'All Roles' },
+        ...roles.map((role) => ({ value: role, label: role })),
+      ],
+    },
+  ];
+
+  const emptyState = (
+    <div className="py-12 text-center">
+      <svg
+        className="mx-auto h-12 w-12 text-gray-400"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+        />
+      </svg>
+      <h3 className="mt-2 text-sm font-medium text-gray-900">No users found</h3>
+      <p className="mt-1 text-sm text-gray-500">
+        No users match your current search and filters.
+      </p>
+    </div>
+  );
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <EngLeadSidebar
@@ -114,157 +218,27 @@ function EngLeadUserManagement({
 
         <main className="flex-1 p-6">
           {/* Search & Filters */}
-          <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4">
-            <div className="flex flex-wrap items-center gap-4">
-              {/* Search */}
-              <div className="min-w-64 flex-1">
-                <input
-                  type="text"
-                  placeholder="Search by name or email"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
-                />
-              </div>
-
-              {/* Role Filter */}
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Role:
-                </label>
-                <select
-                  value={roleFilter}
-                  onChange={(e) => setRoleFilter(e.target.value)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
-                >
-                  <option value="All">All Roles</option>
-                  {roles.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
+          <FilterBar
+            filters={filterConfig}
+            searchConfig={{
+              placeholder: 'Search by name or email',
+              value: searchTerm,
+              onChange: setSearchTerm,
+            }}
+            onFilterChange={(key, value) => {
+              if (key === 'role') {
+                setRoleFilter(value);
+              }
+            }}
+            className="mb-6"
+          />
 
           {/* Users Table */}
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b border-gray-200 bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                      Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                      Email
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                      Role
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                      Created
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {filteredUsers.map((user) => (
-                    <tr
-                      key={user._id || user.id}
-                      className="transition-colors hover:bg-gray-50"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="font-medium text-gray-900">
-                          {user.name}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {user.email}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${roleColors[user.role]}`}
-                        >
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {formatDate(user.createdAt)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleEditUser(user)}
-                            className="p-1.5 text-gray-400 transition-colors hover:text-[#004179]"
-                            title="Edit user"
-                          >
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => setShowDeleteModal(user)}
-                            className="p-1.5 text-gray-400 transition-colors hover:text-red-600"
-                            title="Delete user"
-                          >
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <polyline points="3 6 5 6 21 6" />
-                              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                              <line x1="10" y1="11" x2="10" y2="17" />
-                              <line x1="14" y1="11" x2="14" y2="17" />
-                            </svg>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {filteredUsers.length === 0 && (
-              <div className="py-12 text-center">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                  />
-                </svg>
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  No users found
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  No users match your current search and filters.
-                </p>
-              </div>
-            )}
-          </div>
+          <Table
+            columns={columns}
+            data={filteredUsers}
+            emptyState={emptyState}
+          />
         </main>
       </div>
 

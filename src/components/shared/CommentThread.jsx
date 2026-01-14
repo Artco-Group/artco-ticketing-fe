@@ -67,9 +67,6 @@ function CommentThread({
 function CommentBubble({ comment, currentUser }) {
   const thisUser =
     comment.authorId._id === (currentUser?.id || currentUser?._id);
-  console.log('=== CommentBubble Debug ===');
-  console.log('currentUser:', currentUser);
-  console.log('thisUser:', thisUser ? 'true' : 'false');
   return (
     <div className={`flex ${thisUser ? 'justify-end' : 'justify-start'}`}>
       <div

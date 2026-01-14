@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-import { TicketList, TicketForm, TicketDetail } from '../components/dashboard';
+import {
+  ClientTicketList,
+  TicketForm,
+  ClientTicketDetail,
+} from '../components/dashboard';
 import { initialFormData } from '../utils/ticketHelpers';
 
 import { useAuth } from '../context/AuthContext';
@@ -220,7 +224,7 @@ function UserDashboard() {
   return (
     <div ref={containerRef}>
       {currentView === 'list' && (
-        <TicketList
+        <ClientTicketList
           tickets={tickets}
           userEmail={user.email}
           onLogout={handleLogout}
@@ -243,7 +247,7 @@ function UserDashboard() {
         />
       )}
       {currentView === 'detail' && selectedTicket && (
-        <TicketDetail
+        <ClientTicketDetail
           ticket={selectedTicket}
           comments={comments}
           userEmail={user.email}
