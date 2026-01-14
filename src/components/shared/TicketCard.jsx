@@ -64,4 +64,3 @@ function TicketCard({ ticket, onClick }) {
 }
 
 export default TicketCard;
-

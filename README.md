@@ -89,3 +89,46 @@ chmod +x .husky/*
 **Bypass hooks (emergency only):**
 git commit --no-verify -m "message"
  
+ ## CI/CD
+
+![CI](https://github.com/Artco-Group/artco-ticketing-fe/actions/workflows/ci.yml/badge.svg)
+
+### Automated Checks
+
+Every Pull Request automatically runs:
+
+| Check | Description |
+|-------|-------------|
+| 🔍 Validate Branch Name | Ensures branch follows `type/ARTCOCRM-XXX/description` format |
+| 📝 Validate Commits | Ensures commits follow conventional commit format with ticket ID |
+| 🧹 Lint | Runs ESLint/Prettier |
+| 🔨 Build | Ensures project builds successfully |
+| 🧪 Test | Runs test suite |
+
+### Merge Requirements
+
+- All CI checks must pass
+- At least one approval required
+- Branch must be up to date with the target branch
+
+## CI/CD
+
+![CI](https://github.com/Artco-Group/artco-ticketing-fe/actions/workflows/ci.yml/badge.svg)
+
+### Automated Checks
+
+Every Pull Request automatically runs:
+
+| Check | Description |
+|-------|-------------|
+| 🔍 Validate Branch Name | Ensures branch follows `type/ARTCOCRM-XXX/description` format |
+| 📝 Validate Commits | Ensures commits follow conventional commit format with ticket ID |
+| 🧹 Lint | Runs ESLint/Prettier |
+| 🔨 Build | Ensures project builds successfully |
+| 🧪 Test | Runs test suite |
+
+### Merge Requirements
+
+- All CI checks must pass
+- At least one approval required
+- Branch must be up to date with the target branch

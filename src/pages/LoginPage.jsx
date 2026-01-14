@@ -15,8 +15,8 @@ function LoginPage() {
   const [resetEmail, setResetEmail] = useState('');
   const [showBrandingModal, setShowBrandingModal] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [_error, setError] = useState('');
+  const [_loading, setLoading] = useState(false);
 
   const brandingRef = useRef(null);
   const headlineRef = useRef(null);

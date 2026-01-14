@@ -1,7 +1,13 @@
-import DashboardHeader from './DashboardHeader';
-import TicketCard from './TicketCard';
+import DashboardHeader from '../shared/DashboardHeader';
+import TicketCard from '../shared/TicketCard';
 
-function TicketList({ tickets, userEmail, onLogout, onCreateTicket, onViewTicket }) {
+function ClientTicketList({
+  tickets,
+  userEmail,
+  onLogout,
+  onCreateTicket,
+  onViewTicket,
+}) {
   return (
     <div className="min-h-screen bg-gray-50">
       <DashboardHeader
@@ -35,7 +41,11 @@ function TicketList({ tickets, userEmail, onLogout, onCreateTicket, onViewTicket
         ) : (
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {tickets.map((ticket) => (
-              <TicketCard key={ticket.id} ticket={ticket} onClick={onViewTicket} />
+              <TicketCard
+                key={ticket.id}
+                ticket={ticket}
+                onClick={onViewTicket}
+              />
             ))}
           </div>
         )}
@@ -87,5 +97,4 @@ function EmptyState({ onCreateTicket }) {
   );
 }
 
-export default TicketList;
-
+export default ClientTicketList;

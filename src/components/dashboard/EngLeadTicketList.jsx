@@ -1,6 +1,18 @@
-import EngLeadSidebar from './EngLeadSidebar';
-import EngLeadSummaryCards from './EngLeadSummaryCards';
-import EngLeadTicketTable from './EngLeadTicketTable';
+import EngLeadSidebar from '../shared/EngLeadSidebar';
+import EngLeadSummaryCards from '../shared/EngLeadSummaryCards';
+import FilterBar from '../shared/FilterBar';
+import Table from '../shared/Table';
+import {
+  statusColors,
+  priorityConfig,
+  categoryColors,
+} from '../../utils/ticketHelpers';
+import {
+  textColumn,
+  customColumn,
+  badgeColumn,
+  dateColumn,
+} from '../shared/tableColumns.jsx';
 
 function EngLeadTicketList({
   tickets,
@@ -12,8 +24,87 @@ function EngLeadTicketList({
   onViewTicket,
   onNavigateToUsers,
   onFilterChange,
-  onAssignTicket,
 }) {
+  const getAssigneeName = (assignedTo) => {
+    const user = users.find((u) => u.email === assignedTo.email);
+    return user ? user.name : assignedTo.email;
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  };
+
+  const columns = [
+    customColumn('title', 'Title', (ticket) => (
+      <div className="font-semibold text-gray-900">{ticket.title}</div>
+    )),
+    textColumn('ticketId', 'Ticket ID', {
+      className: 'text-sm text-gray-500',
+    }),
+    textColumn('clientEmail', 'Client', {
+      className: 'text-sm text-gray-900',
+    }),
+    badgeColumn(
+      'category',
+      'Category',
+      (category) =>
+        categoryColors[category] || 'bg-gray-100 text-gray-800 border-gray-200'
+    ),
+    customColumn('priority', 'Priority', (ticket) => (
+      <span
+        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${priorityConfig[ticket.priority].bg} ${priorityConfig[ticket.priority].color}`}
+      >
+        {priorityConfig[ticket.priority].label}
+      </span>
+    )),
+    badgeColumn(
+      'status',
+      'Status',
+      (status) =>
+        statusColors[status] || 'bg-gray-100 text-gray-800 border-gray-200'
+    ),
+    customColumn('assignedTo', 'Assigned To', (ticket) => (
+      <div className="text-sm text-gray-900">
+        {ticket.assignedTo ? (
+          getAssigneeName(ticket.assignedTo)
+        ) : (
+          <span className="font-medium text-orange-600">Unassigned</span>
+        )}
+      </div>
+    )),
+    dateColumn('createdAt', 'Created', formatDate, {
+      className: 'text-gray-500',
+    }),
+  ];
+
+  const emptyState = (
+    <div className="py-12 text-center">
+      <svg
+        className="mx-auto h-12 w-12 text-gray-400"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+        />
+      </svg>
+      <h3 className="mt-2 text-sm font-medium text-gray-900">
+        No tickets found
+      </h3>
+      <p className="mt-1 text-sm text-gray-500">
+        No tickets match your current filters.
+      </p>
+    </div>
+  );
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <EngLeadSidebar
@@ -35,113 +126,90 @@ function EngLeadTicketList({
           <EngLeadSummaryCards tickets={allTickets} />
 
           {/* Filters Section */}
-          <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4">
-            <div className="flex flex-wrap items-center gap-4">
-              {/* Status Filter */}
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Status:
-                </label>
-                <select
-                  value={filters.status}
-                  onChange={(e) => onFilterChange('status', e.target.value)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
-                >
-                  <option value="All">All Status</option>
-                  <option value="New">New</option>
-                  <option value="Open">Open</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Resolved">Resolved</option>
-                  <option value="Closed">Closed</option>
-                </select>
-              </div>
-
-              {/* Priority Filter */}
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Priority:
-                </label>
-                <select
-                  value={filters.priority}
-                  onChange={(e) => onFilterChange('priority', e.target.value)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
-                >
-                  <option value="All">All Priority</option>
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                  <option value="Critical">Critical</option>
-                </select>
-              </div>
-
-              {/* Client Filter */}
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Client:
-                </label>
-                <select
-                  value={filters.client}
-                  onChange={(e) => onFilterChange('client', e.target.value)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
-                >
-                  <option value="All">All Clients</option>
-                  {[...new Set(allTickets.map((t) => t.clientEmail))].map(
-                    (client) => (
-                      <option key={client} value={client}>
-                        {client}
-                      </option>
-                    )
-                  )}
-                </select>
-              </div>
-
-              {/* Assignee Filter */}
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Assignee:
-                </label>
-                <select
-                  value={filters.assignee}
-                  onChange={(e) => onFilterChange('assignee', e.target.value)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
-                >
-                  <option value="All">All Assignees</option>
-                  <option value="Unassigned">Unassigned</option>
-                  {users
+          <FilterBar
+            filters={[
+              {
+                key: 'status',
+                label: 'Status',
+                type: 'select',
+                value: filters.status,
+                options: [
+                  { value: 'All', label: 'All Status' },
+                  { value: 'New', label: 'New' },
+                  { value: 'Open', label: 'Open' },
+                  { value: 'In Progress', label: 'In Progress' },
+                  { value: 'Resolved', label: 'Resolved' },
+                  { value: 'Closed', label: 'Closed' },
+                ],
+              },
+              {
+                key: 'priority',
+                label: 'Priority',
+                type: 'select',
+                value: filters.priority,
+                options: [
+                  { value: 'All', label: 'All Priority' },
+                  { value: 'Low', label: 'Low' },
+                  { value: 'Medium', label: 'Medium' },
+                  { value: 'High', label: 'High' },
+                  { value: 'Critical', label: 'Critical' },
+                ],
+              },
+              {
+                key: 'client',
+                label: 'Client',
+                type: 'select',
+                value: filters.client,
+                options: [
+                  { value: 'All', label: 'All Clients' },
+                  ...[...new Set(allTickets.map((t) => t.clientEmail))].map(
+                    (client) => ({
+                      value: client,
+                      label: client,
+                    })
+                  ),
+                ],
+              },
+              {
+                key: 'assignee',
+                label: 'Assignee',
+                type: 'select',
+                value: filters.assignee,
+                options: [
+                  { value: 'All', label: 'All Assignees' },
+                  { value: 'Unassigned', label: 'Unassigned' },
+                  ...users
                     .filter((u) => u.role === 'developer')
-                    .map((dev) => (
-                      <option key={dev._id} value={dev.email}>
-                        {dev.name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-
-              {/* Sort By */}
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Sort by:
-                </label>
-                <select
-                  value={filters.sortBy}
-                  onChange={(e) => onFilterChange('sortBy', e.target.value)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
-                >
-                  <option value="Status">Status</option>
-                  <option value="Created Date">Created Date</option>
-                  <option value="Priority">Priority</option>
-                  <option value="Client">Client</option>
-                  <option value="Assignee">Assignee</option>
-                </select>
-              </div>
-            </div>
-          </div>
+                    .map((dev) => ({
+                      value: dev.email,
+                      label: dev.name,
+                    })),
+                ],
+              },
+              {
+                key: 'sortBy',
+                label: 'Sort by',
+                type: 'select',
+                value: filters.sortBy,
+                options: [
+                  { value: 'Status', label: 'Status' },
+                  { value: 'Created Date', label: 'Created Date' },
+                  { value: 'Priority', label: 'Priority' },
+                  { value: 'Client', label: 'Client' },
+                  { value: 'Assignee', label: 'Assignee' },
+                ],
+              },
+            ]}
+            onFilterChange={onFilterChange}
+            className="mb-6"
+          />
 
           {/* Tickets Table */}
-          <EngLeadTicketTable
-            tickets={tickets}
-            users={users}
-            onViewTicket={onViewTicket}
+          <Table
+            columns={columns}
+            data={tickets}
+            onRowClick={onViewTicket}
+            emptyState={emptyState}
           />
         </main>
       </div>

@@ -17,10 +17,10 @@ function EngLeadDashboard() {
   const [currentView, setCurrentView] = useState('tickets'); // 'tickets', 'detail', 'users'
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [tickets, setTickets] = useState([]);
-  const [ticketsLoading, setTicketsLoading] = useState(true);
+  const [, setTicketsLoading] = useState(true);
   const [users, setUsers] = useState([]);
-  const [usersLoading, setUsersLoading] = useState(true);
-  const [usersError, setUsersError] = useState(null);
+  const [, setUsersLoading] = useState(true);
+  const [, setUsersError] = useState(null);
   const [comments, setComments] = useState([]);
   const [filters, setFilters] = useState({
     status: 'All',
@@ -87,7 +87,7 @@ function EngLeadDashboard() {
       sortBy: searchParams.get('sortBy') || 'Status',
     };
     setFilters(urlFilters);
-  }, []);
+  }, [searchParams]);
 
   // Open ticket from URL param if present
   useEffect(() => {
@@ -104,6 +104,7 @@ function EngLeadDashboard() {
         setSearchParams(searchParams);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, tickets, selectedTicket]);
 
   useEffect(() => {
@@ -150,13 +151,13 @@ function EngLeadDashboard() {
   const openTicketDetail = async (ticket) => {
     setSelectedTicket(ticket);
     setCurrentView('detail');
-    
+
     // Update URL with ticket param
     setSearchParams({
       ...Object.fromEntries(searchParams),
       ticket: ticket._id,
     });
-    
+
     // Fetch comments for this ticket
     try {
       const response = await commentAPI.getComments(ticket._id);
@@ -169,9 +170,12 @@ function EngLeadDashboard() {
 
   const handleConfirmStatusChange = async () => {
     if (!pendingTicket) return;
-    
+
     try {
-      const response = await ticketAPI.updateTicketStatus(pendingTicket._id, 'Open');
+      const response = await ticketAPI.updateTicketStatus(
+        pendingTicket._id,
+        'Open'
+      );
       const updatedTicket = response.data;
       setTickets((prev) =>
         prev.map((t) => (t._id === pendingTicket._id ? updatedTicket : t))
@@ -198,7 +202,7 @@ function EngLeadDashboard() {
     setCurrentView('tickets');
     setSelectedTicket(null);
     setComments([]);
-    
+
     // Remove ticket param from URL
     searchParams.delete('ticket');
     setSearchParams(searchParams);
@@ -274,7 +278,10 @@ function EngLeadDashboard() {
 
   const handlePriorityUpdate = async (ticketId, newPriority) => {
     try {
-      const response = await ticketAPI.updateTicketPriority(ticketId, newPriority);
+      const response = await ticketAPI.updateTicketPriority(
+        ticketId,
+        newPriority
+      );
       const updatedTicket = response.data;
 
       setTickets((prev) =>
@@ -368,12 +375,20 @@ function EngLeadDashboard() {
     })
     .sort((a, b) => {
       switch (filters.sortBy) {
-        case 'Status':
-          const statusOrder = { New: 1, Open: 2, 'In Progress': 3, Resolved: 4, Closed: 5 };
+        case 'Status': {
+          const statusOrder = {
+            New: 1,
+            Open: 2,
+            'In Progress': 3,
+            Resolved: 4,
+            Closed: 5,
+          };
           return statusOrder[a.status] - statusOrder[b.status];
-        case 'Priority':
+        }
+        case 'Priority': {
           const priorityOrder = { Critical: 4, High: 3, Medium: 2, Low: 1 };
           return priorityOrder[b.priority] - priorityOrder[a.priority];
+        }
         case 'Client':
           return a.clientEmail.localeCompare(b.clientEmail);
         case 'Assignee':
@@ -399,7 +414,6 @@ function EngLeadDashboard() {
           onViewTicket={handleViewTicket}
           onNavigateToUsers={handleNavigateToUsers}
           onFilterChange={handleFilterChange}
-          onAssignTicket={handleAssignTicket}
         />
       )}
       {currentView === 'detail' && selectedTicket && (
