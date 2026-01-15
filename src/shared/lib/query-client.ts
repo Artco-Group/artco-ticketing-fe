@@ -10,8 +10,9 @@ export const queryClient = new QueryClient({
         // Don't retry on 4xx errors
         if (
           error instanceof AxiosError &&
-          error.response?.status >= 400 &&
-          error.response?.status < 500
+          error.response?.status !== undefined &&
+          error.response.status >= 400 &&
+          error.response.status < 500
         ) {
           return false;
         }
