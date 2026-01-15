@@ -7,10 +7,10 @@
   resolved "https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.2.0.tgz"
   integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
 
-"@artco-group/component-library@^0.0.1":
-  version "0.0.1"
-  resolved "https://npm.pkg.github.com/download/@artco-group/component-library/0.0.1/5668550b040f1d0b80e9e48e4acc22988b3e1e09"
-  integrity sha512-VXyOtRerzGqgSzG1EJEXX/mMbeK4uUHFSgZeh5BS52eN2VEVauqO/1hAFKKbqKu7o6XQUoQyX0SstD0DplYCvQ==
+"@artco-group/component-library@^0.0.10":
+  version "0.0.10"
+  resolved "https://npm.pkg.github.com/download/@artco-group/component-library/0.0.10/03c52887362dec69ec92e5a884318e6f87b368ad#03c52887362dec69ec92e5a884318e6f87b368ad"
+  integrity sha512-yF7KRBsvpz6JVxJRMGBNahMjjvedGEHg27Jp37Rh1WTKqiOqRfdxZ30gCAwAfsDxb1yApIuL1LVcyKhg6SK9WA==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.27.1":
   version "7.27.1"
