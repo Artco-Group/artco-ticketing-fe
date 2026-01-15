@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import DashboardHeader from './DashboardHeader';
-import FileUpload from './FileUpload';
-import ScreenRecorder from './ScreenRecorder';
+import DashboardHeader from '../shared/DashboardHeader';
+import FileUpload from '../shared/FileUpload';
+import ScreenRecorder from '../shared/ScreenRecorder';
 
 function TicketForm({
   formData,

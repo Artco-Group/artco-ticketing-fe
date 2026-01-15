@@ -1,17 +1,17 @@
-function EngLeadSidebar({ 
-  userEmail, 
-  currentView, 
-  onLogout, 
-  onNavigateToTickets, 
-  onNavigateToUsers 
+function EngLeadSidebar({
+  userEmail,
+  currentView,
+  onLogout,
+  onNavigateToTickets,
+  onNavigateToUsers,
 }) {
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+    <aside className="sticky top-0 flex h-screen w-64 flex-col border-r border-gray-200 bg-white">
       {/* Company Logo */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="border-b border-gray-200 p-6">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#004179] rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">A</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#004179]">
+            <span className="text-sm font-bold text-white">A</span>
           </div>
           <span className="font-semibold text-gray-900">Artco Group</span>
         </div>
@@ -23,7 +23,7 @@ function EngLeadSidebar({
           <li>
             <button
               onClick={onNavigateToTickets}
-              className={`w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 currentView === 'tickets' || currentView === 'detail'
                   ? 'bg-[#004179] text-white'
                   : 'text-gray-700 hover:bg-gray-100'
@@ -48,7 +48,7 @@ function EngLeadSidebar({
           <li>
             <button
               onClick={onNavigateToUsers}
-              className={`w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 currentView === 'users'
                   ? 'bg-[#004179] text-white'
                   : 'text-gray-700 hover:bg-gray-100'
@@ -74,14 +74,13 @@ function EngLeadSidebar({
       </nav>
 
       {/* User Info */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-            <span className="text-gray-600 font-medium text-sm">
-            </span>
+      <div className="border-t border-gray-200 p-4">
+        <div className="mb-3 flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+            <span className="text-sm font-medium text-gray-600"></span>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-gray-900">
               {userEmail}
             </p>
             <p className="text-xs text-gray-500">Network Lead</p>
@@ -89,7 +88,7 @@ function EngLeadSidebar({
         </div>
         <button
           onClick={onLogout}
-          className="w-full text-left text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          className="w-full text-left text-sm text-gray-600 transition-colors hover:text-gray-900"
         >
           Logout
         </button>
