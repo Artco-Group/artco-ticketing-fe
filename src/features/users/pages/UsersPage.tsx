@@ -2,6 +2,7 @@ import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '../api';
 import { UserManagement } from '../components';
 import { useAuth } from '@/features/auth/context';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 interface UserFormData {
   name?: string;
@@ -28,14 +29,17 @@ export default function UsersPage() {
     try {
       if (action === 'add' && formData) {
         await createUserMutation.mutateAsync(formData);
+        toast.success('User created successfully');
       } else if (action === 'edit' && userId && formData) {
         await updateUserMutation.mutateAsync({ id: userId, data: formData });
+        toast.success('User updated successfully');
       } else if (action === 'delete' && userId) {
         await deleteUserMutation.mutateAsync(userId);
+        toast.success('User deleted successfully');
       }
     } catch (error) {
       console.error(`Failed to ${action} user:`, error);
-      alert(`Failed to ${action} user. Please try again.`);
+      toast.error(`Failed to ${action} user. Please try again.`);
     }
   };
 

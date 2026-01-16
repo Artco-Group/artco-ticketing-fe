@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import type { Ticket, Comment, User, AssignedTo } from '@/types';
+import { toast } from 'sonner';
 import Sidebar from '@/shared/components/layout/Sidebar';
 import CommentThread from './CommentThread';
 import TicketDetails from './TicketDetails';
@@ -144,7 +145,7 @@ function EngLeadTicketDetail({
                 try {
                   await fileAPI.downloadAttachment(ticketId, index, filename);
                 } catch {
-                  alert('Failed to download file');
+                  toast.error('Failed to download file');
                 }
               }}
               onDownloadScreenRecording={(ticketId, filename) => {

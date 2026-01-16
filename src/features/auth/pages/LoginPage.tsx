@@ -1,6 +1,7 @@
 import type { FormEvent, MouseEvent } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { toast } from 'sonner';
 import { useAuth } from '../context';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../api';
@@ -154,7 +155,7 @@ function LoginPage() {
 
     try {
       await authAPI.forgotPassword(resetEmail);
-      alert('Link za resetovanje lozinke je poslat na vaš email!');
+      toast.success('Link za resetovanje lozinke je poslat na vaš email!');
       setResetEmail('');
       // Optionally switch back to login after success
       setTimeout(() => {

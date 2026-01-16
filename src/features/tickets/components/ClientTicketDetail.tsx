@@ -1,5 +1,6 @@
 import type { FormEvent } from 'react';
 import type { Ticket, Comment, User } from '@/types';
+import { toast } from 'sonner';
 import PageHeader from '@/shared/components/layout/PageHeader';
 import CommentThread from './CommentThread';
 import TicketDetails from './TicketDetails';
@@ -67,14 +68,14 @@ function ClientTicketDetail({
             try {
               await fileAPI.downloadAttachment(ticketId, index, filename);
             } catch {
-              alert('Failed to download file');
+              toast.error('Failed to download file');
             }
           }}
           onDownloadScreenRecording={async (ticketId, filename) => {
             try {
               await fileAPI.downloadScreenRecording(ticketId, filename);
             } catch {
-              alert('Failed to download video');
+              toast.error('Failed to download video');
             }
           }}
           formatDateTime={(date) => {

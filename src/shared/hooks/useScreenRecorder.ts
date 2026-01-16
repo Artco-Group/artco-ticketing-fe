@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { toast } from 'sonner';
 
 interface UseScreenRecorderOptions {
   maxDuration?: number;
@@ -143,7 +144,7 @@ export function useScreenRecorder({
 
           if (newTime >= maxDuration) {
             stopRecording();
-            alert('Snimanje automatski zaustavljeno nakon 3 minute');
+            toast.info('Snimanje automatski zaustavljeno nakon 3 minute');
           }
 
           return newTime;

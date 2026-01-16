@@ -8,6 +8,7 @@ import { DeveloperTicketList, DeveloperTicketDetail } from '../components';
 
 import { useAuth } from '@/features/auth/context';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { ticketAPI } from '../api/tickets-api';
 import { commentAPI } from '../api/comments-api';
 
@@ -150,10 +151,13 @@ function DeveloperDashboard() {
       setPendingTicket(null);
       // Open ticket detail with updated ticket
       await openTicketDetail(updatedTicket);
+      toast.success('Ticket status updated successfully');
     } catch (error) {
       console.error('Failed to update ticket status:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
-      alert(axiosError.response?.data?.message || 'Failed to update status');
+      toast.error(
+        axiosError.response?.data?.message || 'Failed to update status'
+      );
       setShowStatusModal(false);
       setPendingTicket(null);
     }
@@ -191,10 +195,13 @@ function DeveloperDashboard() {
       if (selectedTicket && selectedTicket._id === ticketId) {
         setSelectedTicket(updatedTicket);
       }
+      toast.success('Ticket status updated successfully');
     } catch (error) {
       console.error('Failed to update ticket status:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
-      alert(axiosError.response?.data?.message || 'Failed to update status');
+      toast.error(
+        axiosError.response?.data?.message || 'Failed to update status'
+      );
     }
   };
 
@@ -209,10 +216,13 @@ function DeveloperDashboard() {
       // Add the new comment to the comments list
       setComments((prev) => [...prev, response.data]);
       setNewComment('');
+      toast.success('Comment added successfully');
     } catch (error) {
       console.error('Failed to add comment:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
-      alert(axiosError.response?.data?.message || 'Failed to add comment');
+      toast.error(
+        axiosError.response?.data?.message || 'Failed to add comment'
+      );
     }
   };
 

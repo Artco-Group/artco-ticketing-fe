@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Toaster } from 'sonner';
 import { AuthProvider } from '@/features/auth/context';
 import ProtectedRoute from '@/features/auth/components/RouteGuard';
 import Dashboard from '@/features/dashboard/pages/DashboardRouter';
@@ -41,6 +42,7 @@ function App() {
         </AuthProvider>
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
+      <Toaster position="top-right" richColors closeButton />
     </QueryClientProvider>
   );
 }
