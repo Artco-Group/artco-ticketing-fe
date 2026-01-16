@@ -1,22 +1,24 @@
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '@/features/auth/context/auth-context';
+import { useAuth } from '@/features/auth/context';
 import { ROUTES } from '@/app/routes/constants';
+import { UserRole } from '@/types';
+import { hasRole } from '@/shared/utils/role-helpers';
 
 const navigation = [
   {
     name: 'Dashboard',
     href: ROUTES.DASHBOARD,
-    roles: ['client', 'developer', 'eng_lead'],
+    roles: [UserRole.Client, UserRole.Developer, UserRole.EngLead],
   },
-  { name: 'All Tickets', href: ROUTES.TICKETS.LIST, roles: ['eng_lead'] },
-  { name: 'Users', href: ROUTES.USERS.LIST, roles: ['eng_lead'] },
+  { name: 'All Tickets', href: ROUTES.TICKETS.LIST, roles: [UserRole.EngLead] },
+  { name: 'Users', href: ROUTES.USERS.LIST, roles: [UserRole.EngLead] },
 ];
 
 export function Sidebar() {
   const { user } = useAuth();
 
   const filteredNav = navigation.filter(
-    (item) => !item.roles || item.roles.includes(user?.role || '')
+    (item) => !item.roles || hasRole(user, item.roles)
   );
 
   return (

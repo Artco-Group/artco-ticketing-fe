@@ -1,9 +1,10 @@
 import { ROUTES } from '../routes/constants';
+import { UserRole } from '@/types';
 
 export interface RouteConfig {
   layout: 'none' | 'main' | 'auth';
   requiresAuth: boolean;
-  roles?: ('client' | 'developer' | 'eng_lead')[];
+  roles?: UserRole[];
   pageConfigKey?: string;
 }
 
@@ -23,6 +24,6 @@ export const routeConfigs: Record<string, RouteConfig> = {
   [ROUTES.USERS.LIST]: {
     requiresAuth: true,
     layout: 'main',
-    roles: ['eng_lead'],
+    roles: [UserRole.EngLead],
   },
 };

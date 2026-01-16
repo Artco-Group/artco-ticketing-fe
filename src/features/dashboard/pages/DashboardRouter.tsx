@@ -2,17 +2,18 @@ import { useAuth } from '@/features/auth/context';
 import EngLeadDashboard from '@/features/tickets/pages/EngLeadDashboard';
 import DeveloperDashboard from '@/features/tickets/pages/DeveloperDashboard';
 import UserDashboard from '@/features/tickets/pages/ClientDashboard';
+import { UserRole } from '@/types';
 
 export default function Dashboard() {
   const { user } = useAuth();
 
   // Render appropriate dashboard based on user role
   switch (user?.role) {
-    case 'eng_lead':
+    case UserRole.EngLead:
       return <EngLeadDashboard />;
-    case 'developer':
+    case UserRole.Developer:
       return <DeveloperDashboard />;
-    case 'client':
+    case UserRole.Client:
       return <UserDashboard />;
     default:
       return (

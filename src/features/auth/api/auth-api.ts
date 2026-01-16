@@ -1,13 +1,7 @@
 import { useApiQuery, useApiMutation } from '@/shared/lib/api-hooks';
 import { QueryKeys } from '@/shared/lib/query-keys';
 import { queryClient } from '@/shared/lib/query-client';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'client' | 'developer' | 'eng_lead';
-}
+import type { User } from '@/types';
 
 interface LoginInput {
   email: string;

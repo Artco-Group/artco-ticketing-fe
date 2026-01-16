@@ -6,6 +6,7 @@ import type {
   TicketStatus,
   TicketCategory,
 } from '@/types';
+import { UserRole } from '@/types';
 import Sidebar from '@/shared/components/layout/Sidebar';
 import SummaryCards from '@/shared/components/common/SummaryCard';
 import FilterBar from '@/shared/components/common/FilterBar';
@@ -211,7 +212,7 @@ function EngLeadTicketList({
                   { value: 'All', label: 'All Assignees' },
                   { value: 'Unassigned', label: 'Unassigned' },
                   ...users
-                    .filter((u) => u.role === 'developer')
+                    .filter((u) => u.role === UserRole.Developer)
                     .map((dev) => ({
                       value: dev.email || '',
                       label: dev.name || dev.email || '',
