@@ -1,4 +1,4 @@
-import { useAuth } from '@/features/auth/context/auth-context';
+import { useAuth } from '@/features/auth/context';
 import { UserRole } from '@/types';
 
 const UserRoleDisplay: Record<UserRole, string> = {

@@ -2,18 +2,18 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { AuthLayout } from '../components/AuthLayout';
-import { LoginForm } from '../components/LoginForm';
+import { ForgotPasswordForm } from '../components/ForgotPasswordForm';
 
-function LoginPage() {
+function ForgotPasswordPage() {
   const location = useLocation();
   const formContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Animate form in when page loads or when navigating from forgot password
+    // Animate form in when page loads or when navigating from login
     if (formContainerRef.current) {
       gsap.fromTo(
         formContainerRef.current,
-        { opacity: 0, x: 30 },
+        { opacity: 0, x: -30 },
         { opacity: 1, x: 0, duration: 0.3, ease: 'power3.out' }
       );
     }
@@ -22,10 +22,10 @@ function LoginPage() {
   return (
     <AuthLayout>
       <div ref={formContainerRef}>
-        <LoginForm />
+        <ForgotPasswordForm />
       </div>
     </AuthLayout>
   );
 }
 
-export default LoginPage;
+export default ForgotPasswordPage;

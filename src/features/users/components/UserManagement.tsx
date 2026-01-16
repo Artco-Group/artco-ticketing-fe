@@ -18,7 +18,7 @@ import {
 interface UserFormData {
   name: string;
   email: string;
-  role: string;
+  role: UserRole;
   password?: string;
 }
 
@@ -49,7 +49,7 @@ function EngLeadUserManagement({
   const [formData, setFormData] = useState<UserFormData>({
     name: '',
     email: '',
-    role: 'client',
+    role: UserRole.Client,
   });
 
   const roles: UserRole[] = [
@@ -75,7 +75,7 @@ function EngLeadUserManagement({
 
   const handleAddUser = () => {
     setEditingUser(null);
-    setFormData({ name: '', email: '', role: 'client' });
+    setFormData({ name: '', email: '', role: UserRole.Client });
     setShowModal(true);
   };
 
@@ -84,7 +84,7 @@ function EngLeadUserManagement({
     setFormData({
       name: user.name || '',
       email: user.email || '',
-      role: user.role || 'client',
+      role: user.role || UserRole.Client,
     });
     setShowModal(true);
   };
@@ -104,7 +104,7 @@ function EngLeadUserManagement({
     }
 
     setShowModal(false);
-    setFormData({ name: '', email: '', role: 'client' });
+    setFormData({ name: '', email: '', role: UserRole.Client });
   };
 
   const handleDeleteUser = (user: User) => {
@@ -317,7 +317,10 @@ function EngLeadUserManagement({
                 <select
                   value={formData.role}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, role: e.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      role: e.target.value as UserRole,
+                    }))
                   }
                   className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
                   required

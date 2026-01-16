@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import type { AxiosError } from 'axios';
-import { authAPI } from '../api';
+import authAPI from '../api/authApi';
 
 interface ApiErrorResponse {
   message?: string;

@@ -1,22 +1,49 @@
+// src/features/auth/components/RouteGuard.tsx
 import type { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context';
 import { LoadingOverlay } from '@/shared/components/ui';
+import { ROUTES } from '@/app/routes/constants';
+import { UserRole } from '@/types';
+import { hasRole } from '@/shared/utils/role-helpers';
 
-interface ProtectedRouteProps {
+interface RouteGuardProps {
   children: ReactNode;
+  requiresAuth?: boolean;
+  allowedRoles?: UserRole[];
 }
 
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, loading } = useAuth();
+export function RouteGuard({
+  children,
+  requiresAuth = true,
+  allowedRoles,
+}: RouteGuardProps) {
+  const { user, isLoading, isAuthenticated } = useAuth();
+  const location = useLocation();
+  
+  // Protected route, user not authenticated
+  if (requiresAuth && !isAuthenticated) {
+    return (
+      <Navigate to={ROUTES.AUTH.LOGIN} state={{ from: location }} replace />
+    );
+  }
 
-  if (loading) {
+  // Public route, user is authenticated - redirect to dashboard
+  if (!requiresAuth && isAuthenticated) {
+    return <Navigate to={ROUTES.DASHBOARD} replace />;
+  }
+
+  // Still loading - show nothing (prevents flash)
+  if (isLoading) {
     return <LoadingOverlay />;
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  // Role check
+  if (allowedRoles && user && !hasRole(user, allowedRoles)) {
+    return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
 
-  return children;
+  return <>{children}</>;
 }
+
+export default RouteGuard;
