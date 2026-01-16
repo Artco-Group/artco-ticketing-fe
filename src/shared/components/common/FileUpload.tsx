@@ -1,5 +1,6 @@
 import type { DragEvent, ChangeEvent, MouseEvent } from 'react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface FileUploadProps {
   files: File[];
@@ -93,7 +94,7 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
     } else {
       // Show errors if any
       if (errors.length > 0) {
-        alert(errors.join('\n'));
+        errors.forEach((error) => toast.error(error));
       }
 
       // Update files if valid
@@ -105,7 +106,7 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
 
     // Show errors
     if (errors.length > 0) {
-      alert(errors.join('\n'));
+      errors.forEach((error) => toast.error(error));
     }
   };
 

@@ -13,6 +13,7 @@ import { initialFormData } from '@/shared/utils/ticket-helpers';
 
 import { useAuth } from '@/features/auth/context';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { ticketAPI } from '../api/tickets-api';
 import { commentAPI } from '../api/comments-api';
 
@@ -153,7 +154,7 @@ function UserDashboard() {
   const handleSubmitTicket = async (e: FormEvent, files: File[]) => {
     e.preventDefault();
     if (!formData.title || !formData.category || !formData.description) {
-      alert('Molimo popunite sva obavezna polja.');
+      toast.error('Molimo popunite sva obavezna polja.');
       return;
     }
 
@@ -192,10 +193,13 @@ function UserDashboard() {
       setRecordingDuration(0);
 
       setCurrentView('list');
+      toast.success('Ticket created successfully');
     } catch (error) {
       console.error('Failed to create ticket:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
-      alert(axiosError.response?.data?.message || 'Failed to create ticket');
+      toast.error(
+        axiosError.response?.data?.message || 'Failed to create ticket'
+      );
     }
   };
 
@@ -227,10 +231,13 @@ function UserDashboard() {
       // Add the new comment to the comments list
       setComments((prev) => [...prev, response.data]);
       setNewComment('');
+      toast.success('Comment added successfully');
     } catch (error) {
       console.error('Failed to add comment:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
-      alert(axiosError.response?.data?.message || 'Failed to add comment');
+      toast.error(
+        axiosError.response?.data?.message || 'Failed to add comment'
+      );
     }
   };
 

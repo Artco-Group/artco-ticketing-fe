@@ -9,6 +9,7 @@ import { UserManagement as EngLeadUserManagement } from '@/features/users/compon
 
 import { useAuth } from '@/features/auth/context';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { usersAPI } from '@/features/users/api';
 import { ticketAPI } from '../api/tickets-api';
 import { commentAPI } from '../api/comments-api';
@@ -200,10 +201,13 @@ function EngLeadDashboard() {
       setPendingTicket(null);
       // Open ticket detail with updated ticket
       await openTicketDetail(updatedTicket);
+      toast.success('Ticket status updated successfully');
     } catch (error) {
       console.error('Failed to update ticket status:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
-      alert(axiosError.response?.data?.message || 'Failed to update status');
+      toast.error(
+        axiosError.response?.data?.message || 'Failed to update status'
+      );
       setShowStatusModal(false);
       setPendingTicket(null);
     }
@@ -269,10 +273,13 @@ function EngLeadDashboard() {
       if (selectedTicket && selectedTicket._id === ticketId) {
         setSelectedTicket(updatedTicket);
       }
+      toast.success('Ticket assigned successfully');
     } catch (error) {
       console.error('Failed to assign ticket:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
-      alert(axiosError.response?.data?.message || 'Failed to assign ticket');
+      toast.error(
+        axiosError.response?.data?.message || 'Failed to assign ticket'
+      );
     }
   };
 
@@ -288,10 +295,13 @@ function EngLeadDashboard() {
       if (selectedTicket && selectedTicket._id === ticketId) {
         setSelectedTicket(updatedTicket);
       }
+      toast.success('Ticket status updated successfully');
     } catch (error) {
       console.error('Failed to update ticket status:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
-      alert(axiosError.response?.data?.message || 'Failed to update status');
+      toast.error(
+        axiosError.response?.data?.message || 'Failed to update status'
+      );
     }
   };
 
@@ -313,10 +323,13 @@ function EngLeadDashboard() {
       if (selectedTicket && selectedTicket._id === ticketId) {
         setSelectedTicket(updatedTicket);
       }
+      toast.success('Ticket priority updated successfully');
     } catch (error) {
       console.error('Failed to update ticket priority:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
-      alert(axiosError.response?.data?.message || 'Failed to update priority');
+      toast.error(
+        axiosError.response?.data?.message || 'Failed to update priority'
+      );
     }
   };
 
@@ -331,10 +344,13 @@ function EngLeadDashboard() {
       // Add the new comment to the comments list
       setComments((prev) => [...prev, response.data]);
       setNewComment('');
+      toast.success('Comment added successfully');
     } catch (error) {
       console.error('Failed to add comment:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
-      alert(axiosError.response?.data?.message || 'Failed to add comment');
+      toast.error(
+        axiosError.response?.data?.message || 'Failed to add comment'
+      );
     }
   };
 
@@ -348,10 +364,13 @@ function EngLeadDashboard() {
         try {
           const response = await usersAPI.createUser(userData || {});
           setUsers((prev) => [...prev, response.data]);
+          toast.success('User created successfully');
         } catch (error) {
           console.error('Failed to create user:', error);
           const axiosError = error as AxiosError<ApiErrorResponse>;
-          alert(axiosError.response?.data?.message || 'Failed to create user');
+          toast.error(
+            axiosError.response?.data?.message || 'Failed to create user'
+          );
         }
         break;
       case 'edit':
@@ -363,10 +382,13 @@ function EngLeadDashboard() {
           setUsers((prev) =>
             prev.map((u) => (u._id === userId ? { ...u, ...response.data } : u))
           );
+          toast.success('User updated successfully');
         } catch (error) {
           console.error('Failed to update user:', error);
           const axiosError = error as AxiosError<ApiErrorResponse>;
-          alert(axiosError.response?.data?.message || 'Failed to update user');
+          toast.error(
+            axiosError.response?.data?.message || 'Failed to update user'
+          );
         }
 
         break;
@@ -374,10 +396,13 @@ function EngLeadDashboard() {
         try {
           await usersAPI.deleteUser(userId || '');
           setUsers((prev) => prev.filter((u) => u._id !== userId));
+          toast.success('User deleted successfully');
         } catch (error) {
           console.error('Failed to delete user:', error);
           const axiosError = error as AxiosError<ApiErrorResponse>;
-          alert(axiosError.response?.data?.message || 'Failed to delete user');
+          toast.error(
+            axiosError.response?.data?.message || 'Failed to delete user'
+          );
         }
         break;
       default:

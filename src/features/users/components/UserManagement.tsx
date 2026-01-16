@@ -2,6 +2,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import type { User } from '@/types';
 import { UserRole } from '@/types';
+import { toast } from 'sonner';
 import Sidebar from '@/shared/components/layout/Sidebar';
 import Table from '@/shared/components/ui/Table';
 import FilterBar, {
@@ -91,7 +92,7 @@ function EngLeadUserManagement({
   const handleSaveUser = (e: FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.role) {
-      alert('Please fill in all required fields.');
+      toast.error('Please fill in all required fields.');
       return;
     }
 
