@@ -14,6 +14,8 @@ import { initialFormData } from '@/shared/utils/ticket-helpers';
 import { useAuth } from '@/features/auth/context';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { Skeleton } from '@/shared/components/ui';
+import PageHeader from '@/shared/components/layout/PageHeader';
 import { ticketAPI } from '../api/tickets-api';
 import { commentAPI } from '../api/comments-api';
 
@@ -240,6 +242,45 @@ function UserDashboard() {
       );
     }
   };
+
+  if (ticketsLoading && currentView === 'list') {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <PageHeader userEmail={user?.email || ''} onLogout={handleLogout} />
+        <main className="flex-1 p-6">
+          <div className="mb-6">
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b border-gray-200 bg-gray-50">
+                  <tr>
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                      <th key={i} className="px-6 py-3">
+                        <Skeleton className="h-4 w-24" />
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <tr key={i}>
+                      {[1, 2, 3, 4, 5, 6].map((j) => (
+                        <td key={j} className="px-6 py-4">
+                          <Skeleton className="h-4 w-full" />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef}>
