@@ -14,7 +14,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@artco-group/component-library": "^0.0.1",
+    "@artco-group/component-library": "^0.0.10",
     "@tailwindcss/postcss": "^4.1.17",
     "axios": "^1.13.2",
     "gsap": "^3.13.0",

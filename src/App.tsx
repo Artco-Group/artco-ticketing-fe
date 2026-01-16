@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Dashboard from './pages/Dashboard';
-import LoginPage from './pages/LoginPage';
-import PasswordResetPage from './pages/PasswordResetPage';
+import { AuthProvider } from '@/features/auth/context';
+import ProtectedRoute from '@/features/auth/components/RouteGuard';
+import Dashboard from '@/features/dashboard/pages/DashboardRouter';
+import LoginPage from '@/features/auth/pages/LoginPage';
+import PasswordResetPage from '@/features/auth/pages/PasswordResetPage';
 
 function App() {
   return (
