@@ -1,6 +1,56 @@
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '@/features/auth/context/auth-context';
+import { ROUTES } from '@/app/routes/constants';
+
+const navigation = [
+  {
+    name: 'Dashboard',
+    href: ROUTES.DASHBOARD,
+    roles: ['client', 'developer', 'eng_lead'],
+  },
+  { name: 'All Tickets', href: ROUTES.TICKETS.LIST, roles: ['eng_lead'] },
+  { name: 'Users', href: ROUTES.USERS.LIST, roles: ['eng_lead'] },
+];
+
+export function Sidebar() {
+  const { user } = useAuth();
+
+  const filteredNav = navigation.filter(
+    (item) => !item.roles || item.roles.includes(user?.role || '')
+  );
+
+  return (
+    <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+      <div className="flex flex-grow flex-col overflow-y-auto border-r border-gray-200 bg-white pt-5 pb-4">
+        <div className="flex flex-shrink-0 items-center px-4">
+          <span className="text-xl font-bold text-gray-900">Ticketing</span>
+        </div>
+        <nav className="mt-8 flex-1 space-y-1 px-2">
+          {filteredNav.map((item) => (
+            <NavLink
+              key={item.name}
+              to={item.href}
+              className={({ isActive }) =>
+                `group flex items-center rounded-md px-2 py-2 text-sm font-medium ${
+                  isActive
+                    ? 'bg-gray-100 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }`
+              }
+            >
+              {item.name}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+    </div>
+  );
+}
+
+// Legacy Sidebar component for backward compatibility
 type CurrentView = 'tickets' | 'detail' | 'users';
 
-interface SidebarProps {
+interface LegacySidebarProps {
   userEmail: string;
   currentView: CurrentView;
   onLogout: () => void;
@@ -8,13 +58,13 @@ interface SidebarProps {
   onNavigateToUsers: () => void;
 }
 
-function Sidebar({
+function LegacySidebar({
   userEmail,
   currentView,
   onLogout,
   onNavigateToTickets,
   onNavigateToUsers,
-}: SidebarProps) {
+}: LegacySidebarProps) {
   return (
     <aside className="sticky top-0 flex h-screen w-64 flex-col border-r border-gray-200 bg-white">
       {/* Company Logo */}
@@ -107,4 +157,5 @@ function Sidebar({
   );
 }
 
-export default Sidebar;
+// Default export for backward compatibility
+export default LegacySidebar;
