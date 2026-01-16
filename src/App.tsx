@@ -6,6 +6,7 @@ import ProtectedRoute from '@/features/auth/components/RouteGuard';
 import Dashboard from '@/features/dashboard/pages/DashboardRouter';
 import LoginPage from '@/features/auth/pages/LoginPage';
 import PasswordResetPage from '@/features/auth/pages/PasswordResetPage';
+import { UsersPage } from '@/features/users';
 import { queryClient } from '@/shared/lib';
 
 function App() {
@@ -24,6 +25,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute>
+                  <UsersPage />
                 </ProtectedRoute>
               }
             />
