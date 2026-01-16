@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Ticket, Attachment, MetaItem } from '@/types';
+import { Skeleton } from '@/shared/components/ui';
 import {
   statusColors,
   priorityConfig,
@@ -40,7 +41,33 @@ function TicketDetails({
   formatDateTime: customFormatDateTime,
   className = '',
 }: TicketDetailsProps) {
-  if (!ticket) return null;
+  if (!ticket) {
+    return (
+      <div className={`space-y-6 ${className}`}>
+        <div>
+          <Skeleton className="mb-2 h-8 w-3/4" />
+          <div className="flex gap-2">
+            <Skeleton className="h-6 w-20" />
+            <Skeleton className="h-6 w-20" />
+            <Skeleton className="h-6 w-20" />
+          </div>
+        </div>
+        <div className="space-y-4">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-24 w-full" />
+        </div>
+        <div className="space-y-4">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-24 w-full" />
+        </div>
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+        </div>
+      </div>
+    );
+  }
 
   const formatDate = customFormatDateTime || formatDateTime;
 

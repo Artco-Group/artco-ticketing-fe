@@ -10,6 +10,8 @@ import { UserManagement as EngLeadUserManagement } from '@/features/users/compon
 import { useAuth } from '@/features/auth/context';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { Skeleton } from '@/shared/components/ui';
+import Sidebar from '@/shared/components/layout/Sidebar';
 import { usersAPI } from '@/features/users/api';
 import { ticketAPI } from '../api/tickets-api';
 import { commentAPI } from '../api/comments-api';
@@ -31,9 +33,9 @@ function EngLeadDashboard() {
   const [currentView, setCurrentView] = useState<ViewState>('tickets');
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [, setTicketsLoading] = useState(true);
+  const [ticketsLoading, setTicketsLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
-  const [, setUsersLoading] = useState(true);
+  const [_usersLoading, setUsersLoading] = useState(true);
   const [, setUsersError] = useState<string | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [filters, setFilters] = useState<Filters>({
@@ -469,6 +471,72 @@ function EngLeadDashboard() {
           );
       }
     });
+
+  if (ticketsLoading && currentView === 'tickets') {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <Sidebar
+          userEmail={user?.email || ''}
+          currentView="tickets"
+          onLogout={handleLogout}
+          onNavigateToTickets={() => {}}
+          onNavigateToUsers={handleNavigateToUsers}
+        />
+        <div className="flex flex-1 flex-col">
+          <header className="border-b border-gray-200 bg-white px-6 py-4">
+            <Skeleton className="h-8 w-32" />
+          </header>
+          <main className="flex-1 p-6">
+            <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border border-gray-200 bg-white p-6"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <Skeleton className="mb-2 h-4 w-32" />
+                      <Skeleton className="h-8 w-16" />
+                    </div>
+                    <Skeleton className="h-12 w-12 rounded-lg" />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mb-6">
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="border-b border-gray-200 bg-gray-50">
+                    <tr>
+                      {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                        <th key={i} className="px-6 py-3">
+                          <Skeleton className="h-4 w-24" />
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <tr key={i}>
+                        {[1, 2, 3, 4, 5, 6, 7].map((j) => (
+                          <td key={j} className="px-6 py-4">
+                            <Skeleton className="h-4 w-full" />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef}>
