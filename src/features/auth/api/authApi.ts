@@ -21,3 +21,5 @@ export const authAPI = {
   resetPassword: (token: string, newPassword: string) =>
     api.post('/auth/reset-password', { token, newPassword }),
 };
+
+export default authAPI;
