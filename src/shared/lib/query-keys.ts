@@ -1,6 +1,8 @@
 export const QueryKeys = {
   auth: {
     currentUser: () => ['auth', 'currentUser'] as const,
+    verifyResetToken: (token: string) =>
+      ['auth', 'verifyResetToken', token] as const,
   },
   tickets: {
     all: () => ['tickets'] as const,

@@ -2,6 +2,7 @@ import type { FormEvent } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
+import { toast } from 'sonner';
 import { useLogin } from '../api/auth-api';
 import type { AxiosError } from 'axios';
 import { ROUTES } from '@/app/routes/constants';
@@ -79,10 +80,14 @@ export function LoginForm() {
 
     try {
       await loginMutation.mutateAsync({ email, password });
+      toast.success('Uspešno ste se prijavili');
       navigate('/dashboard');
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
-      setError(axiosError.response?.data?.message || 'Login failed');
+      const errorMessage =
+        axiosError.response?.data?.message || 'Greška pri prijavljivanju';
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 

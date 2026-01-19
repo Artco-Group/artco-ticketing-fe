@@ -2,6 +2,7 @@ import type { FormEvent } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
+import { toast } from 'sonner';
 import { useForgotPassword } from '../api/auth-api';
 import type { AxiosError } from 'axios';
 import { ROUTES } from '@/app/routes/constants';
@@ -75,16 +76,18 @@ export function ForgotPasswordForm() {
       await forgotPasswordMutation.mutateAsync({ email: resetEmail });
       setSuccess(true);
       setResetEmail('');
+      toast.success('Email za resetovanje lozinke je poslat');
       // Redirect to login after 2 seconds
       setTimeout(() => {
         navigate(ROUTES.AUTH.LOGIN);
       }, 2000);
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
-      setError(
+      const errorMessage =
         axiosError.response?.data?.message ||
-          'Greška pri slanju emaila za resetovanje'
-      );
+        'Greška pri slanju emaila za resetovanje';
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 

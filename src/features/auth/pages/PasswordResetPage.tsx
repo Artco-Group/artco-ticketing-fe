@@ -1,9 +1,10 @@
 import type { FormEvent } from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
+import { toast } from 'sonner';
+import { useVerifyResetToken, useResetPassword } from '../api/auth-api';
 import type { AxiosError } from 'axios';
-import authAPI from '../api/authApi';
 
 interface ApiErrorResponse {
   message?: string;
@@ -13,15 +14,34 @@ function PasswordResetPage() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
 
+  const verifyTokenQuery = useVerifyResetToken(token);
+  const resetPasswordMutation = useResetPassword();
+
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [verifyingToken, setVerifyingToken] = useState(true);
-  const [tokenValid, setTokenValid] = useState(false);
+  const [formError, setFormError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  const verifyingToken = verifyTokenQuery.isLoading;
+  const tokenValid = verifyTokenQuery.data?.valid ?? false;
+
+  // Calculate token verification error from query
+  const tokenError = useMemo(() => {
+    if (verifyTokenQuery.isError) {
+      return (
+        (verifyTokenQuery.error as AxiosError<ApiErrorResponse>)?.response?.data
+          ?.message || 'Token je nevažeći ili je istekao'
+      );
+    }
+    if (verifyTokenQuery.data && !verifyTokenQuery.data.valid) {
+      return (
+        verifyTokenQuery.data.message || 'Token je nevažeći ili je istekao'
+      );
+    }
+    return '';
+  }, [verifyTokenQuery.isError, verifyTokenQuery.data, verifyTokenQuery.error]);
 
   const brandingRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
@@ -30,29 +50,12 @@ function PasswordResetPage() {
   const titleRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
-  // useEffect #1 - Token verifikacija
+  // useEffect #1 - Show toast notification for token verification errors
   useEffect(() => {
-    const verifyToken = async () => {
-      try {
-        const response = await authAPI.verifyResetToken(token || '');
-        if (response.data.valid) {
-          setTokenValid(true);
-        } else {
-          setError(response.data.message || 'Token je nevažeći ili je istekao');
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        setError(
-          axiosError.response?.data?.message ||
-            'Token je nevažeći ili je istekao'
-        );
-      } finally {
-        setVerifyingToken(false);
-      }
-    };
-
-    verifyToken();
-  }, [token]);
+    if (tokenError) {
+      toast.error(tokenError);
+    }
+  }, [tokenError]);
 
   // useEffect #2 - GSAP Animacije (pokreću se NAKON što verifikacija završi)
   useEffect(() => {
@@ -126,40 +129,47 @@ function PasswordResetPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
+    setFormError('');
 
     // Validation
     if (!newPassword || !confirmPassword) {
-      setError('Molimo vas popunite sva polja');
+      const errorMsg = 'Molimo vas popunite sva polja';
+      setFormError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
     if (newPassword.length < 6) {
-      setError('Lozinka mora imati najmanje 6 karaktera');
+      const errorMsg = 'Lozinka mora imati najmanje 6 karaktera';
+      setFormError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('Lozinke se ne poklapaju');
+      const errorMsg = 'Lozinke se ne poklapaju';
+      setFormError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
-    setLoading(true);
-
     try {
-      await authAPI.resetPassword(token || '', newPassword);
+      await resetPasswordMutation.mutateAsync({
+        token: token || '',
+        newPassword: newPassword,
+      });
       setSuccess(true);
+      toast.success('Lozinka je uspješno resetovana');
       // Redirect to login after 2 seconds
       setTimeout(() => {
         navigate('/');
       }, 2000);
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
-      setError(
-        axiosError.response?.data?.message || 'Greška pri resetovanju lozinke'
-      );
-    } finally {
-      setLoading(false);
+      const errorMsg =
+        axiosError.response?.data?.message || 'Greška pri resetovanju lozinke';
+      setFormError(errorMsg);
+      toast.error(errorMsg);
     }
   };
 
@@ -258,7 +268,7 @@ function PasswordResetPage() {
                   Nevažeći Token
                 </h2>
                 <p className="max-smx:text-[14px] max-smx:mb-6 mb-8 text-[16px] leading-normal text-[#6b7280]">
-                  {error ||
+                  {tokenError ||
                     'Link za resetovanje lozinke je nevažeći ili je istekao.'}
                 </p>
               </div>
@@ -337,7 +347,7 @@ function PasswordResetPage() {
                       className="max-smx:py-3 max-smx:px-4 max-smx:pl-11.5 max-smx:text-[14px] input-field w-full rounded-[10px] border border-[#d1d5db] bg-white py-4 pr-12 pl-12 text-[16px] text-[#111827] transition-all duration-200 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/20 focus:outline-none"
                       placeholder="Unesite novu lozinku"
                       required
-                      disabled={loading}
+                      disabled={resetPasswordMutation.isPending}
                     />
                     <button
                       type="button"
@@ -402,7 +412,7 @@ function PasswordResetPage() {
                       className="max-smx:py-3 max-smx:px-4 max-smx:pl-11.5 max-smx:text-[14px] input-field w-full rounded-[10px] border border-[#d1d5db] bg-white py-4 pr-12 pl-12 text-[16px] text-[#111827] transition-all duration-200 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/20 focus:outline-none"
                       placeholder="Potvrdite novu lozinku"
                       required
-                      disabled={loading}
+                      disabled={resetPasswordMutation.isPending}
                     />
                     <button
                       type="button"
@@ -441,19 +451,19 @@ function PasswordResetPage() {
                 </div>
 
                 {/* Error Message */}
-                {error && (
+                {formError && (
                   <div className="error-message mb-5 rounded-[10px] border border-[#ef4444]/20 bg-[#fef2f2] px-4 py-3 text-[14px] text-[#dc2626]">
-                    {error}
+                    {formError}
                   </div>
                 )}
 
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={resetPasswordMutation.isPending}
                   className="submit-btn max-smx:py-3 max-smx:px-4 max-smx:text-[14px] from[#003366] foucus:shadow-[0_0_0_3px_rgba(0,65,121,0.3)] flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] bg-linear-to-br from-[#004179] to-[#002244] px-5 py-4 text-[16px] font-semibold text-white transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:transform hover:bg-linear-to-br hover:shadow-[0_6px_20px_rgba(0,65,121,0.35)] focus:outline-none active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {loading ? (
+                  {resetPasswordMutation.isPending ? (
                     <>
                       <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
                       <span>Resetovanje...</span>

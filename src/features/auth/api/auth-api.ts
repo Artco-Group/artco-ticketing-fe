@@ -1,6 +1,8 @@
+import { useQuery } from '@tanstack/react-query';
 import { useApiQuery, useApiMutation } from '@/shared/lib/api-hooks';
 import { QueryKeys } from '@/shared/lib/query-keys';
 import { queryClient } from '@/shared/lib/query-client';
+import { apiClient } from '@/shared/lib/api-client';
 import type { User } from '@/types';
 
 interface LoginInput {
@@ -48,10 +50,26 @@ export function useForgotPassword() {
   });
 }
 
+export function useVerifyResetToken(token: string | undefined) {
+  return useQuery<{ valid: boolean; message?: string }>({
+    queryKey: QueryKeys.auth.verifyResetToken(token || ''),
+    queryFn: async () => {
+      if (!token) throw new Error('Token is required');
+      const response = await apiClient.get<{
+        valid: boolean;
+        message?: string;
+      }>(`/auth/verify-reset-token/${token}`);
+      return response.data;
+    },
+    enabled: !!token,
+    retry: false,
+  });
+}
+
 export function useResetPassword() {
   return useApiMutation<
     { message: string },
-    { token: string; password: string }
+    { token: string; newPassword: string }
   >({
     url: '/auth/reset-password',
     method: 'POST',
