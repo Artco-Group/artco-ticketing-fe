@@ -20,7 +20,12 @@ export function RouteGuard({
 }: RouteGuardProps) {
   const { user, isLoading, isAuthenticated } = useAuth();
   const location = useLocation();
-  
+
+  // Still loading - show nothing (prevents flash)
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
+
   // Protected route, user not authenticated
   if (requiresAuth && !isAuthenticated) {
     return (
@@ -31,11 +36,6 @@ export function RouteGuard({
   // Public route, user is authenticated - redirect to dashboard
   if (!requiresAuth && isAuthenticated) {
     return <Navigate to={ROUTES.DASHBOARD} replace />;
-  }
-
-  // Still loading - show nothing (prevents flash)
-  if (isLoading) {
-    return <LoadingOverlay />;
   }
 
   // Role check
