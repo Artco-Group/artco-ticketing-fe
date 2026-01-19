@@ -1,8 +1,8 @@
 // src/features/users/routes.tsx
-import { type RouteObject } from 'react-router-dom';
+import { lazy } from 'react';
+import { createPrivateRoute } from '@shared/utils/route-helpers';
+import { ROUTES } from '@/app/routes/constants';
 
-// User management is currently embedded in EngLeadDashboard
-// This file exists to satisfy the import in app/routes/index.tsx
-// Add user-specific routes here if needed in the future
+const UsersPage = lazy(() => import('./pages/UsersPage'));
 
-export const userRoutes: RouteObject[] = [];
+export const userRoutes = [createPrivateRoute(ROUTES.USERS.LIST, UsersPage)];

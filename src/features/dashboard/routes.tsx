@@ -1,8 +1,10 @@
 // src/features/dashboard/routes.tsx
-import { type RouteObject } from 'react-router-dom';
+import { lazy } from 'react';
+import { createPrivateRoute } from '@shared/utils/route-helpers';
+import { ROUTES } from '@/app/routes/constants';
 
-// Dashboard routes are currently handled in ticketRoutes
-// This file exists to satisfy the import in app/routes/index.tsx
-// Add dashboard-specific routes here if needed in the future
+const DashboardRouter = lazy(() => import('./pages/DashboardRouter'));
 
-export const dashboardRoutes: RouteObject[] = [];
+export const dashboardRoutes = [
+  createPrivateRoute(ROUTES.DASHBOARD, DashboardRouter),
+];
