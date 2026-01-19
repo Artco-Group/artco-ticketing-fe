@@ -47,6 +47,7 @@ function TicketForm({
               id="title"
               name="title"
               type="text"
+              autoComplete="off"
               value={formData.title}
               onChange={onFormChange}
               placeholder="Kratak opis problema"
@@ -60,6 +61,7 @@ function TicketForm({
             <select
               id="category"
               name="category"
+              autoComplete="off"
               value={formData.category}
               onChange={onFormChange}
               required
@@ -81,6 +83,7 @@ function TicketForm({
               id="affectedModule"
               name="affectedModule"
               type="text"
+              autoComplete="off"
               value={formData.affectedModule}
               onChange={onFormChange}
               placeholder="npr. Mobile App, Admin Panel"
@@ -93,6 +96,7 @@ function TicketForm({
             <textarea
               id="description"
               name="description"
+              autoComplete="off"
               value={formData.description}
               onChange={onFormChange}
               placeholder="Detaljno opišite problem ili zahtjev"
@@ -107,6 +111,7 @@ function TicketForm({
             <textarea
               id="reproductionSteps"
               name="reproductionSteps"
+              autoComplete="off"
               value={formData.reproductionSteps}
               onChange={onFormChange}
               placeholder="1. Idite na...&#10;2. Kliknite na...&#10;3. Primijetite..."
@@ -120,6 +125,7 @@ function TicketForm({
             <textarea
               id="expectedResult"
               name="expectedResult"
+              autoComplete="off"
               value={formData.expectedResult}
               onChange={onFormChange}
               placeholder="Šta bi se trebalo desiti?"
@@ -133,6 +139,7 @@ function TicketForm({
             <textarea
               id="actualResult"
               name="actualResult"
+              autoComplete="off"
               value={formData.actualResult}
               onChange={onFormChange}
               placeholder="Šta se zapravo dešava?"
@@ -162,6 +169,7 @@ function TicketForm({
             <select
               id="priority"
               name="priority"
+              autoComplete="off"
               value={formData.priority}
               onChange={onFormChange}
               className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"

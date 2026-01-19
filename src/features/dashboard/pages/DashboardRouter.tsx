@@ -3,6 +3,7 @@ import EngLeadDashboard from '@/features/tickets/pages/EngLeadDashboard';
 import DeveloperDashboard from '@/features/tickets/pages/DeveloperDashboard';
 import ClientDashboard from '@/features/tickets/pages/ClientDashboard';
 import { UserRole } from '@/types';
+import { ErrorBoundary } from '@/shared/components/ui';
 
 export default function DashboardRouter() {
   const { user } = useAuth();
@@ -10,11 +11,23 @@ export default function DashboardRouter() {
   // Render appropriate dashboard based on user role
   switch (user?.role) {
     case UserRole.EngLead:
-      return <EngLeadDashboard />;
+      return (
+        <ErrorBoundary>
+          <EngLeadDashboard />
+        </ErrorBoundary>
+      );
     case UserRole.Developer:
-      return <DeveloperDashboard />;
+      return (
+        <ErrorBoundary>
+          <DeveloperDashboard />
+        </ErrorBoundary>
+      );
     case UserRole.Client:
-      return <ClientDashboard />;
+      return (
+        <ErrorBoundary>
+          <ClientDashboard />
+        </ErrorBoundary>
+      );
     default:
       return (
         <div className="flex min-h-screen items-center justify-center">

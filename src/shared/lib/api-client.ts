@@ -26,8 +26,9 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    // Handle session expiration
-    if (error.response?.status === 401) {
+    // Handle session expiration - only dispatch once per request
+    if (error.response?.status === 401 && error.config?.url !== '/auth/me') {
+      // Don't dispatch for /auth/me to prevent loop
       window.dispatchEvent(new CustomEvent('session-expired'));
     }
     return Promise.reject(error);

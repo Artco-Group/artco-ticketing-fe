@@ -168,12 +168,11 @@ function EngLeadTicketDetail({
                   </label>
                   <div className="flex gap-3">
                     <select
+                      id="assign-developer"
+                      name="assign-developer"
+                      autoComplete="off"
                       value={selectedDeveloper}
-                      onChange={(e) => {
-                        console.log('Selected value:', e.target.value);
-                        setSelectedDeveloper(e.target.value);
-                        console.log('Selected developer:', selectedDeveloper);
-                      }}
+                      onChange={(e) => setSelectedDeveloper(e.target.value)}
                       className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
                     >
                       <option value="">Select Developer</option>
@@ -212,6 +211,9 @@ function EngLeadTicketDetail({
                     Update Priority
                   </label>
                   <select
+                    id="update-priority"
+                    name="update-priority"
+                    autoComplete="off"
                     value={ticket.priority}
                     onChange={(e) =>
                       onPriorityUpdate(ticket._id || '', e.target.value)

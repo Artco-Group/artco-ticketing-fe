@@ -47,8 +47,18 @@ function ClientDashboard() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // React Query hooks
-  const { data: ticketsData, isLoading: ticketsLoading } = useTickets();
-  const tickets = ticketsData?.tickets || [];
+  const {
+    data: ticketsData,
+    isLoading: ticketsLoading,
+    refetch: refetchTickets,
+  } = useTickets();
+
+  // Handle both array and object response formats
+  // API returns array directly: [ticket1, ticket2, ...]
+  // Or object with tickets property: { tickets: [ticket1, ticket2, ...] }
+  const tickets = Array.isArray(ticketsData)
+    ? ticketsData
+    : ticketsData?.tickets || [];
 
   const createTicketMutation = useCreateTicket();
 
@@ -86,23 +96,32 @@ function ClientDashboard() {
   useEffect(() => {
     // GSAP animations on mount
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.dashboard-header',
-        { opacity: 0, y: -20 },
-        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-      );
-      gsap.fromTo(
-        '.ticket-card',
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.4,
-          stagger: 0.1,
-          ease: 'power2.out',
-          delay: 0.2,
-        }
-      );
+      const dashboardHeader =
+        containerRef.current?.querySelector('.dashboard-header');
+      if (dashboardHeader) {
+        gsap.fromTo(
+          dashboardHeader,
+          { opacity: 0, y: -20 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+        );
+      }
+
+      const ticketCards =
+        containerRef.current?.querySelectorAll('.ticket-card');
+      if (ticketCards && ticketCards.length > 0) {
+        gsap.fromTo(
+          ticketCards,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: 'power2.out',
+            delay: 0.2,
+          }
+        );
+      }
     }, containerRef);
 
     return () => ctx.revert();
@@ -186,6 +205,12 @@ function ClientDashboard() {
       // Reset screen recording state
       setScreenRecording(null);
       setRecordingDuration(0);
+
+      // Wait a bit for backend to process
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Explicitly refetch tickets to ensure new ticket appears
+      await refetchTickets();
 
       setCurrentView('list');
       toast.success('Ticket created successfully');

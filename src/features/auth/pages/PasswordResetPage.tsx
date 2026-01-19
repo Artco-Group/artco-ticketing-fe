@@ -342,6 +342,8 @@ function PasswordResetPage() {
                     <input
                       type={showNewPassword ? 'text' : 'password'}
                       id="new-password"
+                      name="new-password"
+                      autoComplete="new-password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       className="max-smx:py-3 max-smx:px-4 max-smx:pl-11.5 max-smx:text-[14px] input-field w-full rounded-[10px] border border-[#d1d5db] bg-white py-4 pr-12 pl-12 text-[16px] text-[#111827] transition-all duration-200 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/20 focus:outline-none"
@@ -407,6 +409,8 @@ function PasswordResetPage() {
                     <input
                       type={showConfirmPassword ? 'text' : 'password'}
                       id="confirm-password"
+                      name="confirm-password"
+                      autoComplete="new-password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="max-smx:py-3 max-smx:px-4 max-smx:pl-11.5 max-smx:text-[14px] input-field w-full rounded-[10px] border border-[#d1d5db] bg-white py-4 pr-12 pl-12 text-[16px] text-[#111827] transition-all duration-200 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/20 focus:outline-none"

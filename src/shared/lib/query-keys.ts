@@ -7,8 +7,13 @@ export const QueryKeys = {
   tickets: {
     all: () => ['tickets'] as const,
     lists: () => [...QueryKeys.tickets.all(), 'list'] as const,
-    list: (params?: Record<string, unknown>) =>
-      [...QueryKeys.tickets.lists(), params] as const,
+    list: (params?: Record<string, unknown>) => {
+      // Only add params if they exist and are not empty
+      if (params && Object.keys(params).length > 0) {
+        return [...QueryKeys.tickets.lists(), params] as const;
+      }
+      return QueryKeys.tickets.lists();
+    },
     details: () => [...QueryKeys.tickets.all(), 'detail'] as const,
     detail: (id: string) => [...QueryKeys.tickets.details(), id] as const,
   },

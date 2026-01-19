@@ -57,6 +57,9 @@ function CommentThread({
       {/* Add Comment Form */}
       <form onSubmit={onSubmit} className="flex gap-3">
         <textarea
+          id="new-comment"
+          name="new-comment"
+          autoComplete="off"
           value={newComment}
           onChange={(e) => onCommentChange(e.target.value)}
           placeholder="Napišite odgovor..."

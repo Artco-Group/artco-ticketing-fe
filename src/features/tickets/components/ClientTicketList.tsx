@@ -51,7 +51,7 @@ function ClientTicketList({
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {tickets.map((ticket) => (
               <TicketCard
-                key={ticket.id}
+                key={ticket._id || ticket.id}
                 ticket={ticket}
                 onClick={onViewTicket}
               />
