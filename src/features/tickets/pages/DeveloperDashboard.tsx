@@ -11,8 +11,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Skeleton } from '@/shared/components/ui';
 import PageHeader from '@/shared/components/layout/PageHeader';
-import { ticketAPI } from '../api/tickets-api';
-import { commentAPI } from '../api/comments-api';
+import { useTickets, useUpdateTicketStatus } from '../api/tickets-api';
+import { useComments, useAddComment } from '../api/comments-api';
 
 interface ApiErrorResponse {
   message?: string;
@@ -23,8 +23,6 @@ type ViewState = 'list' | 'detail';
 function DeveloperDashboard() {
   const [currentView, setCurrentView] = useState<ViewState>('list');
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [ticketsLoading, setTicketsLoading] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
   const [filters, setFilters] = useState<Filters>({
     status: 'All',
@@ -43,23 +41,31 @@ function DeveloperDashboard() {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch tickets from API (filtered by assignee on backend or here)
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        setTicketsLoading(true);
-        const response = await ticketAPI.getTickets();
-        // Filter tickets assigned to this developer
-        setTickets(response.data);
-      } catch (error) {
-        console.error('Failed to fetch tickets:', error);
-      } finally {
-        setTicketsLoading(false);
-      }
-    };
+  // React Query hooks
+  const { data: ticketsData, isLoading: ticketsLoading } = useTickets();
+  const allTickets = ticketsData?.tickets || [];
+  // Filter tickets assigned to this developer
+  const tickets = allTickets.filter((ticket) => {
+    if (typeof ticket.assignedTo === 'string') {
+      return ticket.assignedTo === user?.email;
+    }
+    return ticket.assignedTo?.email === user?.email;
+  });
 
-    fetchTickets();
-  }, [user?.email]);
+  const updateStatusMutation = useUpdateTicketStatus();
+
+  const { data: commentsData, refetch: refetchComments } = useComments(
+    selectedTicket?._id || ''
+  );
+
+  const addCommentMutation = useAddComment();
+
+  // Update comments when selected ticket changes
+  useEffect(() => {
+    if (commentsData?.comments) {
+      setComments(commentsData.comments);
+    }
+  }, [commentsData]);
 
   // Open ticket from URL param if present
   useEffect(() => {
@@ -127,28 +133,19 @@ function DeveloperDashboard() {
     // Update URL with ticket param
     setSearchParams({ ticket: ticket._id || '' });
 
-    // Fetch comments for this ticket
-    try {
-      const response = await commentAPI.getComments(ticket._id || '');
-      setComments(response.data);
-    } catch (error) {
-      console.error('Failed to fetch comments:', error);
-      setComments([]);
-    }
+    // Comments will be fetched automatically via useComments hook
+    refetchComments();
   };
 
   const handleConfirmStatusChange = async () => {
     if (!pendingTicket) return;
 
     try {
-      const response = await ticketAPI.updateTicketStatus(
-        pendingTicket._id || '',
-        'In Progress'
-      );
-      const updatedTicket = response.data;
-      setTickets((prev) =>
-        prev.map((t) => (t._id === pendingTicket._id ? updatedTicket : t))
-      );
+      const response = await updateStatusMutation.mutateAsync({
+        id: pendingTicket._id || '',
+        status: 'In Progress',
+      });
+      const updatedTicket = response.ticket;
       setShowStatusModal(false);
       setPendingTicket(null);
       // Open ticket detail with updated ticket
@@ -187,12 +184,11 @@ function DeveloperDashboard() {
 
   const handleStatusUpdate = async (ticketId: string, newStatus: string) => {
     try {
-      const response = await ticketAPI.updateTicketStatus(ticketId, newStatus);
-      const updatedTicket = response.data;
-
-      setTickets((prev) =>
-        prev.map((ticket) => (ticket._id === ticketId ? updatedTicket : ticket))
-      );
+      const response = await updateStatusMutation.mutateAsync({
+        id: ticketId,
+        status: newStatus,
+      });
+      const updatedTicket = response.ticket;
 
       if (selectedTicket && selectedTicket._id === ticketId) {
         setSelectedTicket(updatedTicket);
@@ -212,13 +208,13 @@ function DeveloperDashboard() {
     if (!newComment.trim() || !selectedTicket) return;
 
     try {
-      const response = await commentAPI.addComment(selectedTicket._id || '', {
-        text: newComment,
+      await addCommentMutation.mutateAsync({
+        ticketId: selectedTicket._id || '',
+        comment: { text: newComment },
       });
-      // Add the new comment to the comments list
-      setComments((prev) => [...prev, response.data]);
       setNewComment('');
       toast.success('Comment added successfully');
+      refetchComments();
     } catch (error) {
       console.error('Failed to add comment:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;

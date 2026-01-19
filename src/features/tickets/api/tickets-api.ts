@@ -76,6 +76,19 @@ export function useAssignTicket() {
   );
 }
 
+export function useUpdateTicketPriority() {
+  return useApiMutation<{ ticket: Ticket }, { id: string; priority: string }>({
+    url: (vars) => `/tickets/${vars.id}/priority`,
+    method: 'PATCH',
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.tickets.detail(variables.id),
+      });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.lists() });
+    },
+  });
+}
+
 export function useDeleteTicket() {
   return useApiMutation<void, string>({
     url: (id) => `/tickets/${id}`,

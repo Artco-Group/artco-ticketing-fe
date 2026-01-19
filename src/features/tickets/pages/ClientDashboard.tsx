@@ -16,8 +16,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Skeleton } from '@/shared/components/ui';
 import PageHeader from '@/shared/components/layout/PageHeader';
-import { ticketAPI } from '../api/tickets-api';
-import { commentAPI } from '../api/comments-api';
+import { useTickets, useCreateTicket } from '../api/tickets-api';
+import { useComments, useAddComment } from '../api/comments-api';
 
 interface ApiErrorResponse {
   message?: string;
@@ -25,11 +25,9 @@ interface ApiErrorResponse {
 
 type ViewState = 'list' | 'create' | 'detail';
 
-function UserDashboard() {
+function ClientDashboard() {
   const [currentView, setCurrentView] = useState<ViewState>('list');
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [ticketsLoading, setTicketsLoading] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
 
   const { logout, user } = useAuth();
@@ -48,22 +46,24 @@ function UserDashboard() {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch tickets from API
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        setTicketsLoading(true);
-        const response = await ticketAPI.getTickets();
-        setTickets(response.data);
-      } catch (error) {
-        console.error('Failed to fetch tickets:', error);
-      } finally {
-        setTicketsLoading(false);
-      }
-    };
+  // React Query hooks
+  const { data: ticketsData, isLoading: ticketsLoading } = useTickets();
+  const tickets = ticketsData?.tickets || [];
 
-    fetchTickets();
-  }, []);
+  const createTicketMutation = useCreateTicket();
+
+  const { data: commentsData, refetch: refetchComments } = useComments(
+    selectedTicket?._id || ''
+  );
+
+  const addCommentMutation = useAddComment();
+
+  // Update comments when selected ticket changes
+  useEffect(() => {
+    if (commentsData?.comments) {
+      setComments(commentsData.comments);
+    }
+  }, [commentsData]);
 
   // Open ticket from URL param if present
   useEffect(() => {
@@ -126,14 +126,8 @@ function UserDashboard() {
     // Update URL with ticket param
     setSearchParams({ ticket: ticket._id || '' });
 
-    // Fetch comments for this ticket
-    try {
-      const response = await commentAPI.getComments(ticket._id || '');
-      setComments(response.data);
-    } catch (error) {
-      console.error('Failed to fetch comments:', error);
-      setComments([]);
-    }
+    // Comments will be fetched automatically via useComments hook
+    refetchComments();
   };
 
   const handleBackToList = () => {
@@ -187,8 +181,7 @@ function UserDashboard() {
         formDataToSend.append('recordingDuration', String(recordingDuration));
       }
 
-      const response = await ticketAPI.createTicket(formDataToSend);
-      setTickets((prev) => [response.data, ...prev]);
+      await createTicketMutation.mutateAsync(formDataToSend);
 
       // Reset screen recording state
       setScreenRecording(null);
@@ -227,13 +220,13 @@ function UserDashboard() {
     if (!newComment.trim() || !selectedTicket) return;
 
     try {
-      const response = await commentAPI.addComment(selectedTicket._id || '', {
-        text: newComment,
+      await addCommentMutation.mutateAsync({
+        ticketId: selectedTicket._id || '',
+        comment: { text: newComment },
       });
-      // Add the new comment to the comments list
-      setComments((prev) => [...prev, response.data]);
       setNewComment('');
       toast.success('Comment added successfully');
+      refetchComments();
     } catch (error) {
       console.error('Failed to add comment:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
@@ -324,4 +317,4 @@ function UserDashboard() {
   );
 }
 
-export default UserDashboard;
+export default ClientDashboard;

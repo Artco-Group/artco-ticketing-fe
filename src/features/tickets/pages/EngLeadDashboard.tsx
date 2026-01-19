@@ -13,8 +13,13 @@ import { toast } from 'sonner';
 import { Skeleton } from '@/shared/components/ui';
 import Sidebar from '@/shared/components/layout/Sidebar';
 import { usersAPI } from '@/features/users/api';
-import { ticketAPI } from '../api/tickets-api';
-import { commentAPI } from '../api/comments-api';
+import {
+  useTickets,
+  useUpdateTicketStatus,
+  useAssignTicket,
+  useUpdateTicketPriority,
+} from '../api/tickets-api';
+import { useComments, useAddComment } from '../api/comments-api';
 
 interface ApiErrorResponse {
   message?: string;
@@ -32,8 +37,6 @@ type ViewState = 'tickets' | 'detail' | 'users';
 function EngLeadDashboard() {
   const [currentView, setCurrentView] = useState<ViewState>('tickets');
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [ticketsLoading, setTicketsLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [_usersLoading, setUsersLoading] = useState(true);
   const [, setUsersError] = useState<string | null>(null);
@@ -57,24 +60,21 @@ function EngLeadDashboard() {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch tickets from API
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        setTicketsLoading(true);
-        const response = await ticketAPI.getTickets();
-        setTickets(response.data);
-      } catch (error) {
-        console.error('Failed to fetch tickets:', error);
-      } finally {
-        setTicketsLoading(false);
-      }
-    };
+  // React Query hooks
+  const { data: ticketsData, isLoading: ticketsLoading } = useTickets();
+  const tickets = ticketsData?.tickets || [];
 
-    fetchTickets();
-  }, []);
+  const updateStatusMutation = useUpdateTicketStatus();
+  const assignTicketMutation = useAssignTicket();
+  const updatePriorityMutation = useUpdateTicketPriority();
 
-  // Fetch users from API
+  const { data: commentsData, refetch: refetchComments } = useComments(
+    selectedTicket?._id || ''
+  );
+
+  const addCommentMutation = useAddComment();
+
+  // Fetch users from API (legacy API for now)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -107,6 +107,13 @@ function EngLeadDashboard() {
     };
     setFilters(urlFilters);
   }, [searchParams]);
+
+  // Update comments when selected ticket changes
+  useEffect(() => {
+    if (commentsData?.comments) {
+      setComments(commentsData.comments);
+    }
+  }, [commentsData]);
 
   // Open ticket from URL param if present
   useEffect(() => {
@@ -177,28 +184,19 @@ function EngLeadDashboard() {
       ticket: ticket._id || '',
     });
 
-    // Fetch comments for this ticket
-    try {
-      const response = await commentAPI.getComments(ticket._id || '');
-      setComments(response.data);
-    } catch (error) {
-      console.error('Failed to fetch comments:', error);
-      setComments([]);
-    }
+    // Comments will be fetched automatically via useComments hook
+    refetchComments();
   };
 
   const handleConfirmStatusChange = async () => {
     if (!pendingTicket) return;
 
     try {
-      const response = await ticketAPI.updateTicketStatus(
-        pendingTicket._id || '',
-        'Open'
-      );
-      const updatedTicket = response.data;
-      setTickets((prev) =>
-        prev.map((t) => (t._id === pendingTicket._id ? updatedTicket : t))
-      );
+      const response = await updateStatusMutation.mutateAsync({
+        id: pendingTicket._id || '',
+        status: 'Open',
+      });
+      const updatedTicket = response.ticket;
       setShowStatusModal(false);
       setPendingTicket(null);
       // Open ticket detail with updated ticket
@@ -262,15 +260,11 @@ function EngLeadDashboard() {
 
   const handleAssignTicket = async (ticketId: string, developerId: string) => {
     try {
-      const response = await ticketAPI.updateTicketAssignee(
-        ticketId,
-        developerId
-      );
-      const updatedTicket = response.data;
-
-      setTickets((prev) =>
-        prev.map((ticket) => (ticket._id === ticketId ? updatedTicket : ticket))
-      );
+      const response = await assignTicketMutation.mutateAsync({
+        id: ticketId,
+        assignedTo: developerId,
+      });
+      const updatedTicket = response.ticket;
 
       if (selectedTicket && selectedTicket._id === ticketId) {
         setSelectedTicket(updatedTicket);
@@ -287,12 +281,11 @@ function EngLeadDashboard() {
 
   const handleStatusUpdate = async (ticketId: string, newStatus: string) => {
     try {
-      const response = await ticketAPI.updateTicketStatus(ticketId, newStatus);
-      const updatedTicket = response.data;
-
-      setTickets((prev) =>
-        prev.map((ticket) => (ticket._id === ticketId ? updatedTicket : ticket))
-      );
+      const response = await updateStatusMutation.mutateAsync({
+        id: ticketId,
+        status: newStatus,
+      });
+      const updatedTicket = response.ticket;
 
       if (selectedTicket && selectedTicket._id === ticketId) {
         setSelectedTicket(updatedTicket);
@@ -312,15 +305,11 @@ function EngLeadDashboard() {
     newPriority: string
   ) => {
     try {
-      const response = await ticketAPI.updateTicketPriority(
-        ticketId,
-        newPriority
-      );
-      const updatedTicket = response.data;
-
-      setTickets((prev) =>
-        prev.map((ticket) => (ticket._id === ticketId ? updatedTicket : ticket))
-      );
+      const response = await updatePriorityMutation.mutateAsync({
+        id: ticketId,
+        priority: newPriority,
+      });
+      const updatedTicket = response.ticket;
 
       if (selectedTicket && selectedTicket._id === ticketId) {
         setSelectedTicket(updatedTicket);
@@ -340,13 +329,13 @@ function EngLeadDashboard() {
     if (!newComment.trim() || !selectedTicket) return;
 
     try {
-      const response = await commentAPI.addComment(selectedTicket._id || '', {
-        text: newComment,
+      await addCommentMutation.mutateAsync({
+        ticketId: selectedTicket._id || '',
+        comment: { text: newComment },
       });
-      // Add the new comment to the comments list
-      setComments((prev) => [...prev, response.data]);
       setNewComment('');
       toast.success('Comment added successfully');
+      refetchComments();
     } catch (error) {
       console.error('Failed to add comment:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
