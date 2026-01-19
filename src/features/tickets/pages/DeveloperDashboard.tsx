@@ -43,7 +43,10 @@ function DeveloperDashboard() {
 
   // React Query hooks
   const { data: ticketsData, isLoading: ticketsLoading } = useTickets();
-  const allTickets = ticketsData?.tickets || [];
+  // Handle both array and object response formats
+  const allTickets = Array.isArray(ticketsData)
+    ? ticketsData
+    : ticketsData?.tickets || [];
   // Filter tickets assigned to this developer
   const tickets = allTickets.filter((ticket) => {
     if (typeof ticket.assignedTo === 'string') {
@@ -88,23 +91,31 @@ function DeveloperDashboard() {
   useEffect(() => {
     // GSAP animations on mount
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.dashboard-header',
-        { opacity: 0, y: -20 },
-        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-      );
-      gsap.fromTo(
-        '.ticket-row',
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.4,
-          stagger: 0.1,
-          ease: 'power2.out',
-          delay: 0.2,
-        }
-      );
+      const dashboardHeader =
+        containerRef.current?.querySelector('.dashboard-header');
+      if (dashboardHeader) {
+        gsap.fromTo(
+          dashboardHeader,
+          { opacity: 0, y: -20 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+        );
+      }
+
+      const ticketRows = containerRef.current?.querySelectorAll('.ticket-row');
+      if (ticketRows && ticketRows.length > 0) {
+        gsap.fromTo(
+          ticketRows,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: 'power2.out',
+            delay: 0.2,
+          }
+        );
+      }
     }, containerRef);
 
     return () => ctx.revert();

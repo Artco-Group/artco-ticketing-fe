@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { toast } from 'sonner';
 import { useLogin } from '../api/auth-api';
+import { useAuth } from '../context';
 import type { AxiosError } from 'axios';
 import { ROUTES } from '@/app/routes/constants';
 
@@ -14,6 +15,7 @@ interface ApiErrorResponse {
 export function LoginForm() {
   const loginMutation = useLogin();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,52 +25,74 @@ export function LoginForm() {
   const titleRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
+  // Redirect to dashboard when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Right panel animations
-      gsap.fromTo(
-        titleRef.current,
-        { opacity: 0, x: 30 },
-        { opacity: 1, x: 0, duration: 0.8, delay: 0.2, ease: 'power3.out' }
-      );
+      if (titleRef.current) {
+        gsap.fromTo(
+          titleRef.current,
+          { opacity: 0, x: 30 },
+          { opacity: 1, x: 0, duration: 0.8, delay: 0.2, ease: 'power3.out' }
+        );
+      }
 
-      gsap.fromTo(
-        '.form-group',
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          delay: 0.4,
-          ease: 'power3.out',
-          stagger: 0.1,
-        }
-      );
+      const formGroups = document.querySelectorAll('.form-group');
+      if (formGroups.length > 0) {
+        gsap.fromTo(
+          formGroups,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            delay: 0.4,
+            ease: 'power3.out',
+            stagger: 0.1,
+          }
+        );
+      }
 
-      gsap.fromTo(
-        '.form-options',
-        { opacity: 0 },
-        { opacity: 1, duration: 0.5, delay: 0.7, ease: 'power2.out' }
-      );
+      // Only animate form-options if element exists
+      const formOptions = document.querySelector('.form-options');
+      if (formOptions) {
+        gsap.fromTo(
+          formOptions,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.5, delay: 0.7, ease: 'power2.out' }
+        );
+      }
 
-      gsap.fromTo(
-        '.submit-btn',
-        { opacity: 0, y: 15, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.6,
-          delay: 0.8,
-          ease: 'back.out(1.7)',
-        }
-      );
+      const submitBtn = document.querySelector('.submit-btn');
+      if (submitBtn) {
+        gsap.fromTo(
+          submitBtn,
+          { opacity: 0, y: 15, scale: 0.98 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            delay: 0.8,
+            ease: 'back.out(1.7)',
+          }
+        );
+      }
 
-      gsap.fromTo(
-        '.login-links',
-        { opacity: 0 },
-        { opacity: 1, duration: 0.5, delay: 1, ease: 'power2.out' }
-      );
+      const loginLinks = document.querySelector('.login-links');
+      if (loginLinks) {
+        gsap.fromTo(
+          loginLinks,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.5, delay: 1, ease: 'power2.out' }
+        );
+      }
     });
 
     return () => ctx.revert();
@@ -81,7 +105,7 @@ export function LoginForm() {
     try {
       await loginMutation.mutateAsync({ email, password });
       toast.success('Uspešno ste se prijavili');
-      navigate('/dashboard');
+      // Navigation will happen automatically via useEffect when isAuthenticated becomes true
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
       const errorMessage =
@@ -131,7 +155,9 @@ export function LoginForm() {
             </svg>
             <input
               id="email"
+              name="email"
               type="email"
+              autoComplete="email"
               className="max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid border-[#e5e7eb] bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none"
               placeholder="vase.ime@kompanija.ba"
               value={email}
@@ -163,7 +189,9 @@ export function LoginForm() {
             </svg>
             <input
               id="password"
+              name="password"
               type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
               className="max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid border-[#e5e7eb] bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none"
               placeholder="Unesite vašu lozinku"
               value={password}
@@ -207,7 +235,13 @@ export function LoginForm() {
 
         <div className="form-group max-smx:flex-col max-smx:items-start max-smx:gap-3 mb-6 flex items-center justify-between">
           <label className="flex cursor-pointer items-center gap-2">
-            <input type="checkbox" className="checkbox-input" />
+            <input
+              id="remember-me"
+              name="remember-me"
+              type="checkbox"
+              autoComplete="off"
+              className="checkbox-input"
+            />
             <span className="text-[14px] text-[#4b5563]">Zapamti me</span>
           </label>
           <Link

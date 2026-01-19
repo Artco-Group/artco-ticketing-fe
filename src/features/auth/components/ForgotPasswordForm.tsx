@@ -157,7 +157,9 @@ export function ForgotPasswordForm() {
             </svg>
             <input
               id="reset-email"
+              name="reset-email"
               type="email"
+              autoComplete="email"
               className="max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid border-[#e5e7eb] bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none"
               placeholder="vase.ime@kompanija.ba"
               value={resetEmail}

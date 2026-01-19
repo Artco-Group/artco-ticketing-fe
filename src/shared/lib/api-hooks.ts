@@ -24,8 +24,17 @@ export function useApiQuery<TData>(
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await apiClient.get<TData>(url, { params, ...config });
-      return response.data;
+      try {
+        const response = await apiClient.get<TData>(url, { params, ...config });
+        return response.data;
+      } catch (error: any) {
+        // For /auth/me endpoint, 401 is expected when not logged in
+        // Don't throw error to prevent console noise
+        if (url === '/auth/me' && error?.response?.status === 401) {
+          return null as TData;
+        }
+        throw error;
+      }
     },
     ...queryOptions,
   });

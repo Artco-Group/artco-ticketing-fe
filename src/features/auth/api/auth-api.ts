@@ -20,6 +20,10 @@ export function useCurrentUser() {
     url: '/auth/me',
     retry: false,
     staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    throwOnError: false, // Don't throw on 401, it's expected when not logged in
   });
 }
 
@@ -27,8 +31,19 @@ export function useLogin() {
   return useApiMutation<LoginResponse, LoginInput>({
     url: '/auth/login',
     method: 'POST',
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
+    onSuccess: async () => {
+      // Invalidate and refetch current user query
+      await queryClient.invalidateQueries({
+        queryKey: QueryKeys.auth.currentUser(),
+      });
+      // Wait for the query to refetch
+      await queryClient.refetchQueries({
+        queryKey: QueryKeys.auth.currentUser(),
+      });
+      // Invalidate tickets query to refetch after login
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.tickets.lists(),
+      });
     },
   });
 }

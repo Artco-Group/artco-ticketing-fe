@@ -285,7 +285,10 @@ function EngLeadUserManagement({
                   Name *
                 </label>
                 <input
+                  id="user-name"
+                  name="name"
                   type="text"
+                  autoComplete="name"
                   value={formData.name}
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, name: e.target.value }))
@@ -300,7 +303,10 @@ function EngLeadUserManagement({
                   Email *
                 </label>
                 <input
+                  id="user-email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
                   value={formData.email}
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, email: e.target.value }))
@@ -315,6 +321,9 @@ function EngLeadUserManagement({
                   Role *
                 </label>
                 <select
+                  id="user-role"
+                  name="role"
+                  autoComplete="off"
                   value={formData.role}
                   onChange={(e) =>
                     setFormData((prev) => ({

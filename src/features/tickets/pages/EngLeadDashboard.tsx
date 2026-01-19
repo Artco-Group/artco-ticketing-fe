@@ -60,9 +60,12 @@ function EngLeadDashboard() {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // React Query hooks
+  // React Query hooks - only fetch when authenticated
   const { data: ticketsData, isLoading: ticketsLoading } = useTickets();
-  const tickets = ticketsData?.tickets || [];
+  // Handle both array and object response formats
+  const tickets = Array.isArray(ticketsData)
+    ? ticketsData
+    : ticketsData?.tickets || [];
 
   const updateStatusMutation = useUpdateTicketStatus();
   const assignTicketMutation = useAssignTicket();
@@ -136,23 +139,33 @@ function EngLeadDashboard() {
   useEffect(() => {
     // GSAP animations on mount
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.dashboard-header',
-        { opacity: 0, y: -20 },
-        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+      const dashboardHeader =
+        containerRef.current?.querySelector('.dashboard-header');
+      if (dashboardHeader) {
+        gsap.fromTo(
+          dashboardHeader,
+          { opacity: 0, y: -20 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+        );
+      }
+
+      const ticketRows = containerRef.current?.querySelectorAll(
+        '.ticket-row, .summary-card'
       );
-      gsap.fromTo(
-        '.ticket-row, .summary-card',
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.4,
-          stagger: 0.1,
-          ease: 'power2.out',
-          delay: 0.2,
-        }
-      );
+      if (ticketRows && ticketRows.length > 0) {
+        gsap.fromTo(
+          ticketRows,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: 'power2.out',
+            delay: 0.2,
+          }
+        );
+      }
     }, containerRef);
 
     return () => ctx.revert();

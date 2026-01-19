@@ -7,7 +7,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logoutMutation = useLogout();
 
   const user = userData?.user ?? null;
-  const isAuthenticated = !!user && !error;
+  // Only consider authenticated if we have user data and no error
+  // If error is 401, we're not authenticated
+  const isAuthenticated =
+    !!user && (!error || (error as any)?.response?.status !== 401);
 
   // Listen for session expiration events
   useEffect(() => {
