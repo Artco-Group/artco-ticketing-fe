@@ -28,7 +28,8 @@ export function LoginForm() {
   // Redirect to dashboard when authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard', { replace: true });
+      // Use replace to prevent back navigation to login page
+      navigate(ROUTES.DASHBOARD, { replace: true });
     }
   }, [isAuthenticated, navigate]);
 

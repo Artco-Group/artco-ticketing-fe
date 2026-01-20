@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import type { Ticket, Comment, User, Filters } from '@/types';
+import type { Ticket, Comment, Filters } from '@/types';
 import type { AxiosError } from 'axios';
 
 import { EngLeadTicketList, EngLeadTicketDetail } from '../components';
@@ -12,7 +12,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Skeleton } from '@/shared/components/ui';
 import Sidebar from '@/shared/components/layout/Sidebar';
-import { usersAPI } from '@/features/users/api';
+import {
+  useUsers,
+  useCreateUser,
+  useUpdateUser,
+  useDeleteUser,
+} from '@/features/users/api';
 import {
   useTickets,
   useUpdateTicketStatus,
@@ -37,9 +42,6 @@ type ViewState = 'tickets' | 'detail' | 'users';
 function EngLeadDashboard() {
   const [currentView, setCurrentView] = useState<ViewState>('tickets');
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
-  const [_usersLoading, setUsersLoading] = useState(true);
-  const [, setUsersError] = useState<string | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [filters, setFilters] = useState<Filters>({
     status: 'All',
@@ -77,27 +79,12 @@ function EngLeadDashboard() {
 
   const addCommentMutation = useAddComment();
 
-  // Fetch users from API (legacy API for now)
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setUsersLoading(true);
-        setUsersError(null);
-        const response = await usersAPI.getUsers();
-        setUsers(response.data);
-      } catch (error) {
-        console.error('Failed to fetch users:', error);
-        const axiosError = error as AxiosError<ApiErrorResponse>;
-        setUsersError(
-          axiosError.response?.data?.message || 'Failed to load users'
-        );
-      } finally {
-        setUsersLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+  // React Query hooks for users
+  const { data: usersData } = useUsers();
+  const users = usersData?.users || [];
+  const createUserMutation = useCreateUser();
+  const updateUserMutation = useUpdateUser();
+  const deleteUserMutation = useDeleteUser();
 
   // Initialize filters from URL params on mount
   useEffect(() => {
@@ -363,54 +350,38 @@ function EngLeadDashboard() {
     userId: string | null,
     userData?: UserFormData
   ) => {
-    switch (action) {
-      case 'add':
-        try {
-          const response = await usersAPI.createUser(userData || {});
-          setUsers((prev) => [...prev, response.data]);
+    try {
+      switch (action) {
+        case 'add':
+          await createUserMutation.mutateAsync(userData || {});
           toast.success('User created successfully');
-        } catch (error) {
-          console.error('Failed to create user:', error);
-          const axiosError = error as AxiosError<ApiErrorResponse>;
-          toast.error(
-            axiosError.response?.data?.message || 'Failed to create user'
-          );
-        }
-        break;
-      case 'edit':
-        try {
-          const response = await usersAPI.updateUser(
-            userId || '',
-            userData || {}
-          );
-          setUsers((prev) =>
-            prev.map((u) => (u._id === userId ? { ...u, ...response.data } : u))
-          );
+          break;
+        case 'edit':
+          if (!userId) {
+            toast.error('User ID is required');
+            return;
+          }
+          await updateUserMutation.mutateAsync({
+            id: userId,
+            data: userData || {},
+          });
           toast.success('User updated successfully');
-        } catch (error) {
-          console.error('Failed to update user:', error);
-          const axiosError = error as AxiosError<ApiErrorResponse>;
-          toast.error(
-            axiosError.response?.data?.message || 'Failed to update user'
-          );
-        }
-
-        break;
-      case 'delete':
-        try {
-          await usersAPI.deleteUser(userId || '');
-          setUsers((prev) => prev.filter((u) => u._id !== userId));
+          break;
+        case 'delete':
+          if (!userId) {
+            toast.error('User ID is required');
+            return;
+          }
+          await deleteUserMutation.mutateAsync(userId);
           toast.success('User deleted successfully');
-        } catch (error) {
-          console.error('Failed to delete user:', error);
-          const axiosError = error as AxiosError<ApiErrorResponse>;
-          toast.error(
-            axiosError.response?.data?.message || 'Failed to delete user'
-          );
-        }
-        break;
-      default:
-        break;
+          break;
+      }
+    } catch (error) {
+      console.error(`Failed to ${action} user:`, error);
+      const axiosError = error as AxiosError<ApiErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.message || `Failed to ${action} user`
+      );
     }
   };
 
