@@ -4,6 +4,8 @@ import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
 // https://vite.dev/config/
+// Environment variables prefixed with VITE_ are automatically exposed via import.meta.env
+// See .env.example for available environment variables
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
