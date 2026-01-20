@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import type { Ticket } from '@/types';
+import type { Ticket } from '@artco-group/artco-ticketing-sync/types';
 
 interface SummaryCardsProps {
   tickets: Ticket[];

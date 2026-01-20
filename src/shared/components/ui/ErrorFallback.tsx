@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import type { ErrorInfo } from 'react';
-import { ROUTES } from '@/app/routes/constants';
+import { PAGE_ROUTES } from '@artco-group/artco-ticketing-sync/constants';
 
 interface ErrorFallbackProps {
   error: Error | null;
@@ -18,7 +18,7 @@ export function ErrorFallback({
 
   const handleGoHome = () => {
     resetErrorBoundary();
-    navigate(ROUTES.DASHBOARD);
+    navigate(PAGE_ROUTES.DASHBOARD.ROOT);
   };
 
   const handleGoBack = () => {

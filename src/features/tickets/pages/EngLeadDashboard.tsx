@@ -1,7 +1,13 @@
 import type { FormEvent } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import type { Ticket, Comment, Filters } from '@/types';
+import type {
+  Ticket,
+  Comment,
+  CreateUserFormData,
+  UpdateUserFormData,
+} from '@artco-group/artco-ticketing-sync/types';
+import type { Filters } from '@/types';
 import type { AxiosError } from 'axios';
 
 import { EngLeadTicketList, EngLeadTicketDetail } from '../components';
@@ -28,13 +34,6 @@ import { useComments, useAddComment } from '../api/comments-api';
 
 interface ApiErrorResponse {
   message?: string;
-}
-
-interface UserFormData {
-  email?: string;
-  name?: string;
-  role?: string;
-  password?: string;
 }
 
 type ViewState = 'tickets' | 'detail' | 'users';
@@ -348,32 +347,32 @@ function EngLeadDashboard() {
   const handleUserAction = async (
     action: 'add' | 'edit' | 'delete',
     userId: string | null,
-    userData?: UserFormData
+    userData?: CreateUserFormData | UpdateUserFormData
   ) => {
     try {
       switch (action) {
         case 'add':
-          await createUserMutation.mutateAsync(userData || {});
-          toast.success('User created successfully');
+          if (userData) {
+            await createUserMutation.mutateAsync(
+              userData as CreateUserFormData
+            );
+            toast.success('User created successfully');
+          }
           break;
         case 'edit':
-          if (!userId) {
-            toast.error('User ID is required');
-            return;
+          if (userId && userData) {
+            await updateUserMutation.mutateAsync({
+              id: userId,
+              data: userData as UpdateUserFormData,
+            });
+            toast.success('User updated successfully');
           }
-          await updateUserMutation.mutateAsync({
-            id: userId,
-            data: userData || {},
-          });
-          toast.success('User updated successfully');
           break;
         case 'delete':
-          if (!userId) {
-            toast.error('User ID is required');
-            return;
+          if (userId) {
+            await deleteUserMutation.mutateAsync(userId);
+            toast.success('User deleted successfully');
           }
-          await deleteUserMutation.mutateAsync(userId);
-          toast.success('User deleted successfully');
           break;
       }
     } catch (error) {
@@ -410,18 +409,25 @@ function EngLeadDashboard() {
     .sort((a, b) => {
       switch (filters.sortBy) {
         case 'Status': {
-          const statusOrder = {
+          const statusOrder: Record<string, number> = {
             New: 1,
             Open: 2,
             'In Progress': 3,
             Resolved: 4,
             Closed: 5,
           };
-          return statusOrder[a.status] - statusOrder[b.status];
+          return (statusOrder[a.status] ?? 0) - (statusOrder[b.status] ?? 0);
         }
         case 'Priority': {
-          const priorityOrder = { Critical: 4, High: 3, Medium: 2, Low: 1 };
-          return priorityOrder[b.priority] - priorityOrder[a.priority];
+          const priorityOrder: Record<string, number> = {
+            Critical: 4,
+            High: 3,
+            Medium: 2,
+            Low: 1,
+          };
+          return (
+            (priorityOrder[b.priority] ?? 0) - (priorityOrder[a.priority] ?? 0)
+          );
         }
         case 'Client':
           return (a.clientEmail || '').localeCompare(b.clientEmail || '');

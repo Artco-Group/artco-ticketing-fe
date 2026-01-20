@@ -2,7 +2,7 @@ import { useAuth } from '@/features/auth/context';
 import EngLeadDashboard from '@/features/tickets/pages/EngLeadDashboard';
 import DeveloperDashboard from '@/features/tickets/pages/DeveloperDashboard';
 import ClientDashboard from '@/features/tickets/pages/ClientDashboard';
-import { UserRole } from '@/types';
+import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
 import { ErrorBoundary } from '@/shared/components/ui';
 
 export default function DashboardRouter() {
@@ -10,19 +10,19 @@ export default function DashboardRouter() {
 
   // Render appropriate dashboard based on user role
   switch (user?.role) {
-    case UserRole.EngLead:
+    case UserRole.ENG_LEAD:
       return (
         <ErrorBoundary>
           <EngLeadDashboard />
         </ErrorBoundary>
       );
-    case UserRole.Developer:
+    case UserRole.DEVELOPER:
       return (
         <ErrorBoundary>
           <DeveloperDashboard />
         </ErrorBoundary>
       );
-    case UserRole.Client:
+    case UserRole.CLIENT:
       return (
         <ErrorBoundary>
           <ClientDashboard />

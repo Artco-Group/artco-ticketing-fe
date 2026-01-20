@@ -1,5 +1,9 @@
 import type { FormEvent } from 'react';
-import type { Ticket, Comment, User } from '@/types';
+import type {
+  Ticket,
+  Comment,
+  User,
+} from '@artco-group/artco-ticketing-sync/types';
 import { toast } from 'sonner';
 import PageHeader from '@/shared/components/layout/PageHeader';
 import CommentThread from './CommentThread';
@@ -79,7 +83,9 @@ function ClientTicketDetail({
             }
           }}
           formatDateTime={(date) => {
-            return new Date(date).toLocaleString('en-GB', {
+            if (!date) return '';
+            const d = typeof date === 'string' ? new Date(date) : date;
+            return d.toLocaleString('en-GB', {
               day: '2-digit',
               month: '2-digit',
               year: 'numeric',

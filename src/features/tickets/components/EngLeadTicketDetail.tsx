@@ -1,8 +1,13 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import type { Ticket, Comment, User, AssignedTo } from '@/types';
+import type {
+  Ticket,
+  Comment,
+  User,
+  AssignedTo,
+} from '@artco-group/artco-ticketing-sync/types';
 import { toast } from 'sonner';
-import { UserRole } from '@/types';
+import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
 import Sidebar from '@/shared/components/layout/Sidebar';
 import CommentThread from './CommentThread';
 import TicketDetails from './TicketDetails';
@@ -49,7 +54,7 @@ function EngLeadTicketDetail({
   const [isClosing, setIsClosing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const developers = users.filter((user) => user.role === UserRole.Developer);
+  const developers = users.filter((user) => user.role === UserRole.DEVELOPER);
 
   const getAssignedTicketsCount = (): number => {
     // TODO: Implement actual assigned tickets count

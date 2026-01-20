@@ -1,6 +1,11 @@
 import type { DragEvent, ChangeEvent, MouseEvent } from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { formatFileSize } from '@artco-group/artco-ticketing-sync/utils';
+import {
+  VALIDATION_RULES,
+  ALLOWED_FILE_TYPES,
+} from '@artco-group/artco-ticketing-sync/constants';
 
 interface FileUploadProps {
   files: File[];
@@ -12,23 +17,12 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
 
   // Validate file type
   const isValidFileType = (file: File): boolean => {
-    const allowedTypes = [
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'image/gif',
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'text/plain',
-    ];
-    return allowedTypes.includes(file.type);
+    return ALLOWED_FILE_TYPES.ATTACHMENTS.includes(file.type);
   };
 
-  // Validate file size (5MB)
+  // Validate file size
   const isValidFileSize = (file: File): boolean => {
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    return file.size <= maxSize;
+    return file.size <= VALIDATION_RULES.FRONTEND_MAX_FILE_SIZE;
   };
 
   // Handle file drop
@@ -83,9 +77,11 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
     // Calculate total size of existing + new files
     const currentTotalSize = files.reduce((sum, f) => sum + f.size, 0);
     const newTotalSize = validFiles.reduce((sum, f) => sum + f.size, 0);
-    const maxTotalSize = 15 * 1024 * 1024; // 15MB
 
-    if (currentTotalSize + newTotalSize > maxTotalSize) {
+    if (
+      currentTotalSize + newTotalSize >
+      VALIDATION_RULES.FRONTEND_MAX_TOTAL_SIZE
+    ) {
       const currentMB = (currentTotalSize / (1024 * 1024)).toFixed(2);
       const newMB = (newTotalSize / (1024 * 1024)).toFixed(2);
       errors.push(
@@ -114,13 +110,6 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
   const removeFile = (index: number) => {
     const newFiles = files.filter((_, i) => i !== index);
     onFilesChange(newFiles);
-  };
-
-  // Format file size
-  const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
   // Get total file size

@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react';
 import { useEffect, useRef } from 'react';
-import type { Comment, User } from '@/types';
-import { formatDateTime } from '@/shared/utils/date-time-utils';
+import type { Comment, User } from '@artco-group/artco-ticketing-sync/types';
+import { formatDateTime } from '@artco-group/artco-ticketing-sync/utils';
 
 interface CommentThreadProps {
   comments: Comment[];
@@ -104,7 +104,7 @@ function CommentBubble({ comment, currentUser }: CommentBubbleProps) {
           <span
             className={`text-xs ${thisUser ? 'text-white/60' : 'text-gray-400'}`}
           >
-            {formatDateTime(comment.updatedAt)}
+            {comment.updatedAt ? formatDateTime(comment.updatedAt) : ''}
           </span>
         </div>
         <p

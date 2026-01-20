@@ -1,23 +1,27 @@
 import { useApiQuery, useApiMutation } from '@/shared/lib/api-hooks';
-import { QueryKeys } from '@/shared/lib/query-keys';
+import {
+  QueryKeys,
+  API_ROUTES,
+} from '@artco-group/artco-ticketing-sync/constants';
 import { queryClient } from '@/shared/lib/query-client';
-import type { Ticket } from '@/types';
+import type { Ticket } from '@artco-group/artco-ticketing-sync/types';
 import api from '@/shared/lib/api-client';
 
 // Legacy API object for backward compatibility
 export const ticketAPI = {
-  getTickets: () => api.get('/tickets'),
-  getTicket: (ticketId: string) => api.get(`/tickets/${ticketId}`),
-  createTicket: (ticket: FormData) => api.post('/tickets', ticket),
+  getTickets: () => api.get(API_ROUTES.TICKETS.BASE),
+  getTicket: (ticketId: string) => api.get(API_ROUTES.TICKETS.BY_ID(ticketId)),
+  createTicket: (ticket: FormData) => api.post(API_ROUTES.TICKETS.BASE, ticket),
   updateTicket: (ticketId: string, ticket: FormData) =>
-    api.put(`/tickets/${ticketId}`, ticket),
+    api.put(API_ROUTES.TICKETS.BY_ID(ticketId), ticket),
   updateTicketStatus: (ticketId: string, status: string) =>
-    api.patch(`/tickets/${ticketId}/status`, { status }),
+    api.patch(API_ROUTES.TICKETS.STATUS(ticketId), { status }),
   updateTicketAssignee: (ticketId: string, developerId: string) =>
-    api.patch(`/tickets/${ticketId}/assign`, { developerId }),
+    api.patch(API_ROUTES.TICKETS.ASSIGN(ticketId), { developerId }),
   updateTicketPriority: (ticketId: string, priority: string) =>
-    api.patch(`/tickets/${ticketId}/priority`, { priority }),
-  deleteTicket: (ticketId: string) => api.delete(`/tickets/${ticketId}`),
+    api.patch(API_ROUTES.TICKETS.PRIORITY(ticketId), { priority }),
+  deleteTicket: (ticketId: string) =>
+    api.delete(API_ROUTES.TICKETS.BY_ID(ticketId)),
 };
 
 // New React Query hooks
@@ -26,7 +30,7 @@ export function useTickets(params?: Record<string, unknown>) {
   return useApiQuery<Ticket[] | { tickets: Ticket[] }>(
     QueryKeys.tickets.list(params),
     {
-      url: '/tickets',
+      url: API_ROUTES.TICKETS.BASE,
       params,
       retry: false,
       staleTime: 0, // Always consider data stale to allow refetch
@@ -37,14 +41,14 @@ export function useTickets(params?: Record<string, unknown>) {
 
 export function useTicket(id: string) {
   return useApiQuery<{ ticket: Ticket }>(QueryKeys.tickets.detail(id), {
-    url: `/tickets/${id}`,
+    url: API_ROUTES.TICKETS.BY_ID(id),
     enabled: !!id,
   });
 }
 
 export function useCreateTicket() {
   return useApiMutation<{ ticket: Ticket }, FormData>({
-    url: '/tickets',
+    url: API_ROUTES.TICKETS.BASE,
     method: 'POST',
     config: {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -75,7 +79,7 @@ export function useCreateTicket() {
 
 export function useUpdateTicketStatus() {
   return useApiMutation<{ ticket: Ticket }, { id: string; status: string }>({
-    url: (vars) => `/tickets/${vars.id}/status`,
+    url: (vars) => API_ROUTES.TICKETS.STATUS(vars.id),
     method: 'PATCH',
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
@@ -90,7 +94,7 @@ export function useUpdateTicketStatus() {
 export function useAssignTicket() {
   return useApiMutation<{ ticket: Ticket }, { id: string; assignedTo: string }>(
     {
-      url: (vars) => `/tickets/${vars.id}/assign`,
+      url: (vars) => API_ROUTES.TICKETS.ASSIGN(vars.id),
       method: 'PATCH',
       onSuccess: (_, variables) => {
         queryClient.invalidateQueries({
@@ -105,7 +109,7 @@ export function useAssignTicket() {
 
 export function useUpdateTicketPriority() {
   return useApiMutation<{ ticket: Ticket }, { id: string; priority: string }>({
-    url: (vars) => `/tickets/${vars.id}/priority`,
+    url: (vars) => API_ROUTES.TICKETS.PRIORITY(vars.id),
     method: 'PATCH',
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
@@ -119,7 +123,7 @@ export function useUpdateTicketPriority() {
 
 export function useDeleteTicket() {
   return useApiMutation<void, string>({
-    url: (id) => `/tickets/${id}`,
+    url: (id) => API_ROUTES.TICKETS.BY_ID(id),
     method: 'DELETE',
     onSuccess: () => {
       // Invalidate all tickets queries (including those with params)

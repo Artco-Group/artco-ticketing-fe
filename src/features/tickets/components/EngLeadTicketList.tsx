@@ -1,12 +1,11 @@
 import type {
   Ticket,
   User,
-  Filters,
   AssignedTo,
-  TicketStatus,
-  TicketCategory,
-} from '@/types';
-import { UserRole } from '@/types';
+} from '@artco-group/artco-ticketing-sync/types';
+import type { Filters } from '@/types';
+import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
+import { formatDateLocalized } from '@artco-group/artco-ticketing-sync/utils';
 import Sidebar from '@/shared/components/layout/Sidebar';
 import SummaryCards from '@/shared/components/common/SummaryCard';
 import FilterBar from '@/shared/components/common/FilterBar';
@@ -57,14 +56,6 @@ function EngLeadTicketList({
     return user?.name || assignedTo.email || '';
   };
 
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
-  };
-
   const columns = [
     customColumn<Ticket>('title', 'Title', (ticket) => (
       <div className="font-semibold text-gray-900">{ticket.title}</div>
@@ -79,8 +70,7 @@ function EngLeadTicketList({
       'category',
       'Category',
       (category) =>
-        categoryColors[category as TicketCategory] ||
-        'bg-gray-100 text-gray-800 border-gray-200'
+        categoryColors[category] || 'bg-gray-100 text-gray-800 border-gray-200'
     ),
     customColumn<Ticket>('priority', 'Priority', (ticket) => (
       <span
@@ -93,8 +83,7 @@ function EngLeadTicketList({
       'status',
       'Status',
       (status) =>
-        statusColors[status as TicketStatus] ||
-        'bg-gray-100 text-gray-800 border-gray-200'
+        statusColors[status] || 'bg-gray-100 text-gray-800 border-gray-200'
     ),
     customColumn<Ticket>('assignedTo', 'Assigned To', (ticket) => (
       <div className="text-sm text-gray-900">
@@ -105,7 +94,7 @@ function EngLeadTicketList({
         )}
       </div>
     )),
-    dateColumn<Ticket>('createdAt', 'Created', formatDate, {
+    dateColumn<Ticket>('createdAt', 'Created', formatDateLocalized, {
       className: 'text-gray-500',
     }),
   ];
@@ -212,7 +201,7 @@ function EngLeadTicketList({
                   { value: 'All', label: 'All Assignees' },
                   { value: 'Unassigned', label: 'Unassigned' },
                   ...users
-                    .filter((u) => u.role === UserRole.Developer)
+                    .filter((u) => u.role === UserRole.DEVELOPER)
                     .map((dev) => ({
                       value: dev.email || '',
                       label: dev.name || dev.email || '',

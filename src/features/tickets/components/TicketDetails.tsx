@@ -1,12 +1,20 @@
 import type { ReactNode } from 'react';
-import type { Ticket, Attachment, MetaItem } from '@/types';
+import type {
+  Ticket,
+  Attachment,
+} from '@artco-group/artco-ticketing-sync/types';
+import type { MetaItem } from '@/types';
 import { Skeleton } from '@/shared/components/ui';
 import {
   statusColors,
   priorityConfig,
   categoryColors,
 } from '@/shared/utils/ticket-helpers';
-import { formatDateTime, formatTime } from '@/shared/utils/date-time-utils';
+import {
+  formatDateTime,
+  formatTime,
+} from '@artco-group/artco-ticketing-sync/utils';
+import { formatFileSize } from '@artco-group/artco-ticketing-sync/utils';
 
 interface TicketDetailsProps {
   ticket: Ticket | null;
@@ -18,7 +26,7 @@ interface TicketDetailsProps {
     filename: string
   ) => Promise<void>;
   onDownloadScreenRecording?: (ticketId: string, filename: string) => void;
-  formatDateTime?: (date: string) => string;
+  formatDateTime?: (date: string | Date) => string;
   className?: string;
 }
 
@@ -70,12 +78,6 @@ function TicketDetails({
   }
 
   const formatDate = customFormatDateTime || formatDateTime;
-
-  const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-  };
 
   const getFileIcon = (mimetype?: string) => {
     if (mimetype?.startsWith('image/')) {
@@ -154,7 +156,7 @@ function TicketDetails({
   const metadataItems: MetaItem[] = [
     {
       label: 'Created',
-      value: formatDate(ticket.createdAt ?? ''),
+      value: ticket.createdAt ? formatDate(ticket.createdAt) : '',
     },
   ];
 

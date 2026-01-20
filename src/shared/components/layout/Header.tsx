@@ -1,12 +1,8 @@
 import { useAuth } from '@/features/auth/context';
-import { UserRole } from '@/types';
-
-const UserRoleDisplay: Record<UserRole, string> = {
-  [UserRole.Client]: 'Client',
-  [UserRole.Developer]: 'Developer',
-  [UserRole.EngLead]: 'Engineering Lead',
-  [UserRole.Admin]: 'Admin',
-};
+import {
+  UserRole,
+  UserRoleDisplay,
+} from '@artco-group/artco-ticketing-sync/enums';
 
 export function Header() {
   const { user, logout } = useAuth();
@@ -19,7 +15,7 @@ export function Header() {
             <div className="text-right">
               <p className="text-sm font-medium text-gray-700">{user?.name}</p>
               <p className="text-xs text-gray-500">
-                {user?.role && UserRoleDisplay[user.role]}
+                {user?.role && UserRoleDisplay[user.role as UserRole]}
               </p>
             </div>
             <button

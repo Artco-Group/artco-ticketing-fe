@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ROUTES } from '@/app/routes/constants';
+import { PAGE_ROUTES } from '@artco-group/artco-ticketing-sync/constants';
 
 export default function NotFoundPage() {
   return (
@@ -13,7 +13,7 @@ export default function NotFoundPage() {
           The page you're looking for doesn't exist.
         </p>
         <Link
-          to={ROUTES.DASHBOARD}
+          to={PAGE_ROUTES.DASHBOARD.ROOT}
           className="mt-6 inline-block rounded-lg bg-[#004179] px-6 py-3 text-white transition-colors hover:bg-[#003366]"
         >
           Go to Dashboard

@@ -1,7 +1,18 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import type { User } from '@/types';
-import { UserRole } from '@/types';
+import type {
+  User,
+  CreateUserFormData,
+  UpdateUserFormData,
+} from '@artco-group/artco-ticketing-sync/types';
+import {
+  UserRole,
+  UserRoleDisplay,
+} from '@artco-group/artco-ticketing-sync/enums';
+import {
+  formatDateLocalized,
+  getRoleBadgeClasses,
+} from '@artco-group/artco-ticketing-sync/utils';
 import { toast } from 'sonner';
 import Sidebar from '@/shared/components/layout/Sidebar';
 import Table from '@/shared/components/ui/Table';
@@ -15,7 +26,7 @@ import {
   actionsColumn,
 } from '@/shared/components/ui/tableColumns';
 
-interface UserFormData {
+interface FormState {
   name: string;
   email: string;
   role: UserRole;
@@ -30,7 +41,7 @@ interface EngLeadUserManagementProps {
   onUserAction: (
     action: 'add' | 'edit' | 'delete',
     userId: string | null,
-    data?: UserFormData
+    data?: CreateUserFormData | UpdateUserFormData
   ) => void;
 }
 
@@ -46,23 +57,17 @@ function EngLeadUserManagement({
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState<User | null>(null);
-  const [formData, setFormData] = useState<UserFormData>({
+  const [formData, setFormData] = useState<FormState>({
     name: '',
     email: '',
-    role: UserRole.Client,
+    role: UserRole.CLIENT,
   });
 
   const roles: UserRole[] = [
-    UserRole.Client,
-    UserRole.Developer,
-    UserRole.EngLead,
+    UserRole.CLIENT,
+    UserRole.DEVELOPER,
+    UserRole.ENG_LEAD,
   ];
-  const roleColors: Record<string, string> = {
-    client: 'bg-blue-100 text-blue-800',
-    developer: 'bg-green-100 text-green-800',
-    eng_lead: 'bg-purple-100 text-purple-800',
-    admin: 'bg-red-100 text-red-800',
-  };
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
@@ -75,7 +80,7 @@ function EngLeadUserManagement({
 
   const handleAddUser = () => {
     setEditingUser(null);
-    setFormData({ name: '', email: '', role: UserRole.Client });
+    setFormData({ name: '', email: '', role: UserRole.CLIENT });
     setShowModal(true);
   };
 
@@ -84,7 +89,7 @@ function EngLeadUserManagement({
     setFormData({
       name: user.name || '',
       email: user.email || '',
-      role: user.role || UserRole.Client,
+      role: (user.role as UserRole) || UserRole.CLIENT,
     });
     setShowModal(true);
   };
@@ -97,27 +102,33 @@ function EngLeadUserManagement({
     }
 
     if (editingUser) {
-      onUserAction('edit', editingUser._id || editingUser.id || null, formData);
+      const updateData: UpdateUserFormData = {
+        name: formData.name,
+        email: formData.email,
+        role: formData.role as UpdateUserFormData['role'],
+      };
+      onUserAction(
+        'edit',
+        editingUser._id || editingUser.id || null,
+        updateData
+      );
     } else {
-      // Set default password for new users
-      onUserAction('add', null, { ...formData, password: 'p455w0rd' });
+      const createData: CreateUserFormData = {
+        name: formData.name,
+        email: formData.email,
+        role: formData.role as CreateUserFormData['role'],
+        password: 'p455w0rd',
+      };
+      onUserAction('add', null, createData);
     }
 
     setShowModal(false);
-    setFormData({ name: '', email: '', role: UserRole.Client });
+    setFormData({ name: '', email: '', role: UserRole.CLIENT });
   };
 
   const handleDeleteUser = (user: User) => {
     onUserAction('delete', user._id || user.id || null);
     setShowDeleteModal(null);
-  };
-
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
   };
 
   const EditIcon = () => (
@@ -157,12 +168,10 @@ function EngLeadUserManagement({
     textColumn<User>('email', 'Email', {
       className: 'text-sm text-gray-900',
     }),
-    badgeColumn<User>(
-      'role',
-      'Role',
-      (role) => roleColors[role] || 'bg-gray-100 text-gray-800'
+    badgeColumn<User>('role', 'Role', (role) =>
+      getRoleBadgeClasses(role as UserRole)
     ),
-    dateColumn<User>('createdAt', 'Created', formatDate, {
+    dateColumn<User>('createdAt', 'Created', formatDateLocalized, {
       className: 'text-gray-500',
     }),
     actionsColumn<User>('actions', 'Actions', [
@@ -189,7 +198,7 @@ function EngLeadUserManagement({
       value: roleFilter,
       options: [
         { value: 'All', label: 'All Roles' },
-        ...roles.map((role) => ({ value: role, label: role })),
+        ...roles.map((role) => ({ value: role, label: UserRoleDisplay[role] })),
       ],
     },
   ];
@@ -336,7 +345,7 @@ function EngLeadUserManagement({
                 >
                   {roles.map((role) => (
                     <option key={role} value={role}>
-                      {role}
+                      {UserRoleDisplay[role]}
                     </option>
                   ))}
                 </select>

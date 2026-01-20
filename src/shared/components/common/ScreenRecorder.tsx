@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useScreenRecorder } from '@/shared/hooks/useScreenRecorder';
-import { formatTime } from '@/shared/utils/date-time-utils';
+import { formatTime } from '@artco-group/artco-ticketing-sync/utils';
 
 interface ScreenRecorderProps {
   onRecordingComplete: (file: File | null, duration: number) => void;
