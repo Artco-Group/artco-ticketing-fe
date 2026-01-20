@@ -1,4 +1,3 @@
-// src/app/config/page-configs.ts
 export interface PageConfig {
   title: string;
   description?: string;

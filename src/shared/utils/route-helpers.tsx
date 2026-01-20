@@ -1,4 +1,3 @@
-// src/shared/utils/route-helpers.tsx
 import { Suspense, type ComponentType } from 'react';
 import { type RouteObject } from 'react-router-dom';
 import { RouteGuard } from '@features/auth/components/RouteGuard';

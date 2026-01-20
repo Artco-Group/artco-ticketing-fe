@@ -20,6 +20,30 @@ This project uses private packages from `@artco-group`. You need to configure a 
    ```
 4. Run `yarn install`
 
+## Environment Variables
+
+This project uses environment variables for configuration. Create a `.env` file in the root directory based on `.env.example`.
+
+### Available Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `VITE_API_URL` | Backend API base URL | `http://localhost:3001/api` | No |
+| `VITE_APP_NAME` | Application display name | `Artco Ticketing` | No |
+
+### Setup
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Update the values in `.env` according to your environment.
+
+3. Restart the development server for changes to take effect.
+
+**Note:** All environment variables must be prefixed with `VITE_` to be accessible in the application. Vite automatically exposes these variables through `import.meta.env`.
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh

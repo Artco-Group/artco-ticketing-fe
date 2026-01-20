@@ -1,4 +1,3 @@
-// src/features/auth/routes.tsx
 import { lazy } from 'react';
 import { createPublicRoute } from '@shared/utils/route-helpers';
 import { ROUTES, ROUTE_PATTERNS } from '@/app/routes/constants';

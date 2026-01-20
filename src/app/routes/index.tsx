@@ -1,4 +1,3 @@
-// src/app/routes/index.tsx
 import { Navigate, type RouteObject } from 'react-router-dom';
 import { lazy } from 'react';
 import { authRoutes } from '@/features/auth/routes';
