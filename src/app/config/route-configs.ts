@@ -1,5 +1,5 @@
-import { ROUTES } from '../routes/constants';
-import { UserRole } from '@/types';
+import { PAGE_ROUTES } from '@artco-group/artco-ticketing-sync/constants';
+import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
 
 export interface RouteConfig {
   layout: 'none' | 'main' | 'auth';
@@ -9,21 +9,21 @@ export interface RouteConfig {
 }
 
 export const routeConfigs: Record<string, RouteConfig> = {
-  [ROUTES.AUTH.LOGIN]: {
+  [PAGE_ROUTES.AUTH.LOGIN]: {
     requiresAuth: false,
     layout: 'auth',
   },
-  [ROUTES.DASHBOARD]: {
+  [PAGE_ROUTES.DASHBOARD.ROOT]: {
     requiresAuth: true,
     layout: 'main',
   },
-  [ROUTES.TICKETS.LIST]: {
+  [PAGE_ROUTES.TICKETS.LIST]: {
     requiresAuth: true,
     layout: 'main',
   },
-  [ROUTES.USERS.LIST]: {
+  [PAGE_ROUTES.USERS.LIST]: {
     requiresAuth: true,
     layout: 'main',
-    roles: [UserRole.EngLead],
+    roles: [UserRole.ENG_LEAD],
   },
 };

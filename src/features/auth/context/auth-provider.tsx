@@ -6,7 +6,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: userData, isLoading, error } = useCurrentUser();
   const logoutMutation = useLogout();
 
-  const user = userData?.user ?? null;
+  // Backend returns ApiResponse format: { status, data: { user } }
+  const user = (userData as any)?.data?.user ?? null;
   // Only consider authenticated if we have user data and no error
   // If error is 401, we're not authenticated
   const isAuthenticated =

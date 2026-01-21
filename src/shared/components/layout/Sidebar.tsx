@@ -1,17 +1,21 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context';
-import { ROUTES } from '@/app/routes/constants';
-import { UserRole } from '@/types';
+import { PAGE_ROUTES } from '@artco-group/artco-ticketing-sync/constants';
+import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
 import { hasRole } from '@/shared/utils/role-helpers';
 
 const navigation = [
   {
     name: 'Dashboard',
-    href: ROUTES.DASHBOARD,
-    roles: [UserRole.Client, UserRole.Developer, UserRole.EngLead],
+    href: PAGE_ROUTES.DASHBOARD.ROOT,
+    roles: [UserRole.CLIENT, UserRole.DEVELOPER, UserRole.ENG_LEAD],
   },
-  { name: 'All Tickets', href: ROUTES.TICKETS.LIST, roles: [UserRole.EngLead] },
-  { name: 'Users', href: ROUTES.USERS.LIST, roles: [UserRole.EngLead] },
+  {
+    name: 'All Tickets',
+    href: PAGE_ROUTES.TICKETS.LIST,
+    roles: [UserRole.ENG_LEAD],
+  },
+  { name: 'Users', href: PAGE_ROUTES.USERS.LIST, roles: [UserRole.ENG_LEAD] },
 ];
 
 export function Sidebar() {

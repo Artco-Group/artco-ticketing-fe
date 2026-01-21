@@ -1,26 +1,34 @@
-import type { FormEvent } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import gsap from 'gsap';
 import { toast } from 'sonner';
 import { useForgotPassword } from '../api/auth-api';
 import type { AxiosError } from 'axios';
-import { ROUTES } from '@/app/routes/constants';
-
-interface ApiErrorResponse {
-  message?: string;
-}
+import { PAGE_ROUTES } from '@artco-group/artco-ticketing-sync/constants';
+import { forgotPasswordSchema } from '@artco-group/artco-ticketing-sync/validations';
+import type { ForgotPasswordFormData } from '@artco-group/artco-ticketing-sync/types';
+import { extractErrorMessage } from '@artco-group/artco-ticketing-sync/errors';
 
 export function ForgotPasswordForm() {
   const forgotPasswordMutation = useForgotPassword();
   const navigate = useNavigate();
 
-  const [resetEmail, setResetEmail] = useState('');
-  const [error, setError] = useState('');
+  const [serverError, setServerError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const titleRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -67,26 +75,29 @@ export function ForgotPasswordForm() {
     return () => ctx.revert();
   }, []);
 
-  const handleForgotPassword = async (e: FormEvent) => {
-    e.preventDefault();
-    setError('');
+  const onSubmit = async (data: ForgotPasswordFormData) => {
+    setServerError('');
     setSuccess(false);
 
     try {
-      await forgotPasswordMutation.mutateAsync({ email: resetEmail });
+      await forgotPasswordMutation.mutateAsync(data);
       setSuccess(true);
-      setResetEmail('');
+      reset();
       toast.success('Email za resetovanje lozinke je poslat');
       // Redirect to login after 2 seconds
       setTimeout(() => {
-        navigate(ROUTES.AUTH.LOGIN);
+        navigate(PAGE_ROUTES.AUTH.LOGIN);
       }, 2000);
     } catch (err) {
-      const axiosError = err as AxiosError<ApiErrorResponse>;
+      const axiosError = err as AxiosError<{
+        message?: string;
+        error?: string;
+      }>;
       const errorMessage =
         axiosError.response?.data?.message ||
-        'Greška pri slanju emaila za resetovanje';
-      setError(errorMessage);
+        axiosError.response?.data?.error ||
+        extractErrorMessage(err);
+      setServerError(errorMessage);
       toast.error(errorMessage);
     }
   };
@@ -106,7 +117,7 @@ export function ForgotPasswordForm() {
         <div className="login-links mt-7 text-center">
           <p className="m-0 text-[14px] text-[#6b7280]">
             <Link
-              to={ROUTES.AUTH.LOGIN}
+              to={PAGE_ROUTES.AUTH.LOGIN}
               className="decoration-none font-medium text-[#004179] transition-colors duration-200 ease-in-out hover:text-[#003366] hover:underline"
             >
               ← Nazad na prijavu
@@ -128,17 +139,17 @@ export function ForgotPasswordForm() {
         </p>
       </div>
 
-      {error && (
+      {serverError && (
         <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-          {error}
+          {serverError}
         </div>
       )}
 
-      <form onSubmit={handleForgotPassword}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="form-group mb-5">
           <label
             className="mb-2 block text-[14px] font-medium text-[#374151]"
-            htmlFor="reset-email"
+            htmlFor="email"
           >
             Email adresa
           </label>
@@ -156,17 +167,17 @@ export function ForgotPasswordForm() {
               <polyline points="22,6 12,13 2,6" />
             </svg>
             <input
-              id="reset-email"
-              name="reset-email"
+              id="email"
               type="email"
               autoComplete="email"
-              className="max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid border-[#e5e7eb] bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none"
+              className={`max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none ${errors.email ? 'border-red-500' : 'border-[#e5e7eb]'}`}
               placeholder="vase.ime@kompanija.ba"
-              value={resetEmail}
-              onChange={(e) => setResetEmail(e.target.value)}
-              required
+              {...register('email')}
             />
           </div>
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+          )}
         </div>
 
         <button
@@ -195,7 +206,7 @@ export function ForgotPasswordForm() {
       <div className="login-links mt-7 text-center">
         <p className="m-0 text-[14px] text-[#6b7280]">
           <Link
-            to={ROUTES.AUTH.LOGIN}
+            to={PAGE_ROUTES.AUTH.LOGIN}
             className="decoration-none font-medium text-[#004179] transition-colors duration-200 ease-in-out hover:text-[#003366] hover:underline"
           >
             ← Nazad na prijavu

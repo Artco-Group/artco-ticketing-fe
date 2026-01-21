@@ -1,7 +1,8 @@
 import type { FormEvent } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import type { Ticket, Comment, Filters } from '@/types';
+import type { Ticket, Comment } from '@artco-group/artco-ticketing-sync/types';
+import type { Filters } from '@/types';
 import type { AxiosError } from 'axios';
 
 import { DeveloperTicketList, DeveloperTicketDetail } from '../components';

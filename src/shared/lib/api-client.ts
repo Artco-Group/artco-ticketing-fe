@@ -1,13 +1,18 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import { HttpStatus } from '@artco-group/artco-ticketing-sync/enums';
+import {
+  TIMEOUTS,
+  CONTENT_TYPES,
+} from '@artco-group/artco-ticketing-sync/constants';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 export const apiClient = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  timeout: 30000,
+  timeout: TIMEOUTS.API_REQUEST,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': CONTENT_TYPES.JSON,
   },
 });
 
@@ -26,8 +31,10 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     // Handle session expiration - only dispatch once per request
-    if (error.response?.status === 401 && error.config?.url !== '/auth/me') {
-      // Don't dispatch for /auth/me to prevent loop
+    // Exclude /auth/me (prevents loop) and /auth/login (401 is expected for wrong credentials)
+    const url = error.config?.url;
+    const isAuthEndpoint = url === '/auth/me' || url === '/auth/login';
+    if (error.response?.status === HttpStatus.UNAUTHORIZED && !isAuthEndpoint) {
       window.dispatchEvent(new CustomEvent('session-expired'));
     }
     return Promise.reject(error);

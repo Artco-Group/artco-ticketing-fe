@@ -1,20 +1,20 @@
 import { lazy } from 'react';
 import { createPrivateRoute } from '@shared/utils/route-helpers';
-import { ROUTES } from '@/app/routes/constants';
-import { UserRole } from '@/types';
+import { PAGE_ROUTES } from '@artco-group/artco-ticketing-sync/constants';
+import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
 
 const ClientDashboard = lazy(() => import('./pages/ClientDashboard'));
 const DeveloperDashboard = lazy(() => import('./pages/DeveloperDashboard'));
 const EngLeadDashboard = lazy(() => import('./pages/EngLeadDashboard'));
 
 export const ticketRoutes = [
-  createPrivateRoute(ROUTES.DASHBOARD + '/client', ClientDashboard, {
-    roles: [UserRole.Client],
+  createPrivateRoute(PAGE_ROUTES.DASHBOARD.CLIENT, ClientDashboard, {
+    roles: [UserRole.CLIENT],
   }),
-  createPrivateRoute(ROUTES.DASHBOARD + '/developer', DeveloperDashboard, {
-    roles: [UserRole.Developer],
+  createPrivateRoute(PAGE_ROUTES.DASHBOARD.DEVELOPER, DeveloperDashboard, {
+    roles: [UserRole.DEVELOPER],
   }),
-  createPrivateRoute(ROUTES.DASHBOARD + '/lead', EngLeadDashboard, {
-    roles: [UserRole.EngLead],
+  createPrivateRoute(PAGE_ROUTES.DASHBOARD.ENG_LEAD, EngLeadDashboard, {
+    roles: [UserRole.ENG_LEAD],
   }),
 ];

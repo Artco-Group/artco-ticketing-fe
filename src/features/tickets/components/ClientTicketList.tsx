@@ -1,4 +1,4 @@
-import type { Ticket } from '@/types';
+import type { Ticket } from '@artco-group/artco-ticketing-sync/types';
 import PageHeader from '@/shared/components/layout/PageHeader';
 import TicketCard from './TicketCard';
 

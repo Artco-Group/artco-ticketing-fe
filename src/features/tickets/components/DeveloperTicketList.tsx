@@ -1,4 +1,5 @@
-import type { Ticket, Filters, TicketStatus, TicketCategory } from '@/types';
+import type { Ticket } from '@artco-group/artco-ticketing-sync/types';
+import type { Filters } from '@/types';
 import FilterBar, {
   type FilterConfig,
 } from '@/shared/components/common/FilterBar';
@@ -8,7 +9,10 @@ import {
   priorityConfig,
   categoryColors,
 } from '@/shared/utils/ticket-helpers';
-import { formatDate, formatDateTime } from '@/shared/utils/date-time-utils';
+import {
+  formatDateLocalized,
+  formatDateTime,
+} from '@artco-group/artco-ticketing-sync/utils';
 import {
   textColumn,
   customColumn,
@@ -89,8 +93,7 @@ function DeveloperTicketList({
       'category',
       'Category',
       (category) =>
-        categoryColors[category as TicketCategory] ||
-        'bg-gray-100 text-gray-800 border-gray-200'
+        categoryColors[category] || 'bg-gray-100 text-gray-800 border-gray-200'
     ),
     customColumn<Ticket>('priority', 'Priority', (ticket) => (
       <span
@@ -103,10 +106,9 @@ function DeveloperTicketList({
       'status',
       'Status',
       (status) =>
-        statusColors[status as TicketStatus] ||
-        'bg-gray-100 text-gray-800 border-gray-200'
+        statusColors[status] || 'bg-gray-100 text-gray-800 border-gray-200'
     ),
-    dateColumn<Ticket>('createdAt', 'Created', formatDate, {
+    dateColumn<Ticket>('createdAt', 'Created', formatDateLocalized, {
       className: 'text-gray-600',
     }),
     customColumn<Ticket>('lastUpdated', 'Last Updated', (ticket) => (

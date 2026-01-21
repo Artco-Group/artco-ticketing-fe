@@ -1,10 +1,10 @@
-import type { Ticket } from '@/types';
+import type { Ticket } from '@artco-group/artco-ticketing-sync/types';
 import {
   statusColors,
   priorityConfig,
   categoryColors,
 } from '@/shared/utils/ticket-helpers';
-import { formatDate } from '@/shared/utils/date-time-utils';
+import { formatDateLocalized } from '@artco-group/artco-ticketing-sync/utils';
 
 interface TicketCardProps {
   ticket: Ticket;
@@ -62,7 +62,7 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
           </span>
         </div>
         <span className="text-xs text-gray-400">
-          {formatDate(ticket.createdAt || '')}
+          {ticket.createdAt ? formatDateLocalized(ticket.createdAt) : ''}
         </span>
       </div>
     </div>

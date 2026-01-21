@@ -1,5 +1,6 @@
-import { UserRole } from '@/types';
-import type { User } from '@/types';
+import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
+import type { User } from '@artco-group/artco-ticketing-sync/types';
+import { isUserRole } from '@artco-group/artco-ticketing-sync/utils';
 
 /**
  * Type-safe function to check if a user has one of the allowed roles
@@ -11,12 +12,8 @@ export function hasRole(
   if (!user || !user.role) {
     return false;
   }
+  if (!isUserRole(user.role)) {
+    return false;
+  }
   return allowedRoles.includes(user.role);
-}
-
-/**
- * Type guard to check if a value is a valid UserRole
- */
-export function isUserRole(value: unknown): value is UserRole {
-  return Object.values(UserRole).includes(value as UserRole);
 }

@@ -3,7 +3,7 @@ import { type RouteObject } from 'react-router-dom';
 import { RouteGuard } from '@features/auth/components/RouteGuard';
 import { MainLayout } from '@shared/components/layout/MainLayout';
 import { LoadingOverlay } from '@shared/components/ui/LoadingOverlay';
-import { UserRole } from '@/types';
+import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
 
 interface RouteOptions {
   roles?: UserRole[];

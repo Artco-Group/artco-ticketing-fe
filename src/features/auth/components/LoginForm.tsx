@@ -1,35 +1,40 @@
-import type { FormEvent } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import gsap from 'gsap';
 import { toast } from 'sonner';
 import { useLogin } from '../api/auth-api';
 import { useAuth } from '../context';
 import type { AxiosError } from 'axios';
-import { ROUTES } from '@/app/routes/constants';
-
-interface ApiErrorResponse {
-  message?: string;
-}
+import { PAGE_ROUTES } from '@artco-group/artco-ticketing-sync/constants';
+import { loginSchema } from '@artco-group/artco-ticketing-sync/validations';
+import type { LoginFormData } from '@artco-group/artco-ticketing-sync/types';
+import { extractErrorMessage } from '@artco-group/artco-ticketing-sync/errors';
 
 export function LoginForm() {
   const loginMutation = useLogin();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
 
   const titleRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
 
   // Redirect to dashboard when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       // Use replace to prevent back navigation to login page
-      navigate(ROUTES.DASHBOARD, { replace: true });
+      navigate(PAGE_ROUTES.DASHBOARD.ROOT, { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -99,19 +104,21 @@ export function LoginForm() {
     return () => ctx.revert();
   }, []);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError('');
-
+  const onSubmit = async (data: LoginFormData) => {
     try {
-      await loginMutation.mutateAsync({ email, password });
+      await loginMutation.mutateAsync(data);
       toast.success('Uspešno ste se prijavili');
-      // Navigation will happen automatically via useEffect when isAuthenticated becomes true
+      // Navigation happens via useEffect watching isAuthenticated
+      // The mutation's onSuccess sets query data, which updates isAuthenticated
     } catch (err) {
-      const axiosError = err as AxiosError<ApiErrorResponse>;
+      const axiosError = err as AxiosError<{
+        message?: string;
+        error?: string;
+      }>;
       const errorMessage =
-        axiosError.response?.data?.message || 'Greška pri prijavljivanju';
-      setError(errorMessage);
+        axiosError.response?.data?.message ||
+        axiosError.response?.data?.error ||
+        extractErrorMessage(err);
       toast.error(errorMessage);
     }
   };
@@ -127,13 +134,13 @@ export function LoginForm() {
         </p>
       </div>
 
-      {error && (
-        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit(onSubmit)(e);
+        }}
+        noValidate
+      >
         <div className="form-group mb-5">
           <label
             className="mb-2 block text-[14px] font-medium text-[#374151]"
@@ -156,16 +163,16 @@ export function LoginForm() {
             </svg>
             <input
               id="email"
-              name="email"
               type="email"
               autoComplete="email"
-              className="max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid border-[#e5e7eb] bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none"
+              className={`max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none ${errors.email ? 'border-red-500' : 'border-[#e5e7eb]'}`}
               placeholder="vase.ime@kompanija.ba"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              {...register('email')}
             />
           </div>
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+          )}
         </div>
 
         <div className="form-group relative mb-5">
@@ -190,14 +197,11 @@ export function LoginForm() {
             </svg>
             <input
               id="password"
-              name="password"
               type={showPassword ? 'text' : 'password'}
               autoComplete="current-password"
-              className="max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid border-[#e5e7eb] bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none"
+              className={`max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none ${errors.password ? 'border-red-500' : 'border-[#e5e7eb]'}`}
               placeholder="Unesite vašu lozinku"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              {...register('password')}
             />
             <button
               type="button"
@@ -232,6 +236,11 @@ export function LoginForm() {
               )}
             </button>
           </div>
+          {errors.password && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <div className="form-group max-smx:flex-col max-smx:items-start max-smx:gap-3 mb-6 flex items-center justify-between">
@@ -246,7 +255,7 @@ export function LoginForm() {
             <span className="text-[14px] text-[#4b5563]">Zapamti me</span>
           </label>
           <Link
-            to={ROUTES.AUTH.FORGOT_PASSWORD}
+            to={PAGE_ROUTES.AUTH.FORGOT_PASSWORD}
             className="decoration-none text-[14px] font-medium text-[#004179] transition-colors duration-200 ease-in-out hover:text-[#003366] hover:underline"
           >
             Zaboravljena lozinka?

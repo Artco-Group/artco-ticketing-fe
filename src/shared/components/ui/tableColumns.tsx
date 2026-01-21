@@ -112,7 +112,7 @@ export function badgeColumn<T>(
 export function dateColumn<T>(
   key: string,
   label: string,
-  formatFn: (dateString: string) => string,
+  formatFn: (dateValue: string | Date) => string,
   options: ColumnOptions = {}
 ): Column<T> {
   const {
@@ -131,11 +131,17 @@ export function dateColumn<T>(
     align,
     className: `${alignClass} ${className}`.trim(),
     headerClassName: `${alignClass} ${headerClassName}`.trim(),
-    render: (row: T) => (
-      <div className={`text-sm ${className}`.trim()}>
-        {formatFn((row as Record<string, unknown>)[key] as string)}
-      </div>
-    ),
+    render: (row: T) => {
+      const value = (row as Record<string, unknown>)[key] as
+        | string
+        | Date
+        | undefined;
+      return (
+        <div className={`text-sm ${className}`.trim()}>
+          {value ? formatFn(value) : ''}
+        </div>
+      );
+    },
   };
 }
 

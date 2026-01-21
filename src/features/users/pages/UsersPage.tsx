@@ -5,13 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Skeleton } from '@/shared/components/ui';
 import Sidebar from '@/shared/components/layout/Sidebar';
-
-interface UserFormData {
-  name?: string;
-  email?: string;
-  role?: string;
-  password?: string;
-}
+import type {
+  CreateUserFormData,
+  UpdateUserFormData,
+} from '@artco-group/artco-ticketing-sync/types';
 
 export default function UsersPage() {
   const { data, isLoading, error } = useUsers();
@@ -26,14 +23,17 @@ export default function UsersPage() {
   const handleUserAction = async (
     action: 'add' | 'edit' | 'delete',
     userId: string | null,
-    formData?: UserFormData
+    formData?: CreateUserFormData | UpdateUserFormData
   ) => {
     try {
       if (action === 'add' && formData) {
-        await createUserMutation.mutateAsync(formData);
+        await createUserMutation.mutateAsync(formData as CreateUserFormData);
         toast.success('User created successfully');
       } else if (action === 'edit' && userId && formData) {
-        await updateUserMutation.mutateAsync({ id: userId, data: formData });
+        await updateUserMutation.mutateAsync({
+          id: userId,
+          data: formData as UpdateUserFormData,
+        });
         toast.success('User updated successfully');
       } else if (action === 'delete' && userId) {
         await deleteUserMutation.mutateAsync(userId);

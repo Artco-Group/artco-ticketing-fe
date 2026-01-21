@@ -1,32 +1,67 @@
-import type { ChangeEvent, FormEvent, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
-import type { TicketFormData } from '@/types';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createTicketSchema } from '@artco-group/artco-ticketing-sync/validations';
+import type { CreateTicketFormData } from '@artco-group/artco-ticketing-sync/types';
+import {
+  TicketCategory,
+  TicketPriority,
+  TicketCategoryDisplay,
+  TicketPriorityDisplay,
+} from '@artco-group/artco-ticketing-sync/enums';
 import FileUpload from '@/shared/components/common/FileUpload';
 import ScreenRecorder from '@/shared/components/common/ScreenRecorder';
 import PageHeader from '@/shared/components/layout/PageHeader';
 
 interface TicketFormProps {
-  formData: TicketFormData;
   userEmail: string;
   onLogout: () => void;
-  onFormChange: (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  onSubmit: (
+    data: CreateTicketFormData,
+    files: File[],
+    screenRecording: { file: File; duration: number } | null
   ) => void;
-  onSubmit: (e: FormEvent<HTMLFormElement>, files: File[]) => void;
   onCancel: () => void;
-  onScreenRecordingChange: (file: File | null, duration: number) => void;
+  isSubmitting?: boolean;
 }
 
 function TicketForm({
-  formData,
   userEmail,
   onLogout,
-  onFormChange,
   onSubmit,
   onCancel,
-  onScreenRecordingChange,
+  isSubmitting = false,
 }: TicketFormProps) {
   const [files, setFiles] = useState<File[]>([]);
+  const [screenRecording, setScreenRecording] = useState<{
+    file: File;
+    duration: number;
+  } | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CreateTicketFormData>({
+    resolver: zodResolver(createTicketSchema),
+    defaultValues: {
+      priority: 'Low',
+    },
+  });
+
+  const handleFormSubmit = (data: CreateTicketFormData) => {
+    onSubmit(data, files, screenRecording);
+  };
+
+  const handleScreenRecordingChange = (file: File | null, duration: number) => {
+    if (file) {
+      setScreenRecording({ file, duration });
+    } else {
+      setScreenRecording(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <PageHeader
@@ -38,42 +73,46 @@ function TicketForm({
 
       <main className="mx-auto max-w-4xl px-6 py-8">
         <form
-          onSubmit={(e) => onSubmit(e, files)}
+          onSubmit={handleSubmit(handleFormSubmit)}
           className="rounded-xl border border-gray-200 bg-white p-8"
         >
           {/* Title */}
-          <FormField label="Naslov" required>
+          <FormField label="Naslov" required error={errors.title?.message}>
             <input
               id="title"
-              name="title"
               type="text"
               autoComplete="off"
-              value={formData.title}
-              onChange={onFormChange}
               placeholder="Kratak opis problema"
-              required
-              className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none ${errors.title ? 'border-red-500' : 'border-gray-200'}`}
+              {...register('title')}
             />
           </FormField>
 
           {/* Category */}
-          <FormField label="Kategorija" required>
+          <FormField
+            label="Kategorija"
+            required
+            error={errors.category?.message}
+          >
             <select
               id="category"
-              name="category"
               autoComplete="off"
-              value={formData.category}
-              onChange={onFormChange}
-              required
-              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none ${errors.category ? 'border-red-500' : 'border-gray-200'}`}
+              {...register('category')}
             >
               <option value="">Odaberite kategoriju</option>
-              <option value="Bug">Bug</option>
-              <option value="Feature Request">
-                Zahtjev za novu funkcionalnost
+              <option value={TicketCategory.BUG}>
+                {TicketCategoryDisplay[TicketCategory.BUG]}
               </option>
-              <option value="Question">Pitanje</option>
-              <option value="Other">Ostalo</option>
+              <option value={TicketCategory.FEATURE_REQUEST}>
+                {TicketCategoryDisplay[TicketCategory.FEATURE_REQUEST]}
+              </option>
+              <option value={TicketCategory.QUESTION}>
+                {TicketCategoryDisplay[TicketCategory.QUESTION]}
+              </option>
+              <option value={TicketCategory.OTHER}>
+                {TicketCategoryDisplay[TicketCategory.OTHER]}
+              </option>
             </select>
           </FormField>
 
@@ -81,28 +120,23 @@ function TicketForm({
           <FormField label="Pogođeni proizvod/modul">
             <input
               id="affectedModule"
-              name="affectedModule"
               type="text"
               autoComplete="off"
-              value={formData.affectedModule}
-              onChange={onFormChange}
               placeholder="npr. Mobile App, Admin Panel"
               className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              {...register('affectedModule')}
             />
           </FormField>
 
           {/* Description */}
-          <FormField label="Opis" required>
+          <FormField label="Opis" required error={errors.description?.message}>
             <textarea
               id="description"
-              name="description"
               autoComplete="off"
-              value={formData.description}
-              onChange={onFormChange}
               placeholder="Detaljno opišite problem ili zahtjev"
-              required
               rows={10}
-              className="w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              className={`w-full resize-y rounded-lg border px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none ${errors.description ? 'border-red-500' : 'border-gray-200'}`}
+              {...register('description')}
             />
           </FormField>
 
@@ -110,13 +144,11 @@ function TicketForm({
           <FormField label="Koraci za reprodukciju (ako je primjenjivo)">
             <textarea
               id="reproductionSteps"
-              name="reproductionSteps"
               autoComplete="off"
-              value={formData.reproductionSteps}
-              onChange={onFormChange}
               placeholder="1. Idite na...&#10;2. Kliknite na...&#10;3. Primijetite..."
               rows={5}
               className="w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              {...register('reproductionSteps')}
             />
           </FormField>
 
@@ -124,13 +156,11 @@ function TicketForm({
           <FormField label="Očekivani rezultat">
             <textarea
               id="expectedResult"
-              name="expectedResult"
               autoComplete="off"
-              value={formData.expectedResult}
-              onChange={onFormChange}
               placeholder="Šta bi se trebalo desiti?"
               rows={3}
               className="w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              {...register('expectedResult')}
             />
           </FormField>
 
@@ -138,13 +168,11 @@ function TicketForm({
           <FormField label="Stvarni rezultat">
             <textarea
               id="actualResult"
-              name="actualResult"
               autoComplete="off"
-              value={formData.actualResult}
-              onChange={onFormChange}
               placeholder="Šta se zapravo dešava?"
               rows={3}
               className="w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              {...register('actualResult')}
             />
           </FormField>
 
@@ -156,7 +184,7 @@ function TicketForm({
           {/* Screen Recording */}
           <FormField label="Snimak Ekrana (Opciono)">
             <ScreenRecorder
-              onRecordingComplete={onScreenRecordingChange}
+              onRecordingComplete={handleScreenRecordingChange}
               disabled={false}
             />
             <p className="mt-2 text-xs text-gray-500">
@@ -168,16 +196,22 @@ function TicketForm({
           <FormField label="Prioritet">
             <select
               id="priority"
-              name="priority"
               autoComplete="off"
-              value={formData.priority}
-              onChange={onFormChange}
               className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              {...register('priority')}
             >
-              <option value="Low">Nizak</option>
-              <option value="Medium">Srednji</option>
-              <option value="High">Visok</option>
-              <option value="Critical">Kritičan</option>
+              <option value={TicketPriority.LOW}>
+                {TicketPriorityDisplay[TicketPriority.LOW]}
+              </option>
+              <option value={TicketPriority.MEDIUM}>
+                {TicketPriorityDisplay[TicketPriority.MEDIUM]}
+              </option>
+              <option value={TicketPriority.HIGH}>
+                {TicketPriorityDisplay[TicketPriority.HIGH]}
+              </option>
+              <option value={TicketPriority.CRITICAL}>
+                {TicketPriorityDisplay[TicketPriority.CRITICAL]}
+              </option>
             </select>
           </FormField>
 
@@ -186,15 +220,17 @@ function TicketForm({
             <button
               type="button"
               onClick={onCancel}
-              className="px-6 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+              disabled={isSubmitting}
+              className="px-6 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 disabled:opacity-50"
             >
               Odustani
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-[#004179] px-6 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-[#003366]"
+              disabled={isSubmitting}
+              className="rounded-lg bg-[#004179] px-6 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-[#003366] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Pošalji tiket
+              {isSubmitting ? 'Slanje...' : 'Pošalji tiket'}
             </button>
           </div>
         </form>
@@ -206,16 +242,18 @@ function TicketForm({
 interface FormFieldProps {
   label: string;
   required?: boolean;
+  error?: string;
   children: ReactNode;
 }
 
-function FormField({ label, required, children }: FormFieldProps) {
+function FormField({ label, required, error, children }: FormFieldProps) {
   return (
     <div className="mb-6">
       <label className="mb-2 block text-sm font-medium text-gray-700">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {children}
+      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>
   );
 }

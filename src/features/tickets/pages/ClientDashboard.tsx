@@ -1,7 +1,11 @@
-import type { ChangeEvent, FormEvent } from 'react';
+import type { FormEvent } from 'react';
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import type { Ticket, Comment, TicketFormData } from '@/types';
+import type {
+  Ticket,
+  Comment,
+  CreateTicketFormData,
+} from '@artco-group/artco-ticketing-sync/types';
 import type { AxiosError } from 'axios';
 
 import {
@@ -9,7 +13,6 @@ import {
   TicketForm,
   ClientTicketDetail,
 } from '../components';
-import { initialFormData } from '@/shared/utils/ticket-helpers';
 
 import { useAuth } from '@/features/auth/context';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -33,13 +36,6 @@ function ClientDashboard() {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  // Form state for new ticket
-  const [formData, setFormData] = useState<TicketFormData>(initialFormData);
-
-  // Screen recording state
-  const [screenRecording, setScreenRecording] = useState<File | null>(null);
-  const [recordingDuration, setRecordingDuration] = useState(0);
 
   // Comment state
   const [newComment, setNewComment] = useState('');
@@ -130,12 +126,10 @@ function ClientDashboard() {
   const handleLogout = () => {
     logout();
     navigate('/login');
-    // TODO: Implement logout logic
   };
 
   const handleCreateTicket = () => {
     setCurrentView('create');
-    setFormData(initialFormData);
   };
 
   const handleViewTicket = async (ticket: Ticket) => {
@@ -159,35 +153,34 @@ function ClientDashboard() {
     setSearchParams(searchParams);
   };
 
-  const handleFormChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  const handleSubmitTicket = async (
+    data: CreateTicketFormData,
+    files: File[],
+    screenRecording: { file: File; duration: number } | null
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmitTicket = async (e: FormEvent, files: File[]) => {
-    e.preventDefault();
-    if (!formData.title || !formData.category || !formData.description) {
-      toast.error('Molimo popunite sva obavezna polja.');
-      return;
-    }
-
     try {
       // Create FormData to send files as multipart/form-data
       const formDataToSend = new FormData();
-      formDataToSend.append('title', formData.title);
+      formDataToSend.append('title', data.title);
       formDataToSend.append('clientEmail', user?.email || '');
-      formDataToSend.append('category', formData.category);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('affectedModule', formData.affectedModule || '');
-      formDataToSend.append(
-        'reproductionSteps',
-        formData.reproductionSteps || ''
-      );
-      formDataToSend.append('expectedResult', formData.expectedResult || '');
-      formDataToSend.append('actualResult', formData.actualResult || '');
-      formDataToSend.append('priority', formData.priority || 'Low');
+      formDataToSend.append('category', data.category);
+      formDataToSend.append('description', data.description);
+
+      if (data.affectedModule) {
+        formDataToSend.append('affectedModule', data.affectedModule);
+      }
+      if (data.reproductionSteps) {
+        formDataToSend.append('reproductionSteps', data.reproductionSteps);
+      }
+      if (data.expectedResult) {
+        formDataToSend.append('expectedResult', data.expectedResult);
+      }
+      if (data.actualResult) {
+        formDataToSend.append('actualResult', data.actualResult);
+      }
+      if (data.priority) {
+        formDataToSend.append('priority', data.priority);
+      }
 
       // Append regular attachments
       files.forEach((file) => {
@@ -196,15 +189,14 @@ function ClientDashboard() {
 
       // Append screen recording if present
       if (screenRecording) {
-        formDataToSend.append('screenRecording', screenRecording);
-        formDataToSend.append('recordingDuration', String(recordingDuration));
+        formDataToSend.append('screenRecording', screenRecording.file);
+        formDataToSend.append(
+          'recordingDuration',
+          String(screenRecording.duration)
+        );
       }
 
       await createTicketMutation.mutateAsync(formDataToSend);
-
-      // Reset screen recording state
-      setScreenRecording(null);
-      setRecordingDuration(0);
 
       // Wait a bit for backend to process
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -213,31 +205,20 @@ function ClientDashboard() {
       await refetchTickets();
 
       setCurrentView('list');
-      toast.success('Ticket created successfully');
+      toast.success('Tiket uspješno kreiran');
     } catch (error) {
       console.error('Failed to create ticket:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
       toast.error(
-        axiosError.response?.data?.message || 'Failed to create ticket'
+        axiosError.response?.data?.message || 'Greška pri kreiranju tiketa'
       );
     }
   };
 
   const handleCancelCreate = () => {
-    const hasData = Object.values(formData).some((val) =>
-      Array.isArray(val) ? val.length > 0 : val !== ''
-    );
-    if (hasData) {
-      if (
-        confirm(
-          'Imate nesačuvane podatke. Da li ste sigurni da želite odustati?'
-        )
-      ) {
-        handleBackToList();
-      }
-    } else {
-      handleBackToList();
-    }
+    // TicketForm now manages its own state, so we can just go back
+    // If needed, we could add a confirmation dialog here
+    handleBackToList();
   };
 
   const handleAddComment = async (e: FormEvent) => {
@@ -250,13 +231,13 @@ function ClientDashboard() {
         comment: { text: newComment },
       });
       setNewComment('');
-      toast.success('Comment added successfully');
+      toast.success('Komentar uspješno dodan');
       refetchComments();
     } catch (error) {
       console.error('Failed to add comment:', error);
       const axiosError = error as AxiosError<ApiErrorResponse>;
       toast.error(
-        axiosError.response?.data?.message || 'Failed to add comment'
+        axiosError.response?.data?.message || 'Greška pri dodavanju komentara'
       );
     }
   };
@@ -313,16 +294,11 @@ function ClientDashboard() {
       )}
       {currentView === 'create' && (
         <TicketForm
-          formData={formData}
           userEmail={user?.email || ''}
           onLogout={handleLogout}
-          onFormChange={handleFormChange}
           onSubmit={handleSubmitTicket}
           onCancel={handleCancelCreate}
-          onScreenRecordingChange={(file, duration) => {
-            setScreenRecording(file);
-            setRecordingDuration(duration);
-          }}
+          isSubmitting={createTicketMutation.isPending}
         />
       )}
       {currentView === 'detail' && selectedTicket && (

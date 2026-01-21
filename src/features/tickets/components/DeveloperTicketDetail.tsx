@@ -1,6 +1,10 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import type { Ticket, Comment, User } from '@/types';
+import type {
+  Ticket,
+  Comment,
+  User,
+} from '@artco-group/artco-ticketing-sync/types';
 import { toast } from 'sonner';
 import PageHeader from '@/shared/components/layout/PageHeader';
 import CommentThread from './CommentThread';
