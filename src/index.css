@@ -30,3 +30,30 @@
   --breakpoint-mdx: 968px;
   --breakpoint-lgx: 1200px;
 }
+
+/* Semantic color tokens for theming and future dark mode support */
+:root {
+  /* Background colors */
+  --color-background: var(--color-greyscale-0);
+  --color-background-subtle: var(--color-greyscale-100);
+
+  /* Foreground/text colors */
+  --color-foreground: var(--color-greyscale-900);
+  --color-foreground-muted: var(--color-greyscale-500);
+
+  /* Border colors */
+  --color-border: var(--color-greyscale-200);
+  --color-border-focus: var(--color-primary-500);
+
+  /* Accent/primary colors */
+  --color-accent: var(--color-primary-500);
+  --color-accent-hover: var(--color-primary-600);
+
+  /* Destructive/error colors */
+  --color-destructive: var(--color-error-500);
+  --color-destructive-hover: var(--color-error-600);
+
+  /* Focus ring colors with transparency */
+  --color-ring: color-mix(in srgb, var(--color-primary-500) 20%, transparent);
+  --color-ring-error: color-mix(in srgb, var(--color-error-500) 20%, transparent);
+}
