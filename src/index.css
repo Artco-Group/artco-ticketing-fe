@@ -31,29 +31,63 @@
   --breakpoint-lgx: 1200px;
 }
 
-/* Semantic color tokens for theming and future dark mode support */
+/* Semantic color tokens from Figma - Light Mode */
 :root {
-  /* Background colors */
-  --color-background: var(--color-greyscale-0);
-  --color-background-subtle: var(--color-greyscale-100);
+  /* ========== colors-background ========== */
+  --colors-background-disabled: var(--color-greyscale-200);
+  --colors-background-selected: var(--color-greyscale-100);
+  --colors-background-light-default: var(--color-greyscale-0);
+  --colors-background-light-secondary: var(--color-greyscale-100);
+  --colors-background-light-pressed: var(--color-greyscale-300);
+  --colors-background-brand-default: var(--color-greyscale-900);
+  --colors-background-brand-hovered: var(--color-greyscale-700);
+  --colors-background-brand-pressed: var(--color-greyscale-700);
+  --colors-background-danger-default: var(--color-red-600);
+  --colors-background-danger-pressed: var(--color-red-500);
+  --colors-background-danger-hovered: var(--color-red-700);
 
-  /* Foreground/text colors */
-  --color-foreground: var(--color-greyscale-900);
-  --color-foreground-muted: var(--color-greyscale-500);
+  /* ========== colors-text ========== */
+  --colors-text-default: var(--color-greyscale-900);
+  --colors-text-secondary: var(--color-greyscale-600);
+  --colors-text-tertiary: var(--color-greyscale-500);
+  --colors-text-placeholder: var(--color-greyscale-400);
+  --colors-text-success: var(--color-green-600);
+  --colors-text-caution: var(--color-violet-600);
+  --colors-text-core: var(--color-blue-100);
+  --colors-text-light-default: var(--color-greyscale-0);
+  --colors-text-light-secondary: var(--color-greyscale-100);
+  --colors-text-danger-default: var(--color-red-600);
+  --colors-text-danger-secondary: var(--color-greyscale-0);
 
-  /* Border colors */
-  --color-border: var(--color-greyscale-200);
-  --color-border-focus: var(--color-primary-500);
+  /* ========== colors-icon ========== */
+  --colors-icon-default: var(--color-greyscale-900);
+  --colors-icon-secondary: var(--color-greyscale-700);
+  --colors-icon-tertiary: var(--color-greyscale-500);
+  --colors-icon-divider: var(--color-greyscale-300);
+  --colors-icon-light: var(--color-greyscale-0);
+  --colors-icon-component: var(--color-purple-600);
+  --colors-icon-notive: var(--color-orange-800);
+  --colors-icon-support: var(--color-pink-600);
+  --colors-icon-info: var(--color-teal-600);
+  --colors-icon-core: var(--color-blue-600);
+  --colors-icon-feature: var(--color-teal-200);
+  --colors-icon-highlight: var(--color-violet-600);
+  --colors-icon-caution: var(--color-violet-800);
+  --colors-icon-success: var(--color-green-600);
+  --colors-icon-danger-default: var(--color-red-600);
+  --colors-icon-danger-secondary: var(--color-red-500);
 
-  /* Accent/primary colors */
-  --color-accent: var(--color-primary-500);
-  --color-accent-hover: var(--color-primary-600);
+  /* ========== colors-border ========== */
+  --colors-border-default: var(--color-greyscale-200);
+  --colors-border-secondary: var(--color-greyscale-100);
+  --colors-border-inverse: var(--color-greyscale-0);
+  --colors-border-selected: var(--color-greyscale-700);
+  --colors-border-component: var(--color-purple-500);
+}
 
-  /* Destructive/error colors */
-  --color-destructive: var(--color-error-500);
-  --color-destructive-hover: var(--color-error-600);
-
-  /* Focus ring colors with transparency */
-  --color-ring: color-mix(in srgb, var(--color-primary-500) 20%, transparent);
-  --color-ring-error: color-mix(in srgb, var(--color-error-500) 20%, transparent);
+/* Dark Mode support (to be implemented) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode mappings can be added here following Figma's Dark Mode column */
+  }
 }
