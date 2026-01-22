@@ -64,6 +64,19 @@ export default {
         18: '72px', // Custom spacing for larger layouts
         22: '88px', // Custom spacing for larger layouts
       },
+      borderRadius: {
+        // Figma design system border radius scale
+        none: '0px', // 0rem
+        xs: '2px', // 0.125rem
+        sm: '4px', // 0.25rem
+        md: '8px', // 0.5rem
+        lg: '10px', // 0.625rem
+        xl: '12px', // 0.75rem
+        '2xl': '16px', // 1rem
+        '3xl': '20px', // 1.25rem
+        '4xl': '24px', // 1.5rem
+        full: '999px', // 62.438rem - Fully rounded corners
+      },
       colors: {
         // Brand primary (Blue from Figma - mapped to primary)
         primary: {
