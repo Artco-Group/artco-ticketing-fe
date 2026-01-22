@@ -40,6 +40,30 @@ export default {
         'label-sm': ['12px', { lineHeight: '16px', fontWeight: '500' }],
         caption: ['11px', { lineHeight: '14px' }],
       },
+      spacing: {
+        // Figma design system spacing scale
+        none: '0px', // 0rem
+        xxs: '2px', // 0.125rem
+        xs: '4px', // 0.25rem
+        sm: '6px', // 0.375rem
+        md: '8px', // 0.5rem
+        lg: '12px', // 0.75rem
+        xl: '16px', // 1rem
+        '2xl': '20px', // 1.25rem
+        '3xl': '24px', // 1.5rem
+        '4xl': '32px', // 2rem
+        '5xl': '40px', // 2.5rem
+        '6xl': '48px', // 3rem
+        '7xl': '64px', // 4rem
+
+        // Component-specific custom spacing values (outside standard scale)
+        4.5: '18px', // Between 4 (16px) and 5 (20px)
+        11.5: '46px', // For input icon padding (used in LoginForm, ForgotPasswordForm, PasswordResetPage)
+        13: '52px', // Custom spacing for larger layouts
+        15: '60px', // Custom spacing for larger layouts
+        18: '72px', // Custom spacing for larger layouts
+        22: '88px', // Custom spacing for larger layouts
+      },
       colors: {
         // Brand primary (Blue from Figma - mapped to primary)
         primary: {
