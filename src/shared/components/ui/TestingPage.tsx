@@ -3,9 +3,14 @@ import { Button } from './Button/Button';
 import { Input } from './Input';
 import { PasswordInput } from './PasswordInput';
 import { Select } from './Select';
+import { Checkbox } from './Checkbox';
+import { Switch } from './Switch';
 
 export default function TestingPage() {
   const [selectedValue, setSelectedValue] = useState<string>('option2');
+  const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [indeterminateChecked, setIndeterminateChecked] = useState(false);
+  const [switchChecked, setSwitchChecked] = useState(false);
   return (
     <div className="flex min-h-screen flex-col gap-8 bg-slate-50 p-8 text-slate-900">
       <h1 className="text-2xl font-bold">UI Components Playground</h1>
@@ -235,6 +240,76 @@ export default function TestingPage() {
             <p className="text-greyscale-600 text-sm">
               Selected: {selectedValue}
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold">Checkbox Component</h2>
+        <div className="flex max-w-md flex-col gap-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Basic</h3>
+            <Checkbox label="Unchecked checkbox" />
+            <Checkbox label="Checked checkbox" checked />
+            <Checkbox
+              label="Controlled checkbox"
+              checked={checkboxChecked}
+              onChange={(e) => setCheckboxChecked(e.target.checked)}
+            />
+            <Checkbox label="Disabled unchecked" disabled />
+            <Checkbox label="Disabled checked" checked disabled />
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Indeterminate</h3>
+            <Checkbox
+              label="Indeterminate checkbox"
+              indeterminate
+              checked={false}
+            />
+            <Checkbox
+              label="Controlled indeterminate"
+              indeterminate={indeterminateChecked}
+              checked={false}
+              onChange={(e) => setIndeterminateChecked(e.target.checked)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Without Label</h3>
+            <div className="flex items-center gap-4">
+              <Checkbox />
+              <Checkbox checked />
+              <Checkbox indeterminate />
+              <Checkbox disabled />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold">Switch Component</h2>
+        <div className="flex max-w-md flex-col gap-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Basic</h3>
+            <Switch label="Off switch" checked={false} />
+            <Switch label="On switch" checked />
+            <Switch
+              label="Controlled switch"
+              checked={switchChecked}
+              onChange={setSwitchChecked}
+            />
+            <Switch label="Disabled off" disabled />
+            <Switch label="Disabled on" checked disabled />
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Without Label</h3>
+            <div className="flex items-center gap-4">
+              <Switch />
+              <Switch checked />
+              <Switch disabled />
+            </div>
           </div>
         </div>
       </section>
