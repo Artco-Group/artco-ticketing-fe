@@ -5,6 +5,7 @@ import { Toaster } from 'sonner';
 import { queryClient } from '@shared/lib/query-client';
 import { AuthProvider } from '@features/auth/context';
 import { allRoutes } from '@app/routes';
+//import TestingPage from '@/shared/components/ui/TestingPage';
 
 const router = createBrowserRouter(allRoutes);
 
@@ -17,5 +18,7 @@ export default function App() {
       </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
+
+    //<TestingPage />
   );
 }
