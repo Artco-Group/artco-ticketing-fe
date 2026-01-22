@@ -18,7 +18,5 @@ export default function App() {
       </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-
-    //<TestingPage />
   );
 }
