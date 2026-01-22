@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner';
 import Sidebar from '@/shared/components/layout/Sidebar';
 import Table from '@/shared/components/ui/Table';
+import { EmptyState } from '@/shared/components/ui';
 import FilterBar, {
   type FilterConfig,
 } from '@/shared/components/common/FilterBar';
@@ -204,25 +205,11 @@ function EngLeadUserManagement({
   ];
 
   const emptyState = (
-    <div className="py-12 text-center">
-      <svg
-        className="mx-auto h-12 w-12 text-gray-400"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-        />
-      </svg>
-      <h3 className="mt-2 text-sm font-medium text-gray-900">No users found</h3>
-      <p className="mt-1 text-sm text-gray-500">
-        No users match your current search and filters.
-      </p>
-    </div>
+    <EmptyState
+      variant="no-users"
+      title="No users found"
+      description="No users match your current search and filters."
+    />
   );
 
   return (
