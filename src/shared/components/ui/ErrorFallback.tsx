@@ -100,7 +100,7 @@ export function ErrorFallback({
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <button
             onClick={handleRetry}
-            className="rounded-lg bg-[#004179] px-6 py-3 font-semibold text-white transition-colors hover:bg-[#003366] focus:ring-2 focus:ring-[#004179] focus:ring-offset-2 focus:outline-none"
+            className="bg-primary-500 hover:bg-primary-600 focus:ring-primary-500 rounded-lg px-6 py-3 font-semibold text-white transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
           >
             Try Again
           </button>

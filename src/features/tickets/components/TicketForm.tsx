@@ -83,7 +83,7 @@ function TicketForm({
               type="text"
               autoComplete="off"
               placeholder="Kratak opis problema"
-              className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none ${errors.title ? 'border-red-500' : 'border-gray-200'}`}
+              className={`focus:border-primary-500 focus:ring-primary-500/10 w-full rounded-lg border px-4 py-3 text-sm text-gray-900 transition-all focus:ring-2 focus:outline-none ${errors.title ? 'border-red-500' : 'border-gray-200'}`}
               {...register('title')}
             />
           </FormField>
@@ -97,7 +97,7 @@ function TicketForm({
             <select
               id="category"
               autoComplete="off"
-              className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none ${errors.category ? 'border-red-500' : 'border-gray-200'}`}
+              className={`focus:border-primary-500 focus:ring-primary-500/10 w-full rounded-lg border bg-white px-4 py-3 text-sm text-gray-900 transition-all focus:ring-2 focus:outline-none ${errors.category ? 'border-red-500' : 'border-gray-200'}`}
               {...register('category')}
             >
               <option value="">Odaberite kategoriju</option>
@@ -123,7 +123,7 @@ function TicketForm({
               type="text"
               autoComplete="off"
               placeholder="npr. Mobile App, Admin Panel"
-              className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              className="focus:border-primary-500 focus:ring-primary-500/10 w-full rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:ring-2 focus:outline-none"
               {...register('affectedModule')}
             />
           </FormField>
@@ -135,7 +135,7 @@ function TicketForm({
               autoComplete="off"
               placeholder="Detaljno opišite problem ili zahtjev"
               rows={10}
-              className={`w-full resize-y rounded-lg border px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none ${errors.description ? 'border-red-500' : 'border-gray-200'}`}
+              className={`focus:border-primary-500 focus:ring-primary-500/10 w-full resize-y rounded-lg border px-4 py-3 text-sm text-gray-900 transition-all focus:ring-2 focus:outline-none ${errors.description ? 'border-red-500' : 'border-gray-200'}`}
               {...register('description')}
             />
           </FormField>
@@ -147,7 +147,7 @@ function TicketForm({
               autoComplete="off"
               placeholder="1. Idite na...&#10;2. Kliknite na...&#10;3. Primijetite..."
               rows={5}
-              className="w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              className="focus:border-primary-500 focus:ring-primary-500/10 w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:ring-2 focus:outline-none"
               {...register('reproductionSteps')}
             />
           </FormField>
@@ -159,7 +159,7 @@ function TicketForm({
               autoComplete="off"
               placeholder="Šta bi se trebalo desiti?"
               rows={3}
-              className="w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              className="focus:border-primary-500 focus:ring-primary-500/10 w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:ring-2 focus:outline-none"
               {...register('expectedResult')}
             />
           </FormField>
@@ -171,7 +171,7 @@ function TicketForm({
               autoComplete="off"
               placeholder="Šta se zapravo dešava?"
               rows={3}
-              className="w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              className="focus:border-primary-500 focus:ring-primary-500/10 w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:ring-2 focus:outline-none"
               {...register('actualResult')}
             />
           </FormField>
@@ -197,7 +197,7 @@ function TicketForm({
             <select
               id="priority"
               autoComplete="off"
-              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              className="focus:border-primary-500 focus:ring-primary-500/10 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 transition-all focus:ring-2 focus:outline-none"
               {...register('priority')}
             >
               <option value={TicketPriority.LOW}>
@@ -228,7 +228,7 @@ function TicketForm({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-lg bg-[#004179] px-6 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-[#003366] disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-primary-500 hover:bg-primary-600 rounded-lg px-6 py-2.5 text-sm font-medium text-white transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? 'Slanje...' : 'Pošalji tiket'}
             </button>

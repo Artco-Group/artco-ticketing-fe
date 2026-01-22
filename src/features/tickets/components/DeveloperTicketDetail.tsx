@@ -110,7 +110,7 @@ function DeveloperTicketDetail({
             <button
               onClick={handleResolve}
               disabled={ticket.status !== 'In Progress' || isUpdating}
-              className="rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366] disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-primary-500 hover:bg-primary-600 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isUpdating ? (
                 <div className="flex items-center justify-center gap-2">

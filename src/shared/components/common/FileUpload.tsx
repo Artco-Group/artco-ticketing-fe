@@ -122,8 +122,8 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
     <div>
       {/* Drop zone */}
       <div
-        className={`cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors hover:border-[#004179] ${
-          isDragging ? 'border-[#004179] bg-blue-50' : 'border-gray-200'
+        className={`hover:border-primary-500 cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
+          isDragging ? 'border-primary-500 bg-blue-50' : 'border-gray-200'
         }`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -181,8 +181,9 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
                       height="20"
                       viewBox="0 0 24 24"
                       fill="none"
-                      stroke="#004179"
+                      stroke="currentColor"
                       strokeWidth="2"
+                      className="text-primary-500"
                     >
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                       <circle cx="8.5" cy="8.5" r="1.5" />
@@ -209,8 +210,9 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
                       height="20"
                       viewBox="0 0 24 24"
                       fill="none"
-                      stroke="#004179"
+                      stroke="currentColor"
                       strokeWidth="2"
+                      className="text-primary-500"
                     >
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                       <polyline points="14 2 14 8 20 8" />

@@ -105,7 +105,7 @@ export default function ScreenRecorder({
   // State 2: Recording finished - show preview with confirm/discard buttons
   if (!confirmed && previewUrl && recordedVideo && !recording) {
     return (
-      <div className="rounded-lg border-2 border-[#004179] bg-blue-50 p-4">
+      <div className="border-primary-500 rounded-lg border-2 bg-blue-50 p-4">
         <p className="mb-3 text-sm font-medium text-gray-900">
           Pregled snimka ({(recordedVideo.size / (1024 * 1024)).toFixed(2)} MB)
         </p>
@@ -121,7 +121,7 @@ export default function ScreenRecorder({
           <button
             type="button"
             onClick={handleConfirm}
-            className="flex-1 rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
+            className="bg-primary-500 hover:bg-primary-600 flex-1 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
           >
             ✓ Potvrdi
           </button>
@@ -202,7 +202,7 @@ export default function ScreenRecorder({
           type="button"
           onClick={startRecording}
           disabled={disabled}
-          className="mt-3 rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366] disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-primary-500 hover:bg-primary-600 mt-3 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           🎥 Započni Snimanje
         </button>

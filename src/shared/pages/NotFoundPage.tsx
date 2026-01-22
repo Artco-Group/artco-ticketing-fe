@@ -14,7 +14,7 @@ export default function NotFoundPage() {
         </p>
         <Link
           to={PAGE_ROUTES.DASHBOARD.ROOT}
-          className="mt-6 inline-block rounded-lg bg-[#004179] px-6 py-3 text-white transition-colors hover:bg-[#003366]"
+          className="bg-primary-500 hover:bg-primary-600 mt-6 inline-block rounded-lg px-6 py-3 text-white transition-colors"
         >
           Go to Dashboard
         </Link>

@@ -148,7 +148,7 @@ export function LoginForm() {
           >
             Email adresa
           </label>
-          <div className="relative flex items-center focus-within:text-[#004179]">
+          <div className="focus-within:text-primary-500 relative flex items-center">
             <svg
               className="pointer-events-none absolute left-3.5 z-1 text-[#9ca3af] transition-colors duration-200 ease-in-out"
               width="20"
@@ -165,7 +165,7 @@ export function LoginForm() {
               id="email"
               type="email"
               autoComplete="email"
-              className={`max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out placeholder:text-[#9ca3af] focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none ${errors.email ? 'border-red-500' : 'border-[#e5e7eb]'}`}
+              className={`max-smx:py-3 max-smx:px-4 max-smx:text-[14px] focus:border-primary-500 focus:ring-primary-500/10 box-border w-full rounded-[10px] border border-solid bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out placeholder:text-[#9ca3af] focus:ring-2 focus:outline-none ${errors.email ? 'border-red-500' : 'border-[#e5e7eb]'}`}
               placeholder="vase.ime@kompanija.ba"
               {...register('email')}
             />
@@ -182,7 +182,7 @@ export function LoginForm() {
           >
             Lozinka
           </label>
-          <div className="relative flex items-center focus-within:text-[#004179]">
+          <div className="focus-within:text-primary-500 relative flex items-center">
             <svg
               className="pointer-events-none absolute left-3.5 z-1 text-[#9ca3af] transition-colors duration-200 ease-in-out"
               width="20"
@@ -199,7 +199,7 @@ export function LoginForm() {
               id="password"
               type={showPassword ? 'text' : 'password'}
               autoComplete="current-password"
-              className={`max-smx:py-3 max-smx:px-4 max-smx:text-[14px] box-border w-full rounded-[10px] border border-solid bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out focus:border-[#004179] focus:shadow-[0_0_0_3px_rgba(0,65,121,0.1)] focus:outline-none ${errors.password ? 'border-red-500' : 'border-[#e5e7eb]'}`}
+              className={`max-smx:py-3 max-smx:px-4 max-smx:text-[14px] focus:border-primary-500 focus:ring-primary-500/10 box-border w-full rounded-[10px] border border-solid bg-white px-4 py-3.5 pl-11.5 text-[15px] text-[#111827] transition-all duration-300 ease-in-out focus:ring-2 focus:outline-none ${errors.password ? 'border-red-500' : 'border-[#e5e7eb]'}`}
               placeholder="Unesite vašu lozinku"
               {...register('password')}
             />
@@ -256,7 +256,7 @@ export function LoginForm() {
           </label>
           <Link
             to={PAGE_ROUTES.AUTH.FORGOT_PASSWORD}
-            className="decoration-none text-[14px] font-medium text-[#004179] transition-colors duration-200 ease-in-out hover:text-[#003366] hover:underline"
+            className="decoration-none text-primary-500 hover:text-primary-600 text-[14px] font-medium transition-colors duration-200 ease-in-out hover:underline"
           >
             Zaboravljena lozinka?
           </Link>
@@ -265,7 +265,7 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={loginMutation.isPending}
-          className="submit-btn max-smx:py-3 max-smx:px-4 max-smx:text-[14px] from[#003366] foucus:shadow-[0_0_0_3px_rgba(0,65,121,0.3)] flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] bg-linear-to-br from-[#004179] to-[#002244] px-5 py-4 text-[16px] font-semibold text-white transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:transform hover:bg-linear-to-br hover:shadow-[0_6px_20px_rgba(0,65,121,0.35)] focus:outline-none active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
+          className="submit-btn max-smx:py-3 max-smx:px-4 max-smx:text-[14px] from-primary-500 to-primary-900 flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] bg-gradient-to-br px-5 py-4 text-[16px] font-semibold text-white transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:transform hover:shadow-[0_6px_20px_rgba(0,65,121,0.35)] focus:outline-none active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span>
             {loginMutation.isPending ? 'Prijavljivanje...' : 'Prijavite se'}
@@ -292,7 +292,7 @@ export function LoginForm() {
             href="https://www.artcogroup.ba/page/contact"
             target="_blank"
             rel="noopener noreferrer"
-            className="decoration-none font-medium text-[#004179] transition-colors duration-200 ease-in-out hover:text-[#003366] hover:underline"
+            className="decoration-none text-primary-500 hover:text-primary-600 font-medium transition-colors duration-200 ease-in-out hover:underline"
           >
             Kontaktirajte administratora
           </a>

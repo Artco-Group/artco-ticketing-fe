@@ -26,7 +26,7 @@ function ClientTicketList({
         rightContent={
           <button
             onClick={onCreateTicket}
-            className="flex items-center gap-2 rounded-lg bg-[#004179] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-[#003366]"
+            className="bg-primary-500 hover:bg-primary-600 flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200"
           >
             <svg
               width="20"
@@ -91,7 +91,7 @@ function EmptyState({ onCreateTicket }: EmptyStateProps) {
       <p className="mb-6 text-gray-500">Kreirajte svoj prvi tiket za podršku</p>
       <button
         onClick={onCreateTicket}
-        className="flex items-center gap-2 rounded-lg bg-[#004179] px-6 py-3 font-medium text-white transition-colors duration-200 hover:bg-[#003366]"
+        className="bg-primary-500 hover:bg-primary-600 flex items-center gap-2 rounded-lg px-6 py-3 font-medium text-white transition-colors duration-200"
       >
         <svg
           width="20"

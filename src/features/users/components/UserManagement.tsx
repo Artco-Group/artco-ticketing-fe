@@ -179,7 +179,8 @@ function EngLeadUserManagement({
         icon: EditIcon,
         onClick: handleEditUser,
         label: 'Edit user',
-        className: 'p-1.5 text-gray-400 transition-colors hover:text-[#004179]',
+        className:
+          'p-1.5 text-gray-400 transition-colors hover:text-primary-500',
       },
       {
         icon: DeleteIcon,
@@ -247,7 +248,7 @@ function EngLeadUserManagement({
             </div>
             <button
               onClick={handleAddUser}
-              className="rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
+              className="bg-primary-500 hover:bg-primary-600 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
             >
               Add New User
             </button>
@@ -302,7 +303,7 @@ function EngLeadUserManagement({
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, name: e.target.value }))
                   }
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+                  className="focus:border-primary-500 focus:ring-primary-500/10 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                   required
                 />
               </div>
@@ -320,7 +321,7 @@ function EngLeadUserManagement({
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, email: e.target.value }))
                   }
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+                  className="focus:border-primary-500 focus:ring-primary-500/10 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                   required
                 />
               </div>
@@ -340,7 +341,7 @@ function EngLeadUserManagement({
                       role: e.target.value as UserRole,
                     }))
                   }
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+                  className="focus:border-primary-500 focus:ring-primary-500/10 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                   required
                 >
                   {roles.map((role) => (
@@ -361,7 +362,7 @@ function EngLeadUserManagement({
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
+                  className="bg-primary-500 hover:bg-primary-600 flex-1 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
                 >
                   {editingUser ? 'Save Changes' : 'Add User'}
                 </button>

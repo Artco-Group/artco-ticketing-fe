@@ -278,7 +278,7 @@ function TicketDetails({
                 className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 transition-colors hover:bg-gray-100"
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-[#004179]">
+                  <div className="text-primary-500 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
                     {getFileIcon(attachment.mimetype)}
                   </div>
                   <div>
@@ -294,7 +294,7 @@ function TicketDetails({
                 </div>
                 <button
                   onClick={() => handleDownloadAttachment(attachment, index)}
-                  className="flex items-center gap-2 rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
+                  className="bg-primary-500 hover:bg-primary-600 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
                 >
                   <svg
                     width="16"
@@ -341,7 +341,7 @@ function TicketDetails({
             </div>
             <button
               onClick={handleDownloadScreenRecording}
-              className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
+              className="bg-primary-500 hover:bg-primary-600 w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
             >
               ⬇️ Preuzmi Video
             </button>

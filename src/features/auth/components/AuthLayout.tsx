@@ -96,7 +96,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
           {/* Dark Overlay */}
           <div
-            className="via[#0A1628]/90 absolute top-0 left-0 z-1 h-full w-full bg-linear-135 from-[#004179]/85 to-[#001E3C]/85"
+            className="from-primary-500/85 to-primary-1000/85 absolute top-0 left-0 z-1 h-full w-full bg-gradient-to-br"
             ref={videoOverlayRef}
           ></div>
 
@@ -257,7 +257,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
               </p>
             </div>
             <button
-              className="max-mdx:flex max-mdx:items-center max-mdx:justify-center max-mdx:mt-5 max-mdx:gap-2 max-mdx:w-full max-mdx:h-14 max-mdx:py-4.5 max-mdx:px-6 max-mdx:bg-linear-135 max-mdx:text-white max-mdx:font-semibold max-mdx:text-[16px] max-mdx:border-none max-mdx:rounded-[10px] max-mdx:cursor-pointer max-mdx:shadow-[0_4px_12px_rgba(0,0,0,0.15)] max-mdx:transition-all max-mdx:duration-300 max-mdx:ease-in-out max-mdx:tracking[0.3px] max-mdx:hover:bg-linear-135 max-mdx:hover:transform max-mdx:hover:-translate-y-0.5 max-mdx:hover:shadow-[0_6px_20px_rgba(0,65,121,0.35)] max-mdx:active:translate-y-0 z-10 hidden cursor-pointer border-none bg-linear-to-br from-[#004179] to-[#003366] text-[16px] text-white"
+              className="max-mdx:flex max-mdx:items-center max-mdx:justify-center max-mdx:mt-5 max-mdx:gap-2 max-mdx:w-full max-mdx:h-14 max-mdx:py-4.5 max-mdx:px-6 max-mdx:bg-linear-135 max-mdx:text-white max-mdx:font-semibold max-mdx:text-[16px] max-mdx:border-none max-mdx:rounded-[10px] max-mdx:cursor-pointer max-mdx:shadow-[0_4px_12px_rgba(0,0,0,0.15)] max-mdx:transition-all max-mdx:duration-300 max-mdx:ease-in-out max-mdx:tracking[0.3px] max-mdx:hover:bg-linear-135 max-mdx:hover:transform max-mdx:hover:-translate-y-0.5 max-mdx:hover:shadow-[0_6px_20px_rgba(0,65,121,0.35)] max-mdx:active:translate-y-0 from-primary-500 to-primary-600 z-10 hidden cursor-pointer border-none bg-gradient-to-br text-[16px] text-white"
               onClick={closeBrandingModal}
             >
               <span>Nastavi</span>

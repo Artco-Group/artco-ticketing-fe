@@ -64,12 +64,12 @@ function CommentThread({
           onChange={(e) => onCommentChange(e.target.value)}
           placeholder="Napišite odgovor..."
           rows={2}
-          className="flex-1 resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+          className="focus:border-primary-500 focus:ring-primary-500/10 flex-1 resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:ring-2 focus:outline-none"
         />
         <button
           type="submit"
           disabled={!newComment.trim()}
-          className="self-end rounded-lg bg-[#004179] px-5 py-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-[#003366] disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-primary-500 hover:bg-primary-600 self-end rounded-lg px-5 py-3 text-sm font-medium text-white transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Pošalji
         </button>
@@ -91,7 +91,7 @@ function CommentBubble({ comment, currentUser }: CommentBubbleProps) {
       <div
         className={`max-w-[70%] rounded-xl p-4 ${
           thisUser
-            ? 'rounded-br-sm bg-[#004179] text-white'
+            ? 'bg-primary-500 rounded-br-sm text-white'
             : 'rounded-bl-sm bg-gray-100 text-gray-900'
         }`}
       >

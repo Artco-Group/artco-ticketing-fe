@@ -32,7 +32,7 @@ function PageHeader({
             <span className="text-gray-600">{userEmail}</span>
             <button
               onClick={onLogout}
-              className="font-medium text-[#004179] hover:text-[#003366] hover:underline"
+              className="text-primary-500 hover:text-primary-600 font-medium hover:underline"
             >
               Odjava
             </button>

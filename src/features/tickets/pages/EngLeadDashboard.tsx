@@ -579,7 +579,7 @@ function EngLeadDashboard() {
               </button>
               <button
                 onClick={handleConfirmStatusChange}
-                className="flex-1 rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
+                className="bg-primary-500 hover:bg-primary-600 flex-1 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
               >
                 Continue
               </button>

@@ -76,7 +76,7 @@ function LegacySidebar({
       {/* Company Logo */}
       <div className="border-b border-gray-200 p-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#004179]">
+          <div className="bg-primary-500 flex h-8 w-8 items-center justify-center rounded-lg">
             <span className="text-sm font-bold text-white">A</span>
           </div>
           <span className="font-semibold text-gray-900">Artco Group</span>
@@ -91,7 +91,7 @@ function LegacySidebar({
               onClick={onNavigateToTickets}
               className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 currentView === 'tickets' || currentView === 'detail'
-                  ? 'bg-[#004179] text-white'
+                  ? 'bg-primary-500 text-white'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
@@ -116,7 +116,7 @@ function LegacySidebar({
               onClick={onNavigateToUsers}
               className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 currentView === 'users'
-                  ? 'bg-[#004179] text-white'
+                  ? 'bg-primary-500 text-white'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >

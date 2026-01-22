@@ -178,7 +178,7 @@ function EngLeadTicketDetail({
                       autoComplete="off"
                       value={selectedDeveloper}
                       onChange={(e) => setSelectedDeveloper(e.target.value)}
-                      className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+                      className="focus:border-primary-500 focus:ring-primary-500/10 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                     >
                       <option value="">Select Developer</option>
                       {developers.map((dev) => (
@@ -196,7 +196,7 @@ function EngLeadTicketDetail({
                             ? ticket.assignedTo
                             : ticket.assignedTo?._id || '')
                       }
-                      className="rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366] disabled:cursor-not-allowed disabled:opacity-50"
+                      className="bg-primary-500 hover:bg-primary-600 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Assign
                     </button>
@@ -227,7 +227,7 @@ function EngLeadTicketDetail({
                       ticket.status !== 'Open' &&
                       ticket.status !== 'In Progress'
                     }
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    className="focus:border-primary-500 focus:ring-primary-500/10 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
@@ -251,7 +251,7 @@ function EngLeadTicketDetail({
                   <button
                     onClick={handleClose}
                     disabled={ticket.status !== 'Resolved' || isClosing}
-                    className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="bg-primary-500 hover:bg-primary-600 w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isClosing ? (
                       <div className="flex items-center justify-center gap-2">

@@ -61,7 +61,7 @@ function FilterBar({
               placeholder={searchConfig.placeholder || 'Search...'}
               value={searchConfig.value || ''}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+              className="focus:border-primary-500 focus:ring-primary-500/10 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             />
           </div>
         )}
@@ -86,7 +86,7 @@ function FilterBar({
                   onChange={(e) =>
                     handleFilterChange(filter.key, e.target.value)
                   }
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
+                  className="focus:border-primary-500 focus:ring-primary-500/10 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                 >
                   {options.map((option) => {
                     // Support both { value, label } objects and simple strings
