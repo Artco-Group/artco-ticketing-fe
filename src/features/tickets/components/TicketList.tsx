@@ -6,7 +6,7 @@ import {
   formatDateTime,
 } from '@artco-group/artco-ticketing-sync';
 import type { Filters } from '@/types';
-import { Plus, ClipboardList } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import {
   useRoleFlags,
   SummaryCards,
@@ -19,6 +19,7 @@ import {
   dateColumn,
   Button,
   Badge,
+  EmptyState,
 } from '@/shared';
 import {
   statusColors,
@@ -93,11 +94,11 @@ function ClientLayout({
   return (
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-foreground text-2xl font-bold">Moji Tiketi</h1>
+        <h1 className="text-foreground text-2xl font-bold">My Tickets</h1>
         {onCreateTicket && (
           <Button onClick={onCreateTicket}>
             <Plus className="mr-2 h-5 w-5" />
-            Kreiraj novi tiket
+            Create New Ticket
           </Button>
         )}
       </div>
@@ -121,23 +122,20 @@ function ClientLayout({
 
 function ClientEmptyState({ onCreateTicket }: { onCreateTicket?: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20">
-      <div className="bg-muted mb-6 flex h-24 w-24 items-center justify-center rounded-full">
-        <ClipboardList className="text-muted-foreground h-12 w-12" />
-      </div>
-      <h2 className="text-foreground mb-2 text-xl font-semibold">
-        Nemate kreiranih tiketa
-      </h2>
-      <p className="text-muted-foreground mb-6">
-        Kreirajte svoj prvi tiket za podršku
-      </p>
-      {onCreateTicket && (
-        <Button onClick={onCreateTicket} size="lg">
-          <Plus className="mr-2 h-5 w-5" />
-          Kreiraj novi tiket
-        </Button>
-      )}
-    </div>
+    <EmptyState
+      variant="no-tickets"
+      title="No tickets yet"
+      message="Create your first support ticket to get started"
+      action={
+        onCreateTicket && (
+          <Button onClick={onCreateTicket} size="lg">
+            <Plus className="mr-2 h-5 w-5" />
+            Create New Ticket
+          </Button>
+        )
+      }
+      className="min-h-0 py-20"
+    />
   );
 }
 
@@ -390,19 +388,16 @@ function TableLayout({
   const filterConfig = isEngLead ? engLeadFilters : developerFilters;
 
   const emptyState = (
-    <div className="flex flex-col items-center justify-center py-20">
-      <div className="bg-muted mb-6 flex h-24 w-24 items-center justify-center rounded-full">
-        <ClipboardList className="text-muted-foreground h-12 w-12" />
-      </div>
-      <h2 className="text-foreground mb-2 text-xl font-semibold">
-        {isDeveloper ? 'No tickets assigned to you' : 'No tickets found'}
-      </h2>
-      <p className="text-muted-foreground">
-        {isDeveloper
+    <EmptyState
+      variant="no-tickets"
+      title={isDeveloper ? 'No tickets assigned to you' : 'No tickets found'}
+      message={
+        isDeveloper
           ? "You don't have any assigned tickets at the moment"
-          : 'No tickets match your current filters.'}
-      </p>
-    </div>
+          : 'No tickets match your current filters.'
+      }
+      className="min-h-0 py-12"
+    />
   );
 
   const title = isDeveloper ? 'Assigned Tickets' : 'All Tickets';
