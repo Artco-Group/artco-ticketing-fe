@@ -1,11 +1,14 @@
 import type { DragEvent, ChangeEvent, MouseEvent } from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { formatFileSize } from '@artco-group/artco-ticketing-sync/utils';
+import { Upload, Image, FileText, File, X } from 'lucide-react';
 import {
+  formatFileSize,
   VALIDATION_RULES,
   ALLOWED_FILE_TYPES,
-} from '@artco-group/artco-ticketing-sync/constants';
+} from '@artco-group/artco-ticketing-sync';
+import { Card, Button } from '@/shared/components/ui';
+import { cn } from '@/lib/utils';
 
 interface FileUploadProps {
   files: File[];
@@ -122,33 +125,22 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
     <div>
       {/* Drop zone */}
       <div
-        className={`cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors hover:border-[#004179] ${
-          isDragging ? 'border-[#004179] bg-blue-50' : 'border-gray-200'
-        }`}
+        className={cn(
+          'hover:border-primary cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors',
+          isDragging ? 'border-primary bg-primary/5' : 'border-border'
+        )}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={() => document.getElementById('file-input')?.click()}
       >
-        <svg
-          width="40"
-          height="40"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#9ca3af"
-          strokeWidth="1.5"
-          className="mx-auto mb-3"
-        >
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-          <polyline points="17 8 12 3 7 8" />
-          <line x1="12" y1="3" x2="12" y2="15" />
-        </svg>
-        <p className="mb-1 text-sm text-gray-600">
+        <Upload className="text-muted-foreground mx-auto mb-3 h-10 w-10" />
+        <p className="text-muted-foreground mb-1 text-sm">
           {files.length === 0
             ? 'Prevucite datoteke ovdje ili kliknite za odabir'
             : 'Dodajte još datoteka'}
         </p>
-        <p className="text-xs text-gray-400">
+        <p className="text-muted-foreground text-xs">
           Podržano: slike, PDF, dokumenti (max 5MB po fajlu, 15MB ukupno)
         </p>
         <input
@@ -164,89 +156,44 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
       {/* Selected files list */}
       {files.length > 0 && (
         <div className="mt-4 space-y-2">
-          <p className="text-sm font-medium text-gray-700">
+          <p className="text-foreground text-sm font-medium">
             Odabrane datoteke ({files.length}) - Ukupno: {getTotalSize()} / 15MB
           </p>
           {files.map((file, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3"
-            >
+            <Card key={index} className="flex items-center justify-between p-3">
               <div className="flex items-center gap-3">
                 {/* File icon based on type */}
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+                <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
                   {file.type.startsWith('image/') ? (
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#004179"
-                      strokeWidth="2"
-                    >
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                      <circle cx="8.5" cy="8.5" r="1.5" />
-                      <polyline points="21 15 16 10 5 21" />
-                    </svg>
+                    <Image className="text-primary h-5 w-5" />
                   ) : file.type === 'application/pdf' ? (
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#dc2626"
-                      strokeWidth="2"
-                    >
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                      <line x1="16" y1="13" x2="8" y2="13" />
-                      <line x1="16" y1="17" x2="8" y2="17" />
-                      <polyline points="10 9 9 9 8 9" />
-                    </svg>
+                    <FileText className="text-destructive h-5 w-5" />
                   ) : (
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#004179"
-                      strokeWidth="2"
-                    >
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                    </svg>
+                    <File className="text-primary h-5 w-5" />
                   )}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-foreground text-sm font-medium">
                     {file.name}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-muted-foreground text-xs">
                     {formatFileSize(file.size)}
                   </p>
                 </div>
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={(e: MouseEvent) => {
                   e.stopPropagation();
                   removeFile(index);
                 }}
-                className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                className="text-muted-foreground hover:text-destructive"
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
+                <X className="h-5 w-5" />
+              </Button>
+            </Card>
           ))}
         </div>
       )}

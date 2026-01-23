@@ -1,20 +1,13 @@
 import type { ReactNode } from 'react';
-import type {
-  Ticket,
-  Attachment,
-} from '@artco-group/artco-ticketing-sync/types';
+import { type Ticket, formatDateTime } from '@artco-group/artco-ticketing-sync';
 import type { MetaItem } from '@/types';
-import { Skeleton } from '@/shared/components/ui';
 import {
   statusColors,
   priorityConfig,
   categoryColors,
 } from '@/shared/utils/ticket-helpers';
-import {
-  formatDateTime,
-  formatTime,
-} from '@artco-group/artco-ticketing-sync/utils';
-import { formatFileSize } from '@artco-group/artco-ticketing-sync/utils';
+import TicketAttachments from './TicketAttachments';
+import TicketScreenRecording from './TicketScreenRecording';
 
 interface TicketDetailsProps {
   ticket: Ticket | null;
@@ -51,106 +44,18 @@ function TicketDetails({
 }: TicketDetailsProps) {
   if (!ticket) {
     return (
-      <div className={`space-y-6 ${className}`}>
-        <div>
-          <Skeleton className="mb-2 h-8 w-3/4" />
-          <div className="flex gap-2">
-            <Skeleton className="h-6 w-20" />
-            <Skeleton className="h-6 w-20" />
-            <Skeleton className="h-6 w-20" />
-          </div>
-        </div>
-        <div className="space-y-4">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-24 w-full" />
-        </div>
-        <div className="space-y-4">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-24 w-full" />
-        </div>
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-3/4" />
+      <div
+        className={`flex min-h-[50vh] items-center justify-center ${className}`}
+      >
+        <div className="text-center">
+          <div className="border-brand-primary/20 border-t-brand-primary mx-auto h-12 w-12 animate-spin rounded-full border-4"></div>
+          <p className="mt-4 text-gray-600">Loading ticket details...</p>
         </div>
       </div>
     );
   }
 
   const formatDate = customFormatDateTime || formatDateTime;
-
-  const getFileIcon = (mimetype?: string) => {
-    if (mimetype?.startsWith('image/')) {
-      return (
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-          <circle cx="8.5" cy="8.5" r="1.5" />
-          <polyline points="21 15 16 10 5 21" />
-        </svg>
-      );
-    } else if (mimetype === 'application/pdf') {
-      return (
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#dc2626"
-          strokeWidth="2"
-        >
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
-        </svg>
-      );
-    } else {
-      return (
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
-        </svg>
-      );
-    }
-  };
-
-  const handleDownloadAttachment = async (
-    attachment: Attachment,
-    index: number
-  ) => {
-    if (onDownloadAttachment && ticket._id) {
-      await onDownloadAttachment(
-        ticket._id,
-        index,
-        attachment.filename || attachment.originalName || ''
-      );
-    }
-  };
-
-  const handleDownloadScreenRecording = () => {
-    if (
-      onDownloadScreenRecording &&
-      ticket._id &&
-      ticket.screenRecording?.originalName
-    ) {
-      onDownloadScreenRecording(
-        ticket._id,
-        ticket.screenRecording.originalName
-      );
-    }
-  };
 
   // Build metadata items based on props
   const metadataItems: MetaItem[] = [
@@ -266,87 +171,21 @@ function TicketDetails({
       )}
 
       {/* Attachments */}
-      {ticket.attachments && ticket.attachments.length > 0 && (
-        <div className="mt-6">
-          <h3 className="mb-3 text-sm font-semibold text-gray-700">
-            Attachments ({ticket.attachments.length})
-          </h3>
-          <div className="space-y-2">
-            {ticket.attachments.map((attachment, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 transition-colors hover:bg-gray-100"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-[#004179]">
-                    {getFileIcon(attachment.mimetype)}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      {attachment.filename || attachment.originalName}
-                    </p>
-                    {attachment.size && (
-                      <p className="text-xs text-gray-500">
-                        {formatFileSize(attachment.size)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleDownloadAttachment(attachment, index)}
-                  className="flex items-center gap-2 rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                  Preuzmi
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
+      {ticket.attachments && ticket.attachments.length > 0 && ticket._id && (
+        <TicketAttachments
+          attachments={ticket.attachments}
+          ticketId={ticket._id}
+          onDownload={onDownloadAttachment}
+        />
       )}
 
       {/* Screen Recording */}
-      {ticket.screenRecording && ticket.screenRecording.originalName && (
-        <div className="mt-4">
-          <h3 className="mb-3 text-sm font-semibold text-gray-700">
-            Snimak Ekrana
-          </h3>
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  📹 {ticket.screenRecording.originalName}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {((ticket.screenRecording.size ?? 0) / (1024 * 1024)).toFixed(
-                    2
-                  )}{' '}
-                  MB
-                  {ticket.screenRecording.duration && (
-                    <> • {formatTime(ticket.screenRecording.duration)}</>
-                  )}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={handleDownloadScreenRecording}
-              className="w-full rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
-            >
-              ⬇️ Preuzmi Video
-            </button>
-          </div>
-        </div>
+      {ticket.screenRecording && ticket._id && (
+        <TicketScreenRecording
+          screenRecording={ticket.screenRecording}
+          ticketId={ticket._id}
+          onDownload={onDownloadScreenRecording}
+        />
       )}
     </div>
   );

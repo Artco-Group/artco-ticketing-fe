@@ -1,9 +1,9 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
-import { HttpStatus } from '@artco-group/artco-ticketing-sync/enums';
 import {
+  HttpStatus,
   TIMEOUTS,
   CONTENT_TYPES,
-} from '@artco-group/artco-ticketing-sync/constants';
+} from '@artco-group/artco-ticketing-sync';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
