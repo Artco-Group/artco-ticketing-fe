@@ -2,49 +2,61 @@ import { useApiQuery, useApiMutation } from '@/shared/lib/api-hooks';
 import {
   QueryKeys,
   API_ROUTES,
-} from '@artco-group/artco-ticketing-sync/constants';
+  CACHE,
+  type User,
+  type CreateUserFormData,
+  type UpdateUserFormData,
+} from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
-import type {
-  User,
-  CreateUserFormData,
-  UpdateUserFormData,
-} from '@artco-group/artco-ticketing-sync/types';
-import api from '@/shared/lib/api-client';
 
-// Legacy API object for backward compatibility
-export const usersAPI = {
-  getUsers: () => api.get(API_ROUTES.USERS.BASE),
-  createUser: (user: CreateUserFormData) =>
-    api.post(API_ROUTES.USERS.BASE, user),
-  updateUser: (userId: string, user: UpdateUserFormData) =>
-    api.put(API_ROUTES.USERS.BY_ID(userId), user),
-  deleteUser: (userId: string) => api.delete(API_ROUTES.USERS.BY_ID(userId)),
-  getUser: (userId: string) => api.get(API_ROUTES.USERS.BY_ID(userId)),
-  getDevelopers: () => api.get(API_ROUTES.USERS.DEVELOPERS),
-};
-
-// New React Query hooks
-export function useUsers(params?: Record<string, unknown>) {
-  return useApiQuery<{ users: User[] }>(QueryKeys.users.list(params), {
-    url: API_ROUTES.USERS.BASE,
-    params,
-  });
+/** API response wrapper type */
+interface ApiResponse<T> {
+  status: string;
+  data: T;
 }
 
-export function useUser(id: string) {
+/**
+ * Get all users
+ */
+function useUsers(params?: Record<string, unknown>) {
+  return useApiQuery<ApiResponse<{ users: User[] }>>(
+    QueryKeys.users.list(params),
+    {
+      url: API_ROUTES.USERS.BASE,
+      params,
+      staleTime: CACHE.SHORT_STALE_TIME,
+    }
+  );
+}
+
+/**
+ * Get a single user by ID
+ */
+function useUser(id: string) {
   return useApiQuery<{ user: User }>(QueryKeys.users.detail(id), {
     url: API_ROUTES.USERS.BY_ID(id),
     enabled: !!id,
+    staleTime: CACHE.STALE_TIME,
   });
 }
 
-export function useDevelopers() {
-  return useApiQuery<{ users: User[] }>(QueryKeys.users.developers(), {
-    url: API_ROUTES.USERS.DEVELOPERS,
-  });
+/**
+ * Get all developers
+ */
+function useDevelopers() {
+  return useApiQuery<ApiResponse<{ users: User[] }>>(
+    QueryKeys.users.developers(),
+    {
+      url: API_ROUTES.USERS.DEVELOPERS,
+      staleTime: CACHE.STALE_TIME,
+    }
+  );
 }
 
-export function useCreateUser() {
+/**
+ * Create a new user
+ */
+function useCreateUser() {
   return useApiMutation<{ user: User }, CreateUserFormData>({
     url: API_ROUTES.USERS.BASE,
     method: 'POST',
@@ -54,7 +66,10 @@ export function useCreateUser() {
   });
 }
 
-export function useUpdateUser() {
+/**
+ * Update an existing user
+ */
+function useUpdateUser() {
   return useApiMutation<
     { user: User },
     { id: string; data: UpdateUserFormData }
@@ -70,7 +85,10 @@ export function useUpdateUser() {
   });
 }
 
-export function useDeleteUser() {
+/**
+ * Delete a user
+ */
+function useDeleteUser() {
   return useApiMutation<void, string>({
     url: (id) => API_ROUTES.USERS.BY_ID(id),
     method: 'DELETE',
@@ -79,3 +97,26 @@ export function useDeleteUser() {
     },
   });
 }
+
+/**
+ * Namespaced API export (FMROI pattern)
+ */
+export const usersApi = {
+  useUsers,
+  useUser,
+  useDevelopers,
+  useCreateUser,
+  useUpdateUser,
+  useDeleteUser,
+  keys: QueryKeys.users,
+};
+
+// Individual exports for backwards compatibility
+export {
+  useUsers,
+  useUser,
+  useDevelopers,
+  useCreateUser,
+  useUpdateUser,
+  useDeleteUser,
+};

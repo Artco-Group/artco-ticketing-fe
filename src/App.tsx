@@ -1,20 +1,27 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'sonner';
 import { queryClient } from '@shared/lib/query-client';
 import { AuthProvider } from '@features/auth/context';
+import { ErrorBoundary } from '@app/components';
 import { allRoutes } from '@app/routes';
 
-const router = createBrowserRouter(allRoutes);
-
+/**
+ * Main App component
+ * Clean and maintainable - all routing logic is organized in dedicated modules
+ */
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster position="top-right" richColors />
-      </AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <ErrorBoundary>
+            <Routes>{allRoutes}</Routes>
+          </ErrorBoundary>
+          <Toaster position="top-right" richColors />
+        </AuthProvider>
+      </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

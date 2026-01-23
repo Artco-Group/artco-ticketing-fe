@@ -1,0 +1,59 @@
+import {
+  type ScreenRecording,
+  formatTime,
+} from '@artco-group/artco-ticketing-sync';
+
+interface TicketScreenRecordingProps {
+  screenRecording: ScreenRecording;
+  ticketId: string;
+  onDownload?: (ticketId: string, filename: string) => void;
+}
+
+function TicketScreenRecording({
+  screenRecording,
+  ticketId,
+  onDownload,
+}: TicketScreenRecordingProps) {
+  if (!screenRecording || !screenRecording.originalName) {
+    return null;
+  }
+
+  const handleDownload = () => {
+    if (onDownload && screenRecording.originalName) {
+      onDownload(ticketId, screenRecording.originalName);
+    }
+  };
+
+  const fileSizeMB = ((screenRecording.size ?? 0) / (1024 * 1024)).toFixed(2);
+
+  return (
+    <div className="mt-4">
+      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+        Snimak Ekrana
+      </h3>
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-900">
+              {screenRecording.originalName}
+            </p>
+            <p className="text-xs text-gray-500">
+              {fileSizeMB} MB
+              {screenRecording.duration && (
+                <> • {formatTime(screenRecording.duration)}</>
+              )}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={handleDownload}
+          className="bg-brand-primary hover:bg-brand-primary-dark w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+        >
+          Preuzmi Video
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default TicketScreenRecording;
