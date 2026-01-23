@@ -1,9 +1,12 @@
-import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
-import type { User } from '@artco-group/artco-ticketing-sync/types';
-import { isUserRole } from '@artco-group/artco-ticketing-sync/utils';
+import {
+  UserRole,
+  type User,
+  isUserRole,
+} from '@artco-group/artco-ticketing-sync';
 
 /**
- * Type-safe function to check if a user has one of the allowed roles
+ * Type-safe function to check if a user has one of the allowed roles.
+ * Admin role has access to everything.
  */
 export function hasRole(
   user: User | null | undefined,
@@ -14,6 +17,10 @@ export function hasRole(
   }
   if (!isUserRole(user.role)) {
     return false;
+  }
+  // Admin has access to everything
+  if (user.role === UserRole.ADMIN) {
+    return true;
   }
   return allowedRoles.includes(user.role);
 }

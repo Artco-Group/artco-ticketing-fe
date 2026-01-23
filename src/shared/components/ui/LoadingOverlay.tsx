@@ -1,5 +1,7 @@
-import { useEffect, useRef, type ReactNode } from 'react';
-import gsap from 'gsap';
+import type { ReactNode } from 'react';
+import { Card, CardContent } from './card';
+import { Spinner } from './Spinner';
+import { cn } from '@/lib/utils';
 
 export interface LoadingOverlayProps {
   isLoading?: boolean;
@@ -16,69 +18,33 @@ export function LoadingOverlay({
   zIndex = 9999,
   children,
 }: LoadingOverlayProps = {}) {
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!overlayRef.current || !contentRef.current) return;
-
-    if (isLoading) {
-      // Fade in
-      gsap.fromTo(
-        overlayRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.2, ease: 'power2.out' }
-      );
-      gsap.fromTo(
-        contentRef.current,
-        { opacity: 0, scale: 0.95, y: 10 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: 'power3.out' }
-      );
-    } else {
-      // Fade out
-      gsap.to(overlayRef.current, {
-        opacity: 0,
-        duration: 0.2,
-        ease: 'power2.in',
-        onComplete: () => {
-          // Keep overlay mounted but invisible for smooth transitions
-        },
-      });
-    }
-  }, [isLoading]);
-
   // Always render when used as Suspense fallback (isLoading defaults to true)
   // Only hide if explicitly set to false
   if (!isLoading) {
     return null;
   }
 
-  const positionClasses = fullScreen ? 'fixed inset-0' : 'absolute inset-0';
-
   return (
     <div
-      ref={overlayRef}
-      className={`${positionClasses} flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity`}
+      className={cn(
+        'animate-in fade-in flex items-center justify-center bg-black/40 backdrop-blur-sm duration-200',
+        fullScreen ? 'fixed inset-0' : 'absolute inset-0'
+      )}
       style={{ zIndex, pointerEvents: isLoading ? 'auto' : 'none' }}
     >
-      <div
-        ref={contentRef}
-        className="flex flex-col items-center gap-4 rounded-xl bg-white p-8 shadow-xl"
-      >
-        {/* Spinner */}
-        <div className="relative h-12 w-12">
-          <div className="absolute inset-0 rounded-full border-4 border-gray-200"></div>
-          <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-[#004179]"></div>
-        </div>
+      <Card className="animate-in fade-in zoom-in-95 duration-300">
+        <CardContent className="flex flex-col items-center gap-4 p-8">
+          <Spinner size="lg" />
 
-        {/* Message */}
-        {message && (
-          <p className="text-sm font-medium text-gray-700">{message}</p>
-        )}
+          {message && (
+            <p className="text-muted-foreground text-sm font-medium">
+              {message}
+            </p>
+          )}
 
-        {/* Custom children */}
-        {children}
-      </div>
+          {children}
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -1,16 +1,15 @@
-import type { ReactElement } from 'react';
-import type { Ticket } from '@artco-group/artco-ticketing-sync/types';
+import type { Ticket } from '@artco-group/artco-ticketing-sync';
+import { cn } from '@/lib/utils';
+import { ClipboardList, AlertTriangle, AlertCircle } from 'lucide-react';
+import { Card, CardContent } from '../ui';
+import { useTicketSummary } from '../../hooks';
 
 interface SummaryCardsProps {
   tickets: Ticket[];
 }
 
 function SummaryCards({ tickets }: SummaryCardsProps) {
-  const totalOpen = tickets.filter(
-    (t) => t.status !== 'Closed' && t.status !== 'Resolved'
-  ).length;
-  const unassigned = tickets.filter((t) => !t.assignedTo).length;
-  const critical = tickets.filter((t) => t.priority === 'Critical').length;
+  const { totalOpen, unassigned, critical } = useTicketSummary(tickets);
 
   return (
     <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -61,41 +60,31 @@ function SummaryCard({
     red: 'bg-red-50 text-red-600',
   };
 
-  const iconSvgs: Record<IconType, ReactElement> = {
-    tickets: (
-      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-    ),
-    alert: (
-      <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
-    ),
-    warning: <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
-  };
+  const IconComponent = {
+    tickets: ClipboardList,
+    alert: AlertTriangle,
+    warning: AlertCircle,
+  }[icon];
 
   return (
-    <div
-      className={`summary-card rounded-xl border border-gray-200 bg-white p-6 ${highlighted ? 'ring-2 ring-orange-200' : ''}`}
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="mt-1 text-3xl font-bold text-gray-900">{value}</p>
-        </div>
-        <div
-          className={`flex h-12 w-12 items-center justify-center rounded-lg ${colorClasses[color]}`}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
+    <Card className={cn(highlighted && 'ring-2 ring-orange-200')}>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-muted-foreground text-sm font-medium">{title}</p>
+            <p className="text-foreground mt-1 text-3xl font-bold">{value}</p>
+          </div>
+          <div
+            className={cn(
+              'flex h-12 w-12 items-center justify-center rounded-lg',
+              colorClasses[color]
+            )}
           >
-            {iconSvgs[icon]}
-          </svg>
+            <IconComponent className="h-6 w-6" />
+          </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 

@@ -1,9 +1,19 @@
 import { lazy } from 'react';
-import { createPrivateRoute } from '@shared/utils/route-helpers';
-import { PAGE_ROUTES } from '@artco-group/artco-ticketing-sync/constants';
+import { PAGE_ROUTES } from '@/shared/constants';
+import { createPrivateRoute } from '@/shared/utils/route-helpers';
 
-const DashboardRouter = lazy(() => import('./pages/DashboardRouter'));
+// Lazy load dashboard page
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 
+/**
+ * Dashboard feature routes
+ * Main dashboard with role-based content
+ */
 export const dashboardRoutes = [
-  createPrivateRoute(PAGE_ROUTES.DASHBOARD.ROOT, DashboardRouter),
+  createPrivateRoute(
+    'dashboard',
+    PAGE_ROUTES.DASHBOARD.ROOT,
+    'dashboard',
+    DashboardPage
+  ),
 ];
