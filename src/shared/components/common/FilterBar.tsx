@@ -1,3 +1,15 @@
+import {
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Card,
+  Label,
+} from '@/shared/components/ui';
+import { cn } from '@/lib/utils';
+
 export interface FilterOption {
   value: string;
   label: string;
@@ -49,19 +61,16 @@ function FilterBar({
   };
 
   return (
-    <div
-      className={`rounded-xl border border-gray-200 bg-white p-4 ${className}`.trim()}
-    >
+    <Card className={cn('p-4', className)}>
       <div className="flex flex-wrap items-center gap-4">
         {/* Search Input */}
         {searchConfig && (
           <div className="min-w-64 flex-1">
-            <input
+            <Input
               type="text"
               placeholder={searchConfig.placeholder || 'Search...'}
               value={searchConfig.value || ''}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
             />
           </div>
         )}
@@ -77,35 +86,37 @@ function FilterBar({
             return (
               <div key={filter.key} className="flex items-center gap-2">
                 {filter.label && (
-                  <label className="text-sm font-medium text-gray-700">
-                    {filter.label}:
-                  </label>
+                  <Label className="text-sm font-medium">{filter.label}:</Label>
                 )}
-                <select
+                <Select
                   value={filter.value || 'All'}
-                  onChange={(e) =>
-                    handleFilterChange(filter.key, e.target.value)
+                  onValueChange={(value) =>
+                    handleFilterChange(filter.key, value)
                   }
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#004179] focus:ring-2 focus:ring-[#004179]/10 focus:outline-none"
                 >
-                  {options.map((option) => {
-                    // Support both { value, label } objects and simple strings
-                    if (typeof option === 'string') {
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {options.map((option) => {
+                      // Support both { value, label } objects and simple strings
+                      if (typeof option === 'string') {
+                        return (
+                          <SelectItem key={option} value={option}>
+                            {option === 'All'
+                              ? `All ${filter.label || ''}`
+                              : option}
+                          </SelectItem>
+                        );
+                      }
                       return (
-                        <option key={option} value={option}>
-                          {option === 'All'
-                            ? `All ${filter.label || ''}`
-                            : option}
-                        </option>
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
                       );
-                    }
-                    return (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    );
-                  })}
-                </select>
+                    })}
+                  </SelectContent>
+                </Select>
               </div>
             );
           }
@@ -114,7 +125,7 @@ function FilterBar({
           return null;
         })}
       </div>
-    </div>
+    </Card>
   );
 }
 

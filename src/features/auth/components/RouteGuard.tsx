@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context';
 import { LoadingOverlay } from '@/shared/components/ui';
-import { PAGE_ROUTES } from '@artco-group/artco-ticketing-sync/constants';
-import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
+import { PAGE_ROUTES } from '@/shared/constants';
+import { UserRole } from '@artco-group/artco-ticketing-sync';
 import { hasRole } from '@/shared/utils/role-helpers';
 
 interface RouteGuardProps {

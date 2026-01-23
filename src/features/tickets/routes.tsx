@@ -1,20 +1,36 @@
 import { lazy } from 'react';
-import { createPrivateRoute } from '@shared/utils/route-helpers';
-import { PAGE_ROUTES } from '@artco-group/artco-ticketing-sync/constants';
-import { UserRole } from '@artco-group/artco-ticketing-sync/enums';
+import { PAGE_ROUTES, ROUTE_PATTERNS } from '@/shared/constants';
+import { createPrivateRoute } from '@/shared/utils/route-helpers';
 
-const ClientDashboard = lazy(() => import('./pages/ClientDashboard'));
-const DeveloperDashboard = lazy(() => import('./pages/DeveloperDashboard'));
-const EngLeadDashboard = lazy(() => import('./pages/EngLeadDashboard'));
+// Lazy load ticket pages
+const TicketListPage = lazy(() => import('./pages/TicketListPage'));
+const TicketDetailPage = lazy(() => import('./pages/TicketDetailPage'));
+const TicketCreatePage = lazy(() => import('./pages/TicketCreatePage'));
 
+/**
+ * Ticket feature routes
+ * Includes ticket list, detail view and create ticket form
+ */
 export const ticketRoutes = [
-  createPrivateRoute(PAGE_ROUTES.DASHBOARD.CLIENT, ClientDashboard, {
-    roles: [UserRole.CLIENT],
-  }),
-  createPrivateRoute(PAGE_ROUTES.DASHBOARD.DEVELOPER, DeveloperDashboard, {
-    roles: [UserRole.DEVELOPER],
-  }),
-  createPrivateRoute(PAGE_ROUTES.DASHBOARD.ENG_LEAD, EngLeadDashboard, {
-    roles: [UserRole.ENG_LEAD],
-  }),
+  // Ticket list route
+  createPrivateRoute(
+    'ticket-list',
+    PAGE_ROUTES.TICKETS.LIST,
+    'tickets',
+    TicketListPage
+  ),
+  // Create ticket route (must come before detail to avoid matching :id)
+  createPrivateRoute(
+    'ticket-create',
+    PAGE_ROUTES.TICKETS.CREATE,
+    'tickets',
+    TicketCreatePage
+  ),
+  // Ticket detail route
+  createPrivateRoute(
+    'ticket-detail',
+    ROUTE_PATTERNS.TICKET_DETAIL,
+    'tickets',
+    TicketDetailPage
+  ),
 ];

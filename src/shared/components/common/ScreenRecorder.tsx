@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { Video, X } from 'lucide-react';
 import { useScreenRecorder } from '@/shared/hooks/useScreenRecorder';
-import { formatTime } from '@artco-group/artco-ticketing-sync/utils';
+import { formatTime } from '@artco-group/artco-ticketing-sync';
+import { SCREEN_RECORDING } from '@/config';
 
 interface ScreenRecorderProps {
   onRecordingComplete: (file: File | null, duration: number) => void;
@@ -25,8 +27,8 @@ export default function ScreenRecorder({
     startRecording,
     stopRecording,
   } = useScreenRecorder({
-    maxDuration: 180, // 3 minutes
-    bitrate: 1000000, // 1 Mbps
+    maxDuration: SCREEN_RECORDING.MAX_DURATION_SECONDS,
+    bitrate: SCREEN_RECORDING.BITRATE,
     onComplete: (file, actualDuration) => {
       setRecordedVideo(file);
       setDuration(actualDuration);
@@ -76,19 +78,7 @@ export default function ScreenRecorder({
             onClick={handleRemove}
             className="text-red-600 transition-colors hover:text-red-700"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -105,7 +95,7 @@ export default function ScreenRecorder({
   // State 2: Recording finished - show preview with confirm/discard buttons
   if (!confirmed && previewUrl && recordedVideo && !recording) {
     return (
-      <div className="rounded-lg border-2 border-[#004179] bg-blue-50 p-4">
+      <div className="border-brand-primary rounded-lg border-2 bg-blue-50 p-4">
         <p className="mb-3 text-sm font-medium text-gray-900">
           Pregled snimka ({(recordedVideo.size / (1024 * 1024)).toFixed(2)} MB)
         </p>
@@ -121,7 +111,7 @@ export default function ScreenRecorder({
           <button
             type="button"
             onClick={handleConfirm}
-            className="flex-1 rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366]"
+            className="bg-brand-primary hover:bg-brand-primary-dark flex-1 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
           >
             ✓ Potvrdi
           </button>
@@ -177,19 +167,7 @@ export default function ScreenRecorder({
   return (
     <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-4">
       <div className="text-center">
-        <svg
-          className="mx-auto h-12 w-12 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-          />
-        </svg>
+        <Video className="mx-auto h-12 w-12 text-gray-400" />
 
         <p className="mt-2 text-sm font-medium text-gray-900">
           Snimite Problem
@@ -202,7 +180,7 @@ export default function ScreenRecorder({
           type="button"
           onClick={startRecording}
           disabled={disabled}
-          className="mt-3 rounded-lg bg-[#004179] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#003366] disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-brand-primary hover:bg-brand-primary-dark mt-3 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           🎥 Započni Snimanje
         </button>
