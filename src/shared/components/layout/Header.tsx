@@ -1,30 +1,83 @@
 import { useAuth } from '@/features/auth/context';
+import { UserRole, UserRoleDisplay } from '@artco-group/artco-ticketing-sync';
+import type { PageConfig } from '@/app/config/page-configs';
 import {
-  UserRole,
-  UserRoleDisplay,
-} from '@artco-group/artco-ticketing-sync/enums';
+  Button,
+  Avatar,
+  AvatarFallback,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/components/ui';
+import { LogOut } from 'lucide-react';
 
-export function Header() {
+interface HeaderProps {
+  pageConfig?: PageConfig;
+}
+
+export function Header({ pageConfig }: HeaderProps) {
   const { user, logout } = useAuth();
 
+  const getInitials = (name?: string) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
-    <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white shadow">
-      <div className="flex flex-1 justify-end px-4">
+    <div className="bg-card sticky top-0 z-10 flex h-16 shrink-0 border-b shadow-sm">
+      <div className="flex flex-1 items-center justify-between px-4">
+        {/* Page title from config */}
+        <div className="flex items-center gap-3">
+          {pageConfig?.title && (
+            <h1 className="text-foreground text-lg font-semibold">
+              {pageConfig.title}
+            </h1>
+          )}
+        </div>
+
         <div className="ml-4 flex items-center md:ml-6">
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-700">{user?.name}</p>
-              <p className="text-xs text-gray-500">
-                {user?.role && UserRoleDisplay[user.role as UserRole]}
-              </p>
-            </div>
-            <button
-              onClick={logout}
-              className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-gray-300 ring-inset hover:bg-gray-50"
-            >
-              Logout
-            </button>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="relative h-10 w-10 rounded-full"
+              >
+                <Avatar className="h-10 w-10">
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    {getInitials(user?.name)}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm leading-none font-medium">
+                    {user?.name}
+                  </p>
+                  <p className="text-muted-foreground text-xs leading-none">
+                    {user?.email}
+                  </p>
+                  <p className="text-muted-foreground text-xs leading-none">
+                    {user?.role && UserRoleDisplay[user.role as UserRole]}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={logout} className="text-destructive">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>

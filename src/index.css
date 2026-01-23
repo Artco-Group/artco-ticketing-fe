@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   @keyframes softPulse {
@@ -30,207 +33,271 @@
   --breakpoint-mdx: 968px;
   --breakpoint-lgx: 1200px;
 
-  /* Brand primary (Blue from Figma - mapped to primary) */
-  --color-primary-50: #F2F9FF;
-  --color-primary-100: #E5F4FF;
-  --color-primary-200: #BBE3FF;
-  --color-primary-300: #80CAFF;
-  --color-primary-400: #0D99FF;
-  --color-primary-500: #004179;
-  --color-primary-600: #007BE5;
-  --color-primary-700: #0768CF;
-  --color-primary-800: #034AC1;
-  --color-primary-900: #093077;
-  --color-primary-1000: #0D193F;
+  /* Typography scale */
+  --font-size-heading-h1: 48px;
+  --font-size-heading-h1--line-height: 56px;
+  --font-size-heading-h1--letter-spacing: -0.02em;
+  --font-size-heading-h1--font-weight: 700;
 
-  /* Greyscale (from Figma) */
-  --color-greyscale-0: #FFFFFF;
-  --color-greyscale-100: #F5F5F5;
-  --color-greyscale-200: #E0E0E0;
-  --color-greyscale-300: #9D9D9D;
-  --color-greyscale-400: #8C8C8C;
-  --color-greyscale-500: #757575;
-  --color-greyscale-600: #444444;
-  --color-greyscale-700: #383838;
-  --color-greyscale-800: #2C2C2C;
-  --color-greyscale-900: #1E1E1E;
-  --color-greyscale-1000: #111111;
+  --font-size-heading-h2: 40px;
+  --font-size-heading-h2--line-height: 48px;
+  --font-size-heading-h2--letter-spacing: -0.02em;
+  --font-size-heading-h2--font-weight: 700;
 
-  /* Teal (from Figma) */
-  --color-teal-100: #EBF6FF;
-  --color-teal-200: #CEF0F8;
-  --color-teal-300: #B6ECF7;
-  --color-teal-400: #75D7F0;
-  --color-teal-500: #00A2C2;
-  --color-teal-600: #0087A8;
-  --color-teal-700: #047195;
-  --color-teal-800: #085A78;
-  --color-teal-900: #093C53;
-  --color-teal-1000: #0E2F43;
+  --font-size-heading-h3: 32px;
+  --font-size-heading-h3--line-height: 40px;
+  --font-size-heading-h3--letter-spacing: -0.01em;
+  --font-size-heading-h3--font-weight: 700;
 
-  /* Pink (from Figma) */
-  --color-pink-100: #FFF0FE;
-  --color-pink-200: #FFE0FC;
-  --color-pink-300: #FFBDF2;
-  --color-pink-400: #FF99E0;
-  --color-pink-500: #FF24BD;
-  --color-pink-600: #EA10AC;
-  --color-pink-700: #C80B96;
-  --color-pink-800: #971172;
-  --color-pink-900: #5F114C;
-  --color-pink-1000: #451138;
+  --font-size-heading-h4: 24px;
+  --font-size-heading-h4--line-height: 32px;
+  --font-size-heading-h4--letter-spacing: -0.01em;
+  --font-size-heading-h4--font-weight: 600;
 
-  /* Red (from Figma) */
-  --color-red-100: #FFF5F5;
-  --color-red-200: #FFE2E0;
-  --color-red-300: #FFC7C2;
-  --color-red-400: #FFAFA3;
-  --color-red-500: #F24822;
-  --color-red-600: #DC3412;
-  --color-red-700: #BD2915;
-  --color-red-800: #9F1F18;
-  --color-red-900: #771208;
-  --color-red-1000: #660E0B;
+  --font-size-heading-h5: 20px;
+  --font-size-heading-h5--line-height: 28px;
+  --font-size-heading-h5--font-weight: 600;
 
-  /* Orange (from Figma) */
-  --color-orange-100: #FFF4E5;
-  --color-orange-200: #FFE0C2;
-  --color-orange-300: #FCD19C;
-  --color-orange-400: #FFC470;
-  --color-orange-500: #FFAB29;
-  --color-orange-600: #FC9E24;
-  --color-orange-700: #F79722;
-  --color-orange-800: #DD7C0E;
-  --color-orange-900: #CE7012;
-  --color-orange-1000: #8A480F;
+  --font-size-heading-h6: 18px;
+  --font-size-heading-h6--line-height: 24px;
+  --font-size-heading-h6--font-weight: 600;
 
-  /* Violet (from Figma) */
-  --color-violet-100: #F5F5FF;
-  --color-violet-200: #EBEBFF;
-  --color-violet-300: #D3D1FF;
-  --color-violet-400: #B4B2FF;
-  --color-violet-500: #4D49FC;
-  --color-violet-600: #443DEB;
-  --color-violet-700: #3D32E2;
-  --color-violet-800: #3620DF;
-  --color-violet-900: #2F15AC;
-  --color-violet-1000: #1D1254;
+  --font-size-body-lg: 18px;
+  --font-size-body-lg--line-height: 28px;
 
-  /* Purple (from Figma) */
-  --color-purple-100: #F9F5FF;
-  --color-purple-200: #F1E5FF;
-  --color-purple-300: #E4CCFF;
-  --color-purple-400: #D9BBFF;
-  --color-purple-500: #9747FF;
-  --color-purple-600: #8638E5;
-  --color-purple-700: #7C2BDA;
-  --color-purple-800: #681ABB;
-  --color-purple-900: #4B0D97;
-  --color-purple-1000: #2D0F46;
+  --font-size-body-md: 16px;
+  --font-size-body-md--line-height: 24px;
 
-  /* Green (from Figma) */
-  --color-green-100: #EBFFEE;
-  --color-green-200: #CFF7D3;
-  --color-green-300: #AFF4C6;
-  --color-green-400: #85E0A3;
-  --color-green-500: #14AE5C;
-  --color-green-600: #009951;
-  --color-green-700: #008043;
-  --color-green-800: #036838;
-  --color-green-900: #024626;
-  --color-green-1000: #084A23;
+  --font-size-body-sm: 14px;
+  --font-size-body-sm--line-height: 20px;
 
-  /* Blue (from Figma) */
-  --color-blue-100: #F2F9FF;
-  --color-blue-200: #E5F4FF;
-  --color-blue-300: #BBE3FF;
-  --color-blue-400: #80CAFF;
-  --color-blue-500: #0D99FF;
-  --color-blue-600: #007BE5;
-  --color-blue-700: #0768CF;
-  --color-blue-800: #034AC1;
-  --color-blue-900: #093077;
-  --color-blue-1000: #0D193F;
+  --font-size-body-xs: 12px;
+  --font-size-body-xs--line-height: 16px;
 
-  /* Semantic colors */
-  --color-error-100: #FFF5F5;
-  --color-error-500: #F24822;
-  --color-error-600: #DC3412;
-  --color-error-700: #BD2915;
+  --font-size-label-lg: 16px;
+  --font-size-label-lg--line-height: 24px;
+  --font-size-label-lg--font-weight: 500;
 
-  --color-warning-100: #FFF4E5;
-  --color-warning-500: #FFAB29;
-  --color-warning-600: #FC9E24;
+  --font-size-label-md: 14px;
+  --font-size-label-md--line-height: 20px;
+  --font-size-label-md--font-weight: 500;
 
-  --color-success-100: #EBFFEE;
-  --color-success-500: #14AE5C;
-  --color-success-600: #009951;
+  --font-size-label-sm: 12px;
+  --font-size-label-sm--line-height: 16px;
+  --font-size-label-sm--font-weight: 500;
 
-  --color-info-100: #F2F9FF;
-  --color-info-500: #0D99FF;
-  --color-info-600: #007BE5;
-
-  /* Button effect variables */
-  --effect-button-1: rgba(245, 245, 245, 0.40);
+  --font-size-caption: 11px;
+  --font-size-caption--line-height: 14px;
 }
 
-/* Semantic color tokens from Figma - Light Mode */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-dark: var(--brand-primary-dark);
+}
+
 :root {
-  /* ========== colors-background ========== */
-  --colors-background-disabled: var(--color-greyscale-200);
-  --colors-background-selected: var(--color-greyscale-100);
-  --colors-background-light-default: var(--color-greyscale-0);
-  --colors-background-light-secondary: var(--color-greyscale-100);
-  --colors-background-light-pressed: var(--color-greyscale-300);
-  --colors-background-brand-default: var(--color-greyscale-900);
-  --colors-background-brand-hovered: var(--color-greyscale-700);
-  --colors-background-brand-pressed: var(--color-greyscale-700);
-  --colors-background-danger-default: var(--color-red-600);
-  --colors-background-danger-pressed: var(--color-red-500);
-  --colors-background-danger-hovered: var(--color-red-700);
-
-  /* ========== colors-text ========== */
-  --colors-text-default: var(--color-greyscale-900);
-  --colors-text-secondary: var(--color-greyscale-600);
-  --colors-text-tertiary: var(--color-greyscale-500);
-  --colors-text-placeholder: var(--color-greyscale-400);
-  --colors-text-success: var(--color-green-600);
-  --colors-text-caution: var(--color-violet-600);
-  --colors-text-core: var(--color-blue-100);
-  --colors-text-light-default: var(--color-greyscale-0);
-  --colors-text-light-secondary: var(--color-greyscale-100);
-  --colors-text-danger-default: var(--color-red-600);
-  --colors-text-danger-secondary: var(--color-greyscale-0);
-
-  /* ========== colors-icon ========== */
-  --colors-icon-default: var(--color-greyscale-900);
-  --colors-icon-secondary: var(--color-greyscale-700);
-  --colors-icon-tertiary: var(--color-greyscale-500);
-  --colors-icon-divider: var(--color-greyscale-300);
-  --colors-icon-light: var(--color-greyscale-0);
-  --colors-icon-component: var(--color-purple-600);
-  --colors-icon-notive: var(--color-orange-800);
-  --colors-icon-support: var(--color-pink-600);
-  --colors-icon-info: var(--color-teal-600);
-  --colors-icon-core: var(--color-blue-600);
-  --colors-icon-feature: var(--color-teal-200);
-  --colors-icon-highlight: var(--color-violet-600);
-  --colors-icon-caution: var(--color-violet-800);
-  --colors-icon-success: var(--color-green-600);
-  --colors-icon-danger-default: var(--color-red-600);
-  --colors-icon-danger-secondary: var(--color-red-500);
-
-  /* ========== colors-border ========== */
-  --colors-border-default: var(--color-greyscale-200);
-  --colors-border-secondary: var(--color-greyscale-100);
-  --colors-border-inverse: var(--color-greyscale-0);
-  --colors-border-selected: var(--color-greyscale-700);
-  --colors-border-component: var(--color-purple-500);
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  /* Brand colors */
+  --brand-primary: oklch(0.282 0.103 242.64);
+  --brand-primary-dark: oklch(0.234 0.089 242.64);
 }
 
-/* Dark Mode support (to be implemented) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark mode mappings can be added here following Figma's Dark Mode column */
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Typography utility classes */
+@layer components {
+  /* Headings */
+  .text-h1 {
+    font-size: var(--font-size-heading-h1);
+    line-height: var(--font-size-heading-h1--line-height);
+    letter-spacing: var(--font-size-heading-h1--letter-spacing);
+    font-weight: var(--font-size-heading-h1--font-weight);
+    color: var(--color-greyscale-900);
+  }
+  .text-h2 {
+    font-size: var(--font-size-heading-h2);
+    line-height: var(--font-size-heading-h2--line-height);
+    letter-spacing: var(--font-size-heading-h2--letter-spacing);
+    font-weight: var(--font-size-heading-h2--font-weight);
+    color: var(--color-greyscale-900);
+  }
+  .text-h3 {
+    font-size: var(--font-size-heading-h3);
+    line-height: var(--font-size-heading-h3--line-height);
+    letter-spacing: var(--font-size-heading-h3--letter-spacing);
+    font-weight: var(--font-size-heading-h3--font-weight);
+    color: var(--color-greyscale-900);
+  }
+  .text-h4 {
+    font-size: var(--font-size-heading-h4);
+    line-height: var(--font-size-heading-h4--line-height);
+    letter-spacing: var(--font-size-heading-h4--letter-spacing);
+    font-weight: var(--font-size-heading-h4--font-weight);
+    color: var(--color-greyscale-900);
+  }
+  .text-h5 {
+    font-size: var(--font-size-heading-h5);
+    line-height: var(--font-size-heading-h5--line-height);
+    font-weight: var(--font-size-heading-h5--font-weight);
+    color: var(--color-greyscale-900);
+  }
+  .text-h6 {
+    font-size: var(--font-size-heading-h6);
+    line-height: var(--font-size-heading-h6--line-height);
+    font-weight: var(--font-size-heading-h6--font-weight);
+    color: var(--color-greyscale-900);
+  }
+
+  /* Body text */
+  .text-body-lg {
+    font-size: var(--font-size-body-lg);
+    line-height: var(--font-size-body-lg--line-height);
+    color: var(--color-greyscale-700);
+  }
+  .text-body {
+    font-size: var(--font-size-body-md);
+    line-height: var(--font-size-body-md--line-height);
+    color: var(--color-greyscale-700);
+  }
+  .text-body-sm {
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-size-body-sm--line-height);
+    color: var(--color-greyscale-600);
+  }
+
+  /* Labels */
+  .text-label {
+    font-size: var(--font-size-label-md);
+    line-height: var(--font-size-label-md--line-height);
+    font-weight: var(--font-size-label-md--font-weight);
+    color: var(--color-greyscale-700);
+  }
+  .text-label-sm {
+    font-size: var(--font-size-label-sm);
+    line-height: var(--font-size-label-sm--line-height);
+    font-weight: var(--font-size-label-sm--font-weight);
+    color: var(--color-greyscale-600);
+  }
+
+  /* Muted/secondary text */
+  .text-muted {
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-size-body-sm--line-height);
+    color: var(--color-greyscale-500);
+  }
+  .text-caption {
+    font-size: var(--font-size-caption);
+    line-height: var(--font-size-caption--line-height);
+    color: var(--color-greyscale-400);
   }
 }

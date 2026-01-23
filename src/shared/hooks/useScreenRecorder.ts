@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
+import { SCREEN_RECORDING } from '@/config';
 
 interface UseScreenRecorderOptions {
   maxDuration?: number;
@@ -19,8 +20,8 @@ interface MediaRecorderOptions {
 }
 
 export function useScreenRecorder({
-  maxDuration = 180, // 3 minutes (180 seconds)
-  bitrate = 1000000, // 1 Mbps
+  maxDuration = SCREEN_RECORDING.MAX_DURATION_SECONDS,
+  bitrate = SCREEN_RECORDING.BITRATE,
   onComplete,
 }: UseScreenRecorderOptions) {
   const [recording, setRecording] = useState(false);
