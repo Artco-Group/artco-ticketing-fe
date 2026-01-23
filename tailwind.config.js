@@ -7,6 +7,39 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Consolas', 'monospace'],
       },
+      fontSize: {
+        // Headings (font-size, { lineHeight, letterSpacing, fontWeight })
+        'heading-h1': [
+          '48px',
+          { lineHeight: '56px', letterSpacing: '-0.02em', fontWeight: '700' },
+        ],
+        'heading-h2': [
+          '40px',
+          { lineHeight: '48px', letterSpacing: '-0.02em', fontWeight: '700' },
+        ],
+        'heading-h3': [
+          '32px',
+          { lineHeight: '40px', letterSpacing: '-0.01em', fontWeight: '700' },
+        ],
+        'heading-h4': [
+          '24px',
+          { lineHeight: '32px', letterSpacing: '-0.01em', fontWeight: '600' },
+        ],
+        'heading-h5': ['20px', { lineHeight: '28px', fontWeight: '600' }],
+        'heading-h6': ['18px', { lineHeight: '24px', fontWeight: '600' }],
+
+        // Body
+        'body-lg': ['18px', { lineHeight: '28px' }],
+        'body-md': ['16px', { lineHeight: '24px' }],
+        'body-sm': ['14px', { lineHeight: '20px' }],
+        'body-xs': ['12px', { lineHeight: '16px' }],
+
+        // Labels & captions
+        'label-lg': ['16px', { lineHeight: '24px', fontWeight: '500' }],
+        'label-md': ['14px', { lineHeight: '20px', fontWeight: '500' }],
+        'label-sm': ['12px', { lineHeight: '16px', fontWeight: '500' }],
+        caption: ['11px', { lineHeight: '14px' }],
+      },
       colors: {
         // Brand primary (Blue from Figma - mapped to primary)
         primary: {
