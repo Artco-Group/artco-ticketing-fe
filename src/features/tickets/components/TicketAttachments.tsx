@@ -18,7 +18,7 @@ function getFileIcon(mimetype?: string) {
   if (mimetype?.startsWith('image/')) {
     return <Image className="h-5 w-5" />;
   } else if (mimetype === 'application/pdf') {
-    return <FileText className="h-5 w-5 text-red-600" />;
+    return <FileText className="text-error-500 h-5 w-5" />;
   } else {
     return <File className="h-5 w-5" />;
   }
@@ -45,7 +45,7 @@ function TicketAttachments({
 
   return (
     <div className="mt-6">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+      <h3 className="text-greyscale-700 mb-3 text-sm font-semibold">
         Attachments ({attachments.length})
       </h3>
       <div className="space-y-2">
@@ -59,11 +59,11 @@ function TicketAttachments({
                 {getFileIcon(attachment.mimetype)}
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-greyscale-900 text-sm font-medium">
                   {attachment.filename || attachment.originalName}
                 </p>
                 {attachment.size && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-greyscale-500 text-xs">
                     {formatFileSize(attachment.size)}
                   </p>
                 )}

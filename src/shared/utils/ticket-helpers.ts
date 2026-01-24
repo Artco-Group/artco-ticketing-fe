@@ -205,22 +205,22 @@ interface PriorityConfigValue {
 export const priorityConfig: Record<string, PriorityConfigValue> = {
   [TicketPriority.LOW]: {
     color: 'text-green-600',
-    bg: 'bg-green-50',
+    bg: 'bg-green-100',
     label: TicketPriorityDisplay[TicketPriority.LOW],
   },
   [TicketPriority.MEDIUM]: {
-    color: 'text-yellow-600',
-    bg: 'bg-yellow-50',
+    color: 'text-warning-500',
+    bg: 'bg-warning-100',
     label: TicketPriorityDisplay[TicketPriority.MEDIUM],
   },
   [TicketPriority.HIGH]: {
     color: 'text-orange-600',
-    bg: 'bg-orange-50',
+    bg: 'bg-orange-100',
     label: TicketPriorityDisplay[TicketPriority.HIGH],
   },
   [TicketPriority.CRITICAL]: {
-    color: 'text-red-600',
-    bg: 'bg-red-50',
+    color: 'text-error-500',
+    bg: 'bg-error-100',
     label: TicketPriorityDisplay[TicketPriority.CRITICAL],
   },
 };

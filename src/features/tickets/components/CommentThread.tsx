@@ -25,7 +25,9 @@ function CommentThread({
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-8">
-      <h2 className="mb-6 text-lg font-semibold text-gray-900">Diskusija</h2>
+      <h2 className="text-greyscale-900 mb-6 text-lg font-semibold">
+        Diskusija
+      </h2>
 
       {/* Comments List */}
       <div
@@ -33,7 +35,7 @@ function CommentThread({
         className="mb-6 max-h-96 space-y-4 overflow-y-auto"
       >
         {comments.length === 0 ? (
-          <p className="py-8 text-center text-gray-400">Nema komentara</p>
+          <p className="text-greyscale-400 py-8 text-center">Nema komentara</p>
         ) : (
           comments.map((comment) => (
             <CommentBubble
@@ -56,7 +58,7 @@ function CommentThread({
           onChange={(e) => onCommentChange(e.target.value)}
           placeholder="Napišite odgovor..."
           rows={2}
-          className="focus:border-brand-primary focus:ring-brand-primary/10 flex-1 resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-900 transition-all focus:ring-2 focus:outline-none"
+          className="focus:border-brand-primary focus:ring-brand-primary/10 text-greyscale-900 flex-1 resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm transition-all focus:ring-2 focus:outline-none"
         />
         <button
           type="submit"
@@ -84,23 +86,23 @@ function CommentBubble({ comment, currentUser }: CommentBubbleProps) {
         className={`max-w-[70%] rounded-xl p-4 ${
           thisUser
             ? 'bg-brand-primary rounded-br-sm text-white'
-            : 'rounded-bl-sm bg-gray-100 text-gray-900'
+            : 'text-greyscale-900 rounded-bl-sm bg-gray-100'
         }`}
       >
         <div className="mb-2 flex items-center gap-2">
           <span
-            className={`text-xs font-medium ${thisUser ? 'text-white/80' : 'text-gray-500'}`}
+            className={`text-xs font-medium ${thisUser ? 'text-white/80' : 'text-greyscale-500'}`}
           >
             {thisUser ? 'You' : comment.authorId.name}
           </span>
           <span
-            className={`text-xs ${thisUser ? 'text-white/60' : 'text-gray-400'}`}
+            className={`text-xs ${thisUser ? 'text-white/60' : 'text-greyscale-400'}`}
           >
             {comment.updatedAt ? formatDateTime(comment.updatedAt) : ''}
           </span>
         </div>
         <p
-          className={`text-sm leading-relaxed ${thisUser ? 'text-white' : 'text-gray-700'}`}
+          className={`text-sm leading-relaxed ${thisUser ? 'text-white' : 'text-greyscale-700'}`}
         >
           {comment.text}
         </p>

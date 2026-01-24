@@ -55,9 +55,9 @@ function SummaryCard({
   highlighted = false,
 }: SummaryCardProps) {
   const colorClasses: Record<ColorType, string> = {
-    blue: 'bg-blue-50 text-blue-600',
-    orange: 'bg-orange-50 text-orange-600',
-    red: 'bg-red-50 text-red-600',
+    blue: 'bg-blue-100 text-blue-600',
+    orange: 'bg-orange-100 text-orange-600',
+    red: 'bg-error-100 text-error-500',
   };
 
   const IconComponent = {

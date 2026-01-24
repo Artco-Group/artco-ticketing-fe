@@ -36,47 +36,47 @@ export function ErrorFallback({
       <div className="w-full max-w-2xl rounded-lg bg-white p-8 shadow-lg">
         {/* Error Icon */}
         <div className="mb-6 flex justify-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-            <AlertTriangle className="h-8 w-8 text-red-600" />
+          <div className="bg-error-100 flex h-16 w-16 items-center justify-center rounded-full">
+            <AlertTriangle className="text-error-500 h-8 w-8" />
           </div>
         </div>
 
         {/* Error Title */}
-        <h1 className="mb-4 text-center text-2xl font-bold text-gray-900">
+        <h1 className="text-greyscale-900 mb-4 text-center text-2xl font-bold">
           Something went wrong
         </h1>
 
         {/* Error Message */}
-        <p className="mb-6 text-center text-gray-600">
+        <p className="text-greyscale-600 mb-6 text-center">
           We're sorry, but something unexpected happened. Please try one of the
           options below to continue.
         </p>
 
         {/* Error Details (Development Only) */}
         {isDevelopment && error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-            <h2 className="mb-2 text-sm font-semibold text-red-900">
+          <div className="bg-error-100 mb-6 rounded-lg border border-red-200 p-4">
+            <h2 className="text-error-700 mb-2 text-sm font-semibold">
               Error Details (Development Only):
             </h2>
-            <p className="mb-2 font-mono text-xs text-red-800">
+            <p className="text-error-600 mb-2 font-mono text-xs">
               {error.toString()}
             </p>
             {error.stack && (
               <details className="mt-2">
-                <summary className="cursor-pointer text-xs font-semibold text-red-700">
+                <summary className="text-error-700 cursor-pointer text-xs font-semibold">
                   Stack Trace
                 </summary>
-                <pre className="mt-2 max-h-48 overflow-auto rounded bg-red-100 p-2 text-xs text-red-900">
+                <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs">
                   {error.stack}
                 </pre>
               </details>
             )}
             {errorInfo && errorInfo.componentStack && (
               <details className="mt-2">
-                <summary className="cursor-pointer text-xs font-semibold text-red-700">
+                <summary className="text-error-700 cursor-pointer text-xs font-semibold">
                   Component Stack
                 </summary>
-                <pre className="mt-2 max-h-48 overflow-auto rounded bg-red-100 p-2 text-xs text-red-900">
+                <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs">
                   {errorInfo.componentStack}
                 </pre>
               </details>
@@ -94,13 +94,13 @@ export function ErrorFallback({
           </button>
           <button
             onClick={handleGoBack}
-            className="rounded-lg border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
+            className="text-greyscale-700 rounded-lg border border-gray-300 bg-white px-6 py-3 font-semibold transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
           >
             Go Back
           </button>
           <button
             onClick={handleGoHome}
-            className="rounded-lg border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
+            className="text-greyscale-700 rounded-lg border border-gray-300 bg-white px-6 py-3 font-semibold transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
           >
             Go to Dashboard
           </button>
@@ -108,7 +108,7 @@ export function ErrorFallback({
 
         {/* Additional Help */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-greyscale-500 text-sm">
             If this problem persists, please contact support.
           </p>
         </div>
