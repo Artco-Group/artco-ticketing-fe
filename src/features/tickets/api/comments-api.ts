@@ -35,7 +35,7 @@ function useComments(ticketId: TicketId) {
 function useAddComment() {
   return useApiMutation<
     ApiResponse<{ comment: Comment }>,
-    { ticketId: TicketId; comment: CreateCommentFormData }
+    { ticketId: TicketId } & CreateCommentFormData
   >({
     url: (vars) => API_ROUTES.COMMENTS.BY_TICKET(vars.ticketId),
     method: 'POST',
@@ -53,7 +53,7 @@ function useAddComment() {
 function useUpdateComment() {
   return useApiMutation<
     ApiResponse<{ comment: Comment }>,
-    { commentId: CommentId; comment: CreateCommentFormData }
+    { commentId: CommentId } & CreateCommentFormData
   >({
     url: (vars) => API_ROUTES.COMMENTS.BY_ID(vars.commentId),
     method: 'PUT',

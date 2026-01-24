@@ -107,7 +107,7 @@ export function useTicketDetail() {
     try {
       await addCommentMutation.mutateAsync({
         ticketId: asTicketId(id),
-        comment: { text: newComment },
+        text: newComment,
       });
       setNewComment('');
       toast.success('Comment added successfully');
