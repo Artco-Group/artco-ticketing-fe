@@ -1,4 +1,5 @@
 import type { FormEvent } from 'react';
+import { useId } from 'react';
 import {
   type Ticket,
   type Comment,
@@ -67,6 +68,10 @@ function TicketDetail({
 
   const { isEngLead, isDeveloper, isClient } = useRoleFlags(currentUser?.role);
 
+  // Generate unique IDs for form controls
+  const assignedToId = useId();
+  const priorityId = useId();
+
   if (!ticket) return null;
 
   const developers = users.filter((user) => user.role === UserRole.DEVELOPER);
@@ -97,7 +102,7 @@ function TicketDetail({
     <div className="p-6">
       {/* Page Header */}
       {isEngLead ? (
-        <div className="mb-6 flex items-center gap-4">
+        <div className="flex-start-gap-4 mb-6">
           <Button variant="ghost" size="icon" onClick={onBack}>
             <Icon name="arrow-left" size="md" />
           </Button>
@@ -147,16 +152,16 @@ function TicketDetail({
               <CardTitle>Lead Controls</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid-responsive">
                 {/* Assignment Section */}
                 <div className="space-y-2">
-                  <Label>Assigned To</Label>
-                  <div className="flex gap-3">
+                  <Label htmlFor={assignedToId}>Assigned To</Label>
+                  <div className="flex-start-gap-3">
                     <Select
                       value={selectedDeveloper}
                       onValueChange={setSelectedDeveloper}
                     >
-                      <SelectTrigger className="flex-1">
+                      <SelectTrigger id={assignedToId} className="flex-1">
                         <SelectValue placeholder="Select Developer" />
                       </SelectTrigger>
                       <SelectContent>
@@ -182,7 +187,7 @@ function TicketDetail({
                   </div>
                   {ticket.assignedTo &&
                     typeof ticket.assignedTo !== 'string' && (
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-muted-xs">
                         Currently assigned to:{' '}
                         {resolveAssigneeName(ticket.assignedTo, users)}
                       </p>
@@ -191,7 +196,7 @@ function TicketDetail({
 
                 {/* Priority Update Section */}
                 <div className="space-y-2">
-                  <Label>Update Priority</Label>
+                  <Label htmlFor={priorityId}>Update Priority</Label>
                   <Select
                     value={ticket.priority}
                     onValueChange={(value) =>
@@ -202,7 +207,7 @@ function TicketDetail({
                       ticket.status !== 'In Progress'
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger id={priorityId}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -214,7 +219,7 @@ function TicketDetail({
                   </Select>
                   {ticket.status !== 'Open' &&
                     ticket.status !== 'In Progress' && (
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-muted-xs">
                         Priority can only be updated for Open or In Progress
                         tickets
                       </p>
@@ -239,13 +244,13 @@ function TicketDetail({
                     )}
                   </Button>
                   {ticket.status !== 'Resolved' && (
-                    <p className="text-muted-foreground text-xs">
+                    <p className="text-muted-xs">
                       This button is only enabled when ticket status is
                       "Resolved"
                     </p>
                   )}
                   {showSuccess && (
-                    <div className="bg-success-100 mt-2 flex items-center gap-2 rounded-lg border border-green-200 p-2">
+                    <div className="alert-success mt-2">
                       <Icon
                         name="check-circle"
                         size="sm"
@@ -285,14 +290,14 @@ function TicketDetail({
               </Button>
 
               {ticket.status !== 'In Progress' && (
-                <p className="text-muted-foreground text-xs">
+                <p className="text-muted-xs">
                   This button is only enabled when ticket status is "In
                   Progress"
                 </p>
               )}
 
               {showSuccess && (
-                <div className="bg-success-100 flex items-center gap-2 rounded-lg border border-green-200 p-3">
+                <div className="alert-success-lg">
                   <Icon
                     name="check-circle"
                     size="sm"

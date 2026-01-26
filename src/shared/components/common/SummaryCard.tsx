@@ -68,9 +68,9 @@ function SummaryCard({
   return (
     <Card className={cn(highlighted && 'ring-2 ring-orange-200')}>
       <CardContent className="p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex-between">
           <div>
-            <p className="text-muted-foreground text-sm font-medium">{title}</p>
+            <p className="text-muted-sm font-medium">{title}</p>
             <p className="text-foreground mt-1 text-3xl font-bold">{value}</p>
           </div>
           <div

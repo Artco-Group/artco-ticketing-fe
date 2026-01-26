@@ -24,7 +24,7 @@ function CommentThread({
   const commentsContainerRef = useAutoScroll(comments);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-8">
+    <div className="card p-8">
       <h2 className="text-greyscale-900 mb-6 text-lg font-semibold">
         Diskusija
       </h2>
@@ -68,7 +68,7 @@ function CommentThread({
         <button
           type="submit"
           disabled={!newComment.trim()}
-          className="bg-brand-primary hover:bg-brand-primary-dark self-end rounded-lg px-5 py-3 text-sm font-medium text-white transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-primary self-end px-5 py-3"
         >
           Pošalji
         </button>
@@ -94,7 +94,7 @@ function CommentBubble({ comment, currentUser }: CommentBubbleProps) {
             : 'text-greyscale-900 rounded-bl-sm bg-gray-100'
         }`}
       >
-        <div className="mb-2 flex items-center gap-2">
+        <div className="flex-start-gap-2 mb-2">
           <span
             className={`text-xs font-medium ${thisUser ? 'text-white/80' : 'text-greyscale-500'}`}
           >

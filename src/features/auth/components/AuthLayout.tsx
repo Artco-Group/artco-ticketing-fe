@@ -16,7 +16,7 @@ const DefaultFloatingCards = () => (
         <Icon name="priority" size="lg" className="shrink-0" />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
-        <div className="flex items-center justify-between gap-2.5">
+        <div className="flex-between gap-2.5">
           <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
             Brza prijava
           </span>
@@ -35,7 +35,7 @@ const DefaultFloatingCards = () => (
         <Icon name="tasks" size="lg" className="shrink-0" />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
-        <div className="flex items-center justify-between gap-2.5">
+        <div className="flex-between gap-2.5">
           <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
             Praćenje statusa
           </span>
@@ -59,14 +59,14 @@ const DefaultFloatingCards = () => (
         <Icon name="shield-check" size="lg" className="shrink-0" />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
-        <div className="flex items-center justify-between gap-2.5">
+        <div className="flex-between gap-2.5">
           <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
             Sigurna komunikacija
           </span>
           <Icon name="check" size="md" className="shrink-0 text-white" />
         </div>
         <span className="text-body-sm text-white/70">Zaštićeni podaci</span>
-        <div className="mt-2 flex items-center gap-3 border-t border-white/10 pt-2.5">
+        <div className="flex-start-gap-3 mt-2 border-t border-white/10 pt-2.5">
           <div className="flex flex-col gap-0.5">
             <span className="text-body-sm font-bold text-white">256-bit</span>
             <span className="text-caption tracking-[0.5px] text-white/50 uppercase">
@@ -169,7 +169,7 @@ export function AuthLayout({
       <div className="max-mdx:p-8 max-smx:p-6 login-form-panel relative flex flex-1 flex-col items-center justify-center bg-white p-12">
         <div className="w-full max-w-[400px]">{children}</div>
 
-        <footer className="login-footer max-mdx:relative max-mdx:bottom-auto max-mdx:left-auto max-mdx:right-auto max-mdx:flex-col max-mdx:gap-4 max-mdx:mt-10 absolute right-12 bottom-8 left-12 flex items-center justify-between">
+        <footer className="login-footer max-mdx:relative max-mdx:bottom-auto max-mdx:left-auto max-mdx:right-auto max-mdx:flex-col max-mdx:gap-4 max-mdx:mt-10 flex-between absolute right-12 bottom-8 left-12">
           <span className="text-body-sm text-greyscale-400">
             © 2024 Artco Group
           </span>

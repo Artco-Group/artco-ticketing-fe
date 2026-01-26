@@ -230,7 +230,7 @@ export function PasswordResetForm() {
         <button
           type="button"
           onClick={navigateToLogin}
-          className="text-primary cursor-pointer border-none bg-transparent text-sm font-medium transition-colors duration-200 hover:underline"
+          className="link text-sm"
         >
           ← Nazad na prijavu
         </button>

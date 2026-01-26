@@ -93,7 +93,7 @@ function ClientLayout({
 }: ClientLayoutProps) {
   return (
     <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="flex-between mb-6">
         <h1 className="text-foreground text-2xl font-bold">My Tickets</h1>
         {onCreateTicket && (
           <Button onClick={onCreateTicket}>
@@ -254,7 +254,7 @@ function TableLayout({
       className: 'text-muted-foreground',
     }),
     customColumn<Ticket>('lastUpdated', 'Last Updated', (ticket) => (
-      <div className="text-muted-foreground text-sm">
+      <div className="text-muted-sm">
         {formatDateTime(ticket.lastUpdated || ticket.createdAt || '')}
       </div>
     )),

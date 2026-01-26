@@ -53,9 +53,9 @@ function TicketAttachments({
         {attachments.map((attachment, index) => (
           <div
             key={index}
-            className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+            className="flex-between rounded-lg border border-gray-200 bg-gray-50 p-3 transition-colors hover:bg-gray-100"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex-start-gap-3">
               <div className="text-brand-primary flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
                 {getFileIcon(attachment.mimetype)}
               </div>
@@ -72,7 +72,7 @@ function TicketAttachments({
             </div>
             <button
               onClick={() => handleDownload(attachment, index)}
-              className="bg-brand-primary hover:bg-brand-primary-dark flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+              className="bg-brand-primary hover:bg-brand-primary-dark flex-start-gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
             >
               <Icon name="download" size="sm" />
               Preuzmi

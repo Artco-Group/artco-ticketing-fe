@@ -234,22 +234,22 @@ function TicketForm({
 
                 {/* Attachments */}
                 <div className="space-y-2">
-                  <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  <span className="text-sm leading-none font-medium">
                     Prilozi
-                  </label>
+                  </span>
                   <FileUpload files={files} onFilesChange={setFiles} />
                 </div>
 
                 {/* Screen Recording */}
                 <div className="space-y-2">
-                  <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  <span className="text-sm leading-none font-medium">
                     Snimak Ekrana (Opciono)
-                  </label>
+                  </span>
                   <ScreenRecorder
                     onRecordingComplete={handleScreenRecordingChange}
                     disabled={false}
                   />
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-muted-xs">
                     Snimite ekran da pokažete problem (maksimalno 3 minute)
                   </p>
                 </div>

@@ -35,7 +35,7 @@ export function Header({ pageConfig }: HeaderProps) {
     <div className="bg-card sticky top-0 z-10 flex h-16 shrink-0 border-b shadow-sm">
       <div className="flex flex-1 items-center justify-between px-4">
         {/* Page title from config */}
-        <div className="flex items-center gap-3">
+        <div className="flex-start-gap-3">
           {pageConfig?.title && (
             <h1 className="text-foreground text-lg font-semibold">
               {pageConfig.title}
@@ -63,10 +63,8 @@ export function Header({ pageConfig }: HeaderProps) {
                   <p className="text-sm leading-none font-medium">
                     {user?.name}
                   </p>
-                  <p className="text-muted-foreground text-xs leading-none">
-                    {user?.email}
-                  </p>
-                  <p className="text-muted-foreground text-xs leading-none">
+                  <p className="text-muted-xs leading-none">{user?.email}</p>
+                  <p className="text-muted-xs leading-none">
                     {user?.role && UserRoleDisplay[user.role as UserRole]}
                   </p>
                 </div>
