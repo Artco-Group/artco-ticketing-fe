@@ -244,9 +244,9 @@ function TicketDetail({
                     </p>
                   )}
                   {showSuccess && (
-                    <div className="mt-2 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-xs font-medium text-green-600">
+                    <div className="bg-success-100 mt-2 flex items-center gap-2 rounded-lg border border-green-200 p-2">
+                      <CheckCircle className="text-success-500 h-4 w-4" />
+                      <span className="text-success-500 text-xs font-medium">
                         Ticket closed successfully
                       </span>
                     </div>
@@ -287,9 +287,9 @@ function TicketDetail({
               )}
 
               {showSuccess && (
-                <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-600">
+                <div className="bg-success-100 flex items-center gap-2 rounded-lg border border-green-200 p-3">
+                  <CheckCircle className="text-success-500 h-4 w-4" />
+                  <span className="text-success-500 text-sm font-medium">
                     Ticket marked as resolved successfully
                   </span>
                 </div>

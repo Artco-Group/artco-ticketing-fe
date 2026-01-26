@@ -65,10 +65,10 @@ export default function ScreenRecorder({
       <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
         <div className="mb-3 flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-greyscale-900 text-sm font-medium">
               🎥 Snimak Ekrana
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-greyscale-500 text-xs">
               {(recordedVideo.size / (1024 * 1024)).toFixed(2)} MB •{' '}
               {formatTime(duration)}
             </p>
@@ -76,7 +76,7 @@ export default function ScreenRecorder({
           <button
             type="button"
             onClick={handleRemove}
-            className="text-red-600 transition-colors hover:text-red-700"
+            className="text-error-500 hover:text-error-600 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -95,8 +95,8 @@ export default function ScreenRecorder({
   // State 2: Recording finished - show preview with confirm/discard buttons
   if (!confirmed && previewUrl && recordedVideo && !recording) {
     return (
-      <div className="border-brand-primary rounded-lg border-2 bg-blue-50 p-4">
-        <p className="mb-3 text-sm font-medium text-gray-900">
+      <div className="border-brand-primary rounded-lg border-2 bg-blue-100 p-4">
+        <p className="text-greyscale-900 mb-3 text-sm font-medium">
           Pregled snimka ({(recordedVideo.size / (1024 * 1024)).toFixed(2)} MB)
         </p>
 
@@ -118,7 +118,7 @@ export default function ScreenRecorder({
           <button
             type="button"
             onClick={handleDiscard}
-            className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="text-greyscale-700 flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50"
           >
             ✗ Odbaci
           </button>
@@ -130,19 +130,19 @@ export default function ScreenRecorder({
   // State 1b: Recording in progress
   if (recording) {
     return (
-      <div className="rounded-lg border-2 border-red-500 bg-red-50 p-4">
+      <div className="border-error-500 bg-error-100 rounded-lg border-2 p-4">
         <div className="mb-3 flex items-center justify-between">
           <div>
-            <p className="flex items-center text-sm font-medium text-red-900">
-              <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-red-500"></span>
+            <p className="text-error-700 flex items-center text-sm font-medium">
+              <span className="bg-error-500 mr-2 inline-block h-2 w-2 animate-pulse rounded-full"></span>
               Snimanje u toku...
             </p>
-            <p className="text-xs text-gray-600">
+            <p className="text-greyscale-600 text-xs">
               {formatTime(recordingTime)} / {formatTime(maxDuration)}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-greyscale-900 text-sm font-medium">
               ~{estimatedSize.toFixed(1)} MB
             </p>
           </div>
@@ -151,12 +151,12 @@ export default function ScreenRecorder({
         <button
           type="button"
           onClick={stopRecording}
-          className="w-full rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+          className="bg-error-500 hover:bg-error-600 w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
         >
           ⏹️ Zaustavi Snimanje
         </button>
 
-        <p className="mt-2 text-xs text-gray-500">
+        <p className="text-greyscale-500 mt-2 text-xs">
           Kliknite na dugme ili zatvorite dijeljenje ekrana za zaustavljanje
         </p>
       </div>
@@ -167,12 +167,12 @@ export default function ScreenRecorder({
   return (
     <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-4">
       <div className="text-center">
-        <Video className="mx-auto h-12 w-12 text-gray-400" />
+        <Video className="text-greyscale-400 mx-auto h-12 w-12" />
 
-        <p className="mt-2 text-sm font-medium text-gray-900">
+        <p className="text-greyscale-900 mt-2 text-sm font-medium">
           Snimite Problem
         </p>
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="text-greyscale-500 mt-1 text-xs">
           Maksimalno 3 minute • ~22 MB
         </p>
 
@@ -185,7 +185,7 @@ export default function ScreenRecorder({
           🎥 Započni Snimanje
         </button>
 
-        {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+        {error && <p className="text-error-500 mt-2 text-xs">{error}</p>}
       </div>
     </div>
   );

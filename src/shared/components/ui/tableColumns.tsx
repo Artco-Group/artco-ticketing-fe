@@ -183,7 +183,7 @@ export function actionsColumn<T>(
               }}
               className={
                 action.className ||
-                'hover:text-brand-primary p-1.5 text-gray-400 transition-colors'
+                'hover:text-brand-primary text-greyscale-400 p-1.5 transition-colors'
               }
               title={action.label}
             >
