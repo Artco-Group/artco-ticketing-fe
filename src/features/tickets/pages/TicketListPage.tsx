@@ -22,6 +22,7 @@ export default function TicketListPage() {
   if (!userRole) {
     return (
       <EmptyState
+        variant="error"
         title="Invalid Role"
         message="Your account has an invalid role. Please contact support."
       />
