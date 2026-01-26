@@ -57,6 +57,7 @@ export default {
         '7xl': '64px', // 4rem
 
         // Component-specific custom spacing values (outside standard scale)
+        2.5: '10px', // Between 2 (8px) and 3 (12px)
         4.5: '18px', // Between 4 (16px) and 5 (20px)
         11.5: '46px', // For input icon padding (used in LoginForm, ForgotPasswordForm, PasswordResetPage)
         13: '52px', // Custom spacing for larger layouts
@@ -69,6 +70,7 @@ export default {
         none: '0px', // 0rem
         xs: '2px', // 0.125rem
         sm: '4px', // 0.25rem
+        DEFAULT: '8px', // 0.5rem - Default border radius
         md: '8px', // 0.5rem
         lg: '10px', // 0.625rem
         xl: '12px', // 0.75rem
