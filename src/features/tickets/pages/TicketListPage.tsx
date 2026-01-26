@@ -1,4 +1,4 @@
-import { UserRole } from '@artco-group/artco-ticketing-sync';
+import { UserRole } from '@/types';
 
 import { TicketList } from '@/features/tickets/components';
 import { QueryStateWrapper, EmptyState } from '@/shared/components/ui';

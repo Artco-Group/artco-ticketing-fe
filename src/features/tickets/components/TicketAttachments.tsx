@@ -4,7 +4,7 @@ import {
 } from '@artco-group/artco-ticketing-sync';
 import { Image, FileText, File } from 'lucide-react';
 import { Icon } from '@/shared/components/ui';
-import type { TicketId } from '@/types/branded';
+import type { TicketId } from '@/types';
 
 interface TicketAttachmentsProps {
   attachments: Attachment[];

@@ -1,13 +1,17 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import type { Comment, Ticket } from '@artco-group/artco-ticketing-sync';
+import {
+  asTicketId,
+  type Comment,
+  type Ticket,
+  type TicketId,
+  type UserId,
+} from '@/types';
 import { toast } from 'sonner';
 
 import { PAGE_ROUTES, getErrorMessage } from '@/shared';
 import { useAuth } from '@/features/auth/context';
-import type { TicketId, UserId } from '@/types/branded';
-import { asTicketId } from '@/types/branded';
 import {
   useTicket,
   useUpdateTicketStatus,

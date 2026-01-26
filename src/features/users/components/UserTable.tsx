@@ -1,9 +1,8 @@
 import {
-  type User,
-  UserRole,
   formatDateLocalized,
   getRoleBadgeClasses,
 } from '@artco-group/artco-ticketing-sync';
+import { UserRole, type User } from '@/types';
 import {
   DataTable,
   textColumn,

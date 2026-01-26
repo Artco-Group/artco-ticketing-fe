@@ -6,7 +6,7 @@ import {
   type Ticket,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
-import type { TicketId, UserId } from '@/types/branded';
+import type { TicketId, UserId } from '@/types';
 
 /** API response wrapper type */
 interface ApiResponse<T> {

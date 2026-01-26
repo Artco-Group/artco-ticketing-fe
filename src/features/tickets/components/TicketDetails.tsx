@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { type Ticket, formatDateTime } from '@artco-group/artco-ticketing-sync';
-import type { MetaItem } from '@/types';
+import { formatDateTime } from '@artco-group/artco-ticketing-sync';
+import { asTicketId, type Ticket, type MetaItem, type TicketId } from '@/types';
 import {
   statusColors,
   priorityConfig,
@@ -8,8 +8,6 @@ import {
 } from '@/shared/utils/ticket-helpers';
 import TicketAttachments from './TicketAttachments';
 import TicketScreenRecording from './TicketScreenRecording';
-import type { TicketId } from '@/types/branded';
-import { asTicketId } from '@/types/branded';
 
 interface TicketDetailsProps {
   ticket: Ticket | null;

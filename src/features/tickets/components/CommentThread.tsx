@@ -1,9 +1,6 @@
 import type { FormEvent } from 'react';
-import {
-  type Comment,
-  type User,
-  formatDateTime,
-} from '@artco-group/artco-ticketing-sync';
+import { formatDateTime } from '@artco-group/artco-ticketing-sync';
+import type { Comment, User } from '@/types';
 import { useAutoScroll, EmptyState } from '@/shared';
 
 interface CommentThreadProps {

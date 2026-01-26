@@ -1,5 +1,6 @@
 import { useAuth } from '@/features/auth/context';
-import { UserRole, UserRoleDisplay } from '@artco-group/artco-ticketing-sync';
+import { UserRoleDisplay } from '@artco-group/artco-ticketing-sync';
+import { UserRole } from '@/types';
 import type { PageConfig } from '@/app/config/page-configs';
 import {
   Button,

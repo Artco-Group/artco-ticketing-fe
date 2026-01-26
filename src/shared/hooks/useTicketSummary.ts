@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { Ticket } from '@artco-group/artco-ticketing-sync';
+import type { Ticket } from '@/types';
 
 interface TicketSummary {
   totalOpen: number;

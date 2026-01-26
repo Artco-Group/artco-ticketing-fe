@@ -1,7 +1,5 @@
-import {
-  type Ticket,
-  formatDateLocalized,
-} from '@artco-group/artco-ticketing-sync';
+import { formatDateLocalized } from '@artco-group/artco-ticketing-sync';
+import type { Ticket } from '@/types';
 import {
   statusColors,
   priorityConfig,

@@ -2,7 +2,7 @@ import {
   type ScreenRecording,
   formatTime,
 } from '@artco-group/artco-ticketing-sync';
-import type { TicketId } from '@/types/branded';
+import type { TicketId } from '@/types';
 
 interface TicketScreenRecordingProps {
   screenRecording: ScreenRecording;

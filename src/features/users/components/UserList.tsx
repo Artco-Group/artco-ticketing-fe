@@ -1,10 +1,9 @@
 import {
-  type User,
   type CreateUserFormData,
   type UpdateUserFormData,
-  UserRole,
   UserRoleDisplay,
 } from '@artco-group/artco-ticketing-sync';
+import { UserRole, type User } from '@/types';
 import {
   FilterBar,
   type FilterConfig,

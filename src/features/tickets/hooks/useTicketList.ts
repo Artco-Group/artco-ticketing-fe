@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { type Ticket, UserRole } from '@artco-group/artco-ticketing-sync';
-import type { Filters } from '@/types';
+import { UserRole, type Ticket, type Filters } from '@/types';
 
 import { PAGE_ROUTES } from '@/shared/constants';
 import { useAuth } from '@/features/auth/context';
