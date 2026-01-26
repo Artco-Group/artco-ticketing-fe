@@ -11,6 +11,8 @@ import CommentThread from './CommentThread';
 import TicketDetails from './TicketDetails';
 import { resolveAssigneeName } from '@/shared/utils/ticket-helpers';
 import { useTicketDetailActions } from '../hooks/useTicketDetailActions';
+import type { TicketId, UserId } from '@/types/branded';
+import { asTicketId } from '@/types/branded';
 import {
   useRoleFlags,
   Button,
@@ -33,9 +35,9 @@ interface TicketDetailProps {
   currentUser: User | null;
   users?: User[];
   onBack: () => void;
-  onStatusUpdate?: (ticketId: string, status: string) => Promise<void>;
-  onPriorityUpdate?: (ticketId: string, priority: string) => void;
-  onAssignTicket?: (ticketId: string, developerId: string) => void;
+  onStatusUpdate?: (ticketId: TicketId, status: string) => Promise<void>;
+  onPriorityUpdate?: (ticketId: TicketId, priority: string) => void;
+  onAssignTicket?: (ticketId: TicketId, developerId: UserId) => void;
   newComment: string;
   onCommentChange: (value: string) => void;
   onAddComment: (e: FormEvent<HTMLFormElement>) => void;
@@ -195,7 +197,7 @@ function TicketDetail({
                   <Select
                     value={ticket.priority}
                     onValueChange={(value) =>
-                      onPriorityUpdate(ticket._id || '', value)
+                      onPriorityUpdate(asTicketId(ticket._id || ''), value)
                     }
                     disabled={
                       ticket.status !== 'Open' &&

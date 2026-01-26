@@ -7,6 +7,7 @@ import {
   type CreateCommentFormData,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
+import type { TicketId, CommentId } from '@/types/branded';
 
 /** API response wrapper type */
 interface ApiResponse<T> {
@@ -17,7 +18,7 @@ interface ApiResponse<T> {
 /**
  * Get comments for a ticket
  */
-function useComments(ticketId: string) {
+function useComments(ticketId: TicketId) {
   return useApiQuery<ApiResponse<{ comments: Comment[] }>>(
     QueryKeys.comments.byTicket(ticketId),
     {
@@ -34,7 +35,7 @@ function useComments(ticketId: string) {
 function useAddComment() {
   return useApiMutation<
     ApiResponse<{ comment: Comment }>,
-    { ticketId: string; comment: CreateCommentFormData }
+    { ticketId: TicketId; comment: CreateCommentFormData }
   >({
     url: (vars) => API_ROUTES.COMMENTS.BY_TICKET(vars.ticketId),
     method: 'POST',
@@ -52,7 +53,7 @@ function useAddComment() {
 function useUpdateComment() {
   return useApiMutation<
     ApiResponse<{ comment: Comment }>,
-    { commentId: string; comment: CreateCommentFormData }
+    { commentId: CommentId; comment: CreateCommentFormData }
   >({
     url: (vars) => API_ROUTES.COMMENTS.BY_ID(vars.commentId),
     method: 'PUT',
@@ -66,7 +67,7 @@ function useUpdateComment() {
  * Delete a comment
  */
 function useDeleteComment() {
-  return useApiMutation<void, string>({
+  return useApiMutation<void, CommentId>({
     url: (commentId) => API_ROUTES.COMMENTS.BY_ID(commentId),
     method: 'DELETE',
     onSuccess: () => {

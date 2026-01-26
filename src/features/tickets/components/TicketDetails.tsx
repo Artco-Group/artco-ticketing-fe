@@ -8,17 +8,19 @@ import {
 } from '@/shared/utils/ticket-helpers';
 import TicketAttachments from './TicketAttachments';
 import TicketScreenRecording from './TicketScreenRecording';
+import type { TicketId } from '@/types/branded';
+import { asTicketId } from '@/types/branded';
 
 interface TicketDetailsProps {
   ticket: Ticket | null;
   showClient?: boolean;
   showAssignedTo?: boolean;
   onDownloadAttachment?: (
-    ticketId: string,
+    ticketId: TicketId,
     index: number,
     filename: string
   ) => Promise<void>;
-  onDownloadScreenRecording?: (ticketId: string, filename: string) => void;
+  onDownloadScreenRecording?: (ticketId: TicketId, filename: string) => void;
   formatDateTime?: (date: string | Date) => string;
   className?: string;
 }
@@ -176,7 +178,7 @@ function TicketDetails({
       {ticket.attachments && ticket.attachments.length > 0 && ticket._id && (
         <TicketAttachments
           attachments={ticket.attachments}
-          ticketId={ticket._id}
+          ticketId={asTicketId(ticket._id)}
           onDownload={onDownloadAttachment}
         />
       )}
@@ -185,7 +187,7 @@ function TicketDetails({
       {ticket.screenRecording && ticket._id && (
         <TicketScreenRecording
           screenRecording={ticket.screenRecording}
-          ticketId={ticket._id}
+          ticketId={asTicketId(ticket._id)}
           onDownload={onDownloadScreenRecording}
         />
       )}

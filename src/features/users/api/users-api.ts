@@ -8,6 +8,7 @@ import {
   type UpdateUserFormData,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
+import type { UserId } from '@/types/branded';
 
 /** API response wrapper type */
 interface ApiResponse<T> {
@@ -32,7 +33,7 @@ function useUsers(params?: Record<string, unknown>) {
 /**
  * Get a single user by ID
  */
-function useUser(id: string) {
+function useUser(id: UserId) {
   return useApiQuery<{ user: User }>(QueryKeys.users.detail(id), {
     url: API_ROUTES.USERS.BY_ID(id),
     enabled: !!id,
@@ -72,7 +73,7 @@ function useCreateUser() {
 function useUpdateUser() {
   return useApiMutation<
     { user: User },
-    { id: string; data: UpdateUserFormData }
+    { id: UserId; data: UpdateUserFormData }
   >({
     url: (vars) => API_ROUTES.USERS.BY_ID(vars.id),
     method: 'PUT',
@@ -89,7 +90,7 @@ function useUpdateUser() {
  * Delete a user
  */
 function useDeleteUser() {
-  return useApiMutation<void, string>({
+  return useApiMutation<void, UserId>({
     url: (id) => API_ROUTES.USERS.BY_ID(id),
     method: 'DELETE',
     onSuccess: () => {
