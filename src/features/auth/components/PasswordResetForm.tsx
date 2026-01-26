@@ -35,7 +35,9 @@ export function PasswordResetForm() {
         <div className="mb-4">
           <div className="border-brand-primary/20 border-t-brand-primary mx-auto h-12 w-12 animate-spin rounded-full border-4"></div>
         </div>
-        <p className="text-[16px] text-[#6b7280]">Verificiranje tokena...</p>
+        <p className="text-body-md text-greyscale-500">
+          Verificiranje tokena...
+        </p>
       </div>
     );
   }
@@ -45,10 +47,10 @@ export function PasswordResetForm() {
     return (
       <div>
         <div>
-          <h2 className="max-smx:text-[26px] mb-4 text-[32px] font-bold tracking-[-0.5px] text-[#111827]">
+          <h2 className="max-smx:text-heading-h4 text-heading-h3 text-greyscale-1000 mb-4 font-bold tracking-[-0.5px]">
             Nevažeći Token
           </h2>
-          <p className="max-smx:mb-6 max-smx:text-[14px] mb-8 text-[16px] leading-normal text-[#6b7280]">
+          <p className="max-smx:mb-6 max-smx:text-body-sm text-body-md text-greyscale-500 mb-8 leading-normal">
             {tokenError ||
               'Link za resetovanje lozinke je nevažeći ili je istekao.'}
           </p>
@@ -65,13 +67,13 @@ export function PasswordResetForm() {
     return (
       <div>
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#10b981]/10">
-            <Check className="h-8 w-8 text-[#10b981]" strokeWidth={2.5} />
+          <div className="bg-success-500/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+            <Check className="text-success-500 h-8 w-8" strokeWidth={2.5} />
           </div>
-          <h2 className="max-smx:text-[26px] mb-4 text-[32px] font-bold tracking-[-0.5px] text-[#111827]">
+          <h2 className="max-smx:text-heading-h4 text-heading-h3 text-greyscale-1000 mb-4 font-bold tracking-[-0.5px]">
             Uspješno!
           </h2>
-          <p className="max-smx:text-[14px] mb-6 text-[16px] leading-normal text-[#6b7280]">
+          <p className="max-smx:text-body-sm text-body-md text-greyscale-500 mb-6 leading-normal">
             Vaša lozinka je uspješno resetovana. Preusmeravanje na stranicu za
             prijavu...
           </p>
@@ -84,10 +86,10 @@ export function PasswordResetForm() {
   return (
     <div>
       <div>
-        <h2 className="max-smx:text-[26px] mb-4 text-[32px] font-bold tracking-[-0.5px] text-[#111827]">
+        <h2 className="max-smx:text-heading-h4 text-heading-h3 text-greyscale-1000 mb-4 font-bold tracking-[-0.5px]">
           Nova Lozinka
         </h2>
-        <p className="max-smx:mb-6 max-smx:text-[14px] mb-8 text-[16px] leading-normal text-[#6b7280]">
+        <p className="max-smx:mb-6 max-smx:text-body-sm text-body-md text-greyscale-500 mb-8 leading-normal">
           Unesite novu lozinku za vaš račun.
         </p>
       </div>
