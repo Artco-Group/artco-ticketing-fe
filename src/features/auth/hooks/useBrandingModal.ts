@@ -2,18 +2,18 @@ import { useEffect, useState } from 'react';
 
 /**
  * Custom hook for branding modal state and responsive behavior.
- * Handles mobile detection, modal visibility, and close animation.
+ * Handles viewport size detection, modal visibility, and close animation.
  */
 export function useBrandingModal(breakpoint = 968) {
   const [showBrandingModal, setShowBrandingModal] = useState(true);
-  const [isMobile, setIsMobile] = useState(
+  const [isNarrowViewport, setIsNarrowViewport] = useState(
     () => window.innerWidth < breakpoint
   );
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < breakpoint);
+      setIsNarrowViewport(window.innerWidth < breakpoint);
     };
     window.addEventListener('resize', handleResize);
 
@@ -32,7 +32,7 @@ export function useBrandingModal(breakpoint = 968) {
 
   return {
     showBrandingModal,
-    isMobile,
+    isNarrowViewport,
     isClosing,
     closeBrandingModal,
   };

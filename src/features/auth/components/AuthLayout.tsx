@@ -11,9 +11,9 @@ interface AuthLayoutProps {
 
 const DefaultFloatingCards = () => (
   <>
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] ml-[-30px] flex items-start gap-4 rounded-2xl border border-white/12 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]">
-      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-[0_4px_12px_rgba(59, 130, 246, 0.4)] card-icon flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-400 to-blue-800 text-white">
-        <FileText className="max-smx:w-5 max-smx:h-5" size={24} />
+    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] max-mdx:ml-0 ml-[-30px] flex items-start gap-4 rounded-2xl border border-white/12 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]">
+      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-[0_4px_12px_rgba(59, 130, 246, 0.4)] card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-blue-400 to-blue-800 text-white">
+        <FileText className="max-smx:w-5 max-smx:h-5 shrink-0" size={24} />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
         <div className="flex items-center justify-between gap-2.5">
@@ -30,9 +30,9 @@ const DefaultFloatingCards = () => (
       </div>
     </div>
 
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] ml-10 flex items-start gap-4 rounded-2xl border border-white/12 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]">
-      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-[0_4px_12px_rgba(245, 158, 11, 0.4)] card-icon flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-orange-500 to-orange-600 text-white">
-        <Clock className="max-smx:w-5 max-smx:h-5" size={24} />
+    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] max-mdx:ml-0 ml-10 flex items-start gap-4 rounded-2xl border border-white/12 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]">
+      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-[0_4px_12px_rgba(245, 158, 11, 0.4)] card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-orange-500 to-orange-600 text-white">
+        <Clock className="max-smx:w-5 max-smx:h-5 shrink-0" size={24} />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
         <div className="flex items-center justify-between gap-2.5">
@@ -54,9 +54,9 @@ const DefaultFloatingCards = () => (
       </div>
     </div>
 
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] ml-xs flex items-start gap-4 rounded-2xl border border-white/12 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]">
-      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-[0_4px_12px_rgba(245, 158, 11, 0.4)] card-icon from-success-500 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-linear-to-br to-green-600 text-white">
-        <ShieldCheck className="max-smx:w-5 max-smx:h-5" size={24} />
+    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] ml-xs max-mdx:ml-0 flex items-start gap-4 rounded-2xl border border-white/12 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]">
+      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-[0_4px_12px_rgba(245, 158, 11, 0.4)] card-icon from-success-500 flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br to-green-600 text-white">
+        <ShieldCheck className="max-smx:w-5 max-smx:h-5 shrink-0" size={24} />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
         <div className="flex items-center justify-between gap-2.5">
@@ -106,13 +106,13 @@ export function AuthLayout({
   description = defaultDescription,
   floatingCards,
 }: AuthLayoutProps) {
-  const { showBrandingModal, isMobile, isClosing, closeBrandingModal } =
+  const { showBrandingModal, isNarrowViewport, isClosing, closeBrandingModal } =
     useBrandingModal();
 
   return (
     <div className="max-mdx:flex-col login-container flex min-h-screen w-full">
       {/* Left Panel - Branding with Video / Conditional Rendering */}
-      {(showBrandingModal || !isMobile) && (
+      {(showBrandingModal || !isNarrowViewport) && (
         <div
           className={`max-mdx:fixed max-mdx:top-0 max-mdx:left-0 max-mdx:w-full max-mdx:h-full max-mdx:z-1000 max-mdx:overflow-y-auto max-smx:p-6 max-smx:min-h-105 login-branding bg-primary-1000 relative flex flex-1 flex-col justify-between overflow-hidden p-12 transition-all duration-300 ${isClosing ? 'translate-y-[-100%] opacity-0' : ''}`}
         >
@@ -141,7 +141,7 @@ export function AuthLayout({
             </div>
 
             {/* Floating UI Cards */}
-            <div className="m-5xl max-lgx:max-w-75 max-mdx:relative max-mdx:top-auto max-mdx:left-auto max-mdx:transform-none max-mdx:m-10 max-mdx:mx-auto max-mdx:max-w-full max-smx:p-0 max-smx:gap-3 floating-cards relative top-auto left-auto z-5 m-auto flex w-full max-w-[380px] transform-none flex-col gap-4.5 p-5">
+            <div className="m-5xl max-lgx:max-w-75 max-mdx:relative max-mdx:top-auto max-mdx:left-auto max-mdx:transform-none max-mdx:m-10 max-mdx:mx-auto max-mdx:max-w-[380px] max-smx:p-0 max-smx:gap-3 floating-cards relative top-auto left-auto z-5 m-auto flex w-full max-w-[380px] transform-none flex-col gap-4.5 p-5">
               {floatingCards ?? <DefaultFloatingCards />}
             </div>
 
@@ -169,7 +169,7 @@ export function AuthLayout({
       )}
 
       {/* Right Panel - Form Container */}
-      <div className="max-mdx:p-8 ma-msx:p-6 login-form-panel relative flex flex-1 flex-col items-center justify-center bg-white p-12">
+      <div className="max-mdx:p-8 max-smx:p-6 login-form-panel relative flex flex-1 flex-col items-center justify-center bg-white p-12">
         <div className="w-full max-w-[400px]">{children}</div>
 
         <footer className="login-footer max-mdx:relative max-mdx:bottom-auto max-mdx:left-auto max-mdx:right-auto max-mdx:flex-col max-mdx:gap-4 max-mdx:mt-10 absolute right-12 bottom-8 left-12 flex items-center justify-between">
