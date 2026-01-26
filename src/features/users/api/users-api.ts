@@ -76,6 +76,7 @@ function useUpdateUser() {
   >({
     url: (vars) => API_ROUTES.USERS.BY_ID(vars.id),
     method: 'PUT',
+    getBody: (vars) => vars.data,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: QueryKeys.users.detail(variables.id),

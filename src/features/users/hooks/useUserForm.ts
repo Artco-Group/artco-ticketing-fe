@@ -1,7 +1,8 @@
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   createUserSchema,
+  updateUserSchema,
   type CreateUserFormData,
   type UpdateUserFormData,
   UserRole,
@@ -13,17 +14,15 @@ interface UseUserFormOptions {
   onSubmit: (data: CreateUserFormData | UpdateUserFormData) => void;
 }
 
-/**
- * Custom hook for user form logic.
- * Separates business logic from UI for better testability and maintainability.
- */
 export function useUserForm({
   defaultValues,
   isEditing = false,
   onSubmit,
 }: UseUserFormOptions) {
+  const schema = isEditing ? updateUserSchema : createUserSchema;
+
   const form = useForm<CreateUserFormData>({
-    resolver: zodResolver(createUserSchema),
+    resolver: zodResolver(schema) as Resolver<CreateUserFormData>,
     defaultValues: {
       name: defaultValues?.name || '',
       email: defaultValues?.email || '',
@@ -34,12 +33,8 @@ export function useUserForm({
 
   const handleFormSubmit = (data: CreateUserFormData) => {
     if (isEditing) {
-      const updateData: UpdateUserFormData = {
-        name: data.name,
-        email: data.email,
-        role: data.role,
-      };
-      onSubmit(updateData);
+      const { password: _, ...updateData } = data;
+      onSubmit(updateData as UpdateUserFormData);
     } else {
       onSubmit(data);
     }
@@ -48,6 +43,5 @@ export function useUserForm({
   return {
     form,
     onSubmit: form.handleSubmit(handleFormSubmit),
-    isEditing,
   };
 }
