@@ -89,26 +89,29 @@ interface ApiMutationOptions<
   url: string | ((variables: TVariables) => string);
   method?: 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   config?: AxiosRequestConfig;
+  getBody?: (variables: TVariables) => unknown;
 }
 
 /**
  * Enhanced useMutation wrapper
  * - Dynamic URL support
  * - Configurable HTTP method
+ * - Optional body transformer via getBody
  * - Error logging in development
  */
 export function useApiMutation<TData, TVariables = void, TContext = unknown>(
   options: ApiMutationOptions<TData, TVariables, TContext>
 ) {
-  const { url, method = 'POST', config, ...mutationOptions } = options;
+  const { url, method = 'POST', config, getBody, ...mutationOptions } = options;
 
   return useMutation({
     mutationFn: async (variables: TVariables): Promise<TData> => {
       const resolvedUrl = typeof url === 'function' ? url(variables) : url;
+      const body = getBody ? getBody(variables) : variables;
       const response = await apiClient.request<TData>({
         url: resolvedUrl,
         method,
-        data: variables,
+        data: body,
         ...config,
       });
       return response.data;

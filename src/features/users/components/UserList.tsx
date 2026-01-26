@@ -114,6 +114,7 @@ function UserList({
         title={editingUser ? 'Edit User' : 'Add New User'}
       >
         <UserForm
+          key={editingUser?._id || editingUser?.id || 'new'}
           onSubmit={onFormSubmit}
           onCancel={onCloseFormModal}
           defaultValues={
