@@ -4,13 +4,14 @@ import {
   formatDateLocalized,
   getRoleBadgeClasses,
 } from '@artco-group/artco-ticketing-sync';
-import { Pencil, Trash2, Users } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import {
   DataTable,
   textColumn,
   badgeColumn,
   dateColumn,
   actionsColumn,
+  EmptyState,
 } from '@/shared/components/ui';
 
 interface UserTableProps {
@@ -52,15 +53,12 @@ function UserTable({ users, onEdit, onDelete }: UserTableProps) {
   ];
 
   const emptyState = (
-    <div className="py-12 text-center">
-      <Users className="text-muted-foreground mx-auto h-12 w-12" />
-      <h3 className="text-foreground mt-2 text-sm font-medium">
-        No users found
-      </h3>
-      <p className="text-muted-foreground mt-1 text-sm">
-        No users match your current search and filters.
-      </p>
-    </div>
+    <EmptyState
+      variant="no-users"
+      title="No users found"
+      message="No users match your current search and filters."
+      className="min-h-0 py-12"
+    />
   );
 
   return <DataTable columns={columns} data={users} emptyState={emptyState} />;

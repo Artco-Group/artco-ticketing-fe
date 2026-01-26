@@ -60,12 +60,15 @@ export function QueryStateWrapper<T>({
   }
 
   if (error) {
-    return <EmptyState title={errorTitle} message={errorMessage} />;
+    return (
+      <EmptyState variant="error" title={errorTitle} message={errorMessage} />
+    );
   }
 
   if (!data) {
     return (
       <EmptyState
+        variant="no-data"
         title={emptyTitle}
         message={emptyMessage}
         action={emptyAction}
@@ -77,6 +80,7 @@ export function QueryStateWrapper<T>({
   if (!allowEmpty && isEmpty?.(data)) {
     return (
       <EmptyState
+        variant="no-data"
         title={emptyTitle}
         message={emptyMessage}
         action={emptyAction}

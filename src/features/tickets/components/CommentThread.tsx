@@ -4,7 +4,7 @@ import {
   type User,
   formatDateTime,
 } from '@artco-group/artco-ticketing-sync';
-import { useAutoScroll } from '@/shared';
+import { useAutoScroll, EmptyState } from '@/shared';
 
 interface CommentThreadProps {
   comments: Comment[];
@@ -33,7 +33,12 @@ function CommentThread({
         className="mb-6 max-h-96 space-y-4 overflow-y-auto"
       >
         {comments.length === 0 ? (
-          <p className="py-8 text-center text-gray-400">Nema komentara</p>
+          <EmptyState
+            variant="no-comments"
+            title="No comments yet"
+            message="Be the first to start the discussion"
+            className="min-h-0 py-8"
+          />
         ) : (
           comments.map((comment) => (
             <CommentBubble

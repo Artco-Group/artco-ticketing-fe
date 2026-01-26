@@ -21,6 +21,7 @@ export default function TicketDetailPage() {
   if (!currentUser?.role) {
     return (
       <EmptyState
+        variant="error"
         title="Access Denied"
         message="You don't have permission to view this ticket."
       />
