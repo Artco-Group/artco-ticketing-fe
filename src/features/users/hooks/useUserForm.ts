@@ -5,8 +5,8 @@ import {
   updateUserSchema,
   type CreateUserFormData,
   type UpdateUserFormData,
-  UserRole,
 } from '@artco-group/artco-ticketing-sync';
+import { UserRole } from '@/types';
 
 interface UseUserFormOptions {
   defaultValues?: Partial<CreateUserFormData>;

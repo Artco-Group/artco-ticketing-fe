@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
-import type { Ticket } from '@artco-group/artco-ticketing-sync';
+import {
+  asTicketId,
+  asUserId,
+  type Ticket,
+  type TicketId,
+  type UserId,
+} from '@/types';
 import { toast } from 'sonner';
 import { fileAPI } from '../api/file-api';
-import type { TicketId, UserId } from '@/types/branded';
-import { asTicketId, asUserId } from '@/types/branded';
 
 interface UseTicketDetailActionsOptions {
   ticket: Ticket | null;

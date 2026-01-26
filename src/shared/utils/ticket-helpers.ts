@@ -1,14 +1,16 @@
 import {
-  TicketStatus,
-  TicketPriority,
-  TicketCategory,
   TicketPriorityDisplay,
   getStatusBadgeClasses,
   getCategoryBadgeClasses,
+} from '@artco-group/artco-ticketing-sync';
+import {
+  TicketStatus,
+  TicketPriority,
+  TicketCategory,
   type Ticket,
   type User,
-} from '@artco-group/artco-ticketing-sync';
-import type { Filters } from '@/types';
+  type Filters,
+} from '@/types';
 
 /**
  * Priority order for sorting (highest first)

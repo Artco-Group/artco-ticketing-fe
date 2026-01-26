@@ -1,4 +1,4 @@
-import type { Ticket } from '@artco-group/artco-ticketing-sync';
+import type { Ticket } from '@/types';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, Icon } from '../ui';
 import { useTicketSummary } from '../../hooks';

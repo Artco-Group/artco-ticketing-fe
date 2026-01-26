@@ -1,11 +1,8 @@
 import {
-  type Ticket,
-  type User,
-  UserRole,
   formatDateLocalized,
   formatDateTime,
 } from '@artco-group/artco-ticketing-sync';
-import type { Filters } from '@/types';
+import { UserRole, type Ticket, type User, type Filters } from '@/types';
 import {
   useRoleFlags,
   SummaryCards,

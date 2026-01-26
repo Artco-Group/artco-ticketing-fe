@@ -7,7 +7,7 @@ import {
   type CreateCommentFormData,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
-import type { TicketId, CommentId } from '@/types/branded';
+import type { TicketId, CommentId } from '@/types';
 
 /** API response wrapper type */
 interface ApiResponse<T> {

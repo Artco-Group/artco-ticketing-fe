@@ -1,5 +1,5 @@
 import api from '@/shared/lib/api-client';
-import type { TicketId } from '@/types/branded';
+import type { TicketId } from '@/types';
 
 export const fileAPI = {
   downloadAttachment: async (

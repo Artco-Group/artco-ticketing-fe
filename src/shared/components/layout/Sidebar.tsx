@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context';
 import { PAGE_ROUTES } from '@/shared/constants';
-import { UserRole } from '@artco-group/artco-ticketing-sync';
+import { UserRole } from '@/types';
 import { hasRole } from '@/shared/utils/role-helpers';
 import { cn } from '@/lib/utils';
 import { Button, Icon } from '@/shared/components/ui';

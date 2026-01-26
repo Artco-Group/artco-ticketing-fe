@@ -8,8 +8,7 @@ import { toast } from 'sonner';
 
 import { getErrorMessage } from '@/shared';
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '../api';
-import type { UserId } from '@/types/branded';
-import { asUserId } from '@/types/branded';
+import { asUserId, type UserId } from '@/types';
 
 /**
  * Custom hook for user list page logic.

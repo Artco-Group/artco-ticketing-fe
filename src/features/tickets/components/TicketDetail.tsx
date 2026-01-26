@@ -1,18 +1,19 @@
 import type { FormEvent } from 'react';
 import {
+  UserRole,
+  asTicketId,
   type Ticket,
   type Comment,
   type User,
-  UserRole,
-} from '@artco-group/artco-ticketing-sync';
+  type TicketId,
+  type UserId,
+} from '@/types';
 import { Loader2 } from 'lucide-react';
 import { Icon } from '@/shared/components/ui';
 import CommentThread from './CommentThread';
 import TicketDetails from './TicketDetails';
 import { resolveAssigneeName } from '@/shared/utils/ticket-helpers';
 import { useTicketDetailActions } from '../hooks/useTicketDetailActions';
-import type { TicketId, UserId } from '@/types/branded';
-import { asTicketId } from '@/types/branded';
 import {
   useRoleFlags,
   Button,

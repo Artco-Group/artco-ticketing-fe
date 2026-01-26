@@ -8,7 +8,7 @@ import {
   type UpdateUserFormData,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
-import type { UserId } from '@/types/branded';
+import type { UserId } from '@/types';
 
 /** API response wrapper type */
 interface ApiResponse<T> {

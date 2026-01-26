@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context';
 import { LoadingOverlay } from '@/shared/components/ui';
 import { PAGE_ROUTES } from '@/shared/constants';
-import { UserRole } from '@artco-group/artco-ticketing-sync';
+import { UserRole } from '@/types';
 import { hasRole } from '@/shared/utils/role-helpers';
 
 interface RouteGuardProps {
