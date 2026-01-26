@@ -4,12 +4,13 @@ import {
 } from '@artco-group/artco-ticketing-sync';
 import { Image, FileText, File } from 'lucide-react';
 import { Icon } from '@/shared/components/ui';
+import type { TicketId } from '@/types/branded';
 
 interface TicketAttachmentsProps {
   attachments: Attachment[];
-  ticketId: string;
+  ticketId: TicketId;
   onDownload?: (
-    ticketId: string,
+    ticketId: TicketId,
     index: number,
     filename: string
   ) => Promise<void>;

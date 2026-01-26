@@ -2,11 +2,12 @@ import {
   type ScreenRecording,
   formatTime,
 } from '@artco-group/artco-ticketing-sync';
+import type { TicketId } from '@/types/branded';
 
 interface TicketScreenRecordingProps {
   screenRecording: ScreenRecording;
-  ticketId: string;
-  onDownload?: (ticketId: string, filename: string) => void;
+  ticketId: TicketId;
+  onDownload?: (ticketId: TicketId, filename: string) => void;
 }
 
 function TicketScreenRecording({
