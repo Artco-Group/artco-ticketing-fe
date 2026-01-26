@@ -3,15 +3,14 @@ import { useAuth } from '@/features/auth/context';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { UserRole } from '@artco-group/artco-ticketing-sync';
 import { hasRole } from '@/shared/utils/role-helpers';
-import { LayoutDashboard, Ticket, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/shared/components/ui';
+import { Button, Icon } from '@/shared/components/ui';
 
 const navigation = [
   {
     name: 'Dashboard',
     href: PAGE_ROUTES.DASHBOARD.ROOT,
-    icon: LayoutDashboard,
+    icon: 'dashboard' as const,
     roles: [
       UserRole.CLIENT,
       UserRole.DEVELOPER,
@@ -22,7 +21,7 @@ const navigation = [
   {
     name: 'Tickets',
     href: PAGE_ROUTES.TICKETS.LIST,
-    icon: Ticket,
+    icon: 'tickets' as const,
     roles: [
       UserRole.CLIENT,
       UserRole.DEVELOPER,
@@ -33,7 +32,7 @@ const navigation = [
   {
     name: 'Users',
     href: PAGE_ROUTES.USERS.LIST,
-    icon: Users,
+    icon: 'user' as const,
     roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
   },
 ];
@@ -62,7 +61,7 @@ export function Sidebar() {
                     isActive && 'bg-accent'
                   )}
                 >
-                  <item.icon className="h-5 w-5" />
+                  <Icon name={item.icon} size="md" />
                   {item.name}
                 </Button>
               )}

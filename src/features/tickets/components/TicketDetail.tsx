@@ -5,7 +5,8 @@ import {
   type User,
   UserRole,
 } from '@artco-group/artco-ticketing-sync';
-import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { Icon } from '@/shared/components/ui';
 import CommentThread from './CommentThread';
 import TicketDetails from './TicketDetails';
 import { resolveAssigneeName } from '@/shared/utils/ticket-helpers';
@@ -98,7 +99,7 @@ function TicketDetail({
       {isEngLead ? (
         <div className="mb-6 flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={onBack}>
-            <ArrowLeft className="h-5 w-5" />
+            <Icon name="arrow-left" size="md" />
           </Button>
           <div>
             <nav className="text-muted-foreground mb-1 text-sm">
@@ -118,7 +119,7 @@ function TicketDetail({
         </div>
       ) : (
         <Button variant="ghost" onClick={onBack} className="mb-6">
-          <ArrowLeft className="mr-2 h-5 w-5" />
+          <Icon name="arrow-left" size="md" className="mr-2" />
           {backButtonText}
         </Button>
       )}
@@ -245,7 +246,11 @@ function TicketDetail({
                   )}
                   {showSuccess && (
                     <div className="bg-success-100 mt-2 flex items-center gap-2 rounded-lg border border-green-200 p-2">
-                      <CheckCircle className="text-success-500 h-4 w-4" />
+                      <Icon
+                        name="check-circle"
+                        size="sm"
+                        className="text-success-500"
+                      />
                       <span className="text-success-500 text-xs font-medium">
                         Ticket closed successfully
                       </span>
@@ -288,7 +293,11 @@ function TicketDetail({
 
               {showSuccess && (
                 <div className="bg-success-100 flex items-center gap-2 rounded-lg border border-green-200 p-3">
-                  <CheckCircle className="text-success-500 h-4 w-4" />
+                  <Icon
+                    name="check-circle"
+                    size="sm"
+                    className="text-success-500"
+                  />
                   <span className="text-success-500 text-sm font-medium">
                     Ticket marked as resolved successfully
                   </span>

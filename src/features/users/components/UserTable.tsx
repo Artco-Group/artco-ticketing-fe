@@ -4,7 +4,6 @@ import {
   formatDateLocalized,
   getRoleBadgeClasses,
 } from '@artco-group/artco-ticketing-sync';
-import { Pencil, Trash2 } from 'lucide-react';
 import {
   DataTable,
   textColumn,
@@ -12,6 +11,7 @@ import {
   dateColumn,
   actionsColumn,
   EmptyState,
+  Icon,
 } from '@/shared/components/ui';
 
 interface UserTableProps {
@@ -36,14 +36,14 @@ function UserTable({ users, onEdit, onDelete }: UserTableProps) {
     }),
     actionsColumn<User>('actions', 'Actions', [
       {
-        icon: () => <Pencil className="h-4 w-4" />,
+        icon: () => <Icon name="edit" size="sm" />,
         onClick: onEdit,
         label: 'Edit user',
         className:
           'p-1.5 text-muted-foreground transition-colors hover:text-primary',
       },
       {
-        icon: () => <Trash2 className="h-4 w-4" />,
+        icon: () => <Icon name="trash" size="sm" />,
         onClick: onDelete,
         label: 'Delete user',
         className:

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import type { ErrorInfo } from 'react';
-import { AlertTriangle } from 'lucide-react';
 import { PAGE_ROUTES } from '@/shared/constants';
+import { Icon } from '@/shared/components/ui';
 
 interface ErrorFallbackProps {
   error: Error | null;
@@ -37,7 +37,7 @@ export function ErrorFallback({
         {/* Error Icon */}
         <div className="mb-6 flex justify-center">
           <div className="bg-error-100 flex h-16 w-16 items-center justify-center rounded-full">
-            <AlertTriangle className="text-error-500 h-8 w-8" />
+            <Icon name="info" size="xl" className="text-error-500" />
           </div>
         </div>
 

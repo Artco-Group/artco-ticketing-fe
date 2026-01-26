@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Mail, ArrowRight, CheckCircle } from 'lucide-react';
 import { PAGE_ROUTES } from '@/shared/constants';
+import { Icon } from '@/shared/components/ui';
 import { useForgotPasswordForm } from '../hooks';
 import {
   Form,
@@ -27,7 +27,7 @@ export function ForgotPasswordForm() {
       <Card className="border-none bg-transparent shadow-none">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle className="h-6 w-6 text-green-600" />
+            <Icon name="check-circle" size="lg" className="text-green-600" />
           </div>
           <CardTitle className="max-smx:text-2xl text-3xl">
             Email poslan!
@@ -76,7 +76,13 @@ export function ForgotPasswordForm() {
                 <FormLabel>Email adresa</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Mail className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
+                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
+                      <Icon
+                        name="mail"
+                        size="md"
+                        className="text-muted-foreground pointer-events-none"
+                      />
+                    </div>
                     <Input
                       type="email"
                       autoComplete="email"
@@ -98,7 +104,7 @@ export function ForgotPasswordForm() {
             disabled={isPending}
           >
             {isPending ? 'Slanje...' : 'Pošalji link'}
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <Icon name="arrow-right" size="md" className="ml-2" />
           </Button>
         </form>
       </Form>

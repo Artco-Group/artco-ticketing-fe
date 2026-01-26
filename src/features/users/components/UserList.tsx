@@ -5,13 +5,13 @@ import {
   UserRole,
   UserRoleDisplay,
 } from '@artco-group/artco-ticketing-sync';
-import { Plus } from 'lucide-react';
 import {
   FilterBar,
   type FilterConfig,
   Modal,
   ConfirmModal,
   Button,
+  Icon,
 } from '@/shared';
 import UserForm from './UserForm';
 import UserTable from './UserTable';
@@ -83,7 +83,7 @@ function UserList({
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-foreground text-2xl font-bold">User Management</h1>
         <Button onClick={onAddUser}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Icon name="plus" size="sm" className="mr-2" />
           Add New User
         </Button>
       </div>

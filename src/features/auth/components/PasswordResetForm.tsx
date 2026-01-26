@@ -1,5 +1,6 @@
-import { Lock, Eye, EyeOff, Check, ChevronRight } from 'lucide-react';
+import { EyeOff } from 'lucide-react';
 import { usePasswordResetForm } from '../hooks';
+import { Icon } from '@/shared/components/ui';
 import {
   Form,
   FormControl,
@@ -68,7 +69,7 @@ export function PasswordResetForm() {
       <div>
         <div className="text-center">
           <div className="bg-success-500/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-            <Check className="text-success-500 h-8 w-8" strokeWidth={2.5} />
+            <Icon name="check-circle" size="xl" className="text-success-500" />
           </div>
           <h2 className="max-smx:text-heading-h4 text-heading-h3 text-greyscale-1000 mb-4 font-bold tracking-[-0.5px]">
             Uspješno!
@@ -104,7 +105,13 @@ export function PasswordResetForm() {
                 <FormLabel>Nova Lozinka</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
+                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
+                      <Icon
+                        name="lock"
+                        size="md"
+                        className="text-muted-foreground pointer-events-none"
+                      />
+                    </div>
                     <Input
                       type={showNewPassword ? 'text' : 'password'}
                       autoComplete="new-password"
@@ -126,7 +133,11 @@ export function PasswordResetForm() {
                       {showNewPassword ? (
                         <EyeOff className="text-muted-foreground h-5 w-5" />
                       ) : (
-                        <Eye className="text-muted-foreground h-5 w-5" />
+                        <Icon
+                          name="eye"
+                          size="md"
+                          className="text-muted-foreground"
+                        />
                       )}
                     </Button>
                   </div>
@@ -144,7 +155,13 @@ export function PasswordResetForm() {
                 <FormLabel>Potvrdi Lozinku</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
+                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
+                      <Icon
+                        name="lock"
+                        size="md"
+                        className="text-muted-foreground pointer-events-none"
+                      />
+                    </div>
                     <Input
                       type={showConfirmPassword ? 'text' : 'password'}
                       autoComplete="new-password"
@@ -168,7 +185,11 @@ export function PasswordResetForm() {
                       {showConfirmPassword ? (
                         <EyeOff className="text-muted-foreground h-5 w-5" />
                       ) : (
-                        <Eye className="text-muted-foreground h-5 w-5" />
+                        <Icon
+                          name="eye"
+                          size="md"
+                          className="text-muted-foreground"
+                        />
                       )}
                     </Button>
                   </div>
@@ -198,7 +219,7 @@ export function PasswordResetForm() {
             ) : (
               <>
                 Resetuj Lozinku
-                <ChevronRight className="ml-2 h-5 w-5" />
+                <Icon name="chevron-right" size="md" className="ml-2" />
               </>
             )}
           </Button>

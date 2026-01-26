@@ -6,7 +6,6 @@ import {
   formatDateTime,
 } from '@artco-group/artco-ticketing-sync';
 import type { Filters } from '@/types';
-import { Plus } from 'lucide-react';
 import {
   useRoleFlags,
   SummaryCards,
@@ -20,6 +19,7 @@ import {
   Button,
   Badge,
   EmptyState,
+  Icon,
 } from '@/shared';
 import {
   statusColors,
@@ -97,7 +97,7 @@ function ClientLayout({
         <h1 className="text-foreground text-2xl font-bold">My Tickets</h1>
         {onCreateTicket && (
           <Button onClick={onCreateTicket}>
-            <Plus className="mr-2 h-5 w-5" />
+            <Icon name="plus" size="lg" className="mr-2" />
             Create New Ticket
           </Button>
         )}
@@ -129,7 +129,7 @@ function ClientEmptyState({ onCreateTicket }: { onCreateTicket?: () => void }) {
       action={
         onCreateTicket && (
           <Button onClick={onCreateTicket} size="lg">
-            <Plus className="mr-2 h-5 w-5" />
+            <Icon name="plus" size="lg" className="mr-2" />
             Create New Ticket
           </Button>
         )

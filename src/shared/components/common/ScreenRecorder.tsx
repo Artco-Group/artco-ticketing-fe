@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Video, X } from 'lucide-react';
+import { Video } from 'lucide-react';
 import { useScreenRecorder } from '@/shared/hooks/useScreenRecorder';
+import { Icon } from '@/shared/components/ui';
 import { formatTime } from '@artco-group/artco-ticketing-sync';
 import { SCREEN_RECORDING } from '@/config';
 
@@ -78,7 +79,7 @@ export default function ScreenRecorder({
             onClick={handleRemove}
             className="text-error-500 hover:text-error-600 transition-colors"
           >
-            <X className="h-5 w-5" />
+            <Icon name="close" size="lg" />
           </button>
         </div>
 
@@ -182,7 +183,7 @@ export default function ScreenRecorder({
           disabled={disabled}
           className="bg-brand-primary hover:bg-brand-primary-dark mt-3 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
-          🎥 Započni Snimanje
+          Započni Snimanje
         </button>
 
         {error && <p className="text-error-500 mt-2 text-xs">{error}</p>}
