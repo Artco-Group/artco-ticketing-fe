@@ -2,7 +2,8 @@ import {
   type Attachment,
   formatFileSize,
 } from '@artco-group/artco-ticketing-sync';
-import { Image, FileText, File, Download } from 'lucide-react';
+import { Image, FileText, File } from 'lucide-react';
+import { Icon } from '@/shared/components/ui';
 
 interface TicketAttachmentsProps {
   attachments: Attachment[];
@@ -73,7 +74,7 @@ function TicketAttachments({
               onClick={() => handleDownload(attachment, index)}
               className="bg-brand-primary hover:bg-brand-primary-dark flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
             >
-              <Download className="h-4 w-4" />
+              <Icon name="download" size="sm" />
               Preuzmi
             </button>
           </div>

@@ -11,8 +11,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Icon,
 } from '@/shared/components/ui';
-import { LogOut } from 'lucide-react';
 
 interface HeaderProps {
   pageConfig?: PageConfig;
@@ -73,7 +73,7 @@ export function Header({ pageConfig }: HeaderProps) {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout} className="text-destructive">
-                <LogOut className="mr-2 h-4 w-4" />
+                <Icon name="logout" size="md" className="mr-2" />
                 <span>Logout</span>
               </DropdownMenuItem>
             </DropdownMenuContent>

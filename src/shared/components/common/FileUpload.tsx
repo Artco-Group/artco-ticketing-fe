@@ -1,13 +1,13 @@
 import type { DragEvent, ChangeEvent, MouseEvent } from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Upload, Image, FileText, File, X } from 'lucide-react';
+import { Image, FileText, File } from 'lucide-react';
 import {
   formatFileSize,
   VALIDATION_RULES,
   ALLOWED_FILE_TYPES,
 } from '@artco-group/artco-ticketing-sync';
-import { Card, Button } from '@/shared/components/ui';
+import { Card, Button, Icon } from '@/shared/components/ui';
 import { cn } from '@/lib/utils';
 
 interface FileUploadProps {
@@ -134,7 +134,11 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
         onDragLeave={handleDragLeave}
         onClick={() => document.getElementById('file-input')?.click()}
       >
-        <Upload className="text-muted-foreground mx-auto mb-3 h-10 w-10" />
+        <Icon
+          name="upload"
+          size="xl"
+          className="text-muted-foreground mx-auto mb-3"
+        />
         <p className="text-muted-foreground mb-1 text-sm">
           {files.length === 0
             ? 'Prevucite datoteke ovdje ili kliknite za odabir'
@@ -191,7 +195,7 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
                 }}
                 className="text-muted-foreground hover:text-destructive"
               >
-                <X className="h-5 w-5" />
+                <Icon name="close" size="lg" />
               </Button>
             </Card>
           ))}

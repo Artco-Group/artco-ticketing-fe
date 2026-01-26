@@ -1,7 +1,6 @@
 import type { Ticket } from '@artco-group/artco-ticketing-sync';
 import { cn } from '@/lib/utils';
-import { ClipboardList, AlertTriangle, AlertCircle } from 'lucide-react';
-import { Card, CardContent } from '../ui';
+import { Card, CardContent, Icon } from '../ui';
 import { useTicketSummary } from '../../hooks';
 
 interface SummaryCardsProps {
@@ -60,11 +59,11 @@ function SummaryCard({
     red: 'bg-error-100 text-error-500',
   };
 
-  const IconComponent = {
-    tickets: ClipboardList,
-    alert: AlertTriangle,
-    warning: AlertCircle,
-  }[icon];
+  const iconMap: Record<IconType, 'all' | 'info' | 'priority'> = {
+    tickets: 'all',
+    alert: 'info',
+    warning: 'priority',
+  };
 
   return (
     <Card className={cn(highlighted && 'ring-2 ring-orange-200')}>
@@ -80,7 +79,7 @@ function SummaryCard({
               colorClasses[color]
             )}
           >
-            <IconComponent className="h-6 w-6" />
+            <Icon name={iconMap[icon]} size="lg" />
           </div>
         </div>
       </CardContent>
