@@ -11,8 +11,8 @@ interface AuthLayoutProps {
 
 const DefaultFloatingCards = () => (
   <>
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] max-mdx:ml-0 ml-[-30px] flex items-start gap-4 rounded-2xl border border-white/12 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]">
-      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-[0_4px_12px_rgba(59, 130, 246, 0.4)] card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-blue-400 to-blue-800 text-white">
+    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] max-mdx:ml-0 shadow-card-glass hover:shadow-card-glass-hover ml-[-30px] flex items-start gap-4 rounded-2xl border border-white/12 p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
+      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-blue card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-blue-400 to-blue-800 text-white">
         <Icon name="priority" size="lg" className="shrink-0" />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
@@ -30,8 +30,8 @@ const DefaultFloatingCards = () => (
       </div>
     </div>
 
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] max-mdx:ml-0 ml-10 flex items-start gap-4 rounded-2xl border border-white/12 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]">
-      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-[0_4px_12px_rgba(245, 158, 11, 0.4)] card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-orange-500 to-orange-600 text-white">
+    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] max-mdx:ml-0 shadow-card-glass hover:shadow-card-glass-hover ml-10 flex items-start gap-4 rounded-2xl border border-white/12 p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
+      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-warm card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-orange-500 to-orange-600 text-white">
         <Icon name="tasks" size="lg" className="shrink-0" />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
@@ -54,8 +54,8 @@ const DefaultFloatingCards = () => (
       </div>
     </div>
 
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] ml-xs max-mdx:ml-0 flex items-start gap-4 rounded-2xl border border-white/12 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]">
-      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-[0_4px_12px_rgba(245, 158, 11, 0.4)] card-icon from-success-500 flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br to-green-600 text-white">
+    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] ml-xs max-mdx:ml-0 shadow-card-glass hover:shadow-card-glass-hover flex items-start gap-4 rounded-2xl border border-white/12 p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
+      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-warm card-icon from-success-500 flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br to-green-600 text-white">
         <Icon name="shield-check" size="lg" className="shrink-0" />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
@@ -151,7 +151,7 @@ export function AuthLayout({
               </p>
             </div>
             <button
-              className="max-mdx:flex max-mdx:items-center max-mdx:justify-center max-mdx:mt-5 max-mdx:gap-2 max-mdx:w-full max-mdx:h-14 max-mdx:py-4.5 max-mdx:px-6 max-mdx:bg-linear-135 max-mdx:text-white max-mdx:font-semibold max-mdx:text-body-md max-mdx:border-none max-mdx:rounded-lg max-mdx:cursor-pointer max-mdx:shadow-[0_4px_12px_rgba(0,0,0,0.15)] max-mdx:transition-all max-mdx:duration-300 max-mdx:ease-in-out max-mdx:tracking[0.3px] max-mdx:hover:bg-linear-135 max-mdx:hover:transform max-mdx:hover:-translate-y-0.5 max-mdx:hover:shadow-[0_6px_20px_rgba(0,65,121,0.35)] max-mdx:active:translate-y-0 from-primary-500 to-primary-600 text-body-md z-10 hidden cursor-pointer border-none bg-linear-to-br text-white"
+              className="max-mdx:flex max-mdx:items-center max-mdx:justify-center max-mdx:mt-5 max-mdx:gap-2 max-mdx:w-full max-mdx:h-14 max-mdx:py-4.5 max-mdx:px-6 max-mdx:bg-linear-135 max-mdx:text-white max-mdx:font-semibold max-mdx:text-body-md max-mdx:border-none max-mdx:rounded-lg max-mdx:cursor-pointer max-mdx:shadow-card-button-md max-mdx:transition-all max-mdx:duration-300 max-mdx:ease-in-out max-mdx:tracking[0.3px] max-mdx:hover:bg-linear-135 max-mdx:hover:transform max-mdx:hover:-translate-y-0.5 max-mdx:hover:shadow-button-hover max-mdx:active:translate-y-0 from-primary-500 to-primary-600 text-body-md z-10 hidden cursor-pointer border-none bg-linear-to-br text-white"
               onClick={closeBrandingModal}
             >
               <span>Nastavi</span>
