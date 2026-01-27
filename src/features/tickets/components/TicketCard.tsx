@@ -28,7 +28,7 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
     >
       <CardHeader className="pb-2">
         <CardTitle className="line-clamp-2 text-lg">{ticket.title}</CardTitle>
-        <p className="text-muted-foreground text-sm">{ticket.clientEmail}</p>
+        <p className="text-muted-sm">{ticket.clientEmail}</p>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -51,7 +51,7 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
         <Separator />
 
         {/* Priority & Date */}
-        <div className="flex items-center justify-between">
+        <div className="flex-between">
           <Badge
             variant="secondary"
             className={cn(
@@ -61,7 +61,7 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
           >
             {priorityConfig[ticket.priority].label}
           </Badge>
-          <span className="text-muted-foreground text-xs">
+          <span className="text-muted-xs">
             {ticket.createdAt ? formatDateLocalized(ticket.createdAt) : ''}
           </span>
         </div>

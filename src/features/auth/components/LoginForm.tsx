@@ -110,7 +110,7 @@ export function LoginForm() {
             )}
           />
 
-          <div className="max-smx:flex-col max-smx:items-start max-smx:gap-3 flex items-center justify-between">
+          <div className="max-smx:flex-col max-smx:items-start max-smx:gap-3 flex-between">
             <div className="flex items-center space-x-2">
               <Checkbox id="remember-me" />
               <label
@@ -122,7 +122,7 @@ export function LoginForm() {
             </div>
             <Link
               to={PAGE_ROUTES.AUTH.FORGOT_PASSWORD}
-              className="text-primary text-sm font-medium hover:underline"
+              className="link text-sm"
             >
               Zaboravljena lozinka?
             </Link>
@@ -141,13 +141,13 @@ export function LoginForm() {
       </Form>
 
       <div className="mt-7 text-center">
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-sm">
           Nemate račun?{' '}
           <a
             href="https://www.artcogroup.ba/page/contact"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary font-medium hover:underline"
+            className="link"
           >
             Kontaktirajte administratora
           </a>

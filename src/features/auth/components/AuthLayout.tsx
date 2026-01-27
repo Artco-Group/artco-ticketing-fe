@@ -16,7 +16,7 @@ const DefaultFloatingCards = () => (
         <Icon name="priority" size="lg" className="shrink-0" />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
-        <div className="flex items-center justify-between gap-2.5">
+        <div className="flex-between gap-2.5">
           <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
             Brza prijava
           </span>
@@ -35,7 +35,7 @@ const DefaultFloatingCards = () => (
         <Icon name="tasks" size="lg" className="shrink-0" />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
-        <div className="flex items-center justify-between gap-2.5">
+        <div className="flex-between gap-2.5">
           <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
             Praćenje statusa
           </span>
@@ -59,14 +59,14 @@ const DefaultFloatingCards = () => (
         <Icon name="shield-check" size="lg" className="shrink-0" />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1.5">
-        <div className="flex items-center justify-between gap-2.5">
+        <div className="flex-between gap-2.5">
           <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
             Sigurna komunikacija
           </span>
           <Icon name="check" size="md" className="shrink-0 text-white" />
         </div>
         <span className="text-body-sm text-white/70">Zaštićeni podaci</span>
-        <div className="mt-2 flex items-center gap-3 border-t border-white/10 pt-2.5">
+        <div className="flex-start-gap-3 mt-2 border-t border-white/10 pt-2.5">
           <div className="flex flex-col gap-0.5">
             <span className="text-body-sm font-bold text-white">256-bit</span>
             <span className="text-caption tracking-[0.5px] text-white/50 uppercase">
@@ -123,8 +123,8 @@ export function AuthLayout({
             <source src="/securitysolution.mp4" type="video/mp4" />
           </video>
 
-          {/* Dark Overlay */}
-          <div className="via-primary-1000/90 from-primary-500/85 to-primary-1000/85 absolute top-0 left-0 z-1 h-full w-full bg-linear-135"></div>
+          {/* Dark Overlay with brand blue hue */}
+          <div className="from-brand-primary/70 via-brand-primary-dark/80 to-primary-1000/90 absolute top-0 left-0 z-1 h-full w-full bg-linear-135"></div>
 
           <div className="branding-content relative z-2 flex h-full flex-col justify-between">
             {/* Artco Logo */}
@@ -141,9 +141,9 @@ export function AuthLayout({
               {floatingCards ?? <DefaultFloatingCards />}
             </div>
 
-            {/* Moved headline and subtext below cards */}
+            {/* Headline and subtext below cards */}
             <div className="z-15 mt-auto text-left">
-              <h1 className="max-lgx:text-heading-h2 max-mdx:text-heading-h3 max-smx:text-heading-h3 text-heading-h2 mb-5 leading-[1.15] font-bold tracking-[-1.5px] text-white">
+              <h1 className="text-h2 mb-5 leading-[1.15] font-bold tracking-[-1.5px] text-white">
                 {headline}
               </h1>
               <p className="max-mdx:text-body-md max-smx:text-body-sm leading-1.7 text-body-lg m-0 max-w-[400px] text-white/80">
@@ -169,7 +169,7 @@ export function AuthLayout({
       <div className="max-mdx:p-8 max-smx:p-6 login-form-panel relative flex flex-1 flex-col items-center justify-center bg-white p-12">
         <div className="w-full max-w-[400px]">{children}</div>
 
-        <footer className="login-footer max-mdx:relative max-mdx:bottom-auto max-mdx:left-auto max-mdx:right-auto max-mdx:flex-col max-mdx:gap-4 max-mdx:mt-10 absolute right-12 bottom-8 left-12 flex items-center justify-between">
+        <footer className="login-footer max-mdx:relative max-mdx:bottom-auto max-mdx:left-auto max-mdx:right-auto max-mdx:flex-col max-mdx:gap-4 max-mdx:mt-10 flex-between absolute right-12 bottom-8 left-12">
           <span className="text-body-sm text-greyscale-400">
             © 2024 Artco Group
           </span>

@@ -118,9 +118,7 @@ function TicketDetails({
   }
 
   return (
-    <div
-      className={`rounded-xl border border-gray-200 bg-white p-8 ${className}`}
-    >
+    <div className={`card p-8 ${className}`}>
       {/* Title & Status */}
       <div className="mb-4 flex items-start justify-between gap-4">
         <h1 className="text-greyscale-900 text-2xl font-bold">

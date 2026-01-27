@@ -64,7 +64,7 @@ export default function ScreenRecorder({
   if (confirmed && previewUrl && recordedVideo) {
     return (
       <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="flex-between mb-3">
           <div>
             <p className="text-greyscale-900 text-sm font-medium">
               🎥 Snimak Ekrana
@@ -112,14 +112,14 @@ export default function ScreenRecorder({
           <button
             type="button"
             onClick={handleConfirm}
-            className="bg-brand-primary hover:bg-brand-primary-dark flex-1 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+            className="btn-primary flex-1"
           >
             ✓ Potvrdi
           </button>
           <button
             type="button"
             onClick={handleDiscard}
-            className="text-greyscale-700 flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50"
+            className="btn-secondary flex-1"
           >
             ✗ Odbaci
           </button>
@@ -132,7 +132,7 @@ export default function ScreenRecorder({
   if (recording) {
     return (
       <div className="border-error-500 bg-error-100 rounded-lg border-2 p-4">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="flex-between mb-3">
           <div>
             <p className="text-error-700 flex items-center text-sm font-medium">
               <span className="bg-error-500 mr-2 inline-block h-2 w-2 animate-pulse rounded-full"></span>
@@ -152,7 +152,7 @@ export default function ScreenRecorder({
         <button
           type="button"
           onClick={stopRecording}
-          className="bg-error-500 hover:bg-error-600 w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+          className="btn-destructive w-full"
         >
           ⏹️ Zaustavi Snimanje
         </button>
@@ -181,7 +181,7 @@ export default function ScreenRecorder({
           type="button"
           onClick={startRecording}
           disabled={disabled}
-          className="bg-brand-primary hover:bg-brand-primary-dark mt-3 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-primary mt-3"
         >
           Započni Snimanje
         </button>

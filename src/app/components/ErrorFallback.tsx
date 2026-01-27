@@ -88,19 +88,19 @@ export function ErrorFallback({
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <button
             onClick={handleRetry}
-            className="bg-brand-primary hover:bg-brand-primary-dark focus:ring-brand-primary rounded-lg px-6 py-3 font-semibold text-white transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
+            className="btn-primary px-6 py-3 font-semibold"
           >
             Try Again
           </button>
           <button
             onClick={handleGoBack}
-            className="text-greyscale-700 rounded-lg border border-gray-300 bg-white px-6 py-3 font-semibold transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
+            className="btn-secondary px-6 py-3 font-semibold"
           >
             Go Back
           </button>
           <button
             onClick={handleGoHome}
-            className="text-greyscale-700 rounded-lg border border-gray-300 bg-white px-6 py-3 font-semibold transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
+            className="btn-secondary px-6 py-3 font-semibold"
           >
             Go to Dashboard
           </button>

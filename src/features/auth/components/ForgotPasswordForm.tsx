@@ -38,10 +38,7 @@ export function ForgotPasswordForm() {
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center">
-          <Link
-            to={PAGE_ROUTES.AUTH.LOGIN}
-            className="text-primary text-sm font-medium hover:underline"
-          >
+          <Link to={PAGE_ROUTES.AUTH.LOGIN} className="link text-sm">
             ← Nazad na prijavu
           </Link>
         </CardContent>

@@ -171,7 +171,7 @@ export function actionsColumn<T>(
     className: `${alignClass} ${className}`.trim(),
     headerClassName: `${alignClass} ${headerClassName}`.trim(),
     render: (row: T) => (
-      <div className="flex items-center gap-2">
+      <div className="flex-start-gap-2">
         {actions.map((action, index) => {
           const Icon = action.icon;
           return (
