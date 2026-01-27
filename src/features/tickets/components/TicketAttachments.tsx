@@ -72,7 +72,7 @@ function TicketAttachments({
             </div>
             <button
               onClick={() => handleDownload(attachment, index)}
-              className="bg-brand-primary hover:bg-brand-primary-dark flex-start-gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+              className="btn-primary flex-start-gap-2 px-4 py-2 text-sm font-medium"
             >
               <Icon name="download" size="sm" />
               Preuzmi

@@ -112,14 +112,14 @@ export default function ScreenRecorder({
           <button
             type="button"
             onClick={handleConfirm}
-            className="bg-brand-primary hover:bg-brand-primary-dark flex-1 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+            className="btn-primary flex-1"
           >
             ✓ Potvrdi
           </button>
           <button
             type="button"
             onClick={handleDiscard}
-            className="text-greyscale-700 flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50"
+            className="btn-secondary flex-1"
           >
             ✗ Odbaci
           </button>
@@ -181,7 +181,7 @@ export default function ScreenRecorder({
           type="button"
           onClick={startRecording}
           disabled={disabled}
-          className="bg-brand-primary hover:bg-brand-primary-dark mt-3 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-primary mt-3"
         >
           Započni Snimanje
         </button>

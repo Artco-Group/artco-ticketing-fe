@@ -123,8 +123,8 @@ export function AuthLayout({
             <source src="/securitysolution.mp4" type="video/mp4" />
           </video>
 
-          {/* Dark Overlay */}
-          <div className="via-primary-1000/90 from-primary-500/85 to-primary-1000/85 absolute top-0 left-0 z-1 h-full w-full bg-linear-135"></div>
+          {/* Dark Overlay with brand blue hue */}
+          <div className="from-brand-primary/70 via-brand-primary-dark/80 to-primary-1000/90 absolute top-0 left-0 z-1 h-full w-full bg-linear-135"></div>
 
           <div className="branding-content relative z-2 flex h-full flex-col justify-between">
             {/* Artco Logo */}
@@ -141,9 +141,9 @@ export function AuthLayout({
               {floatingCards ?? <DefaultFloatingCards />}
             </div>
 
-            {/* Moved headline and subtext below cards */}
+            {/* Headline and subtext below cards */}
             <div className="z-15 mt-auto text-left">
-              <h1 className="max-lgx:text-heading-h2 max-mdx:text-heading-h3 max-smx:text-heading-h3 text-heading-h2 mb-5 leading-[1.15] font-bold tracking-[-1.5px] text-white">
+              <h1 className="text-h2 mb-5 leading-[1.15] font-bold tracking-[-1.5px] text-white">
                 {headline}
               </h1>
               <p className="max-mdx:text-body-md max-smx:text-body-sm leading-1.7 text-body-lg m-0 max-w-[400px] text-white/80">

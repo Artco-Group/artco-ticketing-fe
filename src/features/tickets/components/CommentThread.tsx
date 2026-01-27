@@ -63,7 +63,7 @@ function CommentThread({
           onChange={(e) => onCommentChange(e.target.value)}
           placeholder="Napišite odgovor..."
           rows={2}
-          className="focus:border-brand-primary focus:ring-brand-primary/10 text-greyscale-900 flex-1 resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm transition-all focus:ring-2 focus:outline-none"
+          className="input-base flex-1 resize-none"
         />
         <button
           type="submit"
