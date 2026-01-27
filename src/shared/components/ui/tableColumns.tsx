@@ -171,7 +171,7 @@ export function actionsColumn<T>(
     className: `${alignClass} ${className}`.trim(),
     headerClassName: `${alignClass} ${headerClassName}`.trim(),
     render: (row: T) => (
-      <div className="flex items-center gap-2">
+      <div className="flex-start-gap-2">
         {actions.map((action, index) => {
           const Icon = action.icon;
           return (
@@ -183,7 +183,7 @@ export function actionsColumn<T>(
               }}
               className={
                 action.className ||
-                'hover:text-brand-primary p-1.5 text-gray-400 transition-colors'
+                'hover:text-brand-primary text-greyscale-400 p-1.5 transition-colors'
               }
               title={action.label}
             >

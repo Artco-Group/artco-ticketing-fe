@@ -36,11 +36,7 @@ export function LoadingOverlay({
         <CardContent className="flex flex-col items-center gap-4 p-8">
           <Spinner size="lg" />
 
-          {message && (
-            <p className="text-muted-foreground text-sm font-medium">
-              {message}
-            </p>
-          )}
+          {message && <p className="text-muted-sm font-medium">{message}</p>}
 
           {children}
         </CardContent>

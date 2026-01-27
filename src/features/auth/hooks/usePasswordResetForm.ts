@@ -3,23 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { z } from 'zod';
+import {
+  passwordResetFormSchema,
+  type PasswordResetFormInput,
+} from '../validation/password-reset-schema';
 import { useVerifyResetToken, useResetPassword } from '../api/auth-api';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { extractAuthError } from '../utils/extract-auth-error';
-
-// Local password reset form schema (matches sync package)
-const passwordResetFormSchema = z
-  .object({
-    newPassword: z.string().min(6, 'Lozinka mora imati najmanje 6 karaktera'),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Lozinke se ne poklapaju',
-    path: ['confirmPassword'],
-  });
-
-type PasswordResetFormData = z.infer<typeof passwordResetFormSchema>;
 
 /**
  * Custom hook for password reset form logic.
@@ -37,7 +27,7 @@ export function usePasswordResetForm() {
   const [formError, setFormError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const form = useForm<PasswordResetFormData>({
+  const form = useForm<PasswordResetFormInput>({
     resolver: zodResolver(passwordResetFormSchema),
     defaultValues: {
       newPassword: '',
@@ -68,7 +58,7 @@ export function usePasswordResetForm() {
     }
   }, [tokenError]);
 
-  const onSubmit = async (data: PasswordResetFormData) => {
+  const onSubmit = async (data: PasswordResetFormInput) => {
     setFormError('');
 
     try {

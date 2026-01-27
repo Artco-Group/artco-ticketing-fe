@@ -1,8 +1,5 @@
-import {
-  UserRole,
-  type User,
-  isUserRole,
-} from '@artco-group/artco-ticketing-sync';
+import { isUserRole } from '@artco-group/artco-ticketing-sync';
+import { UserRole, type User } from '@/types';
 
 /**
  * Type-safe function to check if a user has one of the allowed roles.

@@ -1,8 +1,9 @@
 import api from '@/shared/lib/api-client';
+import type { TicketId } from '@/types';
 
 export const fileAPI = {
   downloadAttachment: async (
-    ticketId: string,
+    ticketId: TicketId,
     attachmentIndex: number,
     filename: string
   ): Promise<void> => {
@@ -32,7 +33,7 @@ export const fileAPI = {
   },
 
   downloadScreenRecording: async (
-    ticketId: string,
+    ticketId: TicketId,
     filename: string
   ): Promise<void> => {
     try {

@@ -1,14 +1,16 @@
 import {
-  TicketStatus,
-  TicketPriority,
-  TicketCategory,
   TicketPriorityDisplay,
   getStatusBadgeClasses,
   getCategoryBadgeClasses,
+} from '@artco-group/artco-ticketing-sync';
+import {
+  TicketStatus,
+  TicketPriority,
+  TicketCategory,
   type Ticket,
   type User,
-} from '@artco-group/artco-ticketing-sync';
-import type { Filters } from '@/types';
+  type Filters,
+} from '@/types';
 import type { ReactNode } from 'react';
 import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
 import type { BadgeVariant } from '@/shared/components/ui/badge';
@@ -208,22 +210,22 @@ interface PriorityConfigValue {
 export const priorityConfig: Record<string, PriorityConfigValue> = {
   [TicketPriority.LOW]: {
     color: 'text-green-600',
-    bg: 'bg-green-50',
+    bg: 'bg-green-100',
     label: TicketPriorityDisplay[TicketPriority.LOW],
   },
   [TicketPriority.MEDIUM]: {
-    color: 'text-yellow-600',
-    bg: 'bg-yellow-50',
+    color: 'text-warning-500',
+    bg: 'bg-warning-100',
     label: TicketPriorityDisplay[TicketPriority.MEDIUM],
   },
   [TicketPriority.HIGH]: {
     color: 'text-orange-600',
-    bg: 'bg-orange-50',
+    bg: 'bg-orange-100',
     label: TicketPriorityDisplay[TicketPriority.HIGH],
   },
   [TicketPriority.CRITICAL]: {
-    color: 'text-red-600',
-    bg: 'bg-red-50',
+    color: 'text-error-500',
+    bg: 'bg-error-100',
     label: TicketPriorityDisplay[TicketPriority.CRITICAL],
   },
 };

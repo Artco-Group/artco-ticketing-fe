@@ -1,5 +1,6 @@
-import { Lock, Eye, EyeOff, Check, ChevronRight } from 'lucide-react';
+import { EyeOff } from 'lucide-react';
 import { usePasswordResetForm } from '../hooks';
+import { Icon } from '@/shared/components/ui';
 import {
   Form,
   FormControl,
@@ -35,7 +36,9 @@ export function PasswordResetForm() {
         <div className="mb-4">
           <div className="border-brand-primary/20 border-t-brand-primary mx-auto h-12 w-12 animate-spin rounded-full border-4"></div>
         </div>
-        <p className="text-[16px] text-[#6b7280]">Verificiranje tokena...</p>
+        <p className="text-body-md text-greyscale-500">
+          Verificiranje tokena...
+        </p>
       </div>
     );
   }
@@ -45,10 +48,10 @@ export function PasswordResetForm() {
     return (
       <div>
         <div>
-          <h2 className="max-smx:text-[26px] mb-4 text-[32px] font-bold tracking-[-0.5px] text-[#111827]">
+          <h2 className="max-smx:text-heading-h4 text-heading-h3 text-greyscale-1000 mb-4 font-bold tracking-[-0.5px]">
             Nevažeći Token
           </h2>
-          <p className="max-smx:mb-6 max-smx:text-[14px] mb-8 text-[16px] leading-normal text-[#6b7280]">
+          <p className="max-smx:mb-6 max-smx:text-body-sm text-body-md text-greyscale-500 mb-8 leading-normal">
             {tokenError ||
               'Link za resetovanje lozinke je nevažeći ili je istekao.'}
           </p>
@@ -65,13 +68,13 @@ export function PasswordResetForm() {
     return (
       <div>
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#10b981]/10">
-            <Check className="h-8 w-8 text-[#10b981]" strokeWidth={2.5} />
+          <div className="bg-success-500/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+            <Icon name="check-circle" size="xl" className="text-success-500" />
           </div>
-          <h2 className="max-smx:text-[26px] mb-4 text-[32px] font-bold tracking-[-0.5px] text-[#111827]">
+          <h2 className="max-smx:text-heading-h4 text-heading-h3 text-greyscale-1000 mb-4 font-bold tracking-[-0.5px]">
             Uspješno!
           </h2>
-          <p className="max-smx:text-[14px] mb-6 text-[16px] leading-normal text-[#6b7280]">
+          <p className="max-smx:text-body-sm text-body-md text-greyscale-500 mb-6 leading-normal">
             Vaša lozinka je uspješno resetovana. Preusmeravanje na stranicu za
             prijavu...
           </p>
@@ -84,10 +87,10 @@ export function PasswordResetForm() {
   return (
     <div>
       <div>
-        <h2 className="max-smx:text-[26px] mb-4 text-[32px] font-bold tracking-[-0.5px] text-[#111827]">
+        <h2 className="max-smx:text-heading-h4 text-heading-h3 text-greyscale-1000 mb-4 font-bold tracking-[-0.5px]">
           Nova Lozinka
         </h2>
-        <p className="max-smx:mb-6 max-smx:text-[14px] mb-8 text-[16px] leading-normal text-[#6b7280]">
+        <p className="max-smx:mb-6 max-smx:text-body-sm text-body-md text-greyscale-500 mb-8 leading-normal">
           Unesite novu lozinku za vaš račun.
         </p>
       </div>
@@ -102,7 +105,13 @@ export function PasswordResetForm() {
                 <FormLabel>Nova Lozinka</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
+                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
+                      <Icon
+                        name="lock"
+                        size="md"
+                        className="text-muted-foreground pointer-events-none"
+                      />
+                    </div>
                     <Input
                       type={showNewPassword ? 'text' : 'password'}
                       autoComplete="new-password"
@@ -124,7 +133,11 @@ export function PasswordResetForm() {
                       {showNewPassword ? (
                         <EyeOff className="text-muted-foreground h-5 w-5" />
                       ) : (
-                        <Eye className="text-muted-foreground h-5 w-5" />
+                        <Icon
+                          name="eye"
+                          size="md"
+                          className="text-muted-foreground"
+                        />
                       )}
                     </Button>
                   </div>
@@ -142,7 +155,13 @@ export function PasswordResetForm() {
                 <FormLabel>Potvrdi Lozinku</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
+                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
+                      <Icon
+                        name="lock"
+                        size="md"
+                        className="text-muted-foreground pointer-events-none"
+                      />
+                    </div>
                     <Input
                       type={showConfirmPassword ? 'text' : 'password'}
                       autoComplete="new-password"
@@ -166,7 +185,11 @@ export function PasswordResetForm() {
                       {showConfirmPassword ? (
                         <EyeOff className="text-muted-foreground h-5 w-5" />
                       ) : (
-                        <Eye className="text-muted-foreground h-5 w-5" />
+                        <Icon
+                          name="eye"
+                          size="md"
+                          className="text-muted-foreground"
+                        />
                       )}
                     </Button>
                   </div>
@@ -196,7 +219,7 @@ export function PasswordResetForm() {
             ) : (
               <>
                 Resetuj Lozinku
-                <ChevronRight className="ml-2 h-5 w-5" />
+                <Icon name="chevron-right" size="md" className="ml-2" />
               </>
             )}
           </Button>
@@ -207,7 +230,7 @@ export function PasswordResetForm() {
         <button
           type="button"
           onClick={navigateToLogin}
-          className="text-primary cursor-pointer border-none bg-transparent text-sm font-medium transition-colors duration-200 hover:underline"
+          className="link text-sm"
         >
           ← Nazad na prijavu
         </button>

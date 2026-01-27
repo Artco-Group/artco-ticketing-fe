@@ -8,7 +8,7 @@ import {
   TableRow,
 } from './shadcn-table';
 import { cn } from '@/lib/utils';
-import { ClipboardList } from 'lucide-react';
+import { EmptyState } from './EmptyState';
 
 interface Column<T> {
   key: string;
@@ -41,15 +41,12 @@ function DataTable<T extends TableRowData>({
   className = '',
 }: DataTableProps<T>) {
   const defaultEmptyState = (
-    <div className="py-12 text-center">
-      <ClipboardList className="text-muted-foreground mx-auto h-12 w-12" />
-      <h3 className="text-foreground mt-2 text-sm font-medium">
-        No data found
-      </h3>
-      <p className="text-muted-foreground mt-1 text-sm">
-        No items match your current filters.
-      </p>
-    </div>
+    <EmptyState
+      variant="no-data"
+      title="No data found"
+      message="No items match your current filters."
+      className="min-h-0 py-8"
+    />
   );
 
   if (data.length === 0) {

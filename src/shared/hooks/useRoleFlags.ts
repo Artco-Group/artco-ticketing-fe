@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { UserRole } from '@artco-group/artco-ticketing-sync';
+import { UserRole } from '@/types';
 
 interface RoleFlags {
   isAdmin: boolean;

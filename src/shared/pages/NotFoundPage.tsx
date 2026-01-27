@@ -1,24 +1,18 @@
 import { Link } from 'react-router-dom';
 import { PAGE_ROUTES } from '@/shared/constants';
+import { EmptyState, Button } from '@/shared/components/ui';
 
 export default function NotFoundPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <h1 className="text-6xl font-bold text-gray-900">404</h1>
-        <h2 className="mt-4 text-2xl font-semibold text-gray-700">
-          Page Not Found
-        </h2>
-        <p className="mt-2 text-gray-600">
-          The page you're looking for doesn't exist.
-        </p>
-        <Link
-          to={PAGE_ROUTES.DASHBOARD.ROOT}
-          className="bg-brand-primary hover:bg-brand-primary-dark mt-6 inline-block rounded-lg px-6 py-3 text-white transition-colors"
-        >
-          Go to Dashboard
+    <EmptyState
+      variant="error"
+      title="404 - Page Not Found"
+      message="The page you're looking for doesn't exist."
+      action={
+        <Link to={PAGE_ROUTES.DASHBOARD.ROOT}>
+          <Button>Go to Dashboard</Button>
         </Link>
-      </div>
-    </div>
+      }
+    />
   );
 }

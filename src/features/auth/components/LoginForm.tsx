@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { EyeOff } from 'lucide-react';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { useLoginForm } from '../hooks';
 import {
@@ -12,6 +12,7 @@ import {
   Input,
   Button,
   Checkbox,
+  Icon,
 } from '@/shared/components/ui';
 
 export function LoginForm() {
@@ -39,7 +40,13 @@ export function LoginForm() {
                 <FormLabel>Email adresa</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Mail className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
+                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
+                      <Icon
+                        name="mail"
+                        size="md"
+                        className="text-muted-foreground pointer-events-none"
+                      />
+                    </div>
                     <Input
                       type="email"
                       autoComplete="email"
@@ -62,7 +69,13 @@ export function LoginForm() {
                 <FormLabel>Lozinka</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
+                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
+                      <Icon
+                        name="lock"
+                        size="md"
+                        className="text-muted-foreground pointer-events-none"
+                      />
+                    </div>
                     <Input
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="current-password"
@@ -83,7 +96,11 @@ export function LoginForm() {
                       {showPassword ? (
                         <EyeOff className="text-muted-foreground h-5 w-5" />
                       ) : (
-                        <Eye className="text-muted-foreground h-5 w-5" />
+                        <Icon
+                          name="eye"
+                          size="md"
+                          className="text-muted-foreground"
+                        />
                       )}
                     </Button>
                   </div>
@@ -93,7 +110,7 @@ export function LoginForm() {
             )}
           />
 
-          <div className="max-smx:flex-col max-smx:items-start max-smx:gap-3 flex items-center justify-between">
+          <div className="max-smx:flex-col max-smx:items-start max-smx:gap-3 flex-between">
             <div className="flex items-center space-x-2">
               <Checkbox id="remember-me" />
               <label
@@ -105,7 +122,7 @@ export function LoginForm() {
             </div>
             <Link
               to={PAGE_ROUTES.AUTH.FORGOT_PASSWORD}
-              className="text-primary text-sm font-medium hover:underline"
+              className="link text-sm"
             >
               Zaboravljena lozinka?
             </Link>
@@ -118,19 +135,19 @@ export function LoginForm() {
             disabled={isPending}
           >
             {isPending ? 'Prijavljivanje...' : 'Prijavite se'}
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <Icon name="arrow-right" size="md" className="ml-2" />
           </Button>
         </form>
       </Form>
 
       <div className="mt-7 text-center">
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-sm">
           Nemate račun?{' '}
           <a
             href="https://www.artcogroup.ba/page/contact"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary font-medium hover:underline"
+            className="link"
           >
             Kontaktirajte administratora
           </a>

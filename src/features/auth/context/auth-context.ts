@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { User } from '@artco-group/artco-ticketing-sync';
+import type { User } from '@/types';
 
 export interface AuthContextType {
   user: User | null;

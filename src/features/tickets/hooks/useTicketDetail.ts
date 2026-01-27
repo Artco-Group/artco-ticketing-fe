@@ -1,7 +1,13 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import type { Comment, Ticket } from '@artco-group/artco-ticketing-sync';
+import {
+  asTicketId,
+  type Comment,
+  type Ticket,
+  type TicketId,
+  type UserId,
+} from '@/types';
 import { toast } from 'sonner';
 
 import { PAGE_ROUTES, getErrorMessage } from '@/shared';
@@ -29,16 +35,16 @@ export function useTicketDetail() {
   const [localComments, setLocalComments] = useState<Comment[] | null>(null);
 
   // Fetch ticket data
-  const { data: ticketData, isLoading: ticketLoading } = useTicket(id || '');
+  const ticketId = id ? asTicketId(id) : asTicketId('');
+  const { data: ticketData, isLoading: ticketLoading } = useTicket(ticketId);
 
   // Fetch users (for eng lead assignment)
   const { data: usersData } = useUsers();
   const users = usersData?.data?.users || [];
 
   // Fetch comments
-  const { data: commentsData, refetch: refetchComments } = useComments(
-    id || ''
-  );
+  const { data: commentsData, refetch: refetchComments } =
+    useComments(ticketId);
 
   // Mutations
   const updateStatusMutation = useUpdateTicketStatus();
@@ -54,10 +60,10 @@ export function useTicketDetail() {
     navigate(PAGE_ROUTES.DASHBOARD.ROOT);
   };
 
-  const handleStatusUpdate = async (ticketId: string, newStatus: string) => {
+  const handleStatusUpdate = async (id: TicketId, newStatus: string) => {
     try {
       const response = await updateStatusMutation.mutateAsync({
-        id: ticketId,
+        id,
         status: newStatus,
       });
       setLocalTicket(response.data.ticket);
@@ -68,10 +74,10 @@ export function useTicketDetail() {
     }
   };
 
-  const handleAssignTicket = async (ticketId: string, developerId: string) => {
+  const handleAssignTicket = async (id: TicketId, developerId: UserId) => {
     try {
       const response = await assignTicketMutation.mutateAsync({
-        id: ticketId,
+        id,
         developerId,
       });
       setLocalTicket(response.data.ticket);
@@ -81,13 +87,10 @@ export function useTicketDetail() {
     }
   };
 
-  const handlePriorityUpdate = async (
-    ticketId: string,
-    newPriority: string
-  ) => {
+  const handlePriorityUpdate = async (id: TicketId, newPriority: string) => {
     try {
       const response = await updatePriorityMutation.mutateAsync({
-        id: ticketId,
+        id,
         priority: newPriority,
       });
       setLocalTicket(response.data.ticket);
@@ -103,7 +106,7 @@ export function useTicketDetail() {
 
     try {
       await addCommentMutation.mutateAsync({
-        ticketId: id,
+        ticketId: asTicketId(id),
         comment: { text: newComment },
       });
       setNewComment('');

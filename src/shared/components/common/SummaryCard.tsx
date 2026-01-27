@@ -1,7 +1,6 @@
-import type { Ticket } from '@artco-group/artco-ticketing-sync';
+import type { Ticket } from '@/types';
 import { cn } from '@/lib/utils';
-import { ClipboardList, AlertTriangle, AlertCircle } from 'lucide-react';
-import { Card, CardContent } from '../ui';
+import { Card, CardContent, Icon } from '../ui';
 import { useTicketSummary } from '../../hooks';
 
 interface SummaryCardsProps {
@@ -55,23 +54,23 @@ function SummaryCard({
   highlighted = false,
 }: SummaryCardProps) {
   const colorClasses: Record<ColorType, string> = {
-    blue: 'bg-blue-50 text-blue-600',
-    orange: 'bg-orange-50 text-orange-600',
-    red: 'bg-red-50 text-red-600',
+    blue: 'bg-blue-100 text-blue-600',
+    orange: 'bg-orange-100 text-orange-600',
+    red: 'bg-error-100 text-error-500',
   };
 
-  const IconComponent = {
-    tickets: ClipboardList,
-    alert: AlertTriangle,
-    warning: AlertCircle,
-  }[icon];
+  const iconMap: Record<IconType, 'all' | 'info' | 'priority'> = {
+    tickets: 'all',
+    alert: 'info',
+    warning: 'priority',
+  };
 
   return (
     <Card className={cn(highlighted && 'ring-2 ring-orange-200')}>
       <CardContent className="p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex-between">
           <div>
-            <p className="text-muted-foreground text-sm font-medium">{title}</p>
+            <p className="text-muted-sm font-medium">{title}</p>
             <p className="text-foreground mt-1 text-3xl font-bold">{value}</p>
           </div>
           <div
@@ -80,7 +79,7 @@ function SummaryCard({
               colorClasses[color]
             )}
           >
-            <IconComponent className="h-6 w-6" />
+            <Icon name={iconMap[icon]} size="lg" />
           </div>
         </div>
       </CardContent>

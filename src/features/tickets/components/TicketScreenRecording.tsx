@@ -2,11 +2,12 @@ import {
   type ScreenRecording,
   formatTime,
 } from '@artco-group/artco-ticketing-sync';
+import type { TicketId } from '@/types';
 
 interface TicketScreenRecordingProps {
   screenRecording: ScreenRecording;
-  ticketId: string;
-  onDownload?: (ticketId: string, filename: string) => void;
+  ticketId: TicketId;
+  onDownload?: (ticketId: TicketId, filename: string) => void;
 }
 
 function TicketScreenRecording({
@@ -28,16 +29,16 @@ function TicketScreenRecording({
 
   return (
     <div className="mt-4">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+      <h3 className="text-greyscale-700 mb-3 text-sm font-semibold">
         Snimak Ekrana
       </h3>
       <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="flex-between mb-3">
           <div>
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-greyscale-900 text-sm font-medium">
               {screenRecording.originalName}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-greyscale-500 text-xs">
               {fileSizeMB} MB
               {screenRecording.duration && (
                 <> • {formatTime(screenRecording.duration)}</>
@@ -47,7 +48,7 @@ function TicketScreenRecording({
         </div>
         <button
           onClick={handleDownload}
-          className="bg-brand-primary hover:bg-brand-primary-dark w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+          className="btn-primary w-full px-4 py-2 text-sm font-medium"
         >
           Preuzmi Video
         </button>

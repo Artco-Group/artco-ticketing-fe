@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { type Ticket, formatDateTime } from '@artco-group/artco-ticketing-sync';
-import type { MetaItem } from '@/types';
+import { formatDateTime } from '@artco-group/artco-ticketing-sync';
+import { asTicketId, type Ticket, type MetaItem, type TicketId } from '@/types';
 import {
   statusBadgeConfig,
   priorityBadgeConfig,
@@ -15,11 +15,11 @@ interface TicketDetailsProps {
   showClient?: boolean;
   showAssignedTo?: boolean;
   onDownloadAttachment?: (
-    ticketId: string,
+    ticketId: TicketId,
     index: number,
     filename: string
   ) => Promise<void>;
-  onDownloadScreenRecording?: (ticketId: string, filename: string) => void;
+  onDownloadScreenRecording?: (ticketId: TicketId, filename: string) => void;
   formatDateTime?: (date: string | Date) => string;
   className?: string;
 }
@@ -50,7 +50,7 @@ function TicketDetails({
       >
         <div className="text-center">
           <div className="border-brand-primary/20 border-t-brand-primary mx-auto h-12 w-12 animate-spin rounded-full border-4"></div>
-          <p className="mt-4 text-gray-600">Loading ticket details...</p>
+          <p className="text-greyscale-600 mt-4">Loading ticket details...</p>
         </div>
       </div>
     );
@@ -118,12 +118,12 @@ function TicketDetails({
   }
 
   return (
-    <div
-      className={`rounded-xl border border-gray-200 bg-white p-8 ${className}`}
-    >
+    <div className={`card p-8 ${className}`}>
       {/* Title & Status */}
       <div className="mb-4 flex items-start justify-between gap-4">
-        <h1 className="text-2xl font-bold text-gray-900">{ticket.title}</h1>
+        <h1 className="text-greyscale-900 text-2xl font-bold">
+          {ticket.title}
+        </h1>
         <Badge
           variant={statusBadgeConfig[ticket.status].variant}
           icon={statusBadgeConfig[ticket.status].getIcon?.()}
@@ -134,7 +134,7 @@ function TicketDetails({
       </div>
 
       {/* Ticket ID */}
-      <p className="mb-6 text-sm text-gray-400">
+      <p className="text-greyscale-400 mb-6 text-sm">
         #{ticket.ticketId || ticket.id}
       </p>
 
@@ -176,7 +176,7 @@ function TicketDetails({
       {ticket.attachments && ticket.attachments.length > 0 && ticket._id && (
         <TicketAttachments
           attachments={ticket.attachments}
-          ticketId={ticket._id}
+          ticketId={asTicketId(ticket._id)}
           onDownload={onDownloadAttachment}
         />
       )}
@@ -185,7 +185,7 @@ function TicketDetails({
       {ticket.screenRecording && ticket._id && (
         <TicketScreenRecording
           screenRecording={ticket.screenRecording}
-          ticketId={ticket._id}
+          ticketId={asTicketId(ticket._id)}
           onDownload={onDownloadScreenRecording}
         />
       )}
@@ -196,10 +196,10 @@ function TicketDetails({
 function MetaItemComponent({ label, value }: MetaItemProps) {
   return (
     <div>
-      <span className="text-xs tracking-wide text-gray-400 uppercase">
+      <span className="text-greyscale-400 text-xs tracking-wide uppercase">
         {label}
       </span>
-      <p className="mt-1 text-sm text-gray-900">{value}</p>
+      <p className="text-greyscale-900 mt-1 text-sm">{value}</p>
     </div>
   );
 }
@@ -209,8 +209,8 @@ function DescriptionSection({ title, content }: DescriptionSectionProps) {
 
   return (
     <div className="mb-6">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">{title}</h3>
-      <p className="text-sm leading-relaxed whitespace-pre-wrap text-gray-600">
+      <h3 className="text-greyscale-700 mb-3 text-sm font-semibold">{title}</h3>
+      <p className="text-greyscale-600 text-sm leading-relaxed whitespace-pre-wrap">
         {content}
       </p>
     </div>

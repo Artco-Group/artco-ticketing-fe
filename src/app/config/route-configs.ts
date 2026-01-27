@@ -1,5 +1,5 @@
 import { PAGE_ROUTES, ROUTE_PATTERNS } from '@/shared/constants';
-import { UserRole } from '@artco-group/artco-ticketing-sync';
+import { UserRole } from '@/types';
 
 export interface RouteConfig {
   path: string;

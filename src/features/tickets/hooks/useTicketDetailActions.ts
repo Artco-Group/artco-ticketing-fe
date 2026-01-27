@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
-import type { Ticket } from '@artco-group/artco-ticketing-sync';
+import {
+  asTicketId,
+  asUserId,
+  type Ticket,
+  type TicketId,
+  type UserId,
+} from '@/types';
 import { toast } from 'sonner';
 import { fileAPI } from '../api/file-api';
 
 interface UseTicketDetailActionsOptions {
   ticket: Ticket | null;
-  onStatusUpdate?: (ticketId: string, status: string) => Promise<void>;
-  onAssignTicket?: (ticketId: string, developerId: string) => void;
+  onStatusUpdate?: (ticketId: TicketId, status: string) => Promise<void>;
+  onAssignTicket?: (ticketId: TicketId, developerId: UserId) => void;
 }
 
 /**
@@ -40,7 +46,7 @@ export function useTicketDetailActions({
         ? ticket.assignedTo
         : ticket.assignedTo?._id || '';
     if (selectedDeveloper && selectedDeveloper !== currentAssignedId) {
-      onAssignTicket(ticket._id || '', selectedDeveloper);
+      onAssignTicket(asTicketId(ticket._id || ''), asUserId(selectedDeveloper));
     }
   };
 
@@ -49,7 +55,10 @@ export function useTicketDetailActions({
 
     setIsUpdating(true);
     try {
-      await onStatusUpdate(ticket.ticketId || ticket._id || '', newStatus);
+      await onStatusUpdate(
+        asTicketId(ticket.ticketId || ticket._id || ''),
+        newStatus
+      );
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
@@ -60,7 +69,7 @@ export function useTicketDetailActions({
   };
 
   const handleDownloadAttachment = async (
-    ticketId: string,
+    ticketId: TicketId,
     index: number,
     filename: string
   ) => {
@@ -72,7 +81,7 @@ export function useTicketDetailActions({
   };
 
   const handleDownloadScreenRecording = async (
-    ticketId: string,
+    ticketId: TicketId,
     filename: string
   ) => {
     try {

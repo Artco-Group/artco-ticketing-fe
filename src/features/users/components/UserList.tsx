@@ -1,17 +1,16 @@
 import {
-  type User,
   type CreateUserFormData,
   type UpdateUserFormData,
-  UserRole,
   UserRoleDisplay,
 } from '@artco-group/artco-ticketing-sync';
-import { Plus } from 'lucide-react';
+import { UserRole, type User } from '@/types';
 import {
   FilterBar,
   type FilterConfig,
   Modal,
   ConfirmModal,
   Button,
+  Icon,
 } from '@/shared';
 import UserForm from './UserForm';
 import UserTable from './UserTable';
@@ -80,10 +79,10 @@ function UserList({
   return (
     <div className="p-6">
       {/* Page Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="flex-between mb-6">
         <h1 className="text-foreground text-2xl font-bold">User Management</h1>
         <Button onClick={onAddUser}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Icon name="plus" size="sm" className="mr-2" />
           Add New User
         </Button>
       </div>
@@ -114,6 +113,7 @@ function UserList({
         title={editingUser ? 'Edit User' : 'Add New User'}
       >
         <UserForm
+          key={editingUser?._id || editingUser?.id || 'new'}
           onSubmit={onFormSubmit}
           onCancel={onCloseFormModal}
           defaultValues={

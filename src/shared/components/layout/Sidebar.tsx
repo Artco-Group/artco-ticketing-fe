@@ -1,23 +1,15 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context';
 import { PAGE_ROUTES } from '@/shared/constants';
-import { UserRole } from '@artco-group/artco-ticketing-sync';
+import { UserRole } from '@/types';
 import { hasRole } from '@/shared/utils/role-helpers';
-
-import {
-  LayoutDashboard,
-  Ticket,
-  Users,
-  TestTube2,
-  type LucideIcon,
-} from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/shared/components/ui';
+import { Button, Icon, type IconName } from '@/shared/components/ui';
 
 interface NavigationItem {
   name: string;
   href: string;
-  icon: LucideIcon;
+  icon: IconName;
   roles: UserRole[];
 }
 
@@ -25,7 +17,7 @@ const navigation: NavigationItem[] = [
   {
     name: 'Dashboard',
     href: PAGE_ROUTES.DASHBOARD.ROOT,
-    icon: LayoutDashboard,
+    icon: 'dashboard' as const,
     roles: [
       UserRole.CLIENT,
       UserRole.DEVELOPER,
@@ -36,7 +28,7 @@ const navigation: NavigationItem[] = [
   {
     name: 'Tickets',
     href: PAGE_ROUTES.TICKETS.LIST,
-    icon: Ticket,
+    icon: 'tickets' as const,
     roles: [
       UserRole.CLIENT,
       UserRole.DEVELOPER,
@@ -47,13 +39,13 @@ const navigation: NavigationItem[] = [
   {
     name: 'Users',
     href: PAGE_ROUTES.USERS.LIST,
-    icon: Users,
+    icon: 'user' as const,
     roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
   },
   {
     name: 'Testing',
     href: PAGE_ROUTES.TESTING.LIST,
-    icon: TestTube2,
+    icon: 'tasks' as const,
     roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
   },
 ];
@@ -82,7 +74,7 @@ export function Sidebar() {
                     isActive && 'bg-accent'
                   )}
                 >
-                  <item.icon className="h-5 w-5" />
+                  <Icon name={item.icon} size="md" />
                   {item.name}
                 </Button>
               )}

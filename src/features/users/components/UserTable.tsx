@@ -1,16 +1,16 @@
 import {
-  type User,
-  UserRole,
   formatDateLocalized,
   getRoleBadgeClasses,
 } from '@artco-group/artco-ticketing-sync';
-import { Pencil, Trash2, Users } from 'lucide-react';
+import { UserRole, type User } from '@/types';
 import {
   DataTable,
   textColumn,
   badgeColumn,
   dateColumn,
   actionsColumn,
+  EmptyState,
+  Icon,
 } from '@/shared/components/ui';
 
 interface UserTableProps {
@@ -35,14 +35,14 @@ function UserTable({ users, onEdit, onDelete }: UserTableProps) {
     }),
     actionsColumn<User>('actions', 'Actions', [
       {
-        icon: () => <Pencil className="h-4 w-4" />,
+        icon: () => <Icon name="edit" size="sm" />,
         onClick: onEdit,
         label: 'Edit user',
         className:
           'p-1.5 text-muted-foreground transition-colors hover:text-primary',
       },
       {
-        icon: () => <Trash2 className="h-4 w-4" />,
+        icon: () => <Icon name="trash" size="sm" />,
         onClick: onDelete,
         label: 'Delete user',
         className:
@@ -52,15 +52,12 @@ function UserTable({ users, onEdit, onDelete }: UserTableProps) {
   ];
 
   const emptyState = (
-    <div className="py-12 text-center">
-      <Users className="text-muted-foreground mx-auto h-12 w-12" />
-      <h3 className="text-foreground mt-2 text-sm font-medium">
-        No users found
-      </h3>
-      <p className="text-muted-foreground mt-1 text-sm">
-        No users match your current search and filters.
-      </p>
-    </div>
+    <EmptyState
+      variant="no-users"
+      title="No users found"
+      message="No users match your current search and filters."
+      className="min-h-0 py-12"
+    />
   );
 
   return <DataTable columns={columns} data={users} emptyState={emptyState} />;

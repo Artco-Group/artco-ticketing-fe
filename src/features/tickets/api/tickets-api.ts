@@ -6,6 +6,7 @@ import {
   type Ticket,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
+import type { TicketId, UserId } from '@/types';
 
 /** API response wrapper type */
 interface ApiResponse<T> {
@@ -32,7 +33,7 @@ function useTickets(params?: Record<string, unknown>) {
  * Get single ticket by ID
  * Uses STALE_TIME for individual records
  */
-function useTicket(id: string) {
+function useTicket(id: TicketId) {
   return useApiQuery<ApiResponse<{ ticket: Ticket }>>(
     QueryKeys.tickets.detail(id),
     {
@@ -69,7 +70,7 @@ function useCreateTicket() {
 function useUpdateTicketStatus() {
   return useApiMutation<
     ApiResponse<{ ticket: Ticket }>,
-    { id: string; status: string }
+    { id: TicketId; status: string }
   >({
     url: (vars) => API_ROUTES.TICKETS.STATUS(vars.id),
     method: 'PATCH',
@@ -88,7 +89,7 @@ function useUpdateTicketStatus() {
 function useAssignTicket() {
   return useApiMutation<
     ApiResponse<{ ticket: Ticket }>,
-    { id: string; developerId: string }
+    { id: TicketId; developerId: UserId }
   >({
     url: (vars) => API_ROUTES.TICKETS.ASSIGN(vars.id),
     method: 'PATCH',
@@ -107,7 +108,7 @@ function useAssignTicket() {
 function useUpdateTicketPriority() {
   return useApiMutation<
     ApiResponse<{ ticket: Ticket }>,
-    { id: string; priority: string }
+    { id: TicketId; priority: string }
   >({
     url: (vars) => API_ROUTES.TICKETS.PRIORITY(vars.id),
     method: 'PATCH',
@@ -124,7 +125,7 @@ function useUpdateTicketPriority() {
  * Delete a ticket
  */
 function useDeleteTicket() {
-  return useApiMutation<void, string>({
+  return useApiMutation<void, TicketId>({
     url: (id) => API_ROUTES.TICKETS.BY_ID(id),
     method: 'DELETE',
     onSuccess: () => {

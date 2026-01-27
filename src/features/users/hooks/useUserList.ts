@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 
 import { getErrorMessage } from '@/shared';
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '../api';
+import { asUserId, type UserId } from '@/types';
 
 /**
  * Custom hook for user list page logic.
@@ -56,7 +57,7 @@ export function useUserList() {
     }
   };
 
-  const handleUpdateUser = async (id: string, formData: UpdateUserFormData) => {
+  const handleUpdateUser = async (id: UserId, formData: UpdateUserFormData) => {
     try {
       await updateUserMutation.mutateAsync({ id, data: formData });
       toast.success('User updated successfully');
@@ -66,7 +67,7 @@ export function useUserList() {
     }
   };
 
-  const handleDeleteUser = async (id: string) => {
+  const handleDeleteUser = async (id: UserId) => {
     try {
       await deleteUserMutation.mutateAsync(id);
       toast.success('User deleted successfully');
@@ -98,7 +99,10 @@ export function useUserList() {
     if (editingUser) {
       const userId = editingUser._id || editingUser.id;
       if (userId) {
-        await handleUpdateUser(userId, formData as UpdateUserFormData);
+        await handleUpdateUser(
+          asUserId(userId),
+          formData as UpdateUserFormData
+        );
       }
     } else {
       await handleCreateUser(formData as CreateUserFormData);
@@ -110,7 +114,7 @@ export function useUserList() {
     if (userToDelete) {
       const userId = userToDelete._id || userToDelete.id;
       if (userId) {
-        await handleDeleteUser(userId);
+        await handleDeleteUser(asUserId(userId));
       }
       setUserToDelete(null);
     }

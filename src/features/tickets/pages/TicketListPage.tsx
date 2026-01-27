@@ -1,4 +1,4 @@
-import { UserRole } from '@artco-group/artco-ticketing-sync';
+import { UserRole } from '@/types';
 
 import { TicketList } from '@/features/tickets/components';
 import { QueryStateWrapper, EmptyState } from '@/shared/components/ui';
@@ -22,6 +22,7 @@ export default function TicketListPage() {
   if (!userRole) {
     return (
       <EmptyState
+        variant="error"
         title="Invalid Role"
         message="Your account has an invalid role. Please contact support."
       />

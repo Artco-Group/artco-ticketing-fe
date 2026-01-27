@@ -1,3 +1,4 @@
+import { useId, useMemo } from 'react';
 import {
   Input,
   Select,
@@ -46,6 +47,12 @@ function FilterBar({
   onSearchChange,
   className = '',
 }: FilterBarProps) {
+  // Generate IDs for all filters upfront to avoid calling hooks in callbacks
+  const baseId = useId();
+  const filterIds = useMemo(() => {
+    return filters.map((_, index) => `${baseId}-filter-${index}`);
+  }, [filters, baseId]);
+
   const handleFilterChange = (filterKey: string, value: string) => {
     if (onFilterChange) {
       onFilterChange(filterKey, value);
@@ -76,17 +83,22 @@ function FilterBar({
         )}
 
         {/* Filters */}
-        {filters.map((filter) => {
+        {filters.map((filter, index) => {
           if (filter.type === 'select') {
             // Get options - either from static options array or dynamic getOptions function
             const options = filter.getOptions
               ? filter.getOptions(filter.data || [])
               : filter.options || [];
 
+            // Use pre-generated ID for this filter
+            const filterId = filterIds[index];
+
             return (
-              <div key={filter.key} className="flex items-center gap-2">
+              <div key={filter.key} className="flex-start-gap-2">
                 {filter.label && (
-                  <Label className="text-sm font-medium">{filter.label}:</Label>
+                  <Label htmlFor={filterId} className="text-sm font-medium">
+                    {filter.label}:
+                  </Label>
                 )}
                 <Select
                   value={filter.value || 'All'}
@@ -94,7 +106,7 @@ function FilterBar({
                     handleFilterChange(filter.key, value)
                   }
                 >
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger id={filterId} className="w-[180px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

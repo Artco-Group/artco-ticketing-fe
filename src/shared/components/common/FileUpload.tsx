@@ -1,22 +1,25 @@
 import type { DragEvent, ChangeEvent, MouseEvent } from 'react';
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { toast } from 'sonner';
-import { Upload, Image, FileText, File, X } from 'lucide-react';
+import { Image, FileText, File } from 'lucide-react';
 import {
   formatFileSize,
   VALIDATION_RULES,
   ALLOWED_FILE_TYPES,
 } from '@artco-group/artco-ticketing-sync';
-import { Card, Button } from '@/shared/components/ui';
+import { Card, Button, Icon } from '@/shared/components/ui';
 import { cn } from '@/lib/utils';
 
 interface FileUploadProps {
   files: File[];
   onFilesChange: (files: File[]) => void;
+  id?: string;
 }
 
-function FileUpload({ files, onFilesChange }: FileUploadProps) {
+function FileUpload({ files, onFilesChange, id }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const generatedId = useId();
+  const inputId = id || generatedId;
 
   // Validate file type
   const isValidFileType = (file: File): boolean => {
@@ -132,22 +135,26 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        onClick={() => document.getElementById('file-input')?.click()}
+        onClick={() => document.getElementById(inputId)?.click()}
       >
-        <Upload className="text-muted-foreground mx-auto mb-3 h-10 w-10" />
-        <p className="text-muted-foreground mb-1 text-sm">
+        <Icon
+          name="upload"
+          size="xl"
+          className="text-muted-foreground mx-auto mb-3"
+        />
+        <p className="text-muted-sm mb-1">
           {files.length === 0
             ? 'Prevucite datoteke ovdje ili kliknite za odabir'
             : 'Dodajte još datoteka'}
         </p>
-        <p className="text-muted-foreground text-xs">
+        <p className="text-muted-xs">
           Podržano: slike, PDF, dokumenti (max 5MB po fajlu, 15MB ukupno)
         </p>
         <input
           type="file"
           multiple
           className="hidden"
-          id="file-input"
+          id={inputId}
           onChange={handleFileSelect}
           accept="image/jpeg,image/jpg,image/png,image/gif,application/pdf,.doc,.docx,.txt"
         />
@@ -156,14 +163,14 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
       {/* Selected files list */}
       {files.length > 0 && (
         <div className="mt-4 space-y-2">
-          <p className="text-foreground text-sm font-medium">
+          <p className="text-foreground-sm">
             Odabrane datoteke ({files.length}) - Ukupno: {getTotalSize()} / 15MB
           </p>
           {files.map((file, index) => (
-            <Card key={index} className="flex items-center justify-between p-3">
-              <div className="flex items-center gap-3">
+            <Card key={index} className="flex-between p-3">
+              <div className="flex-start-gap-3">
                 {/* File icon based on type */}
-                <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+                <div className="bg-primary/10 icon-container-sm">
                   {file.type.startsWith('image/') ? (
                     <Image className="text-primary h-5 w-5" />
                   ) : file.type === 'application/pdf' ? (
@@ -173,12 +180,8 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
                   )}
                 </div>
                 <div>
-                  <p className="text-foreground text-sm font-medium">
-                    {file.name}
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    {formatFileSize(file.size)}
-                  </p>
+                  <p className="text-foreground-sm">{file.name}</p>
+                  <p className="text-muted-xs">{formatFileSize(file.size)}</p>
                 </div>
               </div>
               <Button
@@ -189,9 +192,9 @@ function FileUpload({ files, onFilesChange }: FileUploadProps) {
                   e.stopPropagation();
                   removeFile(index);
                 }}
-                className="text-muted-foreground hover:text-destructive"
+                className="hover-destructive"
               >
-                <X className="h-5 w-5" />
+                <Icon name="close" size="lg" />
               </Button>
             </Card>
           ))}

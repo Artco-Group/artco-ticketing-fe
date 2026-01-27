@@ -1,11 +1,16 @@
 import type { FormEvent } from 'react';
+import { useId } from 'react';
 import {
+  UserRole,
+  asTicketId,
   type Ticket,
   type Comment,
   type User,
-  UserRole,
-} from '@artco-group/artco-ticketing-sync';
-import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
+  type TicketId,
+  type UserId,
+} from '@/types';
+import { Loader2 } from 'lucide-react';
+import { Icon } from '@/shared/components/ui';
 import CommentThread from './CommentThread';
 import TicketDetails from './TicketDetails';
 import { resolveAssigneeName } from '@/shared/utils/ticket-helpers';
@@ -32,9 +37,9 @@ interface TicketDetailProps {
   currentUser: User | null;
   users?: User[];
   onBack: () => void;
-  onStatusUpdate?: (ticketId: string, status: string) => Promise<void>;
-  onPriorityUpdate?: (ticketId: string, priority: string) => void;
-  onAssignTicket?: (ticketId: string, developerId: string) => void;
+  onStatusUpdate?: (ticketId: TicketId, status: string) => Promise<void>;
+  onPriorityUpdate?: (ticketId: TicketId, priority: string) => void;
+  onAssignTicket?: (ticketId: TicketId, developerId: UserId) => void;
   newComment: string;
   onCommentChange: (value: string) => void;
   onAddComment: (e: FormEvent<HTMLFormElement>) => void;
@@ -66,6 +71,10 @@ function TicketDetail({
 
   const { isEngLead, isDeveloper, isClient } = useRoleFlags(currentUser?.role);
 
+  // Generate unique IDs for form controls
+  const assignedToId = useId();
+  const priorityId = useId();
+
   if (!ticket) return null;
 
   const developers = users.filter((user) => user.role === UserRole.DEVELOPER);
@@ -96,9 +105,9 @@ function TicketDetail({
     <div className="p-6">
       {/* Page Header */}
       {isEngLead ? (
-        <div className="mb-6 flex items-center gap-4">
+        <div className="flex-start-gap-4 mb-6">
           <Button variant="ghost" size="icon" onClick={onBack}>
-            <ArrowLeft className="h-5 w-5" />
+            <Icon name="arrow-left" size="md" />
           </Button>
           <div>
             <nav className="text-muted-foreground mb-1 text-sm">
@@ -118,7 +127,7 @@ function TicketDetail({
         </div>
       ) : (
         <Button variant="ghost" onClick={onBack} className="mb-6">
-          <ArrowLeft className="mr-2 h-5 w-5" />
+          <Icon name="arrow-left" size="md" className="mr-2" />
           {backButtonText}
         </Button>
       )}
@@ -146,16 +155,16 @@ function TicketDetail({
               <CardTitle>Lead Controls</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid-responsive">
                 {/* Assignment Section */}
                 <div className="space-y-2">
-                  <Label>Assigned To</Label>
-                  <div className="flex gap-3">
+                  <Label htmlFor={assignedToId}>Assigned To</Label>
+                  <div className="flex-start-gap-3">
                     <Select
                       value={selectedDeveloper}
                       onValueChange={setSelectedDeveloper}
                     >
-                      <SelectTrigger className="flex-1">
+                      <SelectTrigger id={assignedToId} className="flex-1">
                         <SelectValue placeholder="Select Developer" />
                       </SelectTrigger>
                       <SelectContent>
@@ -181,7 +190,7 @@ function TicketDetail({
                   </div>
                   {ticket.assignedTo &&
                     typeof ticket.assignedTo !== 'string' && (
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-muted-xs">
                         Currently assigned to:{' '}
                         {resolveAssigneeName(ticket.assignedTo, users)}
                       </p>
@@ -190,18 +199,18 @@ function TicketDetail({
 
                 {/* Priority Update Section */}
                 <div className="space-y-2">
-                  <Label>Update Priority</Label>
+                  <Label htmlFor={priorityId}>Update Priority</Label>
                   <Select
                     value={ticket.priority}
                     onValueChange={(value) =>
-                      onPriorityUpdate(ticket._id || '', value)
+                      onPriorityUpdate(asTicketId(ticket._id || ''), value)
                     }
                     disabled={
                       ticket.status !== 'Open' &&
                       ticket.status !== 'In Progress'
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger id={priorityId}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -213,7 +222,7 @@ function TicketDetail({
                   </Select>
                   {ticket.status !== 'Open' &&
                     ticket.status !== 'In Progress' && (
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-muted-xs">
                         Priority can only be updated for Open or In Progress
                         tickets
                       </p>
@@ -238,15 +247,19 @@ function TicketDetail({
                     )}
                   </Button>
                   {ticket.status !== 'Resolved' && (
-                    <p className="text-muted-foreground text-xs">
+                    <p className="text-muted-xs">
                       This button is only enabled when ticket status is
                       "Resolved"
                     </p>
                   )}
                   {showSuccess && (
-                    <div className="mt-2 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-xs font-medium text-green-600">
+                    <div className="alert-success mt-2">
+                      <Icon
+                        name="check-circle"
+                        size="sm"
+                        className="text-success-500"
+                      />
+                      <span className="text-success-500 text-xs font-medium">
                         Ticket closed successfully
                       </span>
                     </div>
@@ -280,16 +293,20 @@ function TicketDetail({
               </Button>
 
               {ticket.status !== 'In Progress' && (
-                <p className="text-muted-foreground text-xs">
+                <p className="text-muted-xs">
                   This button is only enabled when ticket status is "In
                   Progress"
                 </p>
               )}
 
               {showSuccess && (
-                <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-600">
+                <div className="alert-success-lg">
+                  <Icon
+                    name="check-circle"
+                    size="sm"
+                    className="text-success-500"
+                  />
+                  <span className="text-success-500 text-sm font-medium">
                     Ticket marked as resolved successfully
                   </span>
                 </div>

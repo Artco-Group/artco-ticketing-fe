@@ -1,12 +1,8 @@
 import {
-  type Ticket,
-  type User,
-  UserRole,
   formatDateLocalized,
   formatDateTime,
 } from '@artco-group/artco-ticketing-sync';
-import type { Filters } from '@/types';
-import { Plus, ClipboardList } from 'lucide-react';
+import { UserRole, type Ticket, type User, type Filters } from '@/types';
 import {
   useRoleFlags,
   SummaryCards,
@@ -19,6 +15,8 @@ import {
   dateColumn,
   Button,
   Badge,
+  EmptyState,
+  Icon,
 } from '@/shared';
 import {
   statusColors,
@@ -91,12 +89,12 @@ function ClientLayout({
 }: ClientLayoutProps) {
   return (
     <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-foreground text-2xl font-bold">Moji Tiketi</h1>
+      <div className="flex-between mb-6">
+        <h1 className="text-foreground text-2xl font-bold">My Tickets</h1>
         {onCreateTicket && (
           <Button onClick={onCreateTicket}>
-            <Plus className="mr-2 h-5 w-5" />
-            Kreiraj novi tiket
+            <Icon name="plus" size="lg" className="mr-2" />
+            Create New Ticket
           </Button>
         )}
       </div>
@@ -120,23 +118,20 @@ function ClientLayout({
 
 function ClientEmptyState({ onCreateTicket }: { onCreateTicket?: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20">
-      <div className="bg-muted mb-6 flex h-24 w-24 items-center justify-center rounded-full">
-        <ClipboardList className="text-muted-foreground h-12 w-12" />
-      </div>
-      <h2 className="text-foreground mb-2 text-xl font-semibold">
-        Nemate kreiranih tiketa
-      </h2>
-      <p className="text-muted-foreground mb-6">
-        Kreirajte svoj prvi tiket za podršku
-      </p>
-      {onCreateTicket && (
-        <Button onClick={onCreateTicket} size="lg">
-          <Plus className="mr-2 h-5 w-5" />
-          Kreiraj novi tiket
-        </Button>
-      )}
-    </div>
+    <EmptyState
+      variant="no-tickets"
+      title="No tickets yet"
+      message="Create your first support ticket to get started"
+      action={
+        onCreateTicket && (
+          <Button onClick={onCreateTicket} size="lg">
+            <Icon name="plus" size="lg" className="mr-2" />
+            Create New Ticket
+          </Button>
+        )
+      }
+      className="min-h-0 py-20"
+    />
   );
 }
 
@@ -244,7 +239,7 @@ function TableLayout({
       className: 'text-muted-foreground',
     }),
     customColumn<Ticket>('lastUpdated', 'Last Updated', (ticket) => (
-      <div className="text-muted-foreground text-sm">
+      <div className="text-muted-sm">
         {formatDateTime(ticket.lastUpdated || ticket.createdAt || '')}
       </div>
     )),
@@ -378,19 +373,16 @@ function TableLayout({
   const filterConfig = isEngLead ? engLeadFilters : developerFilters;
 
   const emptyState = (
-    <div className="flex flex-col items-center justify-center py-20">
-      <div className="bg-muted mb-6 flex h-24 w-24 items-center justify-center rounded-full">
-        <ClipboardList className="text-muted-foreground h-12 w-12" />
-      </div>
-      <h2 className="text-foreground mb-2 text-xl font-semibold">
-        {isDeveloper ? 'No tickets assigned to you' : 'No tickets found'}
-      </h2>
-      <p className="text-muted-foreground">
-        {isDeveloper
+    <EmptyState
+      variant="no-tickets"
+      title={isDeveloper ? 'No tickets assigned to you' : 'No tickets found'}
+      message={
+        isDeveloper
           ? "You don't have any assigned tickets at the moment"
-          : 'No tickets match your current filters.'}
-      </p>
-    </div>
+          : 'No tickets match your current filters.'
+      }
+      className="min-h-0 py-12"
+    />
   );
 
   const title = isDeveloper ? 'Assigned Tickets' : 'All Tickets';
