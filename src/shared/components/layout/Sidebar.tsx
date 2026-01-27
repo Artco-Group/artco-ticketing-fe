@@ -3,11 +3,24 @@ import { useAuth } from '@/features/auth/context';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { UserRole } from '@artco-group/artco-ticketing-sync';
 import { hasRole } from '@/shared/utils/role-helpers';
-import { LayoutDashboard, Ticket, Users, TestTube2 } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Ticket,
+  Users,
+  TestTube2,
+  type LucideIcon,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/shared/components/ui';
 
-const navigation = [
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+  roles: UserRole[];
+}
+
+const navigation: NavigationItem[] = [
   {
     name: 'Dashboard',
     href: PAGE_ROUTES.DASHBOARD.ROOT,
