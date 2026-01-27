@@ -2,10 +2,11 @@ import type { ReactNode } from 'react';
 import { type Ticket, formatDateTime } from '@artco-group/artco-ticketing-sync';
 import type { MetaItem } from '@/types';
 import {
-  statusColors,
-  priorityConfig,
-  categoryColors,
+  statusBadgeConfig,
+  priorityBadgeConfig,
+  categoryBadgeConfig,
 } from '@/shared/utils/ticket-helpers';
+import { Badge } from '@/shared/components/ui';
 import TicketAttachments from './TicketAttachments';
 import TicketScreenRecording from './TicketScreenRecording';
 
@@ -76,21 +77,20 @@ function TicketDetails({
     {
       label: 'Category',
       value: (
-        <span
-          className={`inline-block rounded-full border px-2.5 py-1 text-xs font-medium ${categoryColors[ticket.category]}`}
-        >
+        <Badge variant={categoryBadgeConfig[ticket.category].variant}>
           {ticket.category}
-        </span>
+        </Badge>
       ),
     },
     {
       label: 'Priority',
       value: (
-        <span
-          className={`inline-flex items-center gap-1.5 rounded px-2 py-1 text-xs font-medium ${priorityConfig[ticket.priority].bg} ${priorityConfig[ticket.priority].color}`}
+        <Badge
+          variant={priorityBadgeConfig[ticket.priority].variant}
+          icon={priorityBadgeConfig[ticket.priority].getIcon?.()}
         >
-          {priorityConfig[ticket.priority].label}
-        </span>
+          {priorityBadgeConfig[ticket.priority].label}
+        </Badge>
       ),
     }
   );
@@ -124,11 +124,13 @@ function TicketDetails({
       {/* Title & Status */}
       <div className="mb-4 flex items-start justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-900">{ticket.title}</h1>
-        <span
-          className={`shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium ${statusColors[ticket.status]}`}
+        <Badge
+          variant={statusBadgeConfig[ticket.status].variant}
+          icon={statusBadgeConfig[ticket.status].getIcon?.()}
+          className="shrink-0"
         >
           {ticket.status}
-        </span>
+        </Badge>
       </div>
 
       {/* Ticket ID */}

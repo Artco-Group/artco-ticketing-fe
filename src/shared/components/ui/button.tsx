@@ -1,59 +1,112 @@
-/* eslint-disable react-refresh/only-export-components */
-import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-
-import { cn } from '@/lib/utils';
+import { Spinner } from './Spinner';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'relative inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 overflow-hidden group',
   {
     variants: {
       variant: {
-        default:
-          'bg-primary text-primary-foreground shadow hover:bg-primary/90',
-        destructive:
-          'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
-        outline:
-          'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
+        primary:
+          'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500/20',
         secondary:
-          'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+          'border border-greyscale-200 bg-greyscale-0 text-greyscale-700 hover:bg-greyscale-100 focus:ring-greyscale-300/20',
+        destructive:
+          'bg-error-500 text-white hover:bg-error-600 focus:ring-error-500/20',
+        ghost: 'text-greyscale-600 hover:bg-greyscale-100',
       },
       size: {
-        default: 'h-9 px-4 py-2',
-        sm: 'h-8 rounded-md px-3 text-xs',
-        lg: 'h-10 rounded-md px-8',
-        icon: 'h-9 w-9',
+        sm: 'h-7 px-3 text-xs rounded-[6px]',
+        md: 'h-9 px-4 text-sm rounded-[8px]',
+        lg: 'h-11 px-6 text-base rounded-lg',
+        icon: 'h-7 w-7 p-0',
       },
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-    },
+    defaultVariants: { variant: 'primary', size: 'md' },
   }
 );
 
-export interface ButtonProps
+interface ButtonProps
   extends
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
+  loading?: boolean;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      variant,
+      size,
+      loading,
+      leftIcon,
+      rightIcon,
+      children,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
+    const isDisabled = disabled || loading;
+
+    // Border color for pressed state - matches Figma design (#383838 = greyscale-700)
+    const getBorderColor = () => {
+      switch (variant) {
+        case 'primary':
+          return 'border-greyscale-700'; // Dark grey border (#383838) for pressed state
+        case 'destructive':
+          return 'border-greyscale-700'; // Dark grey border (#383838) for pressed state
+        case 'secondary':
+        case 'ghost':
+          return 'border-greyscale-400';
+        default:
+          return 'border-greyscale-700';
+      }
+    };
+
     return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+      <button
         ref={ref}
+        type={props.type || 'button'}
+        disabled={isDisabled}
+        className={buttonVariants({
+          variant,
+          size,
+          className: props.className,
+        })}
         {...props}
-      />
+      >
+        {/* Radial gradient from white to background color - visible in default and hover, fades out on press */}
+        <span
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50.00%_49.43%_at_49.43%_-0.00%,_var(--effect-button-1,_rgba(245,245,245,0.40))_0%,_rgba(255,255,255,0)_100%)] transition-opacity duration-150 group-active:opacity-0 ${
+            size === 'sm'
+              ? 'rounded-[6px]'
+              : size === 'md'
+                ? 'rounded-[8px]'
+                : 'rounded-lg'
+          }`}
+        />
+        {/* Border appears on press with rounded corners, disappears on release */}
+        <span
+          className={`absolute inset-0 border ${getBorderColor()} opacity-0 transition-opacity duration-150 group-active:opacity-100 ${
+            size === 'sm'
+              ? 'rounded-[6px]'
+              : size === 'md'
+                ? 'rounded-[8px]'
+                : 'rounded-lg'
+          }`}
+        />
+        {/* Content */}
+        <span className="relative inline-flex items-center gap-2">
+          {loading && <Spinner size="sm" className="text-current" />}
+          {!loading && leftIcon}
+          {children}
+          {!loading && rightIcon}
+        </span>
+      </button>
     );
   }
 );
-Button.displayName = 'Button';
-
-export { Button, buttonVariants };

@@ -145,7 +145,7 @@ function UserForm({
         <div className="flex gap-3 pt-4">
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
             onClick={onCancel}
             disabled={isSubmitting}
             className="flex-1"

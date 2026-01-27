@@ -88,6 +88,149 @@
 
   --font-size-caption: 11px;
   --font-size-caption--line-height: 14px;
+
+  /* Color palette - Primary */
+  --color-primary-50: #F2F9FF;
+  --color-primary-100: #E5F4FF;
+  --color-primary-200: #BBE3FF;
+  --color-primary-300: #80CAFF;
+  --color-primary-400: #0D99FF;
+  --color-primary-500: #004179;
+  --color-primary-600: #007BE5;
+  --color-primary-700: #0768CF;
+  --color-primary-800: #034AC1;
+  --color-primary-900: #093077;
+  --color-primary-1000: #0D193F;
+
+  /* Color palette - Greyscale */
+  --color-greyscale-0: #FFFFFF;
+  --color-greyscale-100: #F5F5F5;
+  --color-greyscale-200: #E0E0E0;
+  --color-greyscale-300: #9D9D9D;
+  --color-greyscale-400: #8C8C8C;
+  --color-greyscale-500: #757575;
+  --color-greyscale-600: #444444;
+  --color-greyscale-700: #383838;
+  --color-greyscale-800: #2C2C2C;
+  --color-greyscale-900: #1E1E1E;
+  --color-greyscale-1000: #111111;
+
+  /* Color palette - Teal */
+  --color-teal-100: #EBF6FF;
+  --color-teal-200: #CEF0F8;
+  --color-teal-300: #B6ECF7;
+  --color-teal-400: #75D7F0;
+  --color-teal-500: #00A2C2;
+  --color-teal-600: #0087A8;
+  --color-teal-700: #047195;
+  --color-teal-800: #085A78;
+  --color-teal-900: #093C53;
+  --color-teal-1000: #0E2F43;
+
+  /* Color palette - Pink */
+  --color-pink-100: #FFF0FE;
+  --color-pink-200: #FFE0FC;
+  --color-pink-300: #FFBDF2;
+  --color-pink-400: #FF99E0;
+  --color-pink-500: #FF24BD;
+  --color-pink-600: #EA10AC;
+  --color-pink-700: #C80B96;
+  --color-pink-800: #971172;
+  --color-pink-900: #5F114C;
+  --color-pink-1000: #451138;
+
+  /* Color palette - Red */
+  --color-red-100: #FFF5F5;
+  --color-red-200: #FFE2E0;
+  --color-red-300: #FFC7C2;
+  --color-red-400: #FFAFA3;
+  --color-red-500: #F24822;
+  --color-red-600: #DC3412;
+  --color-red-700: #BD2915;
+  --color-red-800: #9F1F18;
+  --color-red-900: #771208;
+  --color-red-1000: #660E0B;
+
+  /* Color palette - Orange */
+  --color-orange-100: #FFF4E5;
+  --color-orange-200: #FFE0C2;
+  --color-orange-300: #FCD19C;
+  --color-orange-400: #FFC470;
+  --color-orange-500: #FFAB29;
+  --color-orange-600: #FC9E24;
+  --color-orange-700: #F79722;
+  --color-orange-800: #DD7C0E;
+  --color-orange-900: #CE7012;
+  --color-orange-1000: #8A480F;
+
+  /* Color palette - Violet */
+  --color-violet-100: #F5F5FF;
+  --color-violet-200: #EBEBFF;
+  --color-violet-300: #D3D1FF;
+  --color-violet-400: #B4B2FF;
+  --color-violet-500: #4D49FC;
+  --color-violet-600: #443DEB;
+  --color-violet-700: #3D32E2;
+  --color-violet-800: #3620DF;
+  --color-violet-900: #2F15AC;
+  --color-violet-1000: #1D1254;
+
+  /* Color palette - Purple */
+  --color-purple-100: #F9F5FF;
+  --color-purple-200: #F1E5FF;
+  --color-purple-300: #E4CCFF;
+  --color-purple-400: #D9BBFF;
+  --color-purple-500: #9747FF;
+  --color-purple-600: #8638E5;
+  --color-purple-700: #7C2BDA;
+  --color-purple-800: #681ABB;
+  --color-purple-900: #4B0D97;
+  --color-purple-1000: #2D0F46;
+
+  /* Color palette - Green */
+  --color-green-100: #EBFFEE;
+  --color-green-200: #CFF7D3;
+  --color-green-300: #AFF4C6;
+  --color-green-400: #85E0A3;
+  --color-green-500: #14AE5C;
+  --color-green-600: #009951;
+  --color-green-700: #008043;
+  --color-green-800: #036838;
+  --color-green-900: #024626;
+  --color-green-1000: #084A23;
+
+  /* Color palette - Blue */
+  --color-blue-100: #F2F9FF;
+  --color-blue-200: #E5F4FF;
+  --color-blue-300: #BBE3FF;
+  --color-blue-400: #80CAFF;
+  --color-blue-500: #0D99FF;
+  --color-blue-600: #007BE5;
+  --color-blue-700: #0768CF;
+  --color-blue-800: #034AC1;
+  --color-blue-900: #093077;
+  --color-blue-1000: #0D193F;
+
+  /* Semantic colors - Error */
+  --color-error-100: #FFF5F5;
+  --color-error-500: #F24822;
+  --color-error-600: #DC3412;
+  --color-error-700: #BD2915;
+
+  /* Semantic colors - Warning */
+  --color-warning-100: #FFF4E5;
+  --color-warning-500: #FFAB29;
+  --color-warning-600: #FC9E24;
+
+  /* Semantic colors - Success */
+  --color-success-100: #EBFFEE;
+  --color-success-500: #14AE5C;
+  --color-success-600: #009951;
+
+  /* Semantic colors - Info */
+  --color-info-100: #F2F9FF;
+  --color-info-500: #0D99FF;
+  --color-info-600: #007BE5;
 }
 
 @theme inline {

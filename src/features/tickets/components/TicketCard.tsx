@@ -3,9 +3,9 @@ import {
   formatDateLocalized,
 } from '@artco-group/artco-ticketing-sync';
 import {
-  statusColors,
-  priorityConfig,
-  categoryColors,
+  statusBadgeConfig,
+  priorityBadgeConfig,
+  categoryBadgeConfig,
 } from '@/shared/utils/ticket-helpers';
 import {
   Card,
@@ -15,7 +15,6 @@ import {
   Badge,
   Separator,
 } from '@/shared/components/ui';
-import { cn } from '@/lib/utils';
 
 interface TicketCardProps {
   ticket: Ticket;
@@ -37,15 +36,12 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
         {/* Status & Category */}
         <div className="flex flex-wrap gap-2">
           <Badge
-            variant="outline"
-            className={cn('rounded-full', statusColors[ticket.status])}
+            variant={statusBadgeConfig[ticket.status].variant}
+            icon={statusBadgeConfig[ticket.status].getIcon?.()}
           >
             {ticket.status}
           </Badge>
-          <Badge
-            variant="outline"
-            className={cn('rounded-full', categoryColors[ticket.category])}
-          >
+          <Badge variant={categoryBadgeConfig[ticket.category].variant}>
             {ticket.category}
           </Badge>
         </div>
@@ -55,13 +51,10 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
         {/* Priority & Date */}
         <div className="flex items-center justify-between">
           <Badge
-            variant="secondary"
-            className={cn(
-              priorityConfig[ticket.priority].bg,
-              priorityConfig[ticket.priority].color
-            )}
+            variant={priorityBadgeConfig[ticket.priority].variant}
+            icon={priorityBadgeConfig[ticket.priority].getIcon?.()}
           >
-            {priorityConfig[ticket.priority].label}
+            {priorityBadgeConfig[ticket.priority].label}
           </Badge>
           <span className="text-muted-foreground text-xs">
             {ticket.createdAt ? formatDateLocalized(ticket.createdAt) : ''}

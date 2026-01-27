@@ -1,6 +1,7 @@
 // shadcn components
 export * from './avatar';
 export * from './badge';
+export * from './BadgeIcons';
 export * from './button';
 export * from './card';
 export * from './checkbox';

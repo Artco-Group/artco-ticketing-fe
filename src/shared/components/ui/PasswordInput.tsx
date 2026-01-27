@@ -1,12 +1,16 @@
 // src/shared/components/ui/PasswordInput/PasswordInput.tsx
-import { forwardRef, useState, type ChangeEvent } from 'react';
-import { Input, type InputProps } from '../Input';
+import { forwardRef, useState, useId, type ChangeEvent } from 'react';
+import { Input } from './input';
+import type { ComponentProps } from 'react';
 
 export interface PasswordInputProps extends Omit<
-  InputProps,
-  'type' | 'rightIcon'
+  ComponentProps<'input'>,
+  'type'
 > {
   showStrengthMeter?: boolean;
+  label?: string;
+  error?: string;
+  helperText?: string;
 }
 
 // Eye icon component (show password)
@@ -89,9 +93,24 @@ const PasswordStrengthMeter = ({ password }: PasswordStrengthMeterProps) => {
 };
 
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ showStrengthMeter, value, onChange, ...props }, ref) => {
+  (
+    {
+      showStrengthMeter,
+      value,
+      onChange,
+      label,
+      error,
+      helperText,
+      className,
+      id,
+      ...props
+    },
+    ref
+  ) => {
     const [showPassword, setShowPassword] = useState(false);
     const [internalValue, setInternalValue] = useState('');
+    const generatedId = useId();
+    const inputId = id || `password-input-${generatedId}`;
 
     // Track password value for strength meter (works with both controlled and uncontrolled inputs)
     const passwordValue = value !== undefined ? String(value) : internalValue;
@@ -106,28 +125,60 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     };
 
     return (
-      <div>
-        <Input
-          ref={ref}
-          type={showPassword ? 'text' : 'password'}
-          value={value}
-          onChange={handleChange}
-          rightIcon={
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-greyscale-400 hover:text-greyscale-600 flex cursor-pointer items-center justify-center bg-none p-0 transition-colors duration-200 ease-in-out focus:outline-none"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? (
-                <EyeOffIcon className="h-5 w-5" />
-              ) : (
-                <EyeIcon className="h-5 w-5" />
-              )}
-            </button>
-          }
-          {...props}
-        />
+      <div className="w-full">
+        {label && (
+          <label
+            htmlFor={inputId}
+            className="text-greyscale-700 mb-1.5 block text-sm font-medium"
+          >
+            {label}
+          </label>
+        )}
+        <div className="relative">
+          <Input
+            ref={ref}
+            id={inputId}
+            type={showPassword ? 'text' : 'password'}
+            value={value}
+            onChange={handleChange}
+            className={`pr-10 ${error ? 'border-error-500 focus-visible:ring-error-500' : ''} ${className || ''}`}
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={
+              error
+                ? `${inputId}-error`
+                : helperText
+                  ? `${inputId}-helper`
+                  : undefined
+            }
+            {...props}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="text-greyscale-400 hover:text-greyscale-600 absolute top-1/2 right-3 flex -translate-y-1/2 cursor-pointer items-center justify-center bg-none p-0 transition-colors duration-200 ease-in-out focus:outline-none"
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            tabIndex={-1}
+          >
+            {showPassword ? (
+              <EyeOffIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </button>
+        </div>
+        {helperText && !error && (
+          <p
+            id={`${inputId}-helper`}
+            className="text-greyscale-500 mt-1.5 text-xs"
+          >
+            {helperText}
+          </p>
+        )}
+        {error && (
+          <p id={`${inputId}-error`} className="text-error-500 mt-1.5 text-xs">
+            {error}
+          </p>
+        )}
         {showStrengthMeter && (
           <PasswordStrengthMeter password={passwordValue} />
         )}

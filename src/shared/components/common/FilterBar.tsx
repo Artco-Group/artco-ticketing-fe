@@ -90,7 +90,7 @@ function FilterBar({
                 )}
                 <Select
                   value={filter.value || 'All'}
-                  onValueChange={(value) =>
+                  onValueChange={(value: string) =>
                     handleFilterChange(filter.key, value)
                   }
                 >

@@ -22,11 +22,10 @@ import {
 } from '@/shared';
 import {
   statusColors,
-  priorityConfig,
+  priorityBadgeConfig,
   categoryColors,
   resolveAssigneeName,
 } from '@/shared/utils/ticket-helpers';
-import { cn } from '@/lib/utils';
 import TicketCard from './TicketCard';
 
 interface TicketListProps {
@@ -182,13 +181,10 @@ function TableLayout({
     ),
     customColumn<Ticket>('priority', 'Priority', (ticket) => (
       <Badge
-        variant="secondary"
-        className={cn(
-          priorityConfig[ticket.priority].bg,
-          priorityConfig[ticket.priority].color
-        )}
+        variant={priorityBadgeConfig[ticket.priority].variant}
+        icon={priorityBadgeConfig[ticket.priority].getIcon?.()}
       >
-        {priorityConfig[ticket.priority].label}
+        {priorityBadgeConfig[ticket.priority].label}
       </Badge>
     )),
     badgeColumn<Ticket>(
@@ -202,12 +198,7 @@ function TableLayout({
         {ticket.assignedTo ? (
           resolveAssigneeName(ticket.assignedTo, users)
         ) : (
-          <Badge
-            variant="outline"
-            className="border-orange-200 text-orange-600"
-          >
-            Unassigned
-          </Badge>
+          <Badge variant="orange">Unassigned</Badge>
         )}
       </div>
     )),
@@ -237,13 +228,10 @@ function TableLayout({
     ),
     customColumn<Ticket>('priority', 'Priority', (ticket) => (
       <Badge
-        variant="secondary"
-        className={cn(
-          priorityConfig[ticket.priority].bg,
-          priorityConfig[ticket.priority].color
-        )}
+        variant={priorityBadgeConfig[ticket.priority].variant}
+        icon={priorityBadgeConfig[ticket.priority].getIcon?.()}
       >
-        {priorityConfig[ticket.priority].label}
+        {priorityBadgeConfig[ticket.priority].label}
       </Badge>
     )),
     badgeColumn<Ticket>(

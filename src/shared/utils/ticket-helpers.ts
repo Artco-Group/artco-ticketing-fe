@@ -9,6 +9,9 @@ import {
   type User,
 } from '@artco-group/artco-ticketing-sync';
 import type { Filters } from '@/types';
+import type { ReactNode } from 'react';
+import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
+import type { BadgeVariant } from '@/shared/components/ui/badge';
 
 /**
  * Priority order for sorting (highest first)
@@ -232,4 +235,112 @@ export const categoryColors: Record<string, string> = {
   ),
   [TicketCategory.QUESTION]: getCategoryBadgeClasses(TicketCategory.QUESTION),
   [TicketCategory.OTHER]: getCategoryBadgeClasses(TicketCategory.OTHER),
+};
+
+// Badge Configuration System with Icons
+interface BadgeConfig {
+  variant: BadgeVariant;
+  getIcon?: () => ReactNode;
+  label?: string;
+}
+
+// Status Badge Configuration with StatusIcon factory functions
+export const statusBadgeConfig: Record<string, BadgeConfig> = {
+  [TicketStatus.NEW]: {
+    variant: 'blue',
+    getIcon: () =>
+      StatusIcon({
+        fillPercent: 10,
+        color: 'var(--color-info-500)',
+        backgroundColor: 'var(--color-info-100)',
+      }),
+  },
+  [TicketStatus.OPEN]: {
+    variant: 'orange',
+    getIcon: () =>
+      StatusIcon({
+        fillPercent: 30,
+        color: 'var(--color-orange-700)',
+        backgroundColor: 'var(--color-orange-100)',
+      }),
+  },
+  [TicketStatus.IN_PROGRESS]: {
+    variant: 'yellow',
+    getIcon: () =>
+      StatusIcon({
+        fillPercent: 50,
+        color: 'var(--color-warning-500)',
+        backgroundColor: 'var(--color-warning-100)',
+      }),
+  },
+  [TicketStatus.RESOLVED]: {
+    variant: 'green',
+    getIcon: () =>
+      StatusIcon({
+        fillPercent: 80,
+        color: 'var(--color-success-600)',
+        backgroundColor: 'var(--color-success-100)',
+      }),
+  },
+  [TicketStatus.CLOSED]: {
+    variant: 'grey',
+    getIcon: () =>
+      StatusIcon({
+        fillPercent: 100,
+        color: 'var(--color-greyscale-500)',
+        backgroundColor: 'var(--color-greyscale-100)',
+      }),
+  },
+};
+
+// Priority Badge Configuration with PriorityIcon factory functions
+export const priorityBadgeConfig: Record<string, BadgeConfig> = {
+  [TicketPriority.LOW]: {
+    variant: 'green',
+    getIcon: () =>
+      PriorityIcon({
+        filledBars: 1,
+        color: 'var(--color-success-600)',
+        backgroundColor: 'var(--color-success-100)',
+      }),
+    label: TicketPriorityDisplay[TicketPriority.LOW],
+  },
+  [TicketPriority.MEDIUM]: {
+    variant: 'yellow',
+    getIcon: () =>
+      PriorityIcon({
+        filledBars: 2,
+        color: 'var(--color-warning-500)',
+        backgroundColor: 'var(--color-warning-100)',
+      }),
+    label: TicketPriorityDisplay[TicketPriority.MEDIUM],
+  },
+  [TicketPriority.HIGH]: {
+    variant: 'orange',
+    getIcon: () =>
+      PriorityIcon({
+        filledBars: 3,
+        color: 'var(--color-orange-700)',
+        backgroundColor: 'var(--color-orange-100)',
+      }),
+    label: TicketPriorityDisplay[TicketPriority.HIGH],
+  },
+  [TicketPriority.CRITICAL]: {
+    variant: 'red',
+    getIcon: () =>
+      PriorityIcon({
+        filledBars: 4,
+        color: 'var(--color-error-600)',
+        backgroundColor: 'var(--color-error-100)',
+      }),
+    label: TicketPriorityDisplay[TicketPriority.CRITICAL],
+  },
+};
+
+// Category Badge Configuration (no icons)
+export const categoryBadgeConfig: Record<string, BadgeConfig> = {
+  [TicketCategory.BUG]: { variant: 'red' },
+  [TicketCategory.FEATURE_REQUEST]: { variant: 'purple' },
+  [TicketCategory.QUESTION]: { variant: 'blue' },
+  [TicketCategory.OTHER]: { variant: 'grey' },
 };

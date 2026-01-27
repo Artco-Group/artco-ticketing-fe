@@ -83,11 +83,11 @@ export function ConfirmModal({
       title={title}
       actions={
         <>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose}>
             {cancelText}
           </Button>
           <Button
-            variant={confirmVariant === 'danger' ? 'destructive' : 'default'}
+            variant={confirmVariant === 'danger' ? 'destructive' : 'primary'}
             onClick={onConfirm}
           >
             {confirmText}
