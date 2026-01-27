@@ -25,6 +25,5 @@ export default function App() {
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-    //<TestingPage />
   );
 }
