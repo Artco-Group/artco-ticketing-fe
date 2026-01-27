@@ -39,6 +39,11 @@ export const PAGE_ROUTES = {
     edit: (id: string) => `/users/${id}/edit` as const,
   },
 
+  // Testing (dev/admin)
+  TESTING: {
+    LIST: '/testing',
+  },
+
   // Utility
   HOME: '/',
   NOT_FOUND: '/404',

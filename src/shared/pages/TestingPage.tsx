@@ -1,18 +1,22 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from './button';
-import { Input } from './input';
-import { PasswordInput } from './PasswordInput';
-import { Checkbox } from './checkbox';
-import { Switch } from './Switch';
-import { Badge } from './badge';
-import { StatusIcon, PriorityIcon } from './BadgeIcons';
-import { FilterButton } from './FilterButton';
-import { Spinner, SpinnerContainer } from './Spinner';
-import { Modal } from './Modal';
-import { EmptyState } from './EmptyState';
-import { LoadingOverlay } from './LoadingOverlay';
-import { Avatar, AvatarImage, AvatarFallback } from './avatar';
+import { Button } from '@/shared/components/ui/button';
+import { Input } from '@/shared/components/ui/input';
+import { PasswordInput } from '@/shared/components/ui/PasswordInput';
+import { Checkbox } from '@/shared/components/ui/checkbox';
+import { Switch } from '@/shared/components/ui/Switch';
+import { Badge } from '@/shared/components/ui/badge';
+import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
+import { FilterButton } from '@/shared/components/ui/FilterButton';
+import { Spinner, SpinnerContainer } from '@/shared/components/ui/Spinner';
+import { Modal } from '@/shared/components/ui/Modal';
+import { EmptyState } from '@/shared/components/ui/EmptyState';
+import { LoadingOverlay } from '@/shared/components/ui/LoadingOverlay';
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from '@/shared/components/ui/avatar';
 import {
   Card,
   CardHeader,
@@ -20,12 +24,12 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from './card';
-import { Textarea } from './textarea';
-import { Label } from './label';
-import { Separator } from './separator';
-import { DataTable } from './DataTable';
-import { QueryStateWrapper } from './QueryStateWrapper';
+} from '@/shared/components/ui/card';
+import { Textarea } from '@/shared/components/ui/textarea';
+import { Label } from '@/shared/components/ui/label';
+import { Separator } from '@/shared/components/ui/separator';
+import { DataTable } from '@/shared/components/ui/DataTable';
+import { QueryStateWrapper } from '@/shared/components/ui/QueryStateWrapper';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -34,7 +38,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './dropdown-menu';
+} from '@/shared/components/ui/dropdown-menu';
 import {
   Dialog,
   DialogContent,
@@ -43,14 +47,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './dialog';
+} from '@/shared/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from './select';
+} from '@/shared/components/ui/select';
 import {
   Form,
   FormControl,
@@ -59,7 +63,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './form';
+} from '@/shared/components/ui/form';
 
 export default function TestingPage() {
   const [selectedValue, setSelectedValue] = useState<string>('option2');

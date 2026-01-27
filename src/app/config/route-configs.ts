@@ -99,6 +99,16 @@ export const routeConfigs: Record<string, RouteConfig> = {
     group: 'users',
     roles: [UserRole.ENG_LEAD],
   },
+
+  // Testing
+  [PAGE_ROUTES.TESTING.LIST]: {
+    path: PAGE_ROUTES.TESTING.LIST,
+    requiresAuth: true,
+    layout: 'main',
+    pageConfigKey: 'testing',
+    group: 'testing',
+    roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
+  },
 };
 
 // Helper functions

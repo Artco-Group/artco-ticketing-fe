@@ -3,7 +3,7 @@ import { useAuth } from '@/features/auth/context';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { UserRole } from '@artco-group/artco-ticketing-sync';
 import { hasRole } from '@/shared/utils/role-helpers';
-import { LayoutDashboard, Ticket, Users } from 'lucide-react';
+import { LayoutDashboard, Ticket, Users, TestTube2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/shared/components/ui';
 
@@ -34,6 +34,12 @@ const navigation = [
     name: 'Users',
     href: PAGE_ROUTES.USERS.LIST,
     icon: Users,
+    roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
+  },
+  {
+    name: 'Testing',
+    href: PAGE_ROUTES.TESTING.LIST,
+    icon: TestTube2,
     roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
   },
 ];
