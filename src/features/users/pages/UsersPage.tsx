@@ -10,6 +10,8 @@ export default function UsersPage() {
     userToDelete,
     isLoading,
     error,
+    refetch,
+    isRefetching,
     isSubmitting,
     searchTerm,
     roleFilter,
@@ -30,7 +32,10 @@ export default function UsersPage() {
       error={error}
       data={data}
       loadingMessage="Loading users..."
+      errorTitle="Failed to load users"
       errorMessage="Failed to load users. Please try again later."
+      onRetry={refetch}
+      isRefetching={isRefetching}
     >
       {() => (
         <UserList

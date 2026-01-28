@@ -45,6 +45,8 @@ export function useTicketList() {
     data: ticketsData,
     isLoading: ticketsLoading,
     error: ticketsError,
+    refetch: refetchTickets,
+    isRefetching: ticketsRefetching,
   } = useTickets();
 
   const allTickets = useMemo(() => {
@@ -109,6 +111,8 @@ export function useTicketList() {
     isLoading: ticketsLoading,
     error: ticketsError,
     ticketsData,
+    refetch: refetchTickets,
+    isRefetching: ticketsRefetching,
 
     // Role info
     userRole: userRole as UserRole | undefined,

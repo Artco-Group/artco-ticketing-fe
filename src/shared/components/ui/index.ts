@@ -24,3 +24,4 @@ export * from './EmptyState';
 export * from './QueryStateWrapper';
 export * from './Icon';
 export * from './Toast';
+export * from './RetryableError';

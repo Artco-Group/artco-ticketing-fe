@@ -15,7 +15,7 @@ import { useToast } from '@/shared/components/ui';
  * Separates business logic from UI for better testability and maintainability.
  */
 export function useUserList() {
-  const { data, isLoading, error } = useUsers();
+  const { data, isLoading, error, refetch, isRefetching } = useUsers();
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
@@ -132,6 +132,8 @@ export function useUserList() {
     // State
     isLoading,
     error,
+    refetch,
+    isRefetching,
     isSubmitting,
     searchTerm,
     roleFilter,

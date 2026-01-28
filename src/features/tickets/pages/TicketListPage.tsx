@@ -13,6 +13,8 @@ export default function TicketListPage() {
     isLoading,
     error,
     ticketsData,
+    refetch,
+    isRefetching,
     userRole,
     onViewTicket,
     onFilterChange,
@@ -35,7 +37,10 @@ export default function TicketListPage() {
       error={error}
       data={ticketsData}
       loadingMessage="Loading tickets..."
+      errorTitle="Failed to load tickets"
       errorMessage="Failed to load tickets. Please try again later."
+      onRetry={refetch}
+      isRefetching={isRefetching}
     >
       {() => (
         <TicketList

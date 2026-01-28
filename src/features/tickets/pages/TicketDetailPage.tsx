@@ -9,6 +9,9 @@ export default function TicketDetailPage() {
     currentUser,
     users,
     ticketLoading,
+    ticketError,
+    refetchTicket,
+    ticketRefetching,
     newComment,
     onBack,
     onStatusUpdate,
@@ -31,9 +34,13 @@ export default function TicketDetailPage() {
   return (
     <QueryStateWrapper
       isLoading={ticketLoading}
-      error={null}
+      error={ticketError}
       data={ticket}
       loadingMessage="Loading ticket..."
+      errorTitle="Failed to load ticket"
+      errorMessage="We couldn't load this ticket. Please try again."
+      onRetry={refetchTicket}
+      isRefetching={ticketRefetching}
       emptyTitle="Ticket Not Found"
       emptyMessage="The ticket you're looking for doesn't exist or you don't have access to it."
       emptyAction={<Button onClick={onBack}>Back to Dashboard</Button>}
