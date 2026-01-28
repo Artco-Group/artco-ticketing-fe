@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
 import {
   passwordResetFormSchema,
   type PasswordResetFormInput,
@@ -10,6 +9,7 @@ import {
 import { useVerifyResetToken, useResetPassword } from '../api/auth-api';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { extractAuthError } from '../utils/extract-auth-error';
+import { useToast } from '@/shared/components/ui';
 
 /**
  * Custom hook for password reset form logic.
@@ -18,6 +18,7 @@ import { extractAuthError } from '../utils/extract-auth-error';
 export function usePasswordResetForm() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const verifyTokenQuery = useVerifyResetToken(token);
   const resetPasswordMutation = useResetPassword();
@@ -44,9 +45,7 @@ export function usePasswordResetForm() {
       );
     }
     if (verifyTokenQuery.data && !verifyTokenQuery.data.valid) {
-      return (
-        verifyTokenQuery.data.message || 'Token je nevažeći ili je istekao'
-      );
+      return 'Token je nevažeći ili je istekao';
     }
     return '';
   }, [verifyTokenQuery.isError, verifyTokenQuery.data, verifyTokenQuery.error]);
@@ -56,7 +55,7 @@ export function usePasswordResetForm() {
     if (tokenError) {
       toast.error(tokenError);
     }
-  }, [tokenError]);
+  }, [tokenError, toast]);
 
   const onSubmit = async (data: PasswordResetFormInput) => {
     setFormError('');

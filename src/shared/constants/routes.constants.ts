@@ -42,6 +42,24 @@ export const PAGE_ROUTES = {
   // Testing (admin)
   TESTING: {
     LIST: '/testing',
+  // Inbox
+  INBOX: {
+    ROOT: '/inbox',
+  },
+
+  // Notes
+  NOTES: {
+    ROOT: '/notes',
+  },
+
+  // Reports
+  REPORTS: {
+    ROOT: '/reports',
+  },
+
+  // Automations
+  AUTOMATIONS: {
+    ROOT: '/automations',
   },
 
   // Utility

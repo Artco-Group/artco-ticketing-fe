@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import type { CreateTicketFormData } from '@artco-group/artco-ticketing-sync';
-import { toast } from 'sonner';
 
 import { PAGE_ROUTES, getErrorMessage } from '@/shared';
 import { useAuth } from '@/features/auth/context';
 import { useCreateTicket } from '../api/tickets-api';
 import { createTicketFormData } from '../utils/file-helpers';
+import { useToast } from '@/shared/components/ui';
 
 /**
  * Custom hook for ticket creation form logic.
@@ -15,6 +15,7 @@ export function useTicketCreate() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const createTicketMutation = useCreateTicket();
+  const toast = useToast();
 
   const handleSubmit = async (
     data: CreateTicketFormData,

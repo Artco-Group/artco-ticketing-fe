@@ -5,6 +5,10 @@ import { userRoutes } from '@/features/users/routes';
 import { dashboardRoutes } from '@/features/dashboard/routes';
 import { ticketRoutes } from '@/features/tickets/routes';
 import { sharedRoutes } from '@/shared/routes';
+import { inboxRoutes } from '@/features/inbox/routes';
+import { notesRoutes } from '@/features/notes/routes';
+import { reportsRoutes } from '@/features/reports/routes';
+import { automationsRoutes } from '@/features/automations/routes';
 import { createSimpleRoute } from '@/shared/utils/route-helpers';
 import { PAGE_ROUTES } from '@/shared/constants';
 
@@ -30,6 +34,10 @@ export const allRoutes = [
   ...ticketRoutes,
   ...userRoutes,
   ...sharedRoutes,
+  ...inboxRoutes,
+  ...notesRoutes,
+  ...reportsRoutes,
+  ...automationsRoutes,
 
   // 404 catch-all route - must be last
   createSimpleRoute('not-found', '*', NotFoundPage),
@@ -46,4 +54,14 @@ export {
 export type { RouteConfig } from '../config/route-configs';
 
 // Re-export individual feature route arrays for selective use
-export { authRoutes, dashboardRoutes, ticketRoutes, userRoutes, sharedRoutes };
+export {
+  authRoutes,
+  dashboardRoutes,
+  ticketRoutes,
+  userRoutes,
+  sharedRoutes,
+  inboxRoutes,
+  notesRoutes,
+  reportsRoutes,
+  automationsRoutes,
+};

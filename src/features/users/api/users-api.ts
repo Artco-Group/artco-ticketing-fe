@@ -94,6 +94,7 @@ function useDeleteUser() {
   return useApiMutation<void, UserId>({
     url: (id) => API_ROUTES.USERS.BY_ID(id),
     method: 'DELETE',
+    getBody: () => undefined,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
     },

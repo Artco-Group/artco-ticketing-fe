@@ -41,6 +41,12 @@ import checkCircleSvg from '@/assets/icons/feedback/check-circle.svg?raw';
 
 import clockSvg from '@/assets/icons/system/clock.svg?raw';
 import fileTextSvg from '@/assets/icons/system/file-text.svg?raw';
+import settingsSvg from '@/assets/icons/system/settings.svg?raw';
+
+import pinSvg from '@/assets/icons/navigation/pin.svg?raw';
+import automationsSvg from '@/assets/icons/navigation/automations.svg?raw';
+import sidebarSvg from '@/assets/icons/navigation/sidebar.svg?raw';
+import chevronSelectorSvg from '@/assets/icons/arrows/chevron-selector.svg?raw';
 
 import arrowLeftSvg from '@/assets/icons/arrows/arrow-left.svg?raw';
 
@@ -53,6 +59,9 @@ export type IconName =
   | 'notes'
   | 'reports'
   | 'all'
+  | 'automations'
+  | 'pin'
+  | 'sidebar'
   | 'plus'
   | 'search'
   | 'trash'
@@ -69,6 +78,7 @@ export type IconName =
   | 'chevron-up'
   | 'chevron-left'
   | 'chevron-right'
+  | 'chevron-selector'
   | 'arrow-right'
   | 'backlog'
   | 'todo'
@@ -80,9 +90,10 @@ export type IconName =
   | 'check-circle'
   | 'clock'
   | 'file-text'
+  | 'settings'
   | 'arrow-left';
 
-export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 const iconMap: Record<IconName, string> = {
   dashboard: dashboardSvg,
@@ -93,6 +104,9 @@ const iconMap: Record<IconName, string> = {
   notes: notesSvg,
   reports: reportsSvg,
   all: allSvg,
+  automations: automationsSvg,
+  pin: pinSvg,
+  sidebar: sidebarSvg,
   plus: plusSvg,
   search: searchSvg,
   trash: trashSvg,
@@ -109,6 +123,7 @@ const iconMap: Record<IconName, string> = {
   'chevron-up': chevronUpSvg,
   'chevron-left': chevronLeftSvg,
   'chevron-right': chevronRightSvg,
+  'chevron-selector': chevronSelectorSvg,
   'arrow-right': arrowRightSvg,
   backlog: backlogSvg,
   todo: todoSvg,
@@ -120,6 +135,7 @@ const iconMap: Record<IconName, string> = {
   'check-circle': checkCircleSvg,
   clock: clockSvg,
   'file-text': fileTextSvg,
+  settings: settingsSvg,
   'arrow-left': arrowLeftSvg,
 };
 
@@ -129,6 +145,7 @@ const sizeMap: Record<IconSize, string> = {
   md: 'w-5 h-5',
   lg: 'w-6 h-6',
   xl: 'w-8 h-8',
+  xxl: 'w-9 h-9',
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
@@ -161,7 +178,8 @@ export function Icon({
     <span
       className={cn(
         'inline-flex shrink-0 items-center justify-center',
-        sizeMap[size]
+        sizeMap[size],
+        className
       )}
       style={{ lineHeight: 0 }}
       aria-hidden={!ariaLabel}

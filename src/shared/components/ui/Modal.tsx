@@ -20,10 +20,10 @@ interface ModalProps {
 }
 
 const maxWidthClasses = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
+  sm: 'modal-sm',
+  md: 'modal-md',
+  lg: 'modal-lg',
+  xl: 'modal-xl',
 };
 
 /**

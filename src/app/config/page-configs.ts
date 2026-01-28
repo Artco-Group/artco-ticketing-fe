@@ -35,6 +35,26 @@ export const pageConfigs: Record<string, PageConfig> = {
     description: 'View user information',
     breadcrumbs: [{ label: 'Users', href: '/users' }, { label: 'Details' }],
   },
+  inbox: {
+    title: 'Inbox',
+    description: 'View messages and notifications',
+    breadcrumbs: [{ label: 'Inbox' }],
+  },
+  notes: {
+    title: 'Notes',
+    description: 'Manage your notes',
+    breadcrumbs: [{ label: 'Notes' }],
+  },
+  reports: {
+    title: 'Reports',
+    description: 'View reports and analytics',
+    breadcrumbs: [{ label: 'Reports' }],
+  },
+  automations: {
+    title: 'Automations',
+    description: 'Manage workflow automations',
+    breadcrumbs: [{ label: 'Automations' }],
+  },
 };
 
 export type { BreadcrumbItem };

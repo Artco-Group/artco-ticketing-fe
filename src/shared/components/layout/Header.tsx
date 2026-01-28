@@ -60,12 +60,10 @@ export function Header({ pageConfig }: HeaderProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm leading-none font-medium">
-                    {user?.name}
-                  </p>
-                  <p className="text-muted-xs leading-none">{user?.email}</p>
-                  <p className="text-muted-xs leading-none">
+                <div className="gap-xs flex flex-col">
+                  <p className="text-sm font-medium">{user?.name}</p>
+                  <p className="text-muted-xs">{user?.email}</p>
+                  <p className="text-muted-xs">
                     {user?.role && UserRoleDisplay[user.role as UserRole]}
                   </p>
                 </div>

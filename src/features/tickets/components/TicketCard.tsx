@@ -24,7 +24,7 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
   return (
     <Card
       onClick={() => onClick(ticket)}
-      className="cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+      className="hover:shadow-button-hover cursor-pointer transition-all duration-200 hover:-translate-y-1"
     >
       <CardHeader className="pb-2">
         <CardTitle className="line-clamp-2 text-lg">{ticket.title}</CardTitle>

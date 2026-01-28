@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { toast } from 'sonner';
 import { SCREEN_RECORDING } from '@/config';
+import { useToast } from '@/shared/components/ui';
 
 interface UseScreenRecorderOptions {
   maxDuration?: number;
@@ -24,6 +24,7 @@ export function useScreenRecorder({
   bitrate = SCREEN_RECORDING.BITRATE,
   onComplete,
 }: UseScreenRecorderOptions) {
+  const toast = useToast();
   const [recording, setRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [estimatedSize, setEstimatedSize] = useState(0);
