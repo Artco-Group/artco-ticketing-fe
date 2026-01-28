@@ -42,6 +42,8 @@ export const PAGE_ROUTES = {
   // Testing (admin)
   TESTING: {
     LIST: '/testing',
+  },
+    
   // Inbox
   INBOX: {
     ROOT: '/inbox',
