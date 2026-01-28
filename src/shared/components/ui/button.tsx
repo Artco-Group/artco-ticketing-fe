@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Spinner } from '@/shared/components/ui/Spinner';
+import { Icon, type IconName } from '@/shared/components/ui/Icon/Icon';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
@@ -42,6 +43,8 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
+  leftIcon?: IconName;
+  rightIcon?: IconName;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -51,6 +54,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant,
       size,
       loading,
+      leftIcon,
+      rightIcon,
       children,
       disabled,
       asChild = false,
@@ -60,6 +65,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const Comp = asChild ? Slot : 'button';
     const isDisabled = disabled || loading;
+    const leftIconElement = leftIcon ? <Icon name={leftIcon} /> : null;
+    const rightIconElement = rightIcon ? <Icon name={rightIcon} /> : null;
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
@@ -69,7 +76,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         <span className="relative z-10 inline-flex items-center gap-2">
           {loading && <Spinner size="sm" className="text-current" />}
+          {!loading && leftIconElement}
           {children}
+          {rightIconElement}
         </span>
       </Comp>
     );

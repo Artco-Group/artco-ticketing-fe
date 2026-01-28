@@ -78,30 +78,20 @@ export default function TestingPage() {
           </Button>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Button variant="default">
-            <Icon name="plus" size="sm" />
+          <Button variant="default" leftIcon="plus" rightIcon="arrow-right">
             Primary with Icons
-            <Icon name="arrow-right" size="sm" />
           </Button>
-          <Button variant="secondary">
-            <Icon name="edit" size="sm" />
+          <Button variant="secondary" leftIcon="edit" rightIcon="chevron-right">
             Secondary with Icons
-            <Icon name="chevron-right" size="sm" />
           </Button>
-          <Button variant="destructive">
-            <Icon name="trash" size="sm" />
+          <Button variant="destructive" leftIcon="trash" rightIcon="close">
             Destructive with Icons
-            <Icon name="close" size="sm" />
           </Button>
-          <Button variant="ghost">
-            <Icon name="search" size="sm" />
+          <Button variant="ghost" leftIcon="search" rightIcon="chevron-down">
             Ghost with Icons
-            <Icon name="chevron-down" size="sm" />
           </Button>
-          <Button variant="link">
-            <Icon name="info" size="sm" />
+          <Button variant="link" leftIcon="info" rightIcon="arrow-right">
             Link with Icons
-            <Icon name="arrow-right" size="sm" />
           </Button>
         </div>
         <div className="flex flex-wrap gap-3">
