@@ -91,7 +91,7 @@ export type IconName =
   | 'settings'
   | 'arrow-left';
 
-export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 const iconMap: Record<IconName, string> = {
   dashboard: dashboardSvg,
@@ -142,6 +142,7 @@ const sizeMap: Record<IconSize, string> = {
   md: 'w-5 h-5',
   lg: 'w-6 h-6',
   xl: 'w-8 h-8',
+  xxl: 'w-9 h-9',
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
