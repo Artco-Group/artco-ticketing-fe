@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from '@/shared/components/ui';
+import { NotificationBell } from '@/shared/components';
 
 interface HeaderProps {
   pageConfig?: PageConfig;
@@ -44,7 +45,7 @@ export function Header({ pageConfig }: HeaderProps) {
           )}
         </div>
 
-        <div className="ml-4 flex items-center md:ml-6">
+        <div className="ml-4 flex items-center gap-2 md:ml-6">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -75,6 +76,12 @@ export function Header({ pageConfig }: HeaderProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <NotificationBell
+            count={0}
+            notifications={[]}
+            onMarkRead={() => {}}
+            onMarkAllRead={() => {}}
+          />
         </div>
       </div>
     </div>

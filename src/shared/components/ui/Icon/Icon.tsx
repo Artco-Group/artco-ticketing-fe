@@ -42,6 +42,7 @@ import checkCircleSvg from '@/assets/icons/feedback/check-circle.svg?raw';
 import clockSvg from '@/assets/icons/system/clock.svg?raw';
 import fileTextSvg from '@/assets/icons/system/file-text.svg?raw';
 import settingsSvg from '@/assets/icons/system/settings.svg?raw';
+import notificationSvg from '@/assets/icons/system/notification.svg?raw';
 
 import pinSvg from '@/assets/icons/navigation/pin.svg?raw';
 import automationsSvg from '@/assets/icons/navigation/automations.svg?raw';
@@ -91,7 +92,8 @@ export type IconName =
   | 'clock'
   | 'file-text'
   | 'settings'
-  | 'arrow-left';
+  | 'arrow-left'
+  | 'notification';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -137,6 +139,7 @@ const iconMap: Record<IconName, string> = {
   'file-text': fileTextSvg,
   settings: settingsSvg,
   'arrow-left': arrowLeftSvg,
+  notification: notificationSvg,
 };
 
 const sizeMap: Record<IconSize, string> = {
