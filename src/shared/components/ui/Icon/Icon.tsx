@@ -19,6 +19,7 @@ import downloadSvg from '@/assets/icons/actions/download.svg?raw';
 import uploadSvg from '@/assets/icons/actions/upload.svg?raw';
 import lockSvg from '@/assets/icons/actions/lock.svg?raw';
 import eyeSvg from '@/assets/icons/actions/eye.svg?raw';
+import eyeOffSvg from '@/assets/icons/actions/eye-off.svg?raw';
 import mailSvg from '@/assets/icons/actions/mail.svg?raw';
 import shieldCheckSvg from '@/assets/icons/actions/shield-check.svg?raw';
 import logoutSvg from '@/assets/icons/actions/logout.svg?raw';
@@ -34,6 +35,7 @@ import todoSvg from '@/assets/icons/status/todo.svg?raw';
 import inProgressSvg from '@/assets/icons/status/in-progress.svg?raw';
 import doneSvg from '@/assets/icons/status/done.svg?raw';
 import checkSvg from '@/assets/icons/status/check.svg?raw';
+import checkActionSvg from '@/assets/icons/actions/check.svg?raw';
 import prioritySvg from '@/assets/icons/status/priority.svg?raw';
 
 import infoSvg from '@/assets/icons/feedback/info.svg?raw';
@@ -62,6 +64,7 @@ export type IconName =
   | 'upload'
   | 'lock'
   | 'eye'
+  | 'eye-off'
   | 'mail'
   | 'shield-check'
   | 'logout'
@@ -75,6 +78,7 @@ export type IconName =
   | 'in-progress'
   | 'done'
   | 'check'
+  | 'check-simple'
   | 'priority'
   | 'info'
   | 'check-circle'
@@ -102,6 +106,7 @@ const iconMap: Record<IconName, string> = {
   upload: uploadSvg,
   lock: lockSvg,
   eye: eyeSvg,
+  'eye-off': eyeOffSvg,
   mail: mailSvg,
   'shield-check': shieldCheckSvg,
   logout: logoutSvg,
@@ -115,6 +120,7 @@ const iconMap: Record<IconName, string> = {
   'in-progress': inProgressSvg,
   done: doneSvg,
   check: checkSvg,
+  'check-simple': checkActionSvg,
   priority: prioritySvg,
   info: infoSvg,
   'check-circle': checkCircleSvg,

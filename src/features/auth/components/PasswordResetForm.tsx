@@ -1,4 +1,3 @@
-import { EyeOff } from 'lucide-react';
 import { usePasswordResetForm } from '../hooks';
 import { Icon } from '@/shared/components/ui';
 import {
@@ -7,8 +6,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-  Input,
+  PasswordInput,
   Button,
 } from '@/shared/components/ui';
 
@@ -22,10 +20,6 @@ export function PasswordResetForm() {
     tokenError,
     formError,
     success,
-    showNewPassword,
-    showConfirmPassword,
-    toggleNewPassword,
-    toggleConfirmPassword,
     navigateToLogin,
   } = usePasswordResetForm();
 
@@ -100,49 +94,20 @@ export function PasswordResetForm() {
           <FormField
             control={form.control}
             name="newPassword"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <FormLabel>Nova Lozinka</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
-                      <Icon
-                        name="lock"
-                        size="md"
-                        className="text-muted-foreground pointer-events-none"
-                      />
-                    </div>
-                    <Input
-                      type={showNewPassword ? 'text' : 'password'}
-                      autoComplete="new-password"
-                      placeholder="Unesite novu lozinku"
-                      className="pr-10 pl-10"
-                      disabled={isPending}
-                      {...field}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
-                      onClick={toggleNewPassword}
-                      aria-label={
-                        showNewPassword ? 'Sakrij lozinku' : 'Prikaži lozinku'
-                      }
-                    >
-                      {showNewPassword ? (
-                        <EyeOff className="text-muted-foreground h-5 w-5" />
-                      ) : (
-                        <Icon
-                          name="eye"
-                          size="md"
-                          className="text-muted-foreground"
-                        />
-                      )}
-                    </Button>
-                  </div>
+                  <PasswordInput
+                    autoComplete="new-password"
+                    placeholder="Unesite novu lozinku"
+                    leftIcon={<Icon name="lock" size="md" />}
+                    disabled={isPending}
+                    showStrengthMeter
+                    error={fieldState.error?.message}
+                    {...field}
+                  />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -150,51 +115,19 @@ export function PasswordResetForm() {
           <FormField
             control={form.control}
             name="confirmPassword"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <FormLabel>Potvrdi Lozinku</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
-                      <Icon
-                        name="lock"
-                        size="md"
-                        className="text-muted-foreground pointer-events-none"
-                      />
-                    </div>
-                    <Input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      autoComplete="new-password"
-                      placeholder="Potvrdite novu lozinku"
-                      className="pr-10 pl-10"
-                      disabled={isPending}
-                      {...field}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
-                      onClick={toggleConfirmPassword}
-                      aria-label={
-                        showConfirmPassword
-                          ? 'Sakrij lozinku'
-                          : 'Prikaži lozinku'
-                      }
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="text-muted-foreground h-5 w-5" />
-                      ) : (
-                        <Icon
-                          name="eye"
-                          size="md"
-                          className="text-muted-foreground"
-                        />
-                      )}
-                    </Button>
-                  </div>
+                  <PasswordInput
+                    autoComplete="new-password"
+                    placeholder="Potvrdite novu lozinku"
+                    leftIcon={<Icon name="lock" size="md" />}
+                    disabled={isPending}
+                    error={fieldState.error?.message}
+                    {...field}
+                  />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />

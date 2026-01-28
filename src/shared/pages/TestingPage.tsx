@@ -3,6 +3,7 @@ import {
   Button,
   Badge,
   Input,
+  PasswordInput,
   Textarea,
   Checkbox,
   Select,
@@ -40,6 +41,7 @@ import {
 
 export default function TestingPage() {
   const [inputValue, setInputValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
   const [isChecked, setIsChecked] = useState(false);
   const [selectValue, setSelectValue] = useState('');
@@ -185,45 +187,164 @@ export default function TestingPage() {
       {/* Form Inputs Section */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">Form Inputs</h2>
-        <div className="max-w-md space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="test-input">Input Field</Label>
-            <Input
-              id="test-input"
-              placeholder="Enter text here..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-            />
+
+        {/* Input Variants */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Input Variants</h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Basic Input</Label>
+              <Input
+                placeholder="Enter text here..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Input with Left Icon</Label>
+              <Input
+                placeholder="Email address"
+                leftIcon={<Icon name="mail" size="md" />}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Input with Right Icon</Label>
+              <Input
+                placeholder="Search..."
+                rightIcon={<Icon name="search" size="md" />}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Input with Both Icons</Label>
+              <Input
+                placeholder="Username"
+                leftIcon={<Icon name="user" size="md" />}
+                rightIcon={<Icon name="check-simple" size="md" />}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Input with Error</Label>
+              <Input
+                placeholder="Enter email"
+                leftIcon={<Icon name="mail" size="md" />}
+                error="This field is required"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Input with Helper Text</Label>
+              <Input
+                placeholder="Username"
+                helperText="Choose a unique username"
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="test-textarea">Textarea</Label>
-            <Textarea
-              id="test-textarea"
-              placeholder="Enter longer text here..."
-              value={textareaValue}
-              onChange={(e) => setTextareaValue(e.target.value)}
-            />
+        </div>
+
+        {/* Input Sizes */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Input Sizes</h3>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label>Small</Label>
+              <Input
+                size="sm"
+                placeholder="Small input"
+                leftIcon={<Icon name="search" size="sm" />}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Medium (Default)</Label>
+              <Input
+                size="md"
+                placeholder="Medium input"
+                leftIcon={<Icon name="search" size="md" />}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Large</Label>
+              <Input
+                size="lg"
+                placeholder="Large input"
+                leftIcon={<Icon name="search" size="md" />}
+              />
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="test-checkbox"
-              checked={isChecked}
-              onCheckedChange={(checked) => setIsChecked(checked as boolean)}
-            />
-            <Label htmlFor="test-checkbox">Checkbox Label</Label>
+        </div>
+
+        {/* Password Input */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Password Input</h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Password Input</Label>
+              <PasswordInput
+                placeholder="Enter password"
+                leftIcon={<Icon name="lock" size="md" />}
+                value={passwordValue}
+                onChange={(e) => setPasswordValue(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Password with Strength Meter</Label>
+              <PasswordInput
+                placeholder="Enter password"
+                leftIcon={<Icon name="lock" size="md" />}
+                showStrengthMeter
+                value={passwordValue}
+                onChange={(e) => setPasswordValue(e.target.value)}
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="test-select">Select</Label>
-            <Select value={selectValue} onValueChange={setSelectValue}>
-              <SelectTrigger id="test-select">
-                <SelectValue placeholder="Select an option" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="option1">Option 1</SelectItem>
-                <SelectItem value="option2">Option 2</SelectItem>
-                <SelectItem value="option3">Option 3</SelectItem>
-              </SelectContent>
-            </Select>
+        </div>
+
+        {/* Other Form Elements */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Other Form Elements</h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="test-textarea">Textarea</Label>
+              <Textarea
+                id="test-textarea"
+                placeholder="Enter longer text here..."
+                value={textareaValue}
+                onChange={(e) => setTextareaValue(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="test-checkbox"
+                  checked={isChecked}
+                  onCheckedChange={(checked) =>
+                    setIsChecked(checked as boolean)
+                  }
+                />
+                <Label htmlFor="test-checkbox">Checkbox Label</Label>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="test-select">Select</Label>
+                <Select value={selectValue} onValueChange={setSelectValue}>
+                  <SelectTrigger id="test-select">
+                    <SelectValue placeholder="Select an option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="option1">Option 1</SelectItem>
+                    <SelectItem value="option2">Option 2</SelectItem>
+                    <SelectItem value="option3">Option 3</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
         </div>
       </section>
