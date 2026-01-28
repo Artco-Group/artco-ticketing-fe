@@ -2,28 +2,29 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
-
+import { Spinner } from '@/shared/components/ui/Spinner';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 overflow-hidden',
   {
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground shadow hover:bg-primary/90',
+          'bg-primary text-primary-foreground shadow hover:bg-primary/90 focus:ring-primary/20 before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_50%_49%_at_50%_0%,_rgba(245,245,245,0.40)_0%,_rgba(255,255,255,0)_100%)] before:transition-opacity before:duration-150 active:before:opacity-0 after:absolute after:inset-0 after:border after:border-greyscale-700 after:opacity-0 after:transition-opacity after:duration-150 active:after:opacity-100 after:rounded-[inherit]',
         destructive:
-          'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
+          'bg-destructive text-primary-foreground shadow-sm hover:bg-destructive/90 focus:ring-destructive/20 before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_50%_49%_at_50%_0%,_rgba(245,245,245,0.40)_0%,_rgba(255,255,255,0)_100%)] before:transition-opacity before:duration-150 active:before:opacity-0 after:absolute after:inset-0 after:border after:border-greyscale-700 after:opacity-0 after:transition-opacity after:duration-150 active:after:opacity-100 after:rounded-[inherit]',
         outline:
-          'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
+          'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground focus:ring-input/20',
         secondary:
-          'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
+          'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 focus:ring-secondary/20 before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_50%_49%_at_50%_0%,_rgba(245,245,245,0.40)_0%,_rgba(255,255,255,0)_100%)] before:transition-opacity before:duration-150 active:before:opacity-0 after:absolute after:inset-0 after:border after:border-greyscale-700 after:opacity-0 after:transition-opacity after:duration-150 active:after:opacity-100 after:rounded-[inherit]',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-9 px-4 py-2',
         sm: 'h-8 rounded-md px-3 text-xs',
+        md: 'h-9 rounded-md px-4 py-2',
         lg: 'h-10 rounded-md px-8',
         icon: 'h-9 w-9',
       },
@@ -40,17 +41,37 @@ export interface ButtonProps
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  loading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      loading,
+      children,
+      disabled,
+      asChild = false,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : 'button';
+    const isDisabled = disabled || loading;
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        disabled={isDisabled}
         {...props}
-      />
+      >
+        <span className="relative z-10 inline-flex items-center gap-2">
+          {loading && <Spinner size="sm" className="text-current" />}
+          {children}
+        </span>
+      </Comp>
     );
   }
 );

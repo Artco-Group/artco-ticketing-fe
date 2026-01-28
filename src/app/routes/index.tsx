@@ -4,6 +4,7 @@ import { authRoutes } from '@/features/auth/routes';
 import { userRoutes } from '@/features/users/routes';
 import { dashboardRoutes } from '@/features/dashboard/routes';
 import { ticketRoutes } from '@/features/tickets/routes';
+import { sharedRoutes } from '@/shared/routes';
 import { createSimpleRoute } from '@/shared/utils/route-helpers';
 import { PAGE_ROUTES } from '@/shared/constants';
 
@@ -28,6 +29,7 @@ export const allRoutes = [
   ...dashboardRoutes,
   ...ticketRoutes,
   ...userRoutes,
+  ...sharedRoutes,
 
   // 404 catch-all route - must be last
   createSimpleRoute('not-found', '*', NotFoundPage),
@@ -44,4 +46,4 @@ export {
 export type { RouteConfig } from '../config/route-configs';
 
 // Re-export individual feature route arrays for selective use
-export { authRoutes, dashboardRoutes, ticketRoutes, userRoutes };
+export { authRoutes, dashboardRoutes, ticketRoutes, userRoutes, sharedRoutes };

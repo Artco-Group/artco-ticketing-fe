@@ -35,6 +35,12 @@ const navigation = [
     icon: 'user' as const,
     roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
   },
+  {
+    name: 'Testing',
+    href: PAGE_ROUTES.TESTING.LIST,
+    icon: 'tasks' as const,
+    roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
+  },
 ];
 
 export function Sidebar() {
