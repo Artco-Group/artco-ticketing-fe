@@ -39,6 +39,26 @@ export const PAGE_ROUTES = {
     edit: (id: string) => `/users/${id}/edit` as const,
   },
 
+  // Inbox
+  INBOX: {
+    ROOT: '/inbox',
+  },
+
+  // Notes
+  NOTES: {
+    ROOT: '/notes',
+  },
+
+  // Reports
+  REPORTS: {
+    ROOT: '/reports',
+  },
+
+  // Automations
+  AUTOMATIONS: {
+    ROOT: '/automations',
+  },
+
   // Utility
   HOME: '/',
   NOT_FOUND: '/404',
