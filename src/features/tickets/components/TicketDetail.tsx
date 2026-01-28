@@ -29,7 +29,6 @@ import {
   SelectValue,
   Label,
 } from '@/shared';
-import { cn } from '@/lib/utils';
 
 interface TicketDetailProps {
   ticket: Ticket | null;
@@ -105,7 +104,7 @@ function TicketDetail({
     <div className="p-6">
       {/* Page Header */}
       {isEngLead ? (
-        <div className="flex-start-gap-4 mb-6">
+        <div className="mb-6 flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={onBack}>
             <Icon name="arrow-left" size="md" />
           </Button>
@@ -132,12 +131,7 @@ function TicketDetail({
         </Button>
       )}
 
-      <div
-        className={cn(
-          'mx-auto space-y-6',
-          isEngLead ? 'max-w-4xl' : 'max-w-5xl'
-        )}
-      >
+      <div className="space-y-6">
         {/* Ticket Details */}
         <TicketDetails
           ticket={ticket}

@@ -6,6 +6,7 @@ import {
   priorityConfig,
   categoryColors,
 } from '@/shared/utils/ticket-helpers';
+import { Card } from '@/shared/components/ui';
 import TicketAttachments from './TicketAttachments';
 import TicketScreenRecording from './TicketScreenRecording';
 
@@ -118,7 +119,7 @@ function TicketDetails({
   }
 
   return (
-    <div className={`card p-8 ${className}`}>
+    <Card className={`p-8 ${className}`}>
       {/* Title & Status */}
       <div className="mb-4 flex items-start justify-between gap-4">
         <h1 className="text-greyscale-900 text-2xl font-bold">
@@ -187,7 +188,7 @@ function TicketDetails({
           onDownload={onDownloadScreenRecording}
         />
       )}
-    </div>
+    </Card>
   );
 }
 

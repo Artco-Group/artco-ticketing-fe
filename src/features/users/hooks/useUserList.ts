@@ -4,11 +4,11 @@ import {
   type CreateUserFormData,
   type UpdateUserFormData,
 } from '@artco-group/artco-ticketing-sync';
-import { toast } from 'sonner';
 
 import { getErrorMessage } from '@/shared';
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '../api';
 import { asUserId, type UserId } from '@/types';
+import { useToast } from '@/shared/components/ui';
 
 /**
  * Custom hook for user list page logic.
@@ -19,6 +19,7 @@ export function useUserList() {
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
+  const toast = useToast();
 
   // UI state
   const [searchTerm, setSearchTerm] = useState('');

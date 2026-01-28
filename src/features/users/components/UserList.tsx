@@ -111,6 +111,7 @@ function UserList({
         isOpen={showFormModal}
         onClose={onCloseFormModal}
         title={editingUser ? 'Edit User' : 'Add New User'}
+        maxWidth="lg"
       >
         <UserForm
           key={editingUser?._id || editingUser?.id || 'new'}
