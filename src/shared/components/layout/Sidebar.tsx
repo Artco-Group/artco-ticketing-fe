@@ -214,18 +214,18 @@ export function Sidebar() {
               collapsed && 'justify-center px-0'
             )}
           >
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[10px] font-semibold">
-              WS
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-600 text-[11px] font-semibold text-white uppercase">
+              ws
             </div>
             {!collapsed && (
               <>
                 <div className="min-w-0">
-                  <p className="text-sidebar-foreground truncate text-sm font-medium">
+                  <p className="text-sidebar-foreground text-h6 truncate">
                     Workspace
                   </p>
                 </div>
                 <Icon
-                  name="chevron-down"
+                  name="chevron-selector"
                   size="lg"
                   className="text-sidebar-foreground/70 ml-1 shrink-0"
                   aria-label="Switch workspace"
@@ -234,12 +234,12 @@ export function Sidebar() {
             )}
           </button>
 
-          <Button
+          <button
             type="button"
-            variant="ghost"
-            size="icon"
             className={cn(
-              'h-11 w-11 shrink-0 rounded-full [&_svg]:!h-7 [&_svg]:!w-7',
+              'inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-sm font-medium',
+              'focus-visible:ring-ring transition-colors focus-visible:ring-1 focus-visible:outline-none',
+              'hover:bg-accent hover:text-accent-foreground',
               collapsed ? 'mx-auto' : 'ml-2'
             )}
             onClick={() => {
@@ -250,13 +250,13 @@ export function Sidebar() {
           >
             <Icon
               name="sidebar"
-              size="xxl"
+              size="lg"
               className={cn(
                 'transition-transform',
                 collapsed && '-scale-x-100'
               )}
             />
-          </Button>
+          </button>
         </div>
 
         {/* Search */}

@@ -46,6 +46,7 @@ import settingsSvg from '@/assets/icons/system/settings.svg?raw';
 import pinSvg from '@/assets/icons/navigation/pin.svg?raw';
 import automationsSvg from '@/assets/icons/navigation/automations.svg?raw';
 import sidebarSvg from '@/assets/icons/navigation/sidebar.svg?raw';
+import chevronSelectorSvg from '@/assets/icons/arrows/chevron-selector.svg?raw';
 
 import arrowLeftSvg from '@/assets/icons/arrows/arrow-left.svg?raw';
 
@@ -77,6 +78,7 @@ export type IconName =
   | 'chevron-up'
   | 'chevron-left'
   | 'chevron-right'
+  | 'chevron-selector'
   | 'arrow-right'
   | 'backlog'
   | 'todo'
@@ -121,6 +123,7 @@ const iconMap: Record<IconName, string> = {
   'chevron-up': chevronUpSvg,
   'chevron-left': chevronLeftSvg,
   'chevron-right': chevronRightSvg,
+  'chevron-selector': chevronSelectorSvg,
   'arrow-right': arrowRightSvg,
   backlog: backlogSvg,
   todo: todoSvg,
