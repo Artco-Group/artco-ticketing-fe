@@ -79,6 +79,18 @@ export default {
         '4xl': '24px', // 1.5rem
         full: '999px', // 62.438rem - Fully rounded corners
       },
+      boxShadow: {
+        'ring-primary': '0 0 0 3px rgba(0, 65, 121, 0.1)',
+        'ring-primary-strong': '0 0 0 3px rgba(0, 65, 121, 0.3)',
+        'ring-error': '0 0 0 3px rgba(239, 68, 68, 0.2)',
+        'button-hover': '0 6px 20px rgba(0, 65, 121, 0.35)',
+        'card-glass':
+          '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+        'card-glass-hover': '0 12px 40px rgba(0, 0, 0, 0.3)',
+        'card-icon-blue': '0 4px 12px rgba(59, 130, 246, 0.4)',
+        'card-icon-warm': '0 4px 12px rgba(245, 158, 11, 0.4)',
+        'card-button-md': '0 4px 12px rgba(0, 0, 0, 0.15)',
+      },
       colors: {
         // Brand primary (Blue from Figma - mapped to primary)
         primary: {
