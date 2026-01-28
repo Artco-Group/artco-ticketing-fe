@@ -133,9 +133,10 @@ export function LoginForm() {
             className="w-full"
             size="lg"
             disabled={isPending}
+            loading={isPending}
+            rightIcon="arrow-right"
           >
-            {isPending ? 'Prijavljivanje...' : 'Prijavite se'}
-            <Icon name="arrow-right" size="md" className="ml-2" />
+            Prijavite se
           </Button>
         </form>
       </Form>

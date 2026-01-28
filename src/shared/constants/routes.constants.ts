@@ -39,6 +39,11 @@ export const PAGE_ROUTES = {
     edit: (id: string) => `/users/${id}/edit` as const,
   },
 
+  // Testing (admin)
+  TESTING: {
+    LIST: '/testing',
+  },
+    
   // Inbox
   INBOX: {
     ROOT: '/inbox',
@@ -80,3 +85,4 @@ export type AuthRoute = typeof PAGE_ROUTES.AUTH;
 export type DashboardRoute = typeof PAGE_ROUTES.DASHBOARD;
 export type TicketRoute = typeof PAGE_ROUTES.TICKETS;
 export type UserRoute = typeof PAGE_ROUTES.USERS;
+export type TestingRoute = typeof PAGE_ROUTES.TESTING;
