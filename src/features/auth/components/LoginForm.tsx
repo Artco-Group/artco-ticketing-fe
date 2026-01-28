@@ -134,9 +134,9 @@ export function LoginForm() {
             size="lg"
             disabled={isPending}
             loading={isPending}
+            rightIcon="arrow-right"
           >
             Prijavite se
-            <Icon name="arrow-right" size="md" className="ml-2" />
           </Button>
         </form>
       </Form>
