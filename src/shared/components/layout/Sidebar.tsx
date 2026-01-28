@@ -52,6 +52,8 @@ const navigation = [
     href: PAGE_ROUTES.TESTING.LIST,
     icon: 'tasks' as const,
     roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
+  },
+  {
     name: 'Notes',
     href: PAGE_ROUTES.NOTES.ROOT,
     icon: 'notes' as const,
