@@ -161,7 +161,8 @@ export function Icon({
     <span
       className={cn(
         'inline-flex shrink-0 items-center justify-center',
-        sizeMap[size]
+        sizeMap[size],
+        className
       )}
       style={{ lineHeight: 0 }}
       aria-hidden={!ariaLabel}

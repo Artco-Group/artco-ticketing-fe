@@ -1,13 +1,12 @@
 import type { DragEvent, ChangeEvent, MouseEvent } from 'react';
 import { useState, useId } from 'react';
-import { toast } from 'sonner';
 import { Image, FileText, File } from 'lucide-react';
 import {
   formatFileSize,
   VALIDATION_RULES,
   ALLOWED_FILE_TYPES,
 } from '@artco-group/artco-ticketing-sync';
-import { Card, Button, Icon } from '@/shared/components/ui';
+import { Card, Button, Icon, useToast } from '@/shared/components/ui';
 import { cn } from '@/lib/utils';
 
 interface FileUploadProps {
@@ -17,6 +16,7 @@ interface FileUploadProps {
 }
 
 function FileUpload({ files, onFilesChange, id }: FileUploadProps) {
+  const toast = useToast();
   const [isDragging, setIsDragging] = useState(false);
   const generatedId = useId();
   const inputId = id || generatedId;

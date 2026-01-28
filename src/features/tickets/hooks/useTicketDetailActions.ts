@@ -6,8 +6,8 @@ import {
   type TicketId,
   type UserId,
 } from '@/types';
-import { toast } from 'sonner';
 import { fileAPI } from '../api/file-api';
+import { useToast } from '@/shared/components/ui';
 
 interface UseTicketDetailActionsOptions {
   ticket: Ticket | null;
@@ -24,6 +24,7 @@ export function useTicketDetailActions({
   onStatusUpdate,
   onAssignTicket,
 }: UseTicketDetailActionsOptions) {
+  const toast = useToast();
   const [selectedDeveloper, setSelectedDeveloper] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);

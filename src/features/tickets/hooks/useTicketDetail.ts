@@ -8,9 +8,9 @@ import {
   type TicketId,
   type UserId,
 } from '@/types';
-import { toast } from 'sonner';
 
 import { PAGE_ROUTES, getErrorMessage } from '@/shared';
+import { useToast } from '@/shared/components/ui';
 import { useAuth } from '@/features/auth/context';
 import {
   useTicket,
@@ -29,6 +29,7 @@ export function useTicketDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const toast = useToast();
 
   const [newComment, setNewComment] = useState('');
   const [localTicket, setLocalTicket] = useState<Ticket | null>(null);

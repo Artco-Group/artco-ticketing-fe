@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
 import {
   forgotPasswordSchema,
   type ForgotPasswordFormData,
@@ -10,6 +9,7 @@ import {
 import { useForgotPassword } from '../api/auth-api';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { extractAuthError } from '../utils/extract-auth-error';
+import { useToast } from '@/shared/components/ui';
 
 /**
  * Custom hook for forgot password form logic.
@@ -18,6 +18,7 @@ import { extractAuthError } from '../utils/extract-auth-error';
 export function useForgotPasswordForm() {
   const forgotPasswordMutation = useForgotPassword();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const [serverError, setServerError] = useState('');
   const [success, setSuccess] = useState(false);

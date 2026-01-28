@@ -88,6 +88,21 @@
 
   --font-size-caption: 11px;
   --font-size-caption--line-height: 14px;
+
+  /* Spacing scale */
+  --spacing-none: 0px;
+  --spacing-xxs: 2px;
+  --spacing-xs: 4px;
+  --spacing-sm: 6px;
+  --spacing-md: 8px;
+  --spacing-lg: 12px;
+  --spacing-xl: 16px;
+  --spacing-2xl: 20px;
+  --spacing-3xl: 24px;
+  --spacing-4xl: 32px;
+  --spacing-5xl: 40px;
+  --spacing-6xl: 48px;
+  --spacing-7xl: 64px;
 }
 
 @theme inline {
@@ -509,6 +524,20 @@
 
   .link {
     @apply font-medium text-primary underline-offset-4 hover:underline;
+  }
+
+  /* Modal size classes */
+  .modal-sm {
+    max-width: 24rem !important;
+  }
+  .modal-md {
+    max-width: 28rem !important;
+  }
+  .modal-lg {
+    max-width: 32rem !important;
+  }
+  .modal-xl {
+    max-width: 36rem !important;
   }
 
 /* Layout utility classes */
