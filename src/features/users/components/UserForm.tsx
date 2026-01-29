@@ -58,11 +58,9 @@ function UserForm({
           name="name"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>
-                Name <span className="text-destructive">*</span>
-              </FormLabel>
               <FormControl>
                 <Input
+                  label="Name"
                   autoComplete="name"
                   placeholder="Enter user name"
                   error={fieldState.error?.message}
@@ -78,11 +76,9 @@ function UserForm({
           name="email"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>
-                Email <span className="text-destructive">*</span>
-              </FormLabel>
               <FormControl>
                 <Input
+                  label="Email"
                   type="email"
                   autoComplete="email"
                   placeholder="Enter email address"
@@ -100,9 +96,7 @@ function UserForm({
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Role <span className="text-destructive">*</span>
-              </FormLabel>
+              <FormLabel>Role</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -128,11 +122,9 @@ function UserForm({
             name="password"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel>
-                  Password <span className="text-destructive">*</span>
-                </FormLabel>
                 <FormControl>
                   <PasswordInput
+                    label="Password"
                     autoComplete="new-password"
                     placeholder="Enter password"
                     leftIcon={<Icon name="lock" size="md" />}

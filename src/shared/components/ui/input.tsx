@@ -5,6 +5,7 @@ export interface InputProps extends Omit<
   React.ComponentProps<'input'>,
   'size'
 > {
+  label?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   error?: string;
@@ -17,6 +18,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     {
       className,
       type,
+      label,
       leftIcon,
       rightIcon,
       error,
@@ -34,6 +36,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="w-full">
+        {label && (
+          <label
+            className={cn(
+              'text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+              error ? 'text-destructive' : 'text-muted-foreground'
+            )}
+          >
+            {label}
+          </label>
+        )}
         <div className="relative">
           {leftIcon && (
             <div className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 items-center transition-colors">

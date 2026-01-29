@@ -6,7 +6,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   Input,
   PasswordInput,
   Button,
@@ -35,11 +34,11 @@ export function LoginForm() {
             name="email"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel>Email adresa</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
                     autoComplete="email"
+                    label="Email adresa"
                     placeholder="vase.ime@kompanija.ba"
                     leftIcon={<Icon name="mail" size="md" />}
                     error={fieldState.error?.message}
@@ -55,10 +54,10 @@ export function LoginForm() {
             name="password"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel>Lozinka</FormLabel>
                 <FormControl>
                   <PasswordInput
                     autoComplete="current-password"
+                    label="Lozinka"
                     placeholder="Unesite vašu lozinku"
                     leftIcon={<Icon name="lock" size="md" />}
                     error={fieldState.error?.message}

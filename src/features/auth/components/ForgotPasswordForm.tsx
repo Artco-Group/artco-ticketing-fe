@@ -7,7 +7,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   Input,
   Button,
   Card,
@@ -69,11 +68,11 @@ export function ForgotPasswordForm() {
             name="email"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel>Email adresa</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
                     autoComplete="email"
+                    label="Email adresa"
                     placeholder="vase.ime@kompanija.ba"
                     leftIcon={<Icon name="mail" size="md" />}
                     error={fieldState.error?.message}

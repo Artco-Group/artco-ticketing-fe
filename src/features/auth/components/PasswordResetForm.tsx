@@ -5,7 +5,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   PasswordInput,
   Button,
 } from '@/shared/components/ui';
@@ -96,9 +95,9 @@ export function PasswordResetForm() {
             name="newPassword"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel>Nova Lozinka</FormLabel>
                 <FormControl>
                   <PasswordInput
+                    label="Nova Lozinka"
                     autoComplete="new-password"
                     placeholder="Unesite novu lozinku"
                     leftIcon={<Icon name="lock" size="md" />}
@@ -117,9 +116,9 @@ export function PasswordResetForm() {
             name="confirmPassword"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel>Potvrdi Lozinku</FormLabel>
                 <FormControl>
                   <PasswordInput
+                    label="Potvrdi Lozinku"
                     autoComplete="new-password"
                     placeholder="Potvrdite novu lozinku"
                     leftIcon={<Icon name="lock" size="md" />}
