@@ -254,14 +254,15 @@ export function Sidebar() {
             }}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            <Icon
-              name="sidebar"
-              size="lg"
+            <span
               className={cn(
-                'transition-transform',
+                'inline-flex transition-transform duration-200',
                 collapsed && '-scale-x-100'
               )}
-            />
+              aria-hidden
+            >
+              <Icon name="sidebar" size="lg" />
+            </span>
           </button>
         </div>
 
