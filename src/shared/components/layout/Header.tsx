@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAuth } from '@/features/auth/context';
 import { UserRoleDisplay } from '@artco-group/artco-ticketing-sync';
 import { UserRole } from '@/types';
@@ -15,6 +16,38 @@ import {
   Icon,
 } from '@/shared/components/ui';
 import { NotificationBell } from '@/shared/components';
+import type { NotificationItem } from '@/shared/components/composite/NotificationBell/NotificationBell';
+
+const MOCK_NOTIFICATIONS: NotificationItem[] = [
+  {
+    id: '1',
+    title: 'New ticket assigned',
+    description: 'TICKET-123 needs your review',
+    createdAt: '2 hours ago',
+    isRead: false,
+  },
+  {
+    id: '2',
+    title: 'Comment added',
+    description: 'John replied to TICKET-456',
+    createdAt: '1 hour ago',
+    isRead: false,
+  },
+  {
+    id: '3',
+    title: 'Status changed',
+    description: 'TICKET-789 marked as resolved',
+    createdAt: '45 min ago',
+    isRead: false,
+  },
+  {
+    id: '4',
+    title: 'Priority updated',
+    description: 'TICKET-101 is now high priority',
+    createdAt: '1 day ago',
+    isRead: true,
+  },
+];
 
 interface HeaderProps {
   pageConfig?: PageConfig;
@@ -22,6 +55,22 @@ interface HeaderProps {
 
 export function Header({ pageConfig }: HeaderProps) {
   const { user, logout } = useAuth();
+  const [notifications, setNotifications] =
+    useState<NotificationItem[]>(MOCK_NOTIFICATIONS);
+
+  const handleMarkRead = (id: string) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+    );
+  };
+
+  const handleMarkAllRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+  };
+
+  const handleClearAll = () => {
+    setNotifications([]);
+  };
 
   const getInitials = (name?: string) => {
     if (!name) return 'U';
@@ -77,10 +126,11 @@ export function Header({ pageConfig }: HeaderProps) {
             </DropdownMenuContent>
           </DropdownMenu>
           <NotificationBell
-            count={0}
-            notifications={[]}
-            onMarkRead={() => {}}
-            onMarkAllRead={() => {}}
+            count={notifications.filter((n) => !n.isRead).length}
+            notifications={notifications}
+            onMarkRead={handleMarkRead}
+            onMarkAllRead={handleMarkAllRead}
+            onClearAll={handleClearAll}
           />
         </div>
       </div>
