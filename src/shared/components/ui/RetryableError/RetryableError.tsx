@@ -39,7 +39,7 @@ export function RetryableError({
     <div
       role="alert"
       className={cn(
-        'flex min-h-[50vh] flex-col items-center justify-center py-12 text-center',
+        'flex min-h-[50vh] w-full flex-col items-center justify-center px-4 py-12 text-center',
         className
       )}
     >
@@ -47,7 +47,9 @@ export function RetryableError({
         <Icon name="info" size="xl" className="text-error-500" />
       </div>
       <h3 className="text-greyscale-900 mb-2 text-xl font-semibold">{title}</h3>
-      <p className="text-greyscale-500 mb-6 max-w-sm text-sm">{message}</p>
+      <p className="text-greyscale-500 mb-6 max-w-md min-w-[20rem] text-sm">
+        {message}
+      </p>
       <Button onClick={onRetry} disabled={retrying} aria-busy={retrying}>
         {retrying ? (
           <>
