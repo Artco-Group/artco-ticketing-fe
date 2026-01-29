@@ -36,7 +36,7 @@ export function MenuItem({
 
   const baseClasses = cn(
     'flex items-center rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
-    'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+    'hover:bg-greyscale-200',
     active && 'bg-greyscale-100',
     collapsed && 'justify-center px-0',
     className
