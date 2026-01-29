@@ -2,7 +2,15 @@ import {
   formatDateLocalized,
   formatDateTime,
 } from '@artco-group/artco-ticketing-sync';
-import { UserRole, type Ticket, type User, type Filters } from '@/types';
+import {
+  UserRole,
+  TicketStatus,
+  TicketPriority,
+  TicketCategory,
+  type Ticket,
+  type User,
+  type Filters,
+} from '@/types';
 import {
   useRoleFlags,
   SummaryCards,
@@ -11,7 +19,6 @@ import {
   DataTable,
   textColumn,
   customColumn,
-  badgeColumn,
   dateColumn,
   Button,
   Badge,
@@ -19,12 +26,11 @@ import {
   Icon,
 } from '@/shared';
 import {
-  statusColors,
-  priorityConfig,
-  categoryColors,
+  statusBadgeConfig,
+  priorityBadgeConfig,
+  categoryBadgeConfig,
   resolveAssigneeName,
 } from '@/shared/utils/ticket-helpers';
-import { cn } from '@/lib/utils';
 import TicketCard from './TicketCard';
 
 interface TicketListProps {
@@ -169,40 +175,37 @@ function TableLayout({
     textColumn<Ticket>('clientEmail', 'Client', {
       className: 'text-sm text-foreground',
     }),
-    badgeColumn<Ticket>(
-      'category',
-      'Category',
-      (category) =>
-        categoryColors[category] || 'bg-secondary text-secondary-foreground'
-    ),
-    customColumn<Ticket>('priority', 'Priority', (ticket) => (
+    customColumn<Ticket>('category', 'Category', (ticket) => (
       <Badge
-        variant="secondary"
-        className={cn(
-          priorityConfig[ticket.priority].bg,
-          priorityConfig[ticket.priority].color
-        )}
+        variant={categoryBadgeConfig[ticket.category as TicketCategory].variant}
       >
-        {priorityConfig[ticket.priority].label}
+        {categoryBadgeConfig[ticket.category as TicketCategory].label}
       </Badge>
     )),
-    badgeColumn<Ticket>(
-      'status',
-      'Status',
-      (status) =>
-        statusColors[status] || 'bg-secondary text-secondary-foreground'
-    ),
+    customColumn<Ticket>('priority', 'Priority', (ticket) => (
+      <Badge
+        variant={priorityBadgeConfig[ticket.priority as TicketPriority].variant}
+        icon={priorityBadgeConfig[
+          ticket.priority as TicketPriority
+        ].getIcon?.()}
+      >
+        {priorityBadgeConfig[ticket.priority as TicketPriority].label}
+      </Badge>
+    )),
+    customColumn<Ticket>('status', 'Status', (ticket) => (
+      <Badge
+        variant={statusBadgeConfig[ticket.status as TicketStatus].variant}
+        icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
+      >
+        {statusBadgeConfig[ticket.status as TicketStatus].label}
+      </Badge>
+    )),
     customColumn<Ticket>('assignedTo', 'Assigned To', (ticket) => (
       <div className="text-foreground text-sm">
         {ticket.assignedTo ? (
           resolveAssigneeName(ticket.assignedTo, users)
         ) : (
-          <Badge
-            variant="outline"
-            className="border-orange-200 text-orange-600"
-          >
-            Unassigned
-          </Badge>
+          <Badge variant="grey">Unassigned</Badge>
         )}
       </div>
     )),
@@ -224,29 +227,31 @@ function TableLayout({
     textColumn<Ticket>('clientEmail', 'Client', {
       className: 'text-sm text-muted-foreground',
     }),
-    badgeColumn<Ticket>(
-      'category',
-      'Category',
-      (category) =>
-        categoryColors[category] || 'bg-secondary text-secondary-foreground'
-    ),
-    customColumn<Ticket>('priority', 'Priority', (ticket) => (
+    customColumn<Ticket>('category', 'Category', (ticket) => (
       <Badge
-        variant="secondary"
-        className={cn(
-          priorityConfig[ticket.priority].bg,
-          priorityConfig[ticket.priority].color
-        )}
+        variant={categoryBadgeConfig[ticket.category as TicketCategory].variant}
       >
-        {priorityConfig[ticket.priority].label}
+        {categoryBadgeConfig[ticket.category as TicketCategory].label}
       </Badge>
     )),
-    badgeColumn<Ticket>(
-      'status',
-      'Status',
-      (status) =>
-        statusColors[status] || 'bg-secondary text-secondary-foreground'
-    ),
+    customColumn<Ticket>('priority', 'Priority', (ticket) => (
+      <Badge
+        variant={priorityBadgeConfig[ticket.priority as TicketPriority].variant}
+        icon={priorityBadgeConfig[
+          ticket.priority as TicketPriority
+        ].getIcon?.()}
+      >
+        {priorityBadgeConfig[ticket.priority as TicketPriority].label}
+      </Badge>
+    )),
+    customColumn<Ticket>('status', 'Status', (ticket) => (
+      <Badge
+        variant={statusBadgeConfig[ticket.status as TicketStatus].variant}
+        icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
+      >
+        {statusBadgeConfig[ticket.status as TicketStatus].label}
+      </Badge>
+    )),
     dateColumn<Ticket>('createdAt', 'Created', formatDateLocalized, {
       className: 'text-muted-foreground',
     }),

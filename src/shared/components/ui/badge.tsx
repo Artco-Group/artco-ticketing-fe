@@ -1,38 +1,59 @@
-/* eslint-disable react-refresh/only-export-components */
-import * as React from 'react';
+import { type ReactNode } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-import { cn } from '@/lib/utils';
-
 const badgeVariants = cva(
-  'inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap',
   {
     variants: {
       variant: {
-        default:
-          'border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80',
-        secondary:
-          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive:
-          'border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80',
-        outline: 'text-foreground',
+        primary: 'bg-blue-50 text-blue-600 border-blue-500',
+        red: 'bg-red-50 text-red-600 border-red-500',
+        orange: 'bg-orange-50 text-orange-500 border-orange-500',
+        yellow: 'bg-yellow-50 text-yellow-600 border-yellow-500',
+        green: 'bg-green-50 text-green-600 border-green-500',
+        blue: 'bg-blue-50 text-blue-600 border-blue-500',
+        teal: 'bg-teal-50 text-teal-600 border-teal-500',
+        pink: 'bg-pink-50 text-pink-600 border-pink-500',
+        violet: 'bg-violet-50 text-violet-600 border-violet-500',
+        purple: 'bg-purple-50 text-purple-600 border-purple-500',
+        grey: 'bg-greyscale-100 text-greyscale-500 border-greyscale-500',
+      },
+      size: {
+        sm: 'px-2 py-0.5 text-[11px]',
+        md: 'px-2.5 py-1 text-xs',
+        lg: 'px-3 py-1.5 text-sm',
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: 'grey',
+      size: 'md',
     },
   }
 );
 
-export interface BadgeProps
-  extends
-    React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
-
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
-  );
+export interface BadgeProps extends VariantProps<typeof badgeVariants> {
+  children?: ReactNode;
+  icon?: ReactNode;
+  className?: string;
 }
 
-export { Badge, badgeVariants };
+export type BadgeVariant = NonNullable<BadgeProps['variant']>;
+
+export const Badge = ({
+  variant,
+  size,
+  children,
+  icon,
+  className,
+}: BadgeProps) => {
+  return (
+    <span className={badgeVariants({ variant, size, className })}>
+      {icon && (
+        <span className="inline-flex shrink-0 items-center">{icon}</span>
+      )}
+      {children}
+    </span>
+  );
+};
+
+Badge.displayName = 'Badge';

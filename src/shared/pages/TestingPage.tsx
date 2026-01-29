@@ -37,13 +37,16 @@ import {
   Spinner,
   EmptyState,
   Icon,
+  Switch,
 } from '@/shared/components/ui';
+import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
 
 export default function TestingPage() {
   const [inputValue, setInputValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [selectValue, setSelectValue] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -116,15 +119,137 @@ export default function TestingPage() {
 
       {/* Badges Section */}
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Badges</h2>
-        <div className="flex flex-wrap gap-3">
-          <Badge variant="default">Grey</Badge>
-          <Badge variant="secondary">Green</Badge>
-          <Badge variant="destructive">Blue</Badge>
-          <Badge variant="outline">Orange</Badge>
+        <h2 className="text-lg font-semibold">Badge Component</h2>
+        <div className="flex max-w-md flex-col gap-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Color Variants</h3>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="primary">Primary</Badge>
+              <Badge variant="red">Red</Badge>
+              <Badge variant="orange">Orange</Badge>
+              <Badge variant="yellow">Yellow</Badge>
+              <Badge variant="green">Green</Badge>
+              <Badge variant="blue">Blue</Badge>
+              <Badge variant="teal">Teal</Badge>
+              <Badge variant="pink">Pink</Badge>
+              <Badge variant="violet">Violet</Badge>
+              <Badge variant="purple">Purple</Badge>
+              <Badge variant="grey">Grey</Badge>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">With PriorityIcon</h3>
+            <div className="flex flex-wrap gap-2">
+              <Badge
+                variant="red"
+                icon={<PriorityIcon filledBars={4} variant="red" />}
+              >
+                Critical
+              </Badge>
+              <Badge
+                variant="orange"
+                icon={<PriorityIcon filledBars={3} variant="orange" />}
+              >
+                High
+              </Badge>
+              <Badge
+                variant="yellow"
+                icon={<PriorityIcon filledBars={2} variant="yellow" />}
+              >
+                Medium
+              </Badge>
+              <Badge
+                variant="green"
+                icon={<PriorityIcon filledBars={1} variant="green" />}
+              >
+                Low
+              </Badge>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">With StatusIcon</h3>
+            <div className="flex flex-wrap gap-2">
+              <Badge
+                variant="blue"
+                icon={<StatusIcon fillPercent={10} variant="blue" />}
+              >
+                New
+              </Badge>
+              <Badge
+                variant="orange"
+                icon={<StatusIcon fillPercent={30} variant="orange" />}
+              >
+                Open
+              </Badge>
+              <Badge
+                variant="yellow"
+                icon={<StatusIcon fillPercent={50} variant="yellow" />}
+              >
+                In Progress
+              </Badge>
+              <Badge
+                variant="green"
+                icon={<StatusIcon fillPercent={80} variant="green" />}
+              >
+                Resolved
+              </Badge>
+              <Badge
+                variant="grey"
+                icon={<StatusIcon fillPercent={100} variant="grey" />}
+              >
+                Closed
+              </Badge>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Icon Only</h3>
+            <div className="flex flex-wrap gap-2">
+              <Badge
+                variant="red"
+                icon={<PriorityIcon filledBars={4} variant="red" />}
+              />
+              <Badge
+                variant="blue"
+                icon={<StatusIcon fillPercent={10} variant="blue" />}
+              />
+              <Badge
+                variant="green"
+                icon={<StatusIcon fillPercent={80} variant="green" />}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Sizes</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge
+                variant="orange"
+                size="sm"
+                icon={<PriorityIcon filledBars={3} variant="orange" />}
+              >
+                Small
+              </Badge>
+              <Badge
+                variant="orange"
+                size="md"
+                icon={<PriorityIcon filledBars={3} variant="orange" />}
+              >
+                Medium
+              </Badge>
+              <Badge
+                variant="orange"
+                size="lg"
+                icon={<PriorityIcon filledBars={3} variant="orange" />}
+              >
+                Large
+              </Badge>
+            </div>
+          </div>
         </div>
       </section>
-
       <Separator />
 
       {/* Icons Section */}
@@ -331,6 +456,15 @@ export default function TestingPage() {
                 <Label htmlFor="test-checkbox">Checkbox Label</Label>
               </div>
 
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="test-switch"
+                  checked={isSwitchOn}
+                  onChange={(checked) => setIsSwitchOn(checked)}
+                />
+                <Label htmlFor="test-switch">Switch Label</Label>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="test-select">Select</Label>
                 <Select value={selectValue} onValueChange={setSelectValue}>
@@ -343,6 +477,60 @@ export default function TestingPage() {
                     <SelectItem value="option3">Option 3</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* Checkbox and Switch Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Checkbox & Switch</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Checkbox</h3>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="checkbox-1"
+                  checked={isChecked}
+                  onCheckedChange={(checked) =>
+                    setIsChecked(checked as boolean)
+                  }
+                />
+                <Label htmlFor="checkbox-1">Default Checkbox</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="checkbox-2" checked={true} disabled />
+                <Label htmlFor="checkbox-2">Checked (Disabled)</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="checkbox-3" checked={false} disabled />
+                <Label htmlFor="checkbox-3">Unchecked (Disabled)</Label>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Switch</h3>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="switch-1"
+                  checked={isSwitchOn}
+                  onChange={(checked) => setIsSwitchOn(checked)}
+                />
+                <Label htmlFor="switch-1">Default Switch</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch id="switch-2" checked={true} disabled />
+                <Label htmlFor="switch-2">On (Disabled)</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch id="switch-3" checked={false} disabled />
+                <Label htmlFor="switch-3">Off (Disabled)</Label>
               </div>
             </div>
           </div>

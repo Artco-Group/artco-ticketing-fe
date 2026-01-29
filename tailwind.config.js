@@ -236,6 +236,7 @@ export default {
           500: '#FFAB29',
           600: '#FC9E24',
         },
+
         success: {
           100: '#EBFFEE',
           500: '#14AE5C',

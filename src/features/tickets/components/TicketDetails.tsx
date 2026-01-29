@@ -1,12 +1,21 @@
 import type { ReactNode } from 'react';
 import { formatDateTime } from '@artco-group/artco-ticketing-sync';
-import { asTicketId, type Ticket, type MetaItem, type TicketId } from '@/types';
 import {
-  statusColors,
-  priorityConfig,
-  categoryColors,
+  asTicketId,
+  TicketStatus,
+  TicketPriority,
+  TicketCategory,
+  type Ticket,
+  type MetaItem,
+  type TicketId,
+} from '@/types';
+import {
+  statusBadgeConfig,
+  priorityBadgeConfig,
+  categoryBadgeConfig,
 } from '@/shared/utils/ticket-helpers';
 import { Card } from '@/shared/components/ui';
+import { Badge } from '@/shared/components/ui';
 import TicketAttachments from './TicketAttachments';
 import TicketScreenRecording from './TicketScreenRecording';
 
@@ -77,21 +86,28 @@ function TicketDetails({
     {
       label: 'Category',
       value: (
-        <span
-          className={`inline-block rounded-full border px-2.5 py-1 text-xs font-medium ${categoryColors[ticket.category]}`}
+        <Badge
+          variant={
+            categoryBadgeConfig[ticket.category as TicketCategory].variant
+          }
         >
-          {ticket.category}
-        </span>
+          {categoryBadgeConfig[ticket.category as TicketCategory].label}
+        </Badge>
       ),
     },
     {
       label: 'Priority',
       value: (
-        <span
-          className={`inline-flex items-center gap-1.5 rounded px-2 py-1 text-xs font-medium ${priorityConfig[ticket.priority].bg} ${priorityConfig[ticket.priority].color}`}
+        <Badge
+          variant={
+            priorityBadgeConfig[ticket.priority as TicketPriority].variant
+          }
+          icon={priorityBadgeConfig[
+            ticket.priority as TicketPriority
+          ].getIcon?.()}
         >
-          {priorityConfig[ticket.priority].label}
-        </span>
+          {priorityBadgeConfig[ticket.priority as TicketPriority].label}
+        </Badge>
       ),
     }
   );
@@ -125,11 +141,13 @@ function TicketDetails({
         <h1 className="text-greyscale-900 text-2xl font-bold">
           {ticket.title}
         </h1>
-        <span
-          className={`shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium ${statusColors[ticket.status]}`}
+        <Badge
+          variant={statusBadgeConfig[ticket.status as TicketStatus].variant}
+          icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
+          size="lg"
         >
-          {ticket.status}
-        </span>
+          {statusBadgeConfig[ticket.status as TicketStatus].label}
+        </Badge>
       </div>
 
       {/* Ticket ID */}
