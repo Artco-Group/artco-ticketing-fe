@@ -56,7 +56,7 @@ function UserForm({
         <FormField
           control={form.control}
           name="name"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel>
                 Name <span className="text-destructive">*</span>
@@ -65,10 +65,10 @@ function UserForm({
                 <Input
                   autoComplete="name"
                   placeholder="Enter user name"
+                  error={fieldState.error?.message}
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />

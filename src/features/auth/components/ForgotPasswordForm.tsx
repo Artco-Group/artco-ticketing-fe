@@ -8,7 +8,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
   Input,
   Button,
   Card,
@@ -68,28 +67,19 @@ export function ForgotPasswordForm() {
           <FormField
             control={form.control}
             name="email"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <FormLabel>Email adresa</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
-                      <Icon
-                        name="mail"
-                        size="md"
-                        className="text-muted-foreground pointer-events-none"
-                      />
-                    </div>
-                    <Input
-                      type="email"
-                      autoComplete="email"
-                      placeholder="vase.ime@kompanija.ba"
-                      className="pl-10"
-                      {...field}
-                    />
-                  </div>
+                  <Input
+                    type="email"
+                    autoComplete="email"
+                    placeholder="vase.ime@kompanija.ba"
+                    leftIcon={<Icon name="mail" size="md" />}
+                    error={fieldState.error?.message}
+                    {...field}
+                  />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
