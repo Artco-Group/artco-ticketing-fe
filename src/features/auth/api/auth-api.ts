@@ -4,6 +4,7 @@ import {
   QueryKeys,
   API_ROUTES,
   CACHE,
+  type ApiResponse,
   type LoginFormData,
   type LoginResponse,
   type ForgotPasswordFormData,
@@ -82,15 +83,14 @@ function useForgotPassword() {
  * Verify password reset token
  */
 function useVerifyResetToken(token: string | undefined) {
-  return useQuery<{ valid: boolean; message?: string }>({
+  return useQuery<{ valid: boolean }>({
     queryKey: QueryKeys.auth.verifyResetToken(token || ''),
     queryFn: async () => {
       if (!token) throw new Error('Token is required');
-      const response = await apiClient.get<{
-        valid: boolean;
-        message?: string;
-      }>(API_ROUTES.AUTH.VERIFY_RESET_TOKEN(token));
-      return response.data;
+      const response = await apiClient.get<ApiResponse<{ valid: boolean }>>(
+        API_ROUTES.AUTH.VERIFY_RESET_TOKEN(token)
+      );
+      return response.data.data as { valid: boolean };
     },
     enabled: !!token,
     retry: false,

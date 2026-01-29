@@ -44,9 +44,7 @@ export function usePasswordResetForm() {
       );
     }
     if (verifyTokenQuery.data && !verifyTokenQuery.data.valid) {
-      return (
-        verifyTokenQuery.data.message || 'Token je nevažeći ili je istekao'
-      );
+      return 'Token je nevažeći ili je istekao';
     }
     return '';
   }, [verifyTokenQuery.isError, verifyTokenQuery.data, verifyTokenQuery.error]);
