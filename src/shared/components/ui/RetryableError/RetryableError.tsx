@@ -1,6 +1,5 @@
 import { Icon } from '../Icon';
 import { Button } from '../button';
-import { Spinner } from '../Spinner';
 import { cn } from '@/lib/utils';
 
 interface RetryableErrorProps {
@@ -50,15 +49,8 @@ export function RetryableError({
       <p className="text-greyscale-500 mb-6 max-w-md min-w-[20rem] text-sm">
         {message}
       </p>
-      <Button onClick={onRetry} disabled={retrying} aria-busy={retrying}>
-        {retrying ? (
-          <>
-            <Spinner size="sm" />
-            Retrying...
-          </>
-        ) : (
-          'Try Again'
-        )}
+      <Button onClick={onRetry} loading={retrying}>
+        {retrying ? 'Retrying...' : 'Try Again'}
       </Button>
     </div>
   );
