@@ -24,6 +24,7 @@ const navigation = [
     name: 'Inbox',
     href: PAGE_ROUTES.INBOX.ROOT,
     icon: 'inbox' as const,
+    // badge: notificationCount, // Add notification count when available
     roles: [
       UserRole.CLIENT,
       UserRole.DEVELOPER,
