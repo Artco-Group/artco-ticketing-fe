@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import type { ErrorInfo } from 'react';
+import { createPortal } from 'react-dom';
 import { PAGE_ROUTES } from '@/shared/constants';
-import { Icon } from '@/shared/components/ui';
+import { Icon, Button } from '@/shared/components/ui';
 
 interface ErrorFallbackProps {
   error: Error | null;
@@ -31,9 +32,15 @@ export function ErrorFallback({
     resetErrorBoundary();
   };
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-2xl rounded-lg bg-white p-8 shadow-lg">
+  const content = (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-gray-50 p-4"
+      style={{ width: '100vw', height: '100vh' }}
+    >
+      <div
+        className="rounded-lg bg-white p-8 shadow-lg"
+        style={{ width: '100%', maxWidth: '42rem', minWidth: '320px' }}
+      >
         {/* Error Icon */}
         <div className="mb-6 flex justify-center">
           <div className="bg-error-100 flex h-16 w-16 items-center justify-center rounded-full">
@@ -58,7 +65,7 @@ export function ErrorFallback({
             <h2 className="text-error-700 mb-2 text-sm font-semibold">
               Error Details (Development Only):
             </h2>
-            <p className="text-error-600 mb-2 font-mono text-xs">
+            <p className="text-error-600 mb-2 font-mono text-xs break-all">
               {error.toString()}
             </p>
             {error.stack && (
@@ -66,7 +73,7 @@ export function ErrorFallback({
                 <summary className="text-error-700 cursor-pointer text-xs font-semibold">
                   Stack Trace
                 </summary>
-                <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs">
+                <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs break-all whitespace-pre-wrap">
                   {error.stack}
                 </pre>
               </details>
@@ -76,7 +83,7 @@ export function ErrorFallback({
                 <summary className="text-error-700 cursor-pointer text-xs font-semibold">
                   Component Stack
                 </summary>
-                <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs">
+                <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs break-all whitespace-pre-wrap">
                   {errorInfo.componentStack}
                 </pre>
               </details>
@@ -86,24 +93,15 @@ export function ErrorFallback({
 
         {/* Recovery Options */}
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <button
-            onClick={handleRetry}
-            className="btn-primary px-6 py-3 font-semibold"
-          >
+          <Button onClick={handleRetry} variant="default" size="lg">
             Try Again
-          </button>
-          <button
-            onClick={handleGoBack}
-            className="btn-secondary px-6 py-3 font-semibold"
-          >
+          </Button>
+          <Button onClick={handleGoBack} variant="outline" size="lg">
             Go Back
-          </button>
-          <button
-            onClick={handleGoHome}
-            className="btn-secondary px-6 py-3 font-semibold"
-          >
+          </Button>
+          <Button onClick={handleGoHome} variant="outline" size="lg">
             Go to Dashboard
-          </button>
+          </Button>
         </div>
 
         {/* Additional Help */}
@@ -115,4 +113,7 @@ export function ErrorFallback({
       </div>
     </div>
   );
+
+  // Render via portal to escape any parent layout constraints
+  return createPortal(content, document.body);
 }

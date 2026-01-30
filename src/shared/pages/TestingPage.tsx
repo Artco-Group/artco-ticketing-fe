@@ -38,6 +38,51 @@ import {
   EmptyState,
   Icon,
 } from '@/shared/components/ui';
+import { MemberPicker } from '@/shared/components/composite';
+
+// Mock user data for MemberPicker demo
+const mockUsers = [
+  {
+    _id: '1',
+    name: 'John Doe',
+    email: 'john.doe@artco.com',
+    role: 'DEVELOPER' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '2',
+    name: 'Jane Smith',
+    email: 'jane.smith@artco.com',
+    role: 'ENG_LEAD' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '3',
+    name: 'Bob Johnson',
+    email: 'bob.johnson@artco.com',
+    role: 'DEVELOPER' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '4',
+    name: 'Alice Williams',
+    email: 'alice.williams@artco.com',
+    role: 'CLIENT' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '5',
+    name: 'Charlie Brown',
+    email: 'charlie.brown@artco.com',
+    role: 'ADMIN' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
 
 export default function TestingPage() {
   const [inputValue, setInputValue] = useState('');
@@ -46,6 +91,8 @@ export default function TestingPage() {
   const [isChecked, setIsChecked] = useState(false);
   const [selectValue, setSelectValue] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState('');
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
   return (
     <div className="container mx-auto space-y-8 p-6">
@@ -466,6 +513,46 @@ export default function TestingPage() {
           <Spinner size="sm" />
           <Spinner size="md" />
           <Spinner size="lg" />
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* MemberPicker Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Member Picker</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label>Single Select</Label>
+            <MemberPicker
+              value={selectedMember}
+              options={mockUsers}
+              onChange={(value) => setSelectedMember(value as string)}
+              placeholder="Select a member..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Multi Select</Label>
+            <MemberPicker
+              value={selectedMembers}
+              options={mockUsers}
+              multiple
+              onChange={(value) => setSelectedMembers(value as string[])}
+              placeholder="Select members..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Disabled</Label>
+            <MemberPicker
+              value=""
+              options={mockUsers}
+              onChange={() => {}}
+              placeholder="This is disabled"
+              disabled
+            />
+          </div>
         </div>
       </section>
 
