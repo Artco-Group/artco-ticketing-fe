@@ -45,30 +45,30 @@ export default function TestingPage() {
   const [inputValue, setInputValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const [selectValue, setSelectValue] = useState('');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [basicChecked, setBasicChecked] = useState(false);
   const [withLabelChecked, setWithLabelChecked] = useState(true);
   const [disabledChecked, setDisabledChecked] = useState(true);
   const [disabledUnchecked, setDisabledUnchecked] = useState(false);
+  const [indeterminateState, setIndeterminateState] = useState(false);
 
   const [items, setItems] = useState([
     { id: 1, label: 'Item 1', checked: false },
     { id: 2, label: 'Item 2', checked: true },
     { id: 3, label: 'Item 3', checked: false },
   ]);
-  const [isSwitchOn, setIsSwitchOn] = useState(false);
-  const [selectValue, setSelectValue] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const allChecked = items.every((item) => item.checked);
   const someChecked = items.some((item) => item.checked) && !allChecked;
 
-  const handleSelectAll = (checked: boolean | 'indeterminate') => {
-    if (checked === 'indeterminate') return;
+  // Handlers
+  const handleSelectAll = (checked: boolean) => {
     setItems(items.map((item) => ({ ...item, checked })));
   };
 
-  const handleItemChange = (id: number, checked: boolean | 'indeterminate') => {
-    if (checked === 'indeterminate') return;
+  const handleItemChange = (id: number, checked: boolean) => {
     setItems(
       items.map((item) => (item.id === id ? { ...item, checked } : item))
     );
@@ -450,119 +450,116 @@ export default function TestingPage() {
             <div className="space-y-4">
               <h3 className="text-xl font-bold">Basic States</h3>
 
-              <div className="space-y-2">
-                <p className="text-sm text-gray-600">Basic (no label)</p>
-                <Checkbox
-                  checked={basicChecked}
-                  onCheckedChange={(checked) => {
-                    if (checked !== 'indeterminate') setBasicChecked(checked);
-                  }}
-                />
-              </div>
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">Basic States</h3>
 
-              <div className="space-y-2">
-                <p className="text-sm text-gray-600">With label</p>
-                <Checkbox
-                  checked={withLabelChecked}
-                  onCheckedChange={(checked) => {
-                    if (checked !== 'indeterminate')
-                      setWithLabelChecked(checked);
-                  }}
-                  label="Accept terms and conditions"
-                />
-              </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">Basic (no label)</p>
+                    <Checkbox
+                      checked={basicChecked}
+                      onCheckedChange={setBasicChecked}
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <p className="text-sm text-gray-600">Disabled (checked)</p>
-                <Checkbox
-                  checked={disabledChecked}
-                  onCheckedChange={(checked) => {
-                    if (checked !== 'indeterminate')
-                      setDisabledChecked(checked);
-                  }}
-                  label="This is disabled and checked"
-                  disabled
-                />
-              </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">With label</p>
+                    <Checkbox
+                      checked={withLabelChecked}
+                      onCheckedChange={setWithLabelChecked}
+                      label="Accept terms and conditions"
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <p className="text-sm text-gray-600">Disabled (unchecked)</p>
-                <Checkbox
-                  checked={disabledUnchecked}
-                  onCheckedChange={(checked) => {
-                    if (checked !== 'indeterminate')
-                      setDisabledUnchecked(checked);
-                  }}
-                  label="This is disabled and unchecked"
-                  disabled
-                />
-              </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">Disabled (checked)</p>
+                    <Checkbox
+                      checked={disabledChecked}
+                      onCheckedChange={setDisabledChecked}
+                      label="This is disabled and checked"
+                      disabled
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <p className="text-sm text-gray-600">
-                  Indeterminate state (static demo)
-                </p>
-                <Checkbox
-                  checked={false}
-                  indeterminate={true}
-                  label="Indeterminate checkbox"
-                />
-              </div>
-            </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">
+                      Disabled (unchecked)
+                    </p>
+                    <Checkbox
+                      checked={disabledUnchecked}
+                      onCheckedChange={setDisabledUnchecked}
+                      label="This is disabled and unchecked"
+                      disabled
+                    />
+                  </div>
 
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold">Select All Example</h3>
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">Indeterminate state</p>
+                    <Checkbox
+                      checked={indeterminateState}
+                      onCheckedChange={setIndeterminateState}
+                      label="Indeterminate checkbox"
+                      indeterminate
+                    />
+                  </div>
+                </div>
 
-              <Checkbox
-                checked={allChecked}
-                indeterminate={someChecked}
-                onCheckedChange={handleSelectAll}
-                label="Select all items"
-              />
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">Select All Example</h3>
 
-              <div className="ml-6 space-y-2">
-                {items.map((item) => (
                   <Checkbox
-                    key={item.id}
-                    checked={item.checked}
-                    onCheckedChange={(checked) =>
-                      handleItemChange(item.id, checked)
-                    }
-                    label={item.label}
+                    checked={allChecked}
+                    indeterminate={someChecked}
+                    onCheckedChange={handleSelectAll}
+                    label="Select all items"
                   />
-                ))}
-              </div>
-            </div>
 
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold">Form Example</h3>
-              <form className="space-y-3">
-                <Checkbox label="Subscribe to newsletter" />
-                <Checkbox label="I agree to the privacy policy" />
-                <Checkbox label="Remember me on this device" />
-                <Checkbox label="Send me promotional emails" />
-              </form>
-            </div>
+                  <div className="ml-6 space-y-2">
+                    {items.map((item) => (
+                      <Checkbox
+                        key={item.id}
+                        checked={item.checked}
+                        onCheckedChange={(checked) =>
+                          handleItemChange(item.id, checked)
+                        }
+                        label={item.label}
+                      />
+                    ))}
+                  </div>
+                </div>
 
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold">State Debug</h3>
-              <div className="rounded bg-gray-100 p-4 font-mono text-sm">
-                <p>Basic: {basicChecked ? 'checked' : 'unchecked'}</p>
-                <p>With Label: {withLabelChecked ? 'checked' : 'unchecked'}</p>
-                <p>
-                  Select All:{' '}
-                  {allChecked ? 'all' : someChecked ? 'some' : 'none'}
-                </p>
-                <p>
-                  Items:{' '}
-                  {JSON.stringify(
-                    items.map((i) => ({ id: i.id, checked: i.checked }))
-                  )}
-                </p>
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">Form Example</h3>
+                  <form className="space-y-3">
+                    <Checkbox label="Subscribe to newsletter" />
+                    <Checkbox label="I agree to the privacy policy" />
+                    <Checkbox label="Remember me on this device" />
+                    <Checkbox label="Send me promotional emails" />
+                  </form>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">State Debug</h3>
+                  <div className="rounded bg-gray-100 p-4 font-mono text-sm">
+                    <p>Basic: {basicChecked ? 'checked' : 'unchecked'}</p>
+                    <p>
+                      With Label: {withLabelChecked ? 'checked' : 'unchecked'}
+                    </p>
+                    <p>
+                      Select All:{' '}
+                      {allChecked ? 'all' : someChecked ? 'some' : 'none'}
+                    </p>
+                    <p>
+                      Items:{' '}
+                      {JSON.stringify(
+                        items.map((i) => ({ id: i.id, checked: i.checked }))
+                      )}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Switch</h3>
             <div className="space-y-3">

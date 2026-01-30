@@ -3,15 +3,30 @@ import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { Icon } from './Icon';
 import { cn } from '@/lib/utils';
 
-export interface CheckboxProps extends React.ComponentPropsWithoutRef<
-  typeof CheckboxPrimitive.Root
+export interface CheckboxProps extends Omit<
+  React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>,
+  'checked' | 'onCheckedChange'
 > {
   label?: string;
   indeterminate?: boolean;
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
 }
 
 const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
-  ({ className, label, indeterminate, checked, ...props }, ref) => {
+  (
+    { className, label, indeterminate, checked, onCheckedChange, ...props },
+    ref
+  ) => {
+    const handleCheckedChange = (value: boolean | 'indeterminate') => {
+      if (onCheckedChange && typeof value === 'boolean') {
+        onCheckedChange(value);
+      }
+    };
+
+    // Determine the actual checked state for Radix
+    const radixChecked = indeterminate ? 'indeterminate' : checked;
+
     const checkboxElement = (
       <CheckboxPrimitive.Root
         ref={ref}
@@ -22,7 +37,8 @@ const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
           className
         )}
         {...props}
-        checked={indeterminate ? 'indeterminate' : checked}
+        checked={radixChecked}
+        onCheckedChange={handleCheckedChange}
       >
         <CheckboxPrimitive.Indicator
           className={cn('flex items-center justify-center text-current')}
