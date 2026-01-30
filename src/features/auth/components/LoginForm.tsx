@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { EyeOff } from 'lucide-react';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { useLoginForm } from '../hooks';
 import {
@@ -7,17 +6,15 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
-  FormMessage,
   Input,
+  PasswordInput,
   Button,
   Checkbox,
   Icon,
 } from '@/shared/components/ui';
 
 export function LoginForm() {
-  const { form, onSubmit, isPending, showPassword, togglePassword } =
-    useLoginForm();
+  const { form, onSubmit, isPending } = useLoginForm();
 
   return (
     <div>
@@ -35,28 +32,19 @@ export function LoginForm() {
           <FormField
             control={form.control}
             name="email"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel>Email adresa</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
-                      <Icon
-                        name="mail"
-                        size="md"
-                        className="text-muted-foreground pointer-events-none"
-                      />
-                    </div>
-                    <Input
-                      type="email"
-                      autoComplete="email"
-                      placeholder="vase.ime@kompanija.ba"
-                      className="pl-10"
-                      {...field}
-                    />
-                  </div>
+                  <Input
+                    type="email"
+                    autoComplete="email"
+                    label="Email adresa"
+                    placeholder="vase.ime@kompanija.ba"
+                    leftIcon={<Icon name="mail" size="md" />}
+                    error={fieldState.error?.message}
+                    {...field}
+                  />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -64,48 +52,18 @@ export function LoginForm() {
           <FormField
             control={form.control}
             name="password"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel>Lozinka</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <div className="absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
-                      <Icon
-                        name="lock"
-                        size="md"
-                        className="text-muted-foreground pointer-events-none"
-                      />
-                    </div>
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      autoComplete="current-password"
-                      placeholder="Unesite vašu lozinku"
-                      className="pr-10 pl-10"
-                      {...field}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
-                      onClick={togglePassword}
-                      aria-label={
-                        showPassword ? 'Sakrij lozinku' : 'Prikaži lozinku'
-                      }
-                    >
-                      {showPassword ? (
-                        <EyeOff className="text-muted-foreground h-5 w-5" />
-                      ) : (
-                        <Icon
-                          name="eye"
-                          size="md"
-                          className="text-muted-foreground"
-                        />
-                      )}
-                    </Button>
-                  </div>
+                  <PasswordInput
+                    autoComplete="current-password"
+                    label="Lozinka"
+                    placeholder="Unesite vašu lozinku"
+                    leftIcon={<Icon name="lock" size="md" />}
+                    error={fieldState.error?.message}
+                    {...field}
+                  />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />

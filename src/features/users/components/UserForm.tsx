@@ -12,12 +12,14 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  PasswordInput,
   Button,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Icon,
 } from '@/shared/components/ui';
 import { useUserForm } from '../hooks';
 
@@ -54,19 +56,17 @@ function UserForm({
         <FormField
           control={form.control}
           name="name"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>
-                Name <span className="text-destructive">*</span>
-              </FormLabel>
               <FormControl>
                 <Input
+                  label="Name"
                   autoComplete="name"
                   placeholder="Enter user name"
+                  error={fieldState.error?.message}
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -74,20 +74,19 @@ function UserForm({
         <FormField
           control={form.control}
           name="email"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>
-                Email <span className="text-destructive">*</span>
-              </FormLabel>
               <FormControl>
                 <Input
+                  label="Email"
                   type="email"
                   autoComplete="email"
                   placeholder="Enter email address"
+                  leftIcon={<Icon name="mail" size="md" />}
+                  error={fieldState.error?.message}
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -97,9 +96,7 @@ function UserForm({
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Role <span className="text-destructive">*</span>
-              </FormLabel>
+              <FormLabel>Role</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -123,20 +120,19 @@ function UserForm({
           <FormField
             control={form.control}
             name="password"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel>
-                  Password <span className="text-destructive">*</span>
-                </FormLabel>
                 <FormControl>
-                  <Input
-                    type="password"
+                  <PasswordInput
+                    label="Password"
                     autoComplete="new-password"
                     placeholder="Enter password"
+                    leftIcon={<Icon name="lock" size="md" />}
+                    showStrengthMeter
+                    error={fieldState.error?.message}
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />

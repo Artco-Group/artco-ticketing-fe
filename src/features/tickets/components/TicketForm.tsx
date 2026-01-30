@@ -70,19 +70,17 @@ function TicketForm({
                 <FormField
                   control={form.control}
                   name="title"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
-                      <FormLabel>
-                        Naslov <span className="text-destructive">*</span>
-                      </FormLabel>
                       <FormControl>
                         <Input
+                          label="Naslov"
                           placeholder="Kratak opis problema"
                           autoComplete="off"
+                          error={fieldState.error?.message}
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -133,13 +131,14 @@ function TicketForm({
                 <FormField
                   control={form.control}
                   name="affectedModule"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
-                      <FormLabel>Pogođeni proizvod/modul</FormLabel>
                       <FormControl>
                         <Input
+                          label="Pogođeni proizvod/modul"
                           placeholder="npr. Mobile App, Admin Panel"
                           autoComplete="off"
+                          error={fieldState.error?.message}
                           {...field}
                         />
                       </FormControl>
