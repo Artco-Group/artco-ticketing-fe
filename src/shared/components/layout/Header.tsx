@@ -1,21 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/features/auth/context';
-import { UserRoleDisplay } from '@artco-group/artco-ticketing-sync';
-import { UserRole } from '@/types';
 import type { PageConfig } from '@/app/config/page-configs';
-import {
-  Button,
-  Avatar,
-  AvatarFallback,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  Icon,
-} from '@/shared/components/ui';
-import { NotificationBell } from '@/shared/components';
+import { NotificationBell, UserMenu } from '@/shared/components';
 import type { NotificationItem } from '@/shared/components/composite/NotificationBell/NotificationBell';
 
 interface HeaderProps {
@@ -40,16 +26,6 @@ export function Header({ pageConfig }: HeaderProps) {
     setNotifications([]);
   };
 
-  const getInitials = (name?: string) => {
-    if (!name) return 'U';
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
     <div className="bg-card sticky top-0 z-10 flex h-16 shrink-0 border-b shadow-sm">
       <div className="flex flex-1 items-center justify-between px-4">
@@ -62,37 +38,14 @@ export function Header({ pageConfig }: HeaderProps) {
           )}
         </div>
 
-        <div className="ml-4 flex items-center gap-2 md:ml-6">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="relative h-10 w-10 rounded-full"
-              >
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {getInitials(user?.name)}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="gap-xs flex flex-col">
-                  <p className="text-sm font-medium">{user?.name}</p>
-                  <p className="text-muted-xs">{user?.email}</p>
-                  <p className="text-muted-xs">
-                    {user?.role && UserRoleDisplay[user.role as UserRole]}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout} className="text-destructive">
-                <Icon name="logout" size="md" className="mr-2" />
-                <span>Logout</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="ml-4 flex items-center md:ml-6">
+          <UserMenu
+            user={{
+              name: user?.name ?? '',
+              email: user?.email,
+            }}
+            onLogout={logout}
+          />
           <NotificationBell
             count={notifications.filter((n) => !n.isRead).length}
             notifications={notifications}
