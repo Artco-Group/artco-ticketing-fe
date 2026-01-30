@@ -37,7 +37,13 @@ export function useTicketDetail() {
 
   // Fetch ticket data
   const ticketId = id ? asTicketId(id) : asTicketId('');
-  const { data: ticketData, isLoading: ticketLoading } = useTicket(ticketId);
+  const {
+    data: ticketData,
+    isLoading: ticketLoading,
+    error: ticketError,
+    refetch: refetchTicket,
+    isRefetching: ticketRefetching,
+  } = useTicket(ticketId);
 
   // Fetch users (for eng lead assignment)
   const { data: usersData } = useUsers();
@@ -130,6 +136,9 @@ export function useTicketDetail() {
 
     // State
     ticketLoading,
+    ticketError,
+    refetchTicket,
+    ticketRefetching,
     newComment,
 
     // Handlers
