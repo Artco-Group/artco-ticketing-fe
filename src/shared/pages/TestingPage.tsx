@@ -553,6 +553,16 @@ export default function TestingPage() {
               disabled
             />
           </div>
+
+          <div className="space-y-2">
+            <Label>No members to select</Label>
+            <MemberPicker
+              value=""
+              options={[]}
+              onChange={() => {}}
+              placeholder="Select a member..."
+            />
+          </div>
         </div>
       </section>
 

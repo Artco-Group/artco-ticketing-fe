@@ -1,9 +1,11 @@
-import type { User } from '@artco-group/artco-ticketing-sync';
+import { useMemo } from 'react';
+import { type User, getInitials } from '@artco-group/artco-ticketing-sync';
 import { cn } from '@/lib/utils';
 import {
   Avatar,
   AvatarFallback,
   Badge,
+  Button,
   Icon,
   DropdownMenu,
   DropdownMenuTrigger,
@@ -26,19 +28,6 @@ export interface MemberPickerProps {
   disabled?: boolean;
   /** Additional CSS classes */
   className?: string;
-}
-
-/**
- * Get user initials from name
- */
-function getUserInitials(name: string | undefined): string {
-  if (!name) return '??';
-  return name
-    .split(' ')
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
 }
 
 /**
@@ -70,8 +59,11 @@ export function MemberPicker({
   disabled = false,
   className,
 }: MemberPickerProps) {
-  // Filter out users without _id
-  const validUsers = options.filter((user) => user._id);
+  // Filter out users without _id - memoized to avoid recalculation on every render
+  const validUsers = useMemo(
+    () => options.filter((user) => user._id),
+    [options]
+  );
 
   // Handle multi-select mode
   if (multiple) {
@@ -113,29 +105,24 @@ export function MemberPicker({
                     >
                       <Avatar className="h-4 w-4">
                         <AvatarFallback className="text-[0.5rem]">
-                          {getUserInitials(user.name)}
+                          {getInitials(user.name || '')}
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-xs">{user.name}</span>
-                      <span
-                        role="button"
-                        tabIndex={0}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="ml-0.5 h-4 w-4 p-0"
+                        disabled={disabled}
                         onPointerDown={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           if (!disabled) handleRemove(user._id!);
                         }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (!disabled) handleRemove(user._id!);
-                          }
-                        }}
-                        className="hover:bg-muted ml-0.5 cursor-pointer rounded-full p-0.5 transition-colors"
                       >
                         <Icon name="close" size="xs" />
-                      </span>
+                      </Button>
                     </Badge>
                   ))}
                 </div>
@@ -151,39 +138,45 @@ export function MemberPicker({
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-            {validUsers.map((user) => {
-              const isSelected = selectedIds.includes(user._id!);
-              return (
-                <DropdownMenuItem
-                  key={user._id!}
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    handleToggle(user._id!);
-                  }}
-                >
-                  <div className="flex flex-1 items-center gap-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarFallback className="text-xs">
-                        {getUserInitials(user.name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium">{user.name}</span>
-                      <span className="text-muted-foreground text-xs">
-                        {user.email}
-                      </span>
+            {validUsers.length === 0 ? (
+              <div className="text-muted-foreground px-2 py-4 text-center text-sm">
+                No members available
+              </div>
+            ) : (
+              validUsers.map((user) => {
+                const isSelected = selectedIds.includes(user._id!);
+                return (
+                  <DropdownMenuItem
+                    key={user._id!}
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      handleToggle(user._id!);
+                    }}
+                  >
+                    <div className="flex flex-1 items-center gap-2">
+                      <Avatar className="h-6 w-6">
+                        <AvatarFallback className="text-xs">
+                          {getInitials(user.name || '')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium">{user.name}</span>
+                        <span className="text-muted-foreground text-xs">
+                          {user.email}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  {isSelected && (
-                    <Icon
-                      name="check"
-                      size="sm"
-                      className="text-primary ml-auto"
-                    />
-                  )}
-                </DropdownMenuItem>
-              );
-            })}
+                    {isSelected && (
+                      <Icon
+                        name="check"
+                        size="sm"
+                        className="text-primary ml-auto"
+                      />
+                    )}
+                  </DropdownMenuItem>
+                );
+              })
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -215,29 +208,24 @@ export function MemberPicker({
               <Badge variant="secondary" className="gap-1 pr-1">
                 <Avatar className="h-4 w-4">
                   <AvatarFallback className="text-[0.5rem]">
-                    {getUserInitials(selectedUser.name)}
+                    {getInitials(selectedUser.name || '')}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-xs">{selectedUser.name}</span>
-                <span
-                  role="button"
-                  tabIndex={0}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="ml-0.5 h-4 w-4 p-0"
+                  disabled={disabled}
                   onPointerDown={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     if (!disabled) handleClear();
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (!disabled) handleClear();
-                    }
-                  }}
-                  className="hover:bg-muted ml-0.5 cursor-pointer rounded-full p-0.5 transition-colors"
                 >
                   <Icon name="close" size="xs" />
-                </span>
+                </Button>
               </Badge>
             </div>
           ) : (
@@ -253,36 +241,42 @@ export function MemberPicker({
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-          {validUsers.map((user) => {
-            const isSelected = user._id === selectedValue;
-            return (
-              <DropdownMenuItem
-                key={user._id!}
-                onSelect={() => handleSelect(user._id!)}
-              >
-                <div className="flex flex-1 items-center gap-2">
-                  <Avatar className="h-6 w-6">
-                    <AvatarFallback className="text-xs">
-                      {getUserInitials(user.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">{user.name}</span>
-                    <span className="text-muted-foreground text-xs">
-                      {user.email}
-                    </span>
+          {validUsers.length === 0 ? (
+            <div className="text-muted-foreground px-2 py-4 text-center text-sm">
+              No members available
+            </div>
+          ) : (
+            validUsers.map((user) => {
+              const isSelected = user._id === selectedValue;
+              return (
+                <DropdownMenuItem
+                  key={user._id!}
+                  onSelect={() => handleSelect(user._id!)}
+                >
+                  <div className="flex flex-1 items-center gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarFallback className="text-xs">
+                        {getInitials(user.name || '')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">{user.name}</span>
+                      <span className="text-muted-foreground text-xs">
+                        {user.email}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                {isSelected && (
-                  <Icon
-                    name="check"
-                    size="sm"
-                    className="text-primary ml-auto"
-                  />
-                )}
-              </DropdownMenuItem>
-            );
-          })}
+                  {isSelected && (
+                    <Icon
+                      name="check"
+                      size="sm"
+                      className="text-primary ml-auto"
+                    />
+                  )}
+                </DropdownMenuItem>
+              );
+            })
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

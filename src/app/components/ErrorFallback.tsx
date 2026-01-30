@@ -29,7 +29,7 @@ export function ErrorFallback({
   };
 
   const handleRetry = () => {
-    resetErrorBoundary();
+    window.location.reload();
   };
 
   const content = (
