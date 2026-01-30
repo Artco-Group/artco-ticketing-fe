@@ -1,21 +1,30 @@
 import { type ReactNode } from 'react';
-import type { BadgeVariant } from './badge';
 
-const variantColors: Record<
-  BadgeVariant,
-  { color: string; backgroundColor: string }
-> = {
-  primary: { color: '#007BE5', backgroundColor: '#F2F9FF' },
-  red: { color: '#DC3412', backgroundColor: '#FFF5F5' },
-  orange: { color: '#FC9E24', backgroundColor: '#FFF4E5' },
-  yellow: { color: '#eab308', backgroundColor: '#fefce8' },
-  green: { color: '#009951', backgroundColor: '#EBFFEE' },
-  blue: { color: '#007BE5', backgroundColor: '#F2F9FF' },
-  teal: { color: '#0087A8', backgroundColor: '#EBF6FF' },
-  pink: { color: '#EA10AC', backgroundColor: '#FFF0FE' },
-  violet: { color: '#443DEB', backgroundColor: '#F5F5FF' },
-  purple: { color: '#8638E5', backgroundColor: '#F9F5FF' },
-  grey: { color: '#757575', backgroundColor: '#F5F5F5' },
+export type IconVariant =
+  | 'primary'
+  | 'red'
+  | 'orange'
+  | 'yellow'
+  | 'green'
+  | 'blue'
+  | 'teal'
+  | 'pink'
+  | 'violet'
+  | 'purple'
+  | 'grey';
+
+const variantColors: Record<IconVariant, string> = {
+  primary: '#007BE5',
+  red: '#DC3412',
+  orange: '#FC9E24',
+  yellow: '#eab308',
+  green: '#009951',
+  blue: '#007BE5',
+  teal: '#0087A8',
+  pink: '#EA10AC',
+  violet: '#443DEB',
+  purple: '#8638E5',
+  grey: '#757575',
 };
 
 export const StatusIcon = ({
@@ -24,10 +33,10 @@ export const StatusIcon = ({
   className,
 }: {
   fillPercent: number;
-  variant?: BadgeVariant;
+  variant?: IconVariant;
   className?: string;
 }): ReactNode => {
-  const { color, backgroundColor } = variantColors[variant];
+  const color = variantColors[variant];
   const radius = 8;
   const centerX = 8;
   const centerY = 8;
@@ -64,7 +73,7 @@ export const StatusIcon = ({
         width="16"
         height="16"
         rx="8"
-        fill={backgroundColor || 'var(--color-greyscale-0)'}
+        fill={'var(--color-greyscale-0)'}
       />
       {useCircle ? (
         <circle cx={centerX} cy={centerY} r={radius} fill={color} />
@@ -89,10 +98,10 @@ export const PriorityIcon = ({
   className,
 }: {
   filledBars: number;
-  variant?: BadgeVariant;
+  variant?: IconVariant;
   className?: string;
 }): ReactNode => {
-  const { color, backgroundColor } = variantColors[variant];
+  const color = variantColors[variant];
   const barWidth = 2;
   const barGap = 1.5;
   const barHeights = [3, 5, 7, 9];
@@ -108,14 +117,6 @@ export const PriorityIcon = ({
       fill="none"
       className={className}
     >
-      <rect
-        x="0"
-        y="0"
-        width="16"
-        height="16"
-        rx="8"
-        fill={backgroundColor || 'var(--color-greyscale-0)'}
-      />
       {[0, 1, 2, 3].map((index) => {
         const x = startX + index * (barWidth + barGap);
         const height = barHeights[index];

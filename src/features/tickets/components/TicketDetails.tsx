@@ -86,11 +86,7 @@ function TicketDetails({
     {
       label: 'Category',
       value: (
-        <Badge
-          variant={
-            categoryBadgeConfig[ticket.category as TicketCategory].variant
-          }
-        >
+        <Badge>
           {categoryBadgeConfig[ticket.category as TicketCategory].label}
         </Badge>
       ),
@@ -99,9 +95,6 @@ function TicketDetails({
       label: 'Priority',
       value: (
         <Badge
-          variant={
-            priorityBadgeConfig[ticket.priority as TicketPriority].variant
-          }
           icon={priorityBadgeConfig[
             ticket.priority as TicketPriority
           ].getIcon?.()}
@@ -142,7 +135,6 @@ function TicketDetails({
           {ticket.title}
         </h1>
         <Badge
-          variant={statusBadgeConfig[ticket.status as TicketStatus].variant}
           icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
           size="lg"
         >

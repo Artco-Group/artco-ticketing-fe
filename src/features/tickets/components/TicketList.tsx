@@ -176,15 +176,12 @@ function TableLayout({
       className: 'text-sm text-foreground',
     }),
     customColumn<Ticket>('category', 'Category', (ticket) => (
-      <Badge
-        variant={categoryBadgeConfig[ticket.category as TicketCategory].variant}
-      >
+      <Badge>
         {categoryBadgeConfig[ticket.category as TicketCategory].label}
       </Badge>
     )),
     customColumn<Ticket>('priority', 'Priority', (ticket) => (
       <Badge
-        variant={priorityBadgeConfig[ticket.priority as TicketPriority].variant}
         icon={priorityBadgeConfig[
           ticket.priority as TicketPriority
         ].getIcon?.()}
@@ -194,7 +191,6 @@ function TableLayout({
     )),
     customColumn<Ticket>('status', 'Status', (ticket) => (
       <Badge
-        variant={statusBadgeConfig[ticket.status as TicketStatus].variant}
         icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
       >
         {statusBadgeConfig[ticket.status as TicketStatus].label}
@@ -203,9 +199,9 @@ function TableLayout({
     customColumn<Ticket>('assignedTo', 'Assigned To', (ticket) => (
       <div className="text-foreground text-sm">
         {ticket.assignedTo ? (
-          resolveAssigneeName(ticket.assignedTo, users)
+          <Badge>{resolveAssigneeName(ticket.assignedTo, users)}</Badge>
         ) : (
-          <Badge variant="grey">Unassigned</Badge>
+          <Badge>Unassigned</Badge>
         )}
       </div>
     )),
@@ -228,15 +224,12 @@ function TableLayout({
       className: 'text-sm text-muted-foreground',
     }),
     customColumn<Ticket>('category', 'Category', (ticket) => (
-      <Badge
-        variant={categoryBadgeConfig[ticket.category as TicketCategory].variant}
-      >
+      <Badge>
         {categoryBadgeConfig[ticket.category as TicketCategory].label}
       </Badge>
     )),
     customColumn<Ticket>('priority', 'Priority', (ticket) => (
       <Badge
-        variant={priorityBadgeConfig[ticket.priority as TicketPriority].variant}
         icon={priorityBadgeConfig[
           ticket.priority as TicketPriority
         ].getIcon?.()}
@@ -246,7 +239,6 @@ function TableLayout({
     )),
     customColumn<Ticket>('status', 'Status', (ticket) => (
       <Badge
-        variant={statusBadgeConfig[ticket.status as TicketStatus].variant}
         icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
       >
         {statusBadgeConfig[ticket.status as TicketStatus].label}

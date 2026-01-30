@@ -12,7 +12,6 @@ import {
   type User,
   type Filters,
 } from '@/types';
-import type { BadgeVariant } from '@/shared/components/ui/badge';
 import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
 
 /**
@@ -243,7 +242,6 @@ export const categoryColors: Record<string, string> = {
  * Badge configuration interface
  */
 interface BadgeConfig {
-  variant: BadgeVariant;
   label: string;
   getIcon?: () => ReactNode;
 }
@@ -253,27 +251,22 @@ interface BadgeConfig {
  */
 export const statusBadgeConfig: Record<TicketStatus, BadgeConfig> = {
   [TicketStatus.NEW]: {
-    variant: 'blue',
     label: 'New',
     getIcon: () => <StatusIcon fillPercent={10} variant="blue" />,
   },
   [TicketStatus.OPEN]: {
-    variant: 'yellow',
     label: 'Open',
     getIcon: () => <StatusIcon fillPercent={25} variant="yellow" />,
   },
   [TicketStatus.IN_PROGRESS]: {
-    variant: 'orange',
     label: 'In Progress',
     getIcon: () => <StatusIcon fillPercent={45} variant="orange" />,
   },
   [TicketStatus.RESOLVED]: {
-    variant: 'green',
     label: 'Resolved',
     getIcon: () => <StatusIcon fillPercent={80} variant="green" />,
   },
   [TicketStatus.CLOSED]: {
-    variant: 'grey',
     label: 'Closed',
     getIcon: () => <StatusIcon fillPercent={100} variant="grey" />,
   },
@@ -284,22 +277,18 @@ export const statusBadgeConfig: Record<TicketStatus, BadgeConfig> = {
  */
 export const priorityBadgeConfig: Record<TicketPriority, BadgeConfig> = {
   [TicketPriority.LOW]: {
-    variant: 'green',
     label: 'Low',
     getIcon: () => <PriorityIcon filledBars={1} variant="green" />,
   },
   [TicketPriority.MEDIUM]: {
-    variant: 'yellow',
     label: 'Medium',
     getIcon: () => <PriorityIcon filledBars={2} variant="yellow" />,
   },
   [TicketPriority.HIGH]: {
-    variant: 'orange',
     label: 'High',
     getIcon: () => <PriorityIcon filledBars={3} variant="orange" />,
   },
   [TicketPriority.CRITICAL]: {
-    variant: 'red',
     label: 'Critical',
     getIcon: () => <PriorityIcon filledBars={4} variant="red" />,
   },
@@ -310,19 +299,15 @@ export const priorityBadgeConfig: Record<TicketPriority, BadgeConfig> = {
  */
 export const categoryBadgeConfig: Record<TicketCategory, BadgeConfig> = {
   [TicketCategory.BUG]: {
-    variant: 'orange',
     label: 'Bug',
   },
   [TicketCategory.FEATURE_REQUEST]: {
-    variant: 'teal',
     label: 'Feature Request',
   },
   [TicketCategory.QUESTION]: {
-    variant: 'purple',
     label: 'Question',
   },
   [TicketCategory.OTHER]: {
-    variant: 'grey',
     label: 'Other',
   },
 };

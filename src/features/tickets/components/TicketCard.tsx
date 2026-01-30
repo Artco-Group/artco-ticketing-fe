@@ -39,16 +39,11 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
         {/* Status & Category */}
         <div className="flex flex-wrap gap-2">
           <Badge
-            variant={statusBadgeConfig[ticket.status as TicketStatus].variant}
             icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
           >
             {statusBadgeConfig[ticket.status as TicketStatus].label}
           </Badge>
-          <Badge
-            variant={
-              categoryBadgeConfig[ticket.category as TicketCategory].variant
-            }
-          >
+          <Badge>
             {categoryBadgeConfig[ticket.category as TicketCategory].label}
           </Badge>
         </div>
@@ -58,9 +53,6 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
         {/* Priority & Date */}
         <div className="flex-between">
           <Badge
-            variant={
-              priorityBadgeConfig[ticket.priority as TicketPriority].variant
-            }
             icon={priorityBadgeConfig[
               ticket.priority as TicketPriority
             ].getIcon?.()}
