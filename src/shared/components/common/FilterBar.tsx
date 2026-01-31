@@ -1,14 +1,5 @@
 import { useId, useMemo } from 'react';
-import {
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Card,
-  Label,
-} from '@/shared/components/ui';
+import { Input, Select, Card, Label } from '@/shared/components/ui';
 import { cn } from '@/lib/utils';
 
 export interface FilterOption {
@@ -101,34 +92,26 @@ function FilterBar({
                   </Label>
                 )}
                 <Select
+                  options={options.map((option) => {
+                    // Support both { value, label } objects and simple strings
+                    if (typeof option === 'string') {
+                      return {
+                        label:
+                          option === 'All'
+                            ? `All ${filter.label || ''}`
+                            : option,
+                        value: option,
+                      };
+                    }
+                    return {
+                      label: option.label,
+                      value: option.value,
+                    };
+                  })}
                   value={filter.value || 'All'}
-                  onValueChange={(value) =>
-                    handleFilterChange(filter.key, value)
-                  }
-                >
-                  <SelectTrigger id={filterId} className="w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {options.map((option) => {
-                      // Support both { value, label } objects and simple strings
-                      if (typeof option === 'string') {
-                        return (
-                          <SelectItem key={option} value={option}>
-                            {option === 'All'
-                              ? `All ${filter.label || ''}`
-                              : option}
-                          </SelectItem>
-                        );
-                      }
-                      return (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
+                  onChange={(value) => handleFilterChange(filter.key, value)}
+                  className="w-[180px]"
+                />
               </div>
             );
           }

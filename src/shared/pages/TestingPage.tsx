@@ -11,6 +11,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectField,
   Card,
   CardContent,
   CardDescription,
@@ -332,8 +333,8 @@ export default function TestingPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="test-select">Select</Label>
-                <Select value={selectValue} onValueChange={setSelectValue}>
+                <Label htmlFor="test-select">Select (Primitive)</Label>
+                <SelectField value={selectValue} onValueChange={setSelectValue}>
                   <SelectTrigger id="test-select">
                     <SelectValue placeholder="Select an option" />
                   </SelectTrigger>
@@ -342,9 +343,112 @@ export default function TestingPage() {
                     <SelectItem value="option2">Option 2</SelectItem>
                     <SelectItem value="option3">Option 3</SelectItem>
                   </SelectContent>
-                </Select>
+                </SelectField>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* Select Component Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Select (Custom Component)</h2>
+        <p className="text-muted-foreground">
+          High-level Select component matching Figma design specifications
+        </p>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Basic SelectField */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Basic Select</h3>
+            <Select
+              label="Category"
+              options={[
+                { label: 'Option 1', value: 'option1' },
+                { label: 'Option 2', value: 'option2' },
+                { label: 'Option 3', value: 'option3' },
+              ]}
+              placeholder="Choose an option"
+              value={selectValue}
+              onChange={setSelectValue}
+            />
+          </div>
+
+          {/* SelectField with Error */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Select with Error</h3>
+            <Select
+              label="Priority"
+              options={[
+                { label: 'Low', value: 'low' },
+                { label: 'Medium', value: 'medium' },
+                { label: 'High', value: 'high' },
+                { label: 'Critical', value: 'critical' },
+              ]}
+              placeholder="Select priority"
+              error="This field is required"
+            />
+          </div>
+
+          {/* Disabled SelectField */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Disabled Select</h3>
+            <Select
+              label="Status"
+              options={[
+                { label: 'Active', value: 'active' },
+                { label: 'Inactive', value: 'inactive' },
+              ]}
+              placeholder="Cannot select"
+              disabled
+            />
+          </div>
+
+          {/* SelectField with Helper Text */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Select with Helper Text</h3>
+            <Select
+              label="Size"
+              options={[
+                { label: 'Small', value: 'sm' },
+                { label: 'Medium', value: 'md' },
+                { label: 'Large', value: 'lg' },
+              ]}
+              placeholder="Pick a size"
+              helperText="Choose the size that fits best"
+            />
+          </div>
+
+          {/* SelectField with Pre-selected Value */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Pre-selected Value</h3>
+            <Select
+              label="Default Selection"
+              options={[
+                { label: 'Option A', value: 'a' },
+                { label: 'Option B', value: 'b' },
+                { label: 'Option C', value: 'c' },
+              ]}
+              defaultValue="b"
+              placeholder="Select an option"
+            />
+          </div>
+
+          {/* SelectField with Disabled Option */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Disabled Option</h3>
+            <Select
+              label="Role"
+              options={[
+                { label: 'Admin', value: 'admin', disabled: true },
+                { label: 'Developer', value: 'developer' },
+                { label: 'Client', value: 'client' },
+              ]}
+              placeholder="Select a role"
+              helperText="Admin role is disabled"
+            />
           </div>
         </div>
       </section>

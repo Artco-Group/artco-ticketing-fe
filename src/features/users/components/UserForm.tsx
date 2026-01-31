@@ -9,16 +9,10 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
-  FormMessage,
   Input,
   PasswordInput,
   Button,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Icon,
 } from '@/shared/components/ui';
 import { useUserForm } from '../hooks';
@@ -94,24 +88,20 @@ function UserForm({
         <FormField
           control={form.control}
           name="role"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>Role</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {AVAILABLE_ROLES.map((role) => (
-                    <SelectItem key={role} value={role}>
-                      {UserRoleDisplay[role]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
+              <FormControl>
+                <Select
+                  label="Role"
+                  options={AVAILABLE_ROLES.map((role) => ({
+                    label: UserRoleDisplay[role],
+                    value: role,
+                  }))}
+                  placeholder="Select a role"
+                  error={fieldState.error?.message}
+                  {...field}
+                />
+              </FormControl>
             </FormItem>
           )}
         />
