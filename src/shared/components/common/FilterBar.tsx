@@ -1,13 +1,10 @@
-import { useId, useMemo } from 'react';
+import { useId, useMemo, type ReactNode } from 'react';
 import {
   Input,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Card,
   Label,
+  FilterButton,
 } from '@/shared/components/ui';
 import { cn } from '@/lib/utils';
 
@@ -18,12 +15,13 @@ export interface FilterOption {
 
 export interface FilterConfig {
   key: string;
-  type: 'select';
+  type?: 'select' | 'filterButton';
   label?: string;
-  value?: string;
+  value?: string | null;
   options?: (string | FilterOption)[];
   getOptions?: (data: unknown[]) => (string | FilterOption)[];
   data?: unknown[];
+  icon?: ReactNode;
 }
 
 interface SearchConfig {
@@ -53,9 +51,10 @@ function FilterBar({
     return filters.map((_, index) => `${baseId}-filter-${index}`);
   }, [filters, baseId]);
 
-  const handleFilterChange = (filterKey: string, value: string) => {
+  const handleFilterChange = (filterKey: string, value: string | null) => {
     if (onFilterChange) {
-      onFilterChange(filterKey, value);
+      // Convert null to 'All' for backward compatibility
+      onFilterChange(filterKey, value ?? 'All');
     }
   };
 
@@ -84,57 +83,76 @@ function FilterBar({
 
         {/* Filters */}
         {filters.map((filter, index) => {
-          if (filter.type === 'select') {
-            // Get options - either from static options array or dynamic getOptions function
-            const options = filter.getOptions
-              ? filter.getOptions(filter.data || [])
-              : filter.options || [];
+          // Get options - either from static options array or dynamic getOptions function
+          const options = filter.getOptions
+            ? filter.getOptions(filter.data || [])
+            : filter.options || [];
 
-            // Use pre-generated ID for this filter
-            const filterId = filterIds[index];
+          // Use pre-generated ID for this filter
+          const filterId = filterIds[index];
 
+          // Determine filter type (default to filterButton if not specified)
+          const filterType = filter.type || 'filterButton';
+
+          // Handle Select type
+          if (filterType === 'select') {
             return (
-              <div key={filter.key} className="flex-start-gap-2">
+              <div key={filter.key} className="flex items-start gap-2">
                 {filter.label && (
                   <Label htmlFor={filterId} className="text-sm font-medium">
                     {filter.label}:
                   </Label>
                 )}
                 <Select
+                  options={options.map((option) => {
+                    // Support both { value, label } objects and simple strings
+                    if (typeof option === 'string') {
+                      return {
+                        label:
+                          option === 'All'
+                            ? `All ${filter.label || ''}`
+                            : option,
+                        value: option,
+                      };
+                    }
+                    return {
+                      label: option.label,
+                      value: option.value,
+                    };
+                  })}
                   value={filter.value || 'All'}
-                  onValueChange={(value) =>
-                    handleFilterChange(filter.key, value)
-                  }
-                >
-                  <SelectTrigger id={filterId} className="w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {options.map((option) => {
-                      // Support both { value, label } objects and simple strings
-                      if (typeof option === 'string') {
-                        return (
-                          <SelectItem key={option} value={option}>
-                            {option === 'All'
-                              ? `All ${filter.label || ''}`
-                              : option}
-                          </SelectItem>
-                        );
-                      }
-                      return (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
+                  onChange={(value) => handleFilterChange(filter.key, value)}
+                  className="w-[180px]"
+                />
               </div>
             );
           }
 
-          // Future: Add support for other filter types (date-range, multi-select, etc.)
-          return null;
+          // Handle FilterButton type (default)
+          // Convert options to string array
+          const stringOptions = options
+            .map((option) => {
+              if (typeof option === 'string') {
+                return option === 'All' ? null : option; // Filter out 'All' as FilterButton uses null
+              }
+              return option.value === 'All' ? null : option.value;
+            })
+            .filter((opt): opt is string => opt !== null);
+
+          // Convert value: 'All' → null
+          const filterValue = filter.value === 'All' ? null : filter.value;
+
+          return (
+            <div key={filter.key} className="flex items-center gap-2">
+              <FilterButton
+                label={filter.label || filter.key}
+                icon={filter.icon}
+                options={stringOptions}
+                value={filterValue ?? null}
+                onChange={(value) => handleFilterChange(filter.key, value)}
+              />
+            </div>
+          );
         })}
       </div>
     </Card>

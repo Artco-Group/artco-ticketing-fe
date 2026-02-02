@@ -13,6 +13,7 @@ export * from './label';
 export * from './select';
 export * from './separator';
 export * from './shadcn-table';
+export * from './Switch';
 export * from './textarea';
 
 // Custom components
@@ -26,3 +27,4 @@ export * from './QueryStateWrapper';
 export * from './Icon';
 export * from './Toast';
 export * from './RetryableError';
+export * from './filterButton';

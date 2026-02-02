@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   TicketPriorityDisplay,
   getStatusBadgeClasses,
@@ -11,6 +12,7 @@ import {
   type User,
   type Filters,
 } from '@/types';
+import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
 
 /**
  * Priority order for sorting (highest first)
@@ -235,3 +237,105 @@ export const categoryColors: Record<string, string> = {
   [TicketCategory.QUESTION]: getCategoryBadgeClasses(TicketCategory.QUESTION),
   [TicketCategory.OTHER]: getCategoryBadgeClasses(TicketCategory.OTHER),
 };
+
+/**
+ * Badge configuration interface
+ */
+interface BadgeConfig {
+  label: string;
+  getIcon?: () => ReactNode;
+}
+
+/**
+ * Status badge configuration with variants and icons
+ */
+export const statusBadgeConfig: Record<TicketStatus, BadgeConfig> = {
+  [TicketStatus.NEW]: {
+    label: 'New',
+    getIcon: () => <StatusIcon fillPercent={10} variant="blue" />,
+  },
+  [TicketStatus.OPEN]: {
+    label: 'Open',
+    getIcon: () => <StatusIcon fillPercent={25} variant="yellow" />,
+  },
+  [TicketStatus.IN_PROGRESS]: {
+    label: 'In Progress',
+    getIcon: () => <StatusIcon fillPercent={45} variant="orange" />,
+  },
+  [TicketStatus.RESOLVED]: {
+    label: 'Resolved',
+    getIcon: () => <StatusIcon fillPercent={80} variant="green" />,
+  },
+  [TicketStatus.CLOSED]: {
+    label: 'Closed',
+    getIcon: () => <StatusIcon fillPercent={100} variant="grey" />,
+  },
+};
+
+/**
+ * Priority badge configuration with variants and icons
+ */
+export const priorityBadgeConfig: Record<TicketPriority, BadgeConfig> = {
+  [TicketPriority.LOW]: {
+    label: 'Low',
+    getIcon: () => <PriorityIcon filledBars={1} variant="green" />,
+  },
+  [TicketPriority.MEDIUM]: {
+    label: 'Medium',
+    getIcon: () => <PriorityIcon filledBars={2} variant="yellow" />,
+  },
+  [TicketPriority.HIGH]: {
+    label: 'High',
+    getIcon: () => <PriorityIcon filledBars={3} variant="orange" />,
+  },
+  [TicketPriority.CRITICAL]: {
+    label: 'Critical',
+    getIcon: () => <PriorityIcon filledBars={4} variant="red" />,
+  },
+};
+
+/**
+ * Category badge configuration with variants
+ */
+export const categoryBadgeConfig: Record<TicketCategory, BadgeConfig> = {
+  [TicketCategory.BUG]: {
+    label: 'Bug',
+  },
+  [TicketCategory.FEATURE_REQUEST]: {
+    label: 'Feature Request',
+  },
+  [TicketCategory.QUESTION]: {
+    label: 'Question',
+  },
+  [TicketCategory.OTHER]: {
+    label: 'Other',
+  },
+};
+
+/**
+ * Get the icon for a given priority
+ */
+export function getPriorityIcon(priority: TicketPriority): ReactNode {
+  return priorityBadgeConfig[priority]?.getIcon?.() ?? null;
+}
+
+/**
+ * Get the icon for a given status
+ */
+export function getStatusIcon(status: TicketStatus): ReactNode {
+  return statusBadgeConfig[status]?.getIcon?.() ?? null;
+}
+
+/**
+ * Get the label for a given priority
+ */
+export function getPriorityLabel(priority: TicketPriority): string {
+  return priorityBadgeConfig[priority]?.label ?? '';
+}
+
+/**
+ * Get the label for a given status
+ */
+export function getStatusLabel(status: TicketStatus): string {
+  return statusBadgeConfig[status]?.label ?? '';
+}

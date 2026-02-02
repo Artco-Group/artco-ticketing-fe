@@ -2,7 +2,15 @@ import {
   formatDateLocalized,
   formatDateTime,
 } from '@artco-group/artco-ticketing-sync';
-import { UserRole, type Ticket, type User, type Filters } from '@/types';
+import {
+  UserRole,
+  TicketStatus,
+  TicketPriority,
+  TicketCategory,
+  type Ticket,
+  type User,
+  type Filters,
+} from '@/types';
 import {
   useRoleFlags,
   SummaryCards,
@@ -11,7 +19,6 @@ import {
   DataTable,
   textColumn,
   customColumn,
-  badgeColumn,
   dateColumn,
   Button,
   Badge,
@@ -19,12 +26,13 @@ import {
   Icon,
 } from '@/shared';
 import {
-  statusColors,
-  priorityConfig,
-  categoryColors,
+  categoryBadgeConfig,
   resolveAssigneeName,
+  getPriorityIcon,
+  getPriorityLabel,
+  getStatusIcon,
+  getStatusLabel,
 } from '@/shared/utils/ticket-helpers';
-import { cn } from '@/lib/utils';
 import TicketCard from './TicketCard';
 
 interface TicketListProps {
@@ -169,40 +177,27 @@ function TableLayout({
     textColumn<Ticket>('clientEmail', 'Client', {
       className: 'text-sm text-foreground',
     }),
-    badgeColumn<Ticket>(
-      'category',
-      'Category',
-      (category) =>
-        categoryColors[category] || 'bg-secondary text-secondary-foreground'
-    ),
-    customColumn<Ticket>('priority', 'Priority', (ticket) => (
-      <Badge
-        variant="secondary"
-        className={cn(
-          priorityConfig[ticket.priority].bg,
-          priorityConfig[ticket.priority].color
-        )}
-      >
-        {priorityConfig[ticket.priority].label}
+    customColumn<Ticket>('category', 'Category', (ticket) => (
+      <Badge>
+        {categoryBadgeConfig[ticket.category as TicketCategory].label}
       </Badge>
     )),
-    badgeColumn<Ticket>(
-      'status',
-      'Status',
-      (status) =>
-        statusColors[status] || 'bg-secondary text-secondary-foreground'
-    ),
+    customColumn<Ticket>('priority', 'Priority', (ticket) => (
+      <Badge icon={getPriorityIcon(ticket.priority as TicketPriority)}>
+        {getPriorityLabel(ticket.priority as TicketPriority)}
+      </Badge>
+    )),
+    customColumn<Ticket>('status', 'Status', (ticket) => (
+      <Badge icon={getStatusIcon(ticket.status as TicketStatus)}>
+        {getStatusLabel(ticket.status as TicketStatus)}
+      </Badge>
+    )),
     customColumn<Ticket>('assignedTo', 'Assigned To', (ticket) => (
       <div className="text-foreground text-sm">
         {ticket.assignedTo ? (
-          resolveAssigneeName(ticket.assignedTo, users)
+          <Badge>{resolveAssigneeName(ticket.assignedTo, users)}</Badge>
         ) : (
-          <Badge
-            variant="outline"
-            className="border-orange-200 text-orange-600"
-          >
-            Unassigned
-          </Badge>
+          <Badge>Unassigned</Badge>
         )}
       </div>
     )),
@@ -224,29 +219,21 @@ function TableLayout({
     textColumn<Ticket>('clientEmail', 'Client', {
       className: 'text-sm text-muted-foreground',
     }),
-    badgeColumn<Ticket>(
-      'category',
-      'Category',
-      (category) =>
-        categoryColors[category] || 'bg-secondary text-secondary-foreground'
-    ),
-    customColumn<Ticket>('priority', 'Priority', (ticket) => (
-      <Badge
-        variant="secondary"
-        className={cn(
-          priorityConfig[ticket.priority].bg,
-          priorityConfig[ticket.priority].color
-        )}
-      >
-        {priorityConfig[ticket.priority].label}
+    customColumn<Ticket>('category', 'Category', (ticket) => (
+      <Badge>
+        {categoryBadgeConfig[ticket.category as TicketCategory].label}
       </Badge>
     )),
-    badgeColumn<Ticket>(
-      'status',
-      'Status',
-      (status) =>
-        statusColors[status] || 'bg-secondary text-secondary-foreground'
-    ),
+    customColumn<Ticket>('priority', 'Priority', (ticket) => (
+      <Badge icon={getPriorityIcon(ticket.priority as TicketPriority)}>
+        {getPriorityLabel(ticket.priority as TicketPriority)}
+      </Badge>
+    )),
+    customColumn<Ticket>('status', 'Status', (ticket) => (
+      <Badge icon={getStatusIcon(ticket.status as TicketStatus)}>
+        {getStatusLabel(ticket.status as TicketStatus)}
+      </Badge>
+    )),
     dateColumn<Ticket>('createdAt', 'Created', formatDateLocalized, {
       className: 'text-muted-foreground',
     }),
@@ -265,7 +252,6 @@ function TableLayout({
         {
           key: 'status',
           label: 'Status',
-          type: 'select' as const,
           value: filters.status,
           options: [
             { value: 'All', label: 'All Status' },
@@ -279,7 +265,6 @@ function TableLayout({
         {
           key: 'priority',
           label: 'Priority',
-          type: 'select' as const,
           value: filters.priority,
           options: [
             { value: 'All', label: 'All Priority' },
@@ -292,7 +277,6 @@ function TableLayout({
         {
           key: 'client',
           label: 'Client',
-          type: 'select' as const,
           value: filters.client,
           options: [
             { value: 'All', label: 'All Clients' },
@@ -311,7 +295,6 @@ function TableLayout({
         {
           key: 'assignee',
           label: 'Assignee',
-          type: 'select' as const,
           value: filters.assignee,
           options: [
             { value: 'All', label: 'All Assignees' },
@@ -327,7 +310,6 @@ function TableLayout({
         {
           key: 'sortBy',
           label: 'Sort by',
-          type: 'select' as const,
           value: filters.sortBy,
           options: [
             { value: 'Status', label: 'Status' },
@@ -346,7 +328,6 @@ function TableLayout({
         {
           key: 'status',
           label: 'Status',
-          type: 'select' as const,
           value: filters.status,
           options: [
             { value: 'All', label: 'All Status' },
@@ -358,7 +339,6 @@ function TableLayout({
         {
           key: 'priority',
           label: 'Priority',
-          type: 'select' as const,
           value: filters.priority,
           options: [
             { value: 'All', label: 'All Priority' },
@@ -371,7 +351,6 @@ function TableLayout({
         {
           key: 'sortBy',
           label: 'Sort by',
-          type: 'select' as const,
           value: filters.sortBy,
           options: [
             { value: 'Created Date', label: 'Created Date' },

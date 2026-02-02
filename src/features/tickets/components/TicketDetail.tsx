@@ -11,6 +11,8 @@ import {
 } from '@/types';
 import { Loader2 } from 'lucide-react';
 import { Icon } from '@/shared/components/ui';
+import { Breadcrumbs } from '@/shared/components';
+import { PAGE_ROUTES } from '@/shared/constants';
 import CommentThread from './CommentThread';
 import TicketDetails from './TicketDetails';
 import { resolveAssigneeName } from '@/shared/utils/ticket-helpers';
@@ -23,10 +25,6 @@ import {
   CardHeader,
   CardTitle,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Label,
 } from '@/shared';
 
@@ -109,16 +107,13 @@ function TicketDetail({
             <Icon name="arrow-left" size="md" />
           </Button>
           <div>
-            <nav className="text-muted-foreground mb-1 text-sm">
-              <span
-                className="hover:text-foreground cursor-pointer"
-                onClick={onBack}
-              >
-                All Tickets
-              </span>
-              <span className="mx-2">&gt;</span>
-              <span className="text-foreground">{ticket.title}</span>
-            </nav>
+            <Breadcrumbs
+              items={[
+                { label: 'All Tickets', href: PAGE_ROUTES.TICKETS.LIST },
+                { label: ticket.title, href: '#' },
+              ]}
+              className="mb-1"
+            />
             <h1 className="text-foreground text-2xl font-bold">
               {ticket.title}
             </h1>
@@ -155,20 +150,15 @@ function TicketDetail({
                   <Label htmlFor={assignedToId}>Assigned To</Label>
                   <div className="flex-start-gap-3">
                     <Select
+                      options={developers.map((dev) => ({
+                        label: dev.name || '',
+                        value: dev._id || '',
+                      }))}
+                      placeholder="Select Developer"
                       value={selectedDeveloper}
-                      onValueChange={setSelectedDeveloper}
-                    >
-                      <SelectTrigger id={assignedToId} className="flex-1">
-                        <SelectValue placeholder="Select Developer" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {developers.map((dev) => (
-                          <SelectItem key={dev._id} value={dev._id || ''}>
-                            {dev.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onChange={setSelectedDeveloper}
+                      className="flex-1"
+                    />
                     <Button
                       onClick={handleAssign}
                       disabled={
@@ -195,25 +185,21 @@ function TicketDetail({
                 <div className="space-y-2">
                   <Label htmlFor={priorityId}>Update Priority</Label>
                   <Select
+                    options={[
+                      { label: 'Low', value: 'Low' },
+                      { label: 'Medium', value: 'Medium' },
+                      { label: 'High', value: 'High' },
+                      { label: 'Critical', value: 'Critical' },
+                    ]}
                     value={ticket.priority}
-                    onValueChange={(value) =>
+                    onChange={(value) =>
                       onPriorityUpdate(asTicketId(ticket._id || ''), value)
                     }
                     disabled={
                       ticket.status !== 'Open' &&
                       ticket.status !== 'In Progress'
                     }
-                  >
-                    <SelectTrigger id={priorityId}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Low">Low</SelectItem>
-                      <SelectItem value="Medium">Medium</SelectItem>
-                      <SelectItem value="High">High</SelectItem>
-                      <SelectItem value="Critical">Critical</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  />
                   {ticket.status !== 'Open' &&
                     ticket.status !== 'In Progress' && (
                       <p className="text-muted-xs">
