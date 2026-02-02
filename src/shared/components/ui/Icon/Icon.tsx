@@ -53,6 +53,8 @@ import sidebarSvg from '@/assets/icons/navigation/sidebar.svg?raw';
 import chevronSelectorSvg from '@/assets/icons/arrows/chevron-selector.svg?raw';
 
 import arrowLeftSvg from '@/assets/icons/arrows/arrow-left.svg?raw';
+import trendUpSvg from '@/assets/icons/arrows/trend-up.svg?raw';
+import trendDownSvg from '@/assets/icons/arrows/trend-down.svg?raw';
 
 export type IconName =
   | 'dashboard'
@@ -99,7 +101,9 @@ export type IconName =
   | 'settings'
   | 'arrow-left'
   | 'notification'
-  | 'double-check';
+  | 'double-check'
+  | 'trend-up'
+  | 'trend-down';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -149,6 +153,8 @@ const iconMap: Record<IconName, string> = {
   'arrow-left': arrowLeftSvg,
   notification: notificationSvg,
   'double-check': doubleCheckSvg,
+  'trend-up': trendUpSvg,
+  'trend-down': trendDownSvg,
 };
 
 const sizeMap: Record<IconSize, string> = {

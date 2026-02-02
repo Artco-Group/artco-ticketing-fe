@@ -38,7 +38,7 @@ import {
   EmptyState,
   Icon,
 } from '@/shared/components/ui';
-import { MemberPicker } from '@/shared/components/composite';
+import { MemberPicker, StatsCard } from '@/shared/components/composite';
 
 // Mock user data for MemberPicker demo
 const mockUsers = [
@@ -563,6 +563,43 @@ export default function TestingPage() {
               placeholder="Select a member..."
             />
           </div>
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* StatsCard Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Stats Cards</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatsCard
+            label="Total tickets"
+            value={50}
+            trend="up"
+            trendValue="12%"
+            trendLabel="from last month"
+          />
+          <StatsCard
+            label="Solved tickets"
+            value={37}
+            trend="down"
+            trendValue="-5%"
+            trendLabel="from last month"
+          />
+          <StatsCard
+            label="Projects on track"
+            value="75%"
+            trend="up"
+            trendValue="15%"
+            trendLabel="from last month"
+          />
+          <StatsCard
+            label="Projects on track"
+            value="2d 8h"
+            trend="up"
+            trendValue="-1d 2h"
+            trendLabel="from last month"
+          />
         </div>
       </section>
 
