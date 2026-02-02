@@ -10,6 +10,7 @@ import notesSvg from '@/assets/icons/navigation/notes.svg?raw';
 import reportsSvg from '@/assets/icons/navigation/reports.svg?raw';
 import allSvg from '@/assets/icons/navigation/all.svg?raw';
 
+import minusSvg from '@/assets/icons/actions/minus.svg?raw';
 import plusSvg from '@/assets/icons/actions/plus.svg?raw';
 import searchSvg from '@/assets/icons/actions/search.svg?raw';
 import trashSvg from '@/assets/icons/actions/trash.svg?raw';
@@ -67,6 +68,7 @@ export type IconName =
   | 'automations'
   | 'pin'
   | 'sidebar'
+  | 'minus'
   | 'plus'
   | 'search'
   | 'trash'
@@ -117,6 +119,7 @@ const iconMap: Record<IconName, string> = {
   automations: automationsSvg,
   pin: pinSvg,
   sidebar: sidebarSvg,
+  minus: minusSvg,
   plus: plusSvg,
   search: searchSvg,
   trash: trashSvg,

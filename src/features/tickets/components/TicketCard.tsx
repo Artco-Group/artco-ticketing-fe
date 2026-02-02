@@ -1,9 +1,16 @@
 import { formatDateLocalized } from '@artco-group/artco-ticketing-sync';
-import type { Ticket } from '@/types';
 import {
-  statusColors,
-  priorityConfig,
-  categoryColors,
+  TicketStatus,
+  TicketPriority,
+  TicketCategory,
+  type Ticket,
+} from '@/types';
+import {
+  categoryBadgeConfig,
+  getPriorityIcon,
+  getPriorityLabel,
+  getStatusIcon,
+  getStatusLabel,
 } from '@/shared/utils/ticket-helpers';
 import {
   Card,
@@ -13,7 +20,6 @@ import {
   Badge,
   Separator,
 } from '@/shared/components/ui';
-import { cn } from '@/lib/utils';
 
 interface TicketCardProps {
   ticket: Ticket;
@@ -34,17 +40,11 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
       <CardContent className="space-y-4">
         {/* Status & Category */}
         <div className="flex flex-wrap gap-2">
-          <Badge
-            variant="outline"
-            className={cn('rounded-full', statusColors[ticket.status])}
-          >
-            {ticket.status}
+          <Badge icon={getStatusIcon(ticket.status as TicketStatus)}>
+            {getStatusLabel(ticket.status as TicketStatus)}
           </Badge>
-          <Badge
-            variant="outline"
-            className={cn('rounded-full', categoryColors[ticket.category])}
-          >
-            {ticket.category}
+          <Badge>
+            {categoryBadgeConfig[ticket.category as TicketCategory].label}
           </Badge>
         </div>
 
@@ -52,14 +52,8 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
 
         {/* Priority & Date */}
         <div className="flex-between">
-          <Badge
-            variant="secondary"
-            className={cn(
-              priorityConfig[ticket.priority].bg,
-              priorityConfig[ticket.priority].color
-            )}
-          >
-            {priorityConfig[ticket.priority].label}
+          <Badge icon={getPriorityIcon(ticket.priority as TicketPriority)}>
+            {getPriorityLabel(ticket.priority as TicketPriority)}
           </Badge>
           <span className="text-muted-xs">
             {ticket.createdAt ? formatDateLocalized(ticket.createdAt) : ''}

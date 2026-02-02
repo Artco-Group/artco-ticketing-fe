@@ -38,8 +38,10 @@ import {
   Spinner,
   EmptyState,
   Icon,
+  Switch,
   FilterButton,
 } from '@/shared/components/ui';
+import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
 import { MemberPicker } from '@/shared/components/composite';
 
 // Mock user data for MemberPicker demo
@@ -90,14 +92,39 @@ export default function TestingPage() {
   const [inputValue, setInputValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
-  const [isChecked, setIsChecked] = useState(false);
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [selectValue, setSelectValue] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [filterValue, setFilterValue] = useState<string | null>(null);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [selectedMember, setSelectedMember] = useState('');
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [basicChecked, setBasicChecked] = useState(false);
+  const [withLabelChecked, setWithLabelChecked] = useState(true);
+  const [disabledChecked, setDisabledChecked] = useState(true);
+  const [disabledUnchecked, setDisabledUnchecked] = useState(false);
+  const [indeterminateState, setIndeterminateState] = useState(false);
 
+  const [items, setItems] = useState([
+    { id: 1, label: 'Item 1', checked: false },
+    { id: 2, label: 'Item 2', checked: true },
+    { id: 3, label: 'Item 3', checked: false },
+  ]);
+
+  const allChecked = items.every((item) => item.checked);
+  const someChecked = items.some((item) => item.checked) && !allChecked;
+
+  // Handlers
+  const handleSelectAll = (checked: boolean) => {
+    setItems(items.map((item) => ({ ...item, checked })));
+  };
+
+  const handleItemChange = (id: number, checked: boolean) => {
+    setItems(
+      items.map((item) => (item.id === id ? { ...item, checked } : item))
+    );
+  };
+ 
   return (
     <div className="container mx-auto space-y-8 p-6">
       <div>
@@ -236,15 +263,81 @@ export default function TestingPage() {
 
       {/* Badges Section */}
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Badges</h2>
-        <div className="flex flex-wrap gap-3">
-          <Badge variant="default">Grey</Badge>
-          <Badge variant="secondary">Green</Badge>
-          <Badge variant="destructive">Blue</Badge>
-          <Badge variant="outline">Orange</Badge>
+        <h2 className="text-lg font-semibold">Badge Component</h2>
+        <div className="flex max-w-md flex-col gap-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">With PriorityIcon</h3>
+            <div className="flex flex-wrap gap-2">
+              <Badge icon={<PriorityIcon filledBars={4} variant="red" />}>
+                Critical
+              </Badge>
+              <Badge icon={<PriorityIcon filledBars={3} variant="orange" />}>
+                High
+              </Badge>
+              <Badge icon={<PriorityIcon filledBars={2} variant="yellow" />}>
+                Medium
+              </Badge>
+              <Badge icon={<PriorityIcon filledBars={1} variant="green" />}>
+                Low
+              </Badge>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">With StatusIcon</h3>
+            <div className="flex flex-wrap gap-2">
+              <Badge icon={<StatusIcon fillPercent={10} variant="blue" />}>
+                New
+              </Badge>
+              <Badge icon={<StatusIcon fillPercent={30} variant="orange" />}>
+                Open
+              </Badge>
+              <Badge icon={<StatusIcon fillPercent={50} variant="yellow" />}>
+                In Progress
+              </Badge>
+              <Badge icon={<StatusIcon fillPercent={80} variant="green" />}>
+                Resolved
+              </Badge>
+              <Badge icon={<StatusIcon fillPercent={100} variant="grey" />}>
+                Closed
+              </Badge>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Icon Only</h3>
+            <div className="flex flex-wrap gap-2">
+              <Badge icon={<PriorityIcon filledBars={4} variant="red" />} />
+              <Badge icon={<StatusIcon fillPercent={10} variant="blue" />} />
+              <Badge icon={<StatusIcon fillPercent={80} variant="green" />} />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Sizes</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge
+                size="sm"
+                icon={<PriorityIcon filledBars={3} variant="orange" />}
+              >
+                Small
+              </Badge>
+              <Badge
+                size="md"
+                icon={<PriorityIcon filledBars={3} variant="orange" />}
+              >
+                Medium
+              </Badge>
+              <Badge
+                size="lg"
+                icon={<PriorityIcon filledBars={3} variant="orange" />}
+              >
+                Large
+              </Badge>
+            </div>
+          </div>
         </div>
       </section>
-
       <Separator />
 
       {/* Icons Section */}
@@ -441,14 +534,12 @@ export default function TestingPage() {
 
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="test-checkbox"
-                  checked={isChecked}
-                  onCheckedChange={(checked) =>
-                    setIsChecked(checked as boolean)
-                  }
+                <Switch
+                  id="test-switch"
+                  checked={isSwitchOn}
+                  onChange={setIsSwitchOn}
                 />
-                <Label htmlFor="test-checkbox">Checkbox Label</Label>
+                <Label htmlFor="test-switch">Switch Label</Label>
               </div>
 
               <div className="space-y-2">
@@ -471,6 +562,149 @@ export default function TestingPage() {
 
       <Separator />
 
+      {/* Checkbox and Switch Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Checkbox & Switch</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold">Basic States</h3>
+
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">Basic States</h3>
+
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">Basic (no label)</p>
+                    <Checkbox
+                      checked={basicChecked}
+                      onCheckedChange={setBasicChecked}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">With label</p>
+                    <Checkbox
+                      checked={withLabelChecked}
+                      onCheckedChange={setWithLabelChecked}
+                      label="Accept terms and conditions"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">Disabled (checked)</p>
+                    <Checkbox
+                      checked={disabledChecked}
+                      onCheckedChange={setDisabledChecked}
+                      label="This is disabled and checked"
+                      disabled
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">
+                      Disabled (unchecked)
+                    </p>
+                    <Checkbox
+                      checked={disabledUnchecked}
+                      onCheckedChange={setDisabledUnchecked}
+                      label="This is disabled and unchecked"
+                      disabled
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">Indeterminate state</p>
+                    <Checkbox
+                      checked={indeterminateState}
+                      onCheckedChange={setIndeterminateState}
+                      label="Indeterminate checkbox"
+                      indeterminate
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">Select All Example</h3>
+
+                  <Checkbox
+                    checked={allChecked}
+                    indeterminate={someChecked}
+                    onCheckedChange={handleSelectAll}
+                    label="Select all items"
+                  />
+
+                  <div className="ml-6 space-y-2">
+                    {items.map((item) => (
+                      <Checkbox
+                        key={item.id}
+                        checked={item.checked}
+                        onCheckedChange={(checked) =>
+                          handleItemChange(item.id, checked)
+                        }
+                        label={item.label}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">Form Example</h3>
+                  <form className="space-y-3">
+                    <Checkbox label="Subscribe to newsletter" />
+                    <Checkbox label="I agree to the privacy policy" />
+                    <Checkbox label="Remember me on this device" />
+                    <Checkbox label="Send me promotional emails" />
+                  </form>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">State Debug</h3>
+                  <div className="rounded bg-gray-100 p-4 font-mono text-sm">
+                    <p>Basic: {basicChecked ? 'checked' : 'unchecked'}</p>
+                    <p>
+                      With Label: {withLabelChecked ? 'checked' : 'unchecked'}
+                    </p>
+                    <p>
+                      Select All:{' '}
+                      {allChecked ? 'all' : someChecked ? 'some' : 'none'}
+                    </p>
+                    <p>
+                      Items:{' '}
+                      {JSON.stringify(
+                        items.map((i) => ({ id: i.id, checked: i.checked }))
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Switch</h3>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="switch-1"
+                  checked={isSwitchOn}
+                  onChange={setIsSwitchOn}
+                />
+                <Label htmlFor="switch-1">Default Switch</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch id="switch-2" checked={true} disabled />
+                <Label htmlFor="switch-2">On (Disabled)</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch id="switch-3" checked={false} disabled />
+                <Label htmlFor="switch-3">Off (Disabled)</Label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Separator />
       {/* Select Component Section */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">Select (Custom Component)</h2>
