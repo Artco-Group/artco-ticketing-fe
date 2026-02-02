@@ -2,10 +2,6 @@ import { useId, useMemo, type ReactNode } from 'react';
 import {
   Input,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Card,
   Label,
   FilterButton,
