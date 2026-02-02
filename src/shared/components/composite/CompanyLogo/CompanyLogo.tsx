@@ -4,6 +4,9 @@ import { cn } from '@/lib/utils';
 /** Size variants aligned with design system (Avatar / spacing scale) */
 export type CompanyLogoSize = 'sm' | 'md' | 'lg';
 
+/** Shape variants for the logo container */
+export type CompanyLogoVariant = 'circle' | 'rounded';
+
 export interface CompanyLogoProps extends Omit<
   React.ImgHTMLAttributes<HTMLImageElement>,
   'src' | 'alt'
@@ -14,6 +17,8 @@ export interface CompanyLogoProps extends Omit<
   alt: string;
   /** Size: sm (32px), md (40px), lg (48px). */
   size?: CompanyLogoSize;
+  /** Shape variant: 'circle' (default) or 'rounded' (rounded square). */
+  variant?: CompanyLogoVariant;
   /** Fallback initials shown in a colored circle when no image (e.g. "AB" for Acme Corp). */
   fallback: string;
   /** Optional index into design-system fallback colors (0–N). When set, overrides hash-based color. */
@@ -59,7 +64,16 @@ function getFallbackBg(fallback: string): (typeof FALLBACK_BG_CLASSES)[number] {
 
 export const CompanyLogo = React.forwardRef<HTMLDivElement, CompanyLogoProps>(
   (
-    { src, alt, size = 'md', fallback, colorIndex, className, ...imgProps },
+    {
+      src,
+      alt,
+      size = 'md',
+      variant = 'circle',
+      fallback,
+      colorIndex,
+      className,
+      ...imgProps
+    },
     ref
   ) => {
     const [imageError, setImageError] = React.useState(false);
@@ -70,12 +84,14 @@ export const CompanyLogo = React.forwardRef<HTMLDivElement, CompanyLogoProps>(
         ? FALLBACK_BG_CLASSES[Math.abs(colorIndex) % FALLBACK_BG_CLASSES.length]
         : getFallbackBg(fallback);
     const initials = fallback.trim().slice(0, 2).toUpperCase() || '?';
+    const borderRadius = variant === 'circle' ? 'rounded-full' : 'rounded-md';
 
     return (
       <div
         ref={ref}
         className={cn(
-          'relative flex shrink-0 overflow-hidden rounded-full',
+          'relative flex shrink-0 overflow-hidden',
+          borderRadius,
           sizes.root,
           className
         )}
@@ -93,7 +109,8 @@ export const CompanyLogo = React.forwardRef<HTMLDivElement, CompanyLogoProps>(
         ) : (
           <div
             className={cn(
-              'flex h-full w-full items-center justify-center rounded-full font-medium text-white',
+              'flex h-full w-full items-center justify-center font-medium text-white',
+              borderRadius,
               sizes.text,
               fallbackBg
             )}

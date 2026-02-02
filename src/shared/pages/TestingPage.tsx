@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { CompanyLogo } from '@/shared/components/composite';
+import { clientLogos } from '@/assets/logos';
 import {
   Button,
   Badge,
@@ -32,7 +34,6 @@ import {
   DropdownMenuTrigger,
   Avatar,
   AvatarFallback,
-  CompanyLogo,
   Label,
   Separator,
   Spinner,
@@ -494,6 +495,24 @@ export default function TestingPage() {
             <CompanyLogo alt="Company B" fallback="XY" colorIndex={4} />
             <CompanyLogo alt="Company C" fallback="Artco" colorIndex={5} />
           </div>
+        </div>
+
+        <h3 className="mt-6 text-lg font-medium">Client Logos (21 variants)</h3>
+        <div className="grid grid-cols-7 gap-4">
+          {clientLogos.map((logo, i) => (
+            <div key={i} className="flex flex-col items-center gap-2">
+              <CompanyLogo
+                src={logo}
+                alt={`Logo ${i + 1}`}
+                fallback={`L${i + 1}`}
+                size="lg"
+                variant="rounded"
+              />
+              <span className="text-muted-foreground text-xs">
+                Logo {i + 1}
+              </span>
+            </div>
+          ))}
         </div>
       </section>
 
