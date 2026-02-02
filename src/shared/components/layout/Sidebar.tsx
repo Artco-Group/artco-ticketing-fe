@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { UserRole } from '@/types';
 import { hasRole } from '@/shared/utils/role-helpers';
 import { cn } from '@/lib/utils';
 import { Button, Icon, Input } from '@/shared/components/ui';
+import { MenuItem } from '@/shared/components/composite/MenuItem';
 
 const navigation = [
   {
@@ -23,6 +24,7 @@ const navigation = [
     name: 'Inbox',
     href: PAGE_ROUTES.INBOX.ROOT,
     icon: 'inbox' as const,
+    // badge: notificationCount, // Add notification count when available
     roles: [
       UserRole.CLIENT,
       UserRole.DEVELOPER,
@@ -145,53 +147,6 @@ export function Sidebar() {
     );
   };
 
-  const renderNavItem = (item: (typeof navigation)[0]) => {
-    const active = isActive(item.href);
-
-    return (
-      <NavLink
-        key={item.name}
-        to={item.href}
-        className={cn(
-          'flex items-center rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
-          'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-          collapsed && 'justify-center px-0'
-        )}
-      >
-        <Icon
-          name={item.icon}
-          size={collapsed ? 'lg' : 'xl'}
-          className={cn(!collapsed && 'mr-3')}
-        />
-        {!collapsed && <span className="truncate">{item.name}</span>}
-        {active && !collapsed && (
-          <div className="bg-sidebar-primary absolute top-0 left-0 h-full w-1 rounded-r" />
-        )}
-      </NavLink>
-    );
-  };
-
-  const renderGroupItem = (item: (typeof groups)[0]) => {
-    return (
-      <NavLink
-        key={item.id}
-        to={item.href}
-        className={cn(
-          'flex items-center rounded-md px-3 py-2 text-sm transition-colors',
-          'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-          collapsed && 'justify-center px-0'
-        )}
-      >
-        <Icon
-          name={item.icon}
-          size={collapsed ? 'md' : 'lg'}
-          className={cn(!collapsed && 'mr-2')}
-        />
-        {!collapsed && <span className="truncate">{item.name}</span>}
-      </NavLink>
-    );
-  };
-
   return (
     <aside
       className={cn(
@@ -298,7 +253,13 @@ export function Sidebar() {
           <ul className={cn('space-y-0.5', !collapsed && 'px-2')}>
             {filteredNav.map((item) => (
               <li key={item.name} className="relative">
-                {renderNavItem(item)}
+                <MenuItem
+                  icon={item.icon}
+                  label={item.name}
+                  href={item.href}
+                  active={isActive(item.href)}
+                  collapsed={collapsed}
+                />
               </li>
             ))}
           </ul>
@@ -328,7 +289,15 @@ export function Sidebar() {
             {groupsExpanded && (
               <ul className={cn('mt-1 space-y-1', !collapsed && 'pl-2')}>
                 {groups.map((item) => (
-                  <li key={item.id}>{renderGroupItem(item)}</li>
+                  <li key={item.id}>
+                    <MenuItem
+                      icon={item.icon}
+                      label={item.name}
+                      href={item.href}
+                      active={isActive(item.href)}
+                      collapsed={collapsed}
+                    />
+                  </li>
                 ))}
               </ul>
             )}
@@ -367,29 +336,18 @@ export function Sidebar() {
           )}
         >
           <div className={cn('flex flex-col gap-2', collapsed && 'gap-3')}>
-            <button
-              type="button"
-              className={cn(
-                'text-sidebar-foreground/70 flex items-center gap-2 rounded-md px-2 py-1 text-sm transition-colors',
-                'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-                collapsed && 'justify-center px-0'
-              )}
-            >
-              <Icon name="settings" size="lg" />
-              {!collapsed && <span>Settings</span>}
-            </button>
-
-            <button
-              type="button"
-              className={cn(
-                'text-sidebar-foreground/70 flex items-center gap-2 rounded-md px-2 py-1 text-sm transition-colors',
-                'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-                collapsed && 'justify-center px-0'
-              )}
-            >
-              <Icon name="info" size="lg" />
-              {!collapsed && <span>Help and first step</span>}
-            </button>
+            <MenuItem
+              icon="settings"
+              label="Settings"
+              collapsed={collapsed}
+              className="text-sidebar-foreground/70"
+            />
+            <MenuItem
+              icon="info"
+              label="Help and first step"
+              collapsed={collapsed}
+              className="text-sidebar-foreground/70"
+            />
           </div>
         </footer>
       </div>
