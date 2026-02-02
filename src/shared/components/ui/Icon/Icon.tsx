@@ -53,6 +53,8 @@ import sidebarSvg from '@/assets/icons/navigation/sidebar.svg?raw';
 import chevronSelectorSvg from '@/assets/icons/arrows/chevron-selector.svg?raw';
 
 import arrowLeftSvg from '@/assets/icons/arrows/arrow-left.svg?raw';
+import trendUpSvg from '@/assets/icons/arrows/trend-up.svg?raw';
+import trendDownSvg from '@/assets/icons/arrows/trend-down.svg?raw';
 import commandKSvg from '@/assets/icons/system/command-k.svg?raw';
 import trendUpSvg from '@/assets/icons/arrows/trend-up.svg?raw';
 import trendDownSvg from '@/assets/icons/arrows/trend-down.svg?raw';
@@ -103,6 +105,8 @@ export type IconName =
   | 'arrow-left'
   | 'notification'
   | 'double-check'
+  | 'trend-up'
+  | 'trend-down';
   | 'command-k';
   | 'double-check'
   | 'trend-up'
@@ -156,6 +160,8 @@ const iconMap: Record<IconName, string> = {
   'arrow-left': arrowLeftSvg,
   notification: notificationSvg,
   'double-check': doubleCheckSvg,
+  'trend-up': trendUpSvg,
+  'trend-down': trendDownSvg,
   'command-k': commandKSvg,
   'trend-up': trendUpSvg,
   'trend-down': trendDownSvg,
