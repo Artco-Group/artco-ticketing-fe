@@ -6,7 +6,7 @@ import { UserRole } from '@/types';
 import { hasRole } from '@/shared/utils/role-helpers';
 import { cn } from '@/lib/utils';
 import { Button, Icon, Input } from '@/shared/components/ui';
-import { MenuItem } from '@/shared/components/composite';
+import { MenuItem } from '@/shared/components/composite/MenuItem';
 
 const navigation = [
   {
