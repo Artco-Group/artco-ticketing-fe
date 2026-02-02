@@ -193,10 +193,10 @@ export function Icon({
     return null;
   }
 
-  const svgWithClass = svgContent.replace(
-    /<svg\s/,
-    `<svg class="${cn(sizeMap[size], className)}" `
-  );
+  const svgWithClass = svgContent
+    .replace(/\s*width="[^"]*"/g, '')
+    .replace(/\s*height="[^"]*"/g, '')
+    .replace(/<svg\s/, `<svg class="${cn(sizeMap[size], className)}" `);
 
   return (
     <span

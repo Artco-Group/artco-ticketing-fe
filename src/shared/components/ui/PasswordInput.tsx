@@ -1,6 +1,6 @@
 // src/shared/components/ui/PasswordInput/PasswordInput.tsx
 import { forwardRef, useState } from 'react';
-import { Input, type InputProps } from './input';
+import { Input, type InputProps } from './Input';
 import { Icon } from './Icon';
 import { PasswordStrengthMeter } from './PasswordStregthMeter';
 

@@ -34,7 +34,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Avatar,
-  AvatarFallback,
+  AvatarGroup,
   Label,
   Separator,
   Spinner,
@@ -901,18 +901,131 @@ export default function TestingPage() {
       <Separator />
 
       {/* Avatar Section */}
-      <section className="space-y-4">
+      <section className="space-y-6">
         <h2 className="text-2xl font-semibold">Avatars</h2>
-        <div className="flex gap-4">
-          <Avatar>
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <Avatar>
-            <AvatarFallback>AB</AvatarFallback>
-          </Avatar>
-          <Avatar>
-            <AvatarFallback>CD</AvatarFallback>
-          </Avatar>
+
+        {/* Avatar Sizes */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium">Sizes</h3>
+          <div className="flex items-end gap-4">
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Doe" size="sm" />
+              <span className="text-xs">sm (24px)</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Doe" size="md" />
+              <span className="text-xs">md (32px)</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Doe" size="lg" />
+              <span className="text-xs">lg (40px)</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Doe" size="xl" />
+              <span className="text-xs">xl (48px)</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Avatar Initials */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium">Initials Extraction</h3>
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John" size="lg" />
+              <span className="text-xs">&quot;John&quot; → J</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Doe" size="lg" />
+              <span className="text-xs">&quot;John Doe&quot; → JD</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Middle Doe" size="lg" />
+              <span className="text-xs">&quot;John Middle Doe&quot; → JD</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Avatar Group */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Avatar Group</h3>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <span className="text-muted-foreground text-sm">
+                6 users, max 3 shown:
+              </span>
+              <AvatarGroup
+                avatars={[
+                  { fallback: 'David Lee' },
+                  { fallback: 'Eve Martin' },
+                  { fallback: 'Frank White' },
+                  { fallback: 'Gina Brown' },
+                  { fallback: 'Harry Green' },
+                ]}
+                max={3}
+                size="md"
+              />
+            </div>
+            <div className="space-y-2">
+              <span className="text-muted-foreground text-sm">
+                Different sizes:
+              </span>
+              <div className="flex items-end gap-6">
+                <div className="flex flex-col items-center gap-2">
+                  <AvatarGroup
+                    avatars={[
+                      { fallback: 'A B' },
+                      { fallback: 'C D' },
+                      { fallback: 'E F' },
+                      { fallback: 'G H' },
+                    ]}
+                    max={2}
+                    size="sm"
+                  />
+                  <span className="text-xs">sm</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <AvatarGroup
+                    avatars={[
+                      { fallback: 'A B' },
+                      { fallback: 'C D' },
+                      { fallback: 'E F' },
+                      { fallback: 'G H' },
+                    ]}
+                    max={2}
+                    size="md"
+                  />
+                  <span className="text-xs">md</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <AvatarGroup
+                    avatars={[
+                      { fallback: 'A B' },
+                      { fallback: 'C D' },
+                      { fallback: 'E F' },
+                      { fallback: 'G H' },
+                    ]}
+                    max={2}
+                    size="lg"
+                  />
+                  <span className="text-xs">lg</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <AvatarGroup
+                    avatars={[
+                      { fallback: 'A B' },
+                      { fallback: 'C D' },
+                      { fallback: 'E F' },
+                      { fallback: 'G H' },
+                    ]}
+                    max={2}
+                    size="xl"
+                  />
+                  <span className="text-xs">xl</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
