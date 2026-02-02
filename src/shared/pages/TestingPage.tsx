@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { CompanyLogo } from '@/shared/components/composite';
+import { clientLogos } from '@/assets/logos';
 import {
   Button,
   Badge,
@@ -911,6 +913,63 @@ export default function TestingPage() {
           <Avatar>
             <AvatarFallback>CD</AvatarFallback>
           </Avatar>
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* Company Logo Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Company Logo</h2>
+        <p className="text-muted-foreground text-sm">
+          Fallback to initials in a colored circle when no image.
+        </p>
+        <div className="flex flex-wrap items-end gap-6">
+          <div className="flex flex-col items-center gap-2">
+            <CompanyLogo alt="Acme" fallback="Acme" size="sm" colorIndex={0} />
+            <span className="text-muted-foreground text-xs">sm</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <CompanyLogo
+              alt="Brand Co"
+              fallback="Brand Co"
+              size="md"
+              colorIndex={1}
+            />
+            <span className="text-muted-foreground text-xs">md</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <CompanyLogo
+              alt="Client Inc"
+              fallback="Client Inc"
+              size="lg"
+              colorIndex={2}
+            />
+            <span className="text-muted-foreground text-xs">lg</span>
+          </div>
+          <div className="flex items-end gap-4">
+            <CompanyLogo alt="Company A" fallback="A" colorIndex={3} />
+            <CompanyLogo alt="Company B" fallback="XY" colorIndex={4} />
+            <CompanyLogo alt="Company C" fallback="Artco" colorIndex={5} />
+          </div>
+        </div>
+
+        <h3 className="mt-6 text-lg font-medium">Client Logos (21 variants)</h3>
+        <div className="grid grid-cols-7 gap-4">
+          {clientLogos.map((logo, i) => (
+            <div key={i} className="flex flex-col items-center gap-2">
+              <CompanyLogo
+                src={logo}
+                alt={`Logo ${i + 1}`}
+                fallback={`L${i + 1}`}
+                size="lg"
+                variant="rounded"
+              />
+              <span className="text-muted-foreground text-xs">
+                Logo {i + 1}
+              </span>
+            </div>
+          ))}
         </div>
       </section>
 
