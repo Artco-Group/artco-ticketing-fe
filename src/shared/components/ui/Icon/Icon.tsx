@@ -53,6 +53,7 @@ import sidebarSvg from '@/assets/icons/navigation/sidebar.svg?raw';
 import chevronSelectorSvg from '@/assets/icons/arrows/chevron-selector.svg?raw';
 
 import arrowLeftSvg from '@/assets/icons/arrows/arrow-left.svg?raw';
+import commandKSvg from '@/assets/icons/system/command-k.svg?raw';
 
 export type IconName =
   | 'dashboard'
@@ -99,7 +100,8 @@ export type IconName =
   | 'settings'
   | 'arrow-left'
   | 'notification'
-  | 'double-check';
+  | 'double-check'
+  | 'command-k';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -149,6 +151,7 @@ const iconMap: Record<IconName, string> = {
   'arrow-left': arrowLeftSvg,
   notification: notificationSvg,
   'double-check': doubleCheckSvg,
+  'command-k': commandKSvg,
 };
 
 const sizeMap: Record<IconSize, string> = {
