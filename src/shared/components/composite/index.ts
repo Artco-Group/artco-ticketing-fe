@@ -1,2 +1,2 @@
-export * from './MenuItem';
+export * from './MemberPicker';
 export * from './NotificationBell';

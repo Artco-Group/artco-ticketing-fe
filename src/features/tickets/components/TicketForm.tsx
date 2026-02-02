@@ -53,12 +53,23 @@ function TicketForm({
   } = useTicketForm({ onSubmit });
 
   return (
-    <div className="p-6">
+    <div
+      className="p-6"
+      style={{ width: '100%', minWidth: '20rem', boxSizing: 'border-box' }}
+    >
       <h1 className="text-foreground mb-6 text-2xl font-bold">
         Kreiraj novi tiket
       </h1>
 
-      <div className="mx-auto max-w-4xl">
+      <div
+        className="mx-auto"
+        style={{
+          width: '100%',
+          maxWidth: '56rem',
+          minWidth: '20rem',
+          boxSizing: 'border-box',
+        }}
+      >
         <Card>
           <CardHeader>
             <CardTitle className="sr-only">Forma za kreiranje tiketa</CardTitle>
