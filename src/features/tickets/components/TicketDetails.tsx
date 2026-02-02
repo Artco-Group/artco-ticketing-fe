@@ -10,9 +10,11 @@ import {
   type TicketId,
 } from '@/types';
 import {
-  statusBadgeConfig,
-  priorityBadgeConfig,
   categoryBadgeConfig,
+  getPriorityIcon,
+  getPriorityLabel,
+  getStatusIcon,
+  getStatusLabel,
 } from '@/shared/utils/ticket-helpers';
 import { Card } from '@/shared/components/ui';
 import { Badge } from '@/shared/components/ui';
@@ -94,12 +96,8 @@ function TicketDetails({
     {
       label: 'Priority',
       value: (
-        <Badge
-          icon={priorityBadgeConfig[
-            ticket.priority as TicketPriority
-          ].getIcon?.()}
-        >
-          {priorityBadgeConfig[ticket.priority as TicketPriority].label}
+        <Badge icon={getPriorityIcon(ticket.priority as TicketPriority)}>
+          {getPriorityLabel(ticket.priority as TicketPriority)}
         </Badge>
       ),
     }
@@ -134,11 +132,8 @@ function TicketDetails({
         <h1 className="text-greyscale-900 text-2xl font-bold">
           {ticket.title}
         </h1>
-        <Badge
-          icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
-          size="lg"
-        >
-          {statusBadgeConfig[ticket.status as TicketStatus].label}
+        <Badge icon={getStatusIcon(ticket.status as TicketStatus)} size="lg">
+          {getStatusLabel(ticket.status as TicketStatus)}
         </Badge>
       </div>
 

@@ -26,10 +26,12 @@ import {
   Icon,
 } from '@/shared';
 import {
-  statusBadgeConfig,
-  priorityBadgeConfig,
   categoryBadgeConfig,
   resolveAssigneeName,
+  getPriorityIcon,
+  getPriorityLabel,
+  getStatusIcon,
+  getStatusLabel,
 } from '@/shared/utils/ticket-helpers';
 import TicketCard from './TicketCard';
 
@@ -181,19 +183,13 @@ function TableLayout({
       </Badge>
     )),
     customColumn<Ticket>('priority', 'Priority', (ticket) => (
-      <Badge
-        icon={priorityBadgeConfig[
-          ticket.priority as TicketPriority
-        ].getIcon?.()}
-      >
-        {priorityBadgeConfig[ticket.priority as TicketPriority].label}
+      <Badge icon={getPriorityIcon(ticket.priority as TicketPriority)}>
+        {getPriorityLabel(ticket.priority as TicketPriority)}
       </Badge>
     )),
     customColumn<Ticket>('status', 'Status', (ticket) => (
-      <Badge
-        icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
-      >
-        {statusBadgeConfig[ticket.status as TicketStatus].label}
+      <Badge icon={getStatusIcon(ticket.status as TicketStatus)}>
+        {getStatusLabel(ticket.status as TicketStatus)}
       </Badge>
     )),
     customColumn<Ticket>('assignedTo', 'Assigned To', (ticket) => (
@@ -229,19 +225,13 @@ function TableLayout({
       </Badge>
     )),
     customColumn<Ticket>('priority', 'Priority', (ticket) => (
-      <Badge
-        icon={priorityBadgeConfig[
-          ticket.priority as TicketPriority
-        ].getIcon?.()}
-      >
-        {priorityBadgeConfig[ticket.priority as TicketPriority].label}
+      <Badge icon={getPriorityIcon(ticket.priority as TicketPriority)}>
+        {getPriorityLabel(ticket.priority as TicketPriority)}
       </Badge>
     )),
     customColumn<Ticket>('status', 'Status', (ticket) => (
-      <Badge
-        icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
-      >
-        {statusBadgeConfig[ticket.status as TicketStatus].label}
+      <Badge icon={getStatusIcon(ticket.status as TicketStatus)}>
+        {getStatusLabel(ticket.status as TicketStatus)}
       </Badge>
     )),
     dateColumn<Ticket>('createdAt', 'Created', formatDateLocalized, {

@@ -6,9 +6,11 @@ import {
   type Ticket,
 } from '@/types';
 import {
-  statusBadgeConfig,
-  priorityBadgeConfig,
   categoryBadgeConfig,
+  getPriorityIcon,
+  getPriorityLabel,
+  getStatusIcon,
+  getStatusLabel,
 } from '@/shared/utils/ticket-helpers';
 import {
   Card,
@@ -38,10 +40,8 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
       <CardContent className="space-y-4">
         {/* Status & Category */}
         <div className="flex flex-wrap gap-2">
-          <Badge
-            icon={statusBadgeConfig[ticket.status as TicketStatus].getIcon?.()}
-          >
-            {statusBadgeConfig[ticket.status as TicketStatus].label}
+          <Badge icon={getStatusIcon(ticket.status as TicketStatus)}>
+            {getStatusLabel(ticket.status as TicketStatus)}
           </Badge>
           <Badge>
             {categoryBadgeConfig[ticket.category as TicketCategory].label}
@@ -52,12 +52,8 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
 
         {/* Priority & Date */}
         <div className="flex-between">
-          <Badge
-            icon={priorityBadgeConfig[
-              ticket.priority as TicketPriority
-            ].getIcon?.()}
-          >
-            {priorityBadgeConfig[ticket.priority as TicketPriority].label}
+          <Badge icon={getPriorityIcon(ticket.priority as TicketPriority)}>
+            {getPriorityLabel(ticket.priority as TicketPriority)}
           </Badge>
           <span className="text-muted-xs">
             {ticket.createdAt ? formatDateLocalized(ticket.createdAt) : ''}

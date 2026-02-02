@@ -311,3 +311,31 @@ export const categoryBadgeConfig: Record<TicketCategory, BadgeConfig> = {
     label: 'Other',
   },
 };
+
+/**
+ * Get the icon for a given priority
+ */
+export function getPriorityIcon(priority: TicketPriority): ReactNode {
+  return priorityBadgeConfig[priority]?.getIcon?.() ?? null;
+}
+
+/**
+ * Get the icon for a given status
+ */
+export function getStatusIcon(status: TicketStatus): ReactNode {
+  return statusBadgeConfig[status]?.getIcon?.() ?? null;
+}
+
+/**
+ * Get the label for a given priority
+ */
+export function getPriorityLabel(priority: TicketPriority): string {
+  return priorityBadgeConfig[priority]?.label ?? '';
+}
+
+/**
+ * Get the label for a given status
+ */
+export function getStatusLabel(status: TicketStatus): string {
+  return statusBadgeConfig[status]?.label ?? '';
+}
