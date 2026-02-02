@@ -37,6 +37,7 @@ import {
   Spinner,
   EmptyState,
   Icon,
+  FilterButton,
 } from '@/shared/components/ui';
 import { MemberPicker, StatsCard } from '@/shared/components/composite';
 
@@ -91,6 +92,8 @@ export default function TestingPage() {
   const [isChecked, setIsChecked] = useState(false);
   const [selectValue, setSelectValue] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [filterValue, setFilterValue] = useState<string | null>(null);
+  const [isFilterActive, setIsFilterActive] = useState(false);
   const [selectedMember, setSelectedMember] = useState('');
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
@@ -102,6 +105,75 @@ export default function TestingPage() {
           A comprehensive showcase of all available UI components
         </p>
       </div>
+
+      <Separator />
+
+      {/* Filter Buttons Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Filter Buttons</h2>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Basic States</h3>
+          <div className="flex flex-wrap gap-3">
+            <FilterButton label="Inactive Filter" />
+            <FilterButton label="Active Filter" active={true} />
+            <FilterButton
+              label="With Icon"
+              icon={<Icon name="search" size="sm" />}
+            />
+            <FilterButton
+              label="Active with Icon"
+              icon={<Icon name="settings" size="sm" />}
+              active={true}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">With Options (Cycle Through)</h3>
+          <div className="flex flex-wrap gap-3">
+            <FilterButton
+              label="Priority"
+              icon={<Icon name="priority" size="sm" />}
+              options={['Low', 'Medium', 'High']}
+              value={filterValue}
+              onChange={setFilterValue}
+            />
+            <FilterButton
+              label="Status"
+              options={['Open', 'In Progress', 'Closed']}
+            />
+            <FilterButton
+              label="Type"
+              icon={<Icon name="file-text" size="sm" />}
+              options={['Bug', 'Feature', 'Task']}
+            />
+          </div>
+          {filterValue && (
+            <p className="text-muted-foreground text-sm">
+              Selected priority: <strong>{filterValue}</strong>
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Controlled State</h3>
+          <div className="flex flex-wrap gap-3">
+            <FilterButton
+              label="Controlled Filter"
+              active={isFilterActive}
+              onClick={() => setIsFilterActive(!isFilterActive)}
+            />
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsFilterActive(!isFilterActive)}
+            >
+              Toggle Filter
+            </Button>
+          </div>
+        </div>
+      </section>
 
       <Separator />
 

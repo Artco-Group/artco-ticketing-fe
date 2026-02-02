@@ -55,6 +55,7 @@ import chevronSelectorSvg from '@/assets/icons/arrows/chevron-selector.svg?raw';
 import arrowLeftSvg from '@/assets/icons/arrows/arrow-left.svg?raw';
 import trendUpSvg from '@/assets/icons/arrows/trend-up.svg?raw';
 import trendDownSvg from '@/assets/icons/arrows/trend-down.svg?raw';
+import commandKSvg from '@/assets/icons/system/command-k.svg?raw';
 
 export type IconName =
   | 'dashboard'
@@ -104,6 +105,7 @@ export type IconName =
   | 'double-check'
   | 'trend-up'
   | 'trend-down';
+  | 'command-k';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -155,6 +157,7 @@ const iconMap: Record<IconName, string> = {
   'double-check': doubleCheckSvg,
   'trend-up': trendUpSvg,
   'trend-down': trendDownSvg,
+  'command-k': commandKSvg,
 };
 
 const sizeMap: Record<IconSize, string> = {
