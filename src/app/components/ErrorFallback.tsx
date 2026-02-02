@@ -1,5 +1,4 @@
 import type { ErrorInfo } from 'react';
-import { createPortal } from 'react-dom';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { Icon, Button } from '@/shared/components/ui';
 
@@ -140,7 +139,4 @@ export function ErrorFallback({
       </div>
     </div>
   );
-
-  // Render via portal to escape any parent layout constraints
-  return createPortal(content, document.body);
 }
