@@ -1,22 +1,55 @@
 import * as React from 'react';
-
 import { cn } from '@/lib/utils';
 
-const Textarea = React.forwardRef<
-  HTMLTextAreaElement,
-  React.ComponentProps<'textarea'>
->(({ className, ...props }, ref) => {
-  return (
-    <textarea
-      className={cn(
-        'border-input placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[60px] w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-sm focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-        className
-      )}
-      ref={ref}
-      {...props}
-    />
-  );
-});
+export interface TextareaProps extends React.ComponentProps<'textarea'> {
+  label?: string;
+  error?: string;
+  helperText?: string;
+}
+
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, label, error, helperText, ...props }, ref) => {
+    return (
+      <div className="flex w-full flex-col gap-2">
+        {label && (
+          <label
+            className={cn(
+              'text-text-tertiary font-[Inter] text-xs leading-4 font-normal',
+              error && 'text-destructive'
+            )}
+          >
+            {label}
+          </label>
+        )}
+        <textarea
+          className={cn(
+            'bg-component-input outline-border-default min-h-[100px] w-full rounded-lg px-3 py-3 shadow-[inset_0px_0px_0px_1px_rgba(238,239,241,1.00)] outline-1 -outline-offset-1',
+            'text-text-secondary font-[Inter] text-sm leading-5 font-medium',
+            'placeholder:text-text-placeholder placeholder:font-[Inter] placeholder:text-sm placeholder:leading-5 placeholder:font-medium',
+            'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:-outline-offset-2',
+            'disabled:cursor-not-allowed disabled:opacity-50',
+            'resize-y transition-colors',
+            error && 'outline-destructive focus-visible:outline-destructive',
+            className
+          )}
+          ref={ref}
+          aria-invalid={!!error}
+          {...props}
+        />
+        {(error || helperText) && (
+          <p
+            className={cn(
+              'font-[Inter] text-xs leading-4 font-normal',
+              error ? 'text-destructive font-medium' : 'text-text-tertiary'
+            )}
+          >
+            {error || helperText}
+          </p>
+        )}
+      </div>
+    );
+  }
+);
 Textarea.displayName = 'Textarea';
 
 export { Textarea };

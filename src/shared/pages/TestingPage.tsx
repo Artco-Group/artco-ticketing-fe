@@ -11,6 +11,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectField,
   Card,
   CardContent,
   CardDescription,
@@ -38,8 +39,54 @@ import {
   EmptyState,
   Icon,
   Switch,
+  FilterButton,
 } from '@/shared/components/ui';
 import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
+import { MemberPicker } from '@/shared/components/composite';
+
+// Mock user data for MemberPicker demo
+const mockUsers = [
+  {
+    _id: '1',
+    name: 'John Doe',
+    email: 'john.doe@artco.com',
+    role: 'DEVELOPER' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '2',
+    name: 'Jane Smith',
+    email: 'jane.smith@artco.com',
+    role: 'ENG_LEAD' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '3',
+    name: 'Bob Johnson',
+    email: 'bob.johnson@artco.com',
+    role: 'DEVELOPER' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '4',
+    name: 'Alice Williams',
+    email: 'alice.williams@artco.com',
+    role: 'CLIENT' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '5',
+    name: 'Charlie Brown',
+    email: 'charlie.brown@artco.com',
+    role: 'ADMIN' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
 
 export default function TestingPage() {
   const [inputValue, setInputValue] = useState('');
@@ -48,6 +95,10 @@ export default function TestingPage() {
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [selectValue, setSelectValue] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [filterValue, setFilterValue] = useState<string | null>(null);
+  const [isFilterActive, setIsFilterActive] = useState(false);
+  const [selectedMember, setSelectedMember] = useState('');
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [basicChecked, setBasicChecked] = useState(false);
   const [withLabelChecked, setWithLabelChecked] = useState(true);
   const [disabledChecked, setDisabledChecked] = useState(true);
@@ -73,7 +124,7 @@ export default function TestingPage() {
       items.map((item) => (item.id === id ? { ...item, checked } : item))
     );
   };
-
+ 
   return (
     <div className="container mx-auto space-y-8 p-6">
       <div>
@@ -82,6 +133,75 @@ export default function TestingPage() {
           A comprehensive showcase of all available UI components
         </p>
       </div>
+
+      <Separator />
+
+      {/* Filter Buttons Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Filter Buttons</h2>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Basic States</h3>
+          <div className="flex flex-wrap gap-3">
+            <FilterButton label="Inactive Filter" />
+            <FilterButton label="Active Filter" active={true} />
+            <FilterButton
+              label="With Icon"
+              icon={<Icon name="search" size="sm" />}
+            />
+            <FilterButton
+              label="Active with Icon"
+              icon={<Icon name="settings" size="sm" />}
+              active={true}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">With Options (Cycle Through)</h3>
+          <div className="flex flex-wrap gap-3">
+            <FilterButton
+              label="Priority"
+              icon={<Icon name="priority" size="sm" />}
+              options={['Low', 'Medium', 'High']}
+              value={filterValue}
+              onChange={setFilterValue}
+            />
+            <FilterButton
+              label="Status"
+              options={['Open', 'In Progress', 'Closed']}
+            />
+            <FilterButton
+              label="Type"
+              icon={<Icon name="file-text" size="sm" />}
+              options={['Bug', 'Feature', 'Task']}
+            />
+          </div>
+          {filterValue && (
+            <p className="text-muted-foreground text-sm">
+              Selected priority: <strong>{filterValue}</strong>
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Controlled State</h3>
+          <div className="flex flex-wrap gap-3">
+            <FilterButton
+              label="Controlled Filter"
+              active={isFilterActive}
+              onClick={() => setIsFilterActive(!isFilterActive)}
+            />
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsFilterActive(!isFilterActive)}
+            >
+              Toggle Filter
+            </Button>
+          </div>
+        </div>
+      </section>
 
       <Separator />
 
@@ -423,8 +543,8 @@ export default function TestingPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="test-select">Select</Label>
-                <Select value={selectValue} onValueChange={setSelectValue}>
+                <Label htmlFor="test-select">Select (Primitive)</Label>
+                <SelectField value={selectValue} onValueChange={setSelectValue}>
                   <SelectTrigger id="test-select">
                     <SelectValue placeholder="Select an option" />
                   </SelectTrigger>
@@ -433,7 +553,7 @@ export default function TestingPage() {
                     <SelectItem value="option2">Option 2</SelectItem>
                     <SelectItem value="option3">Option 3</SelectItem>
                   </SelectContent>
-                </Select>
+                </SelectField>
               </div>
             </div>
           </div>
@@ -585,6 +705,108 @@ export default function TestingPage() {
       </section>
 
       <Separator />
+      {/* Select Component Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Select (Custom Component)</h2>
+        <p className="text-muted-foreground">
+          High-level Select component matching Figma design specifications
+        </p>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Basic SelectField */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Basic Select</h3>
+            <Select
+              label="Category"
+              options={[
+                { label: 'Option 1', value: 'option1' },
+                { label: 'Option 2', value: 'option2' },
+                { label: 'Option 3', value: 'option3' },
+              ]}
+              placeholder="Choose an option"
+              value={selectValue}
+              onChange={setSelectValue}
+            />
+          </div>
+
+          {/* SelectField with Error */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Select with Error</h3>
+            <Select
+              label="Priority"
+              options={[
+                { label: 'Low', value: 'low' },
+                { label: 'Medium', value: 'medium' },
+                { label: 'High', value: 'high' },
+                { label: 'Critical', value: 'critical' },
+              ]}
+              placeholder="Select priority"
+              error="This field is required"
+            />
+          </div>
+
+          {/* Disabled SelectField */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Disabled Select</h3>
+            <Select
+              label="Status"
+              options={[
+                { label: 'Active', value: 'active' },
+                { label: 'Inactive', value: 'inactive' },
+              ]}
+              placeholder="Cannot select"
+              disabled
+            />
+          </div>
+
+          {/* SelectField with Helper Text */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Select with Helper Text</h3>
+            <Select
+              label="Size"
+              options={[
+                { label: 'Small', value: 'sm' },
+                { label: 'Medium', value: 'md' },
+                { label: 'Large', value: 'lg' },
+              ]}
+              placeholder="Pick a size"
+              helperText="Choose the size that fits best"
+            />
+          </div>
+
+          {/* SelectField with Pre-selected Value */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Pre-selected Value</h3>
+            <Select
+              label="Default Selection"
+              options={[
+                { label: 'Option A', value: 'a' },
+                { label: 'Option B', value: 'b' },
+                { label: 'Option C', value: 'c' },
+              ]}
+              defaultValue="b"
+              placeholder="Select an option"
+            />
+          </div>
+
+          {/* SelectField with Disabled Option */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Disabled Option</h3>
+            <Select
+              label="Role"
+              options={[
+                { label: 'Admin', value: 'admin', disabled: true },
+                { label: 'Developer', value: 'developer' },
+                { label: 'Client', value: 'client' },
+              ]}
+              placeholder="Select a role"
+              helperText="Admin role is disabled"
+            />
+          </div>
+        </div>
+      </section>
+
+      <Separator />
 
       {/* Cards Section */}
       <section className="space-y-4">
@@ -701,6 +923,56 @@ export default function TestingPage() {
           <Spinner size="sm" />
           <Spinner size="md" />
           <Spinner size="lg" />
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* MemberPicker Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Member Picker</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label>Single Select</Label>
+            <MemberPicker
+              value={selectedMember}
+              options={mockUsers}
+              onChange={(value) => setSelectedMember(value as string)}
+              placeholder="Select a member..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Multi Select</Label>
+            <MemberPicker
+              value={selectedMembers}
+              options={mockUsers}
+              multiple
+              onChange={(value) => setSelectedMembers(value as string[])}
+              placeholder="Select members..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Disabled</Label>
+            <MemberPicker
+              value=""
+              options={mockUsers}
+              onChange={() => {}}
+              placeholder="This is disabled"
+              disabled
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>No members to select</Label>
+            <MemberPicker
+              value=""
+              options={[]}
+              onChange={() => {}}
+              placeholder="Select a member..."
+            />
+          </div>
         </div>
       </section>
 

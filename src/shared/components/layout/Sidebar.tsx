@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { UserRole } from '@/types';
 import { hasRole } from '@/shared/utils/role-helpers';
 import { cn } from '@/lib/utils';
-import { Button, Icon, Input } from '@/shared/components/ui';
-import { MenuItem } from '@/shared/components/composite';
+import { Button, Icon } from '@/shared/components/ui';
+import { SearchBar } from '../composite';
+import { useSidebar } from './useSidebar';
+import { MenuItem } from '@/shared/components/composite/MenuItem';
 
 const navigation = [
   {
@@ -120,24 +122,18 @@ const groups = [
 export function Sidebar() {
   const { user } = useAuth();
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, setCollapsed } = useSidebar();
   const [groupsExpanded, setGroupsExpanded] = useState(true);
-
-  // Keep sidebar collapsed on smaller screens so content doesn't clip
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setCollapsed(true);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [searchValue, setSearchValue] = useState('');
 
   const filteredNav = navigation.filter(
-    (item) => !item.roles || hasRole(user, item.roles)
+    (item) =>
+      (!item.roles || hasRole(user, item.roles)) &&
+      item.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
+  const filteredGroups = groups.filter((item) =>
+    item.name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const isActive = (href: string) => {
@@ -181,14 +177,17 @@ export function Sidebar() {
             {!collapsed && (
               <>
                 <div className="min-w-0">
-                  <p className="text-sidebar-foreground text-h6 truncate">
+                  <p
+                    className="text-sidebar-foreground text-h6 truncate"
+                    title="Workspace"
+                  >
                     Workspace
                   </p>
                 </div>
                 <Icon
                   name="chevron-selector"
                   size="lg"
-                  className="text-sidebar-foreground/70 ml-1 shrink-0"
+                  className="text-sidebar-foreground/70 shrink-0"
                   aria-label="Switch workspace"
                 />
               </>
@@ -205,7 +204,7 @@ export function Sidebar() {
             )}
             onClick={() => {
               if (window.innerWidth < 1024) return;
-              setCollapsed((prev) => !prev);
+              setCollapsed(!collapsed);
             }}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -216,29 +215,19 @@ export function Sidebar() {
               )}
               aria-hidden
             >
-              <Icon name="sidebar" size="lg" />
+              <Icon name="sidebar" size="md" />
             </span>
           </button>
         </div>
 
         {/* Search */}
         {!collapsed && (
-          <div className="px-4 pb-3">
-            <div className="relative">
-              <div className="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 items-center">
-                <Icon
-                  name="search"
-                  size="md"
-                  className="text-sidebar-foreground/60"
-                  aria-label="Search"
-                />
-              </div>
-              <Input
-                type="search"
-                placeholder="Search"
-                className="border-sidebar-border bg-sidebar h-9 w-full rounded-lg border pl-10 text-sm"
-              />
-            </div>
+          <div className="px-4 pb-2">
+            <SearchBar
+              value={searchValue}
+              placeholder="Search"
+              onChange={setSearchValue}
+            />
           </div>
         )}
 
@@ -288,7 +277,7 @@ export function Sidebar() {
 
             {groupsExpanded && (
               <ul className={cn('mt-1 space-y-1', !collapsed && 'pl-2')}>
-                {groups.map((item) => (
+                {filteredGroups.map((item) => (
                   <li key={item.id}>
                     <MenuItem
                       icon={item.icon}

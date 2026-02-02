@@ -29,18 +29,42 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ref
   ) => {
     const sizeClasses = {
-      sm: 'h-8 text-xs',
-      md: 'h-9 text-sm',
-      lg: 'h-10 text-base',
+      sm: 'h-9 text-sm px-2.5',
+      md: 'h-11 text-sm px-3',
+      lg: 'h-12 text-base px-4',
+    };
+
+    const iconSizeClasses = {
+      sm: 'left-2',
+      md: 'left-3',
+      lg: 'left-4',
+    };
+
+    const iconRightSizeClasses = {
+      sm: 'right-2',
+      md: 'right-3',
+      lg: 'right-4',
+    };
+
+    const iconPaddingClasses = {
+      sm: 'pl-8',
+      md: 'pl-10',
+      lg: 'pl-12',
+    };
+
+    const iconRightPaddingClasses = {
+      sm: 'pr-8',
+      md: 'pr-10',
+      lg: 'pr-12',
     };
 
     return (
-      <div className="w-full">
+      <div className="flex w-full flex-col gap-2">
         {label && (
           <label
             className={cn(
-              'text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
-              error ? 'text-destructive' : 'text-muted-foreground'
+              'text-text-tertiary font-[Inter] text-xs leading-4 font-normal',
+              error && 'text-destructive'
             )}
           >
             {label}
@@ -48,18 +72,28 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative">
           {leftIcon && (
-            <div className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 items-center transition-colors">
+            <div
+              className={cn(
+                'text-icon-tertiary pointer-events-none absolute top-1/2 flex -translate-y-1/2 items-center transition-colors',
+                iconSizeClasses[size]
+              )}
+            >
               {leftIcon}
             </div>
           )}
           <input
             type={type}
             className={cn(
-              'border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
-              error && 'border-destructive focus-visible:ring-destructive',
-              leftIcon && 'pl-10',
-              rightIcon && 'pr-10',
+              'bg-component-input outline-border-default flex w-full items-center justify-start overflow-hidden rounded-lg shadow-[inset_0px_0px_0px_1px_rgba(238,239,241,1.00)] outline-1 -outline-offset-1',
+              'text-text-secondary font-[Inter] leading-5 font-medium',
+              'placeholder:text-text-placeholder placeholder:font-[Inter] placeholder:leading-5 placeholder:font-medium',
+              'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:-outline-offset-2',
+              'disabled:cursor-not-allowed disabled:opacity-50',
+              'transition-colors',
               sizeClasses[size],
+              error && 'outline-destructive focus-visible:outline-destructive',
+              leftIcon && iconPaddingClasses[size],
+              rightIcon && iconRightPaddingClasses[size],
               className
             )}
             ref={ref}
@@ -67,7 +101,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {rightIcon && (
-            <div className="text-muted-foreground absolute top-1/2 right-3 flex -translate-y-1/2 items-center transition-colors">
+            <div
+              className={cn(
+                'text-icon-tertiary absolute top-1/2 flex -translate-y-1/2 items-center transition-colors',
+                iconRightSizeClasses[size]
+              )}
+            >
               {rightIcon}
             </div>
           )}
@@ -75,8 +114,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {(error || helperText) && (
           <p
             className={cn(
-              'mt-1.5 text-[0.8rem]',
-              error ? 'text-destructive font-medium' : 'text-muted-foreground'
+              'font-[Inter] text-xs leading-4 font-normal',
+              error ? 'text-destructive font-medium' : 'text-text-tertiary'
             )}
           >
             {error || helperText}
