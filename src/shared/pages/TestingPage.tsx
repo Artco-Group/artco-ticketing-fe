@@ -38,7 +38,53 @@ import {
   Spinner,
   EmptyState,
   Icon,
+  FilterButton,
 } from '@/shared/components/ui';
+import { MemberPicker } from '@/shared/components/composite';
+
+// Mock user data for MemberPicker demo
+const mockUsers = [
+  {
+    _id: '1',
+    name: 'John Doe',
+    email: 'john.doe@artco.com',
+    role: 'DEVELOPER' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '2',
+    name: 'Jane Smith',
+    email: 'jane.smith@artco.com',
+    role: 'ENG_LEAD' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '3',
+    name: 'Bob Johnson',
+    email: 'bob.johnson@artco.com',
+    role: 'DEVELOPER' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '4',
+    name: 'Alice Williams',
+    email: 'alice.williams@artco.com',
+    role: 'CLIENT' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '5',
+    name: 'Charlie Brown',
+    email: 'charlie.brown@artco.com',
+    role: 'ADMIN' as const,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
 
 export default function TestingPage() {
   const [inputValue, setInputValue] = useState('');
@@ -47,6 +93,10 @@ export default function TestingPage() {
   const [isChecked, setIsChecked] = useState(false);
   const [selectValue, setSelectValue] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [filterValue, setFilterValue] = useState<string | null>(null);
+  const [isFilterActive, setIsFilterActive] = useState(false);
+  const [selectedMember, setSelectedMember] = useState('');
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
   return (
     <div className="container mx-auto space-y-8 p-6">
@@ -56,6 +106,75 @@ export default function TestingPage() {
           A comprehensive showcase of all available UI components
         </p>
       </div>
+
+      <Separator />
+
+      {/* Filter Buttons Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Filter Buttons</h2>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Basic States</h3>
+          <div className="flex flex-wrap gap-3">
+            <FilterButton label="Inactive Filter" />
+            <FilterButton label="Active Filter" active={true} />
+            <FilterButton
+              label="With Icon"
+              icon={<Icon name="search" size="sm" />}
+            />
+            <FilterButton
+              label="Active with Icon"
+              icon={<Icon name="settings" size="sm" />}
+              active={true}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">With Options (Cycle Through)</h3>
+          <div className="flex flex-wrap gap-3">
+            <FilterButton
+              label="Priority"
+              icon={<Icon name="priority" size="sm" />}
+              options={['Low', 'Medium', 'High']}
+              value={filterValue}
+              onChange={setFilterValue}
+            />
+            <FilterButton
+              label="Status"
+              options={['Open', 'In Progress', 'Closed']}
+            />
+            <FilterButton
+              label="Type"
+              icon={<Icon name="file-text" size="sm" />}
+              options={['Bug', 'Feature', 'Task']}
+            />
+          </div>
+          {filterValue && (
+            <p className="text-muted-foreground text-sm">
+              Selected priority: <strong>{filterValue}</strong>
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Controlled State</h3>
+          <div className="flex flex-wrap gap-3">
+            <FilterButton
+              label="Controlled Filter"
+              active={isFilterActive}
+              onClick={() => setIsFilterActive(!isFilterActive)}
+            />
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsFilterActive(!isFilterActive)}
+            >
+              Toggle Filter
+            </Button>
+          </div>
+        </div>
+      </section>
 
       <Separator />
 
@@ -570,6 +689,56 @@ export default function TestingPage() {
           <Spinner size="sm" />
           <Spinner size="md" />
           <Spinner size="lg" />
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* MemberPicker Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Member Picker</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label>Single Select</Label>
+            <MemberPicker
+              value={selectedMember}
+              options={mockUsers}
+              onChange={(value) => setSelectedMember(value as string)}
+              placeholder="Select a member..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Multi Select</Label>
+            <MemberPicker
+              value={selectedMembers}
+              options={mockUsers}
+              multiple
+              onChange={(value) => setSelectedMembers(value as string[])}
+              placeholder="Select members..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Disabled</Label>
+            <MemberPicker
+              value=""
+              options={mockUsers}
+              onChange={() => {}}
+              placeholder="This is disabled"
+              disabled
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>No members to select</Label>
+            <MemberPicker
+              value=""
+              options={[]}
+              onChange={() => {}}
+              placeholder="Select a member..."
+            />
+          </div>
         </div>
       </section>
 

@@ -265,7 +265,6 @@ function TableLayout({
         {
           key: 'status',
           label: 'Status',
-          type: 'select' as const,
           value: filters.status,
           options: [
             { value: 'All', label: 'All Status' },
@@ -279,7 +278,6 @@ function TableLayout({
         {
           key: 'priority',
           label: 'Priority',
-          type: 'select' as const,
           value: filters.priority,
           options: [
             { value: 'All', label: 'All Priority' },
@@ -292,7 +290,6 @@ function TableLayout({
         {
           key: 'client',
           label: 'Client',
-          type: 'select' as const,
           value: filters.client,
           options: [
             { value: 'All', label: 'All Clients' },
@@ -311,7 +308,6 @@ function TableLayout({
         {
           key: 'assignee',
           label: 'Assignee',
-          type: 'select' as const,
           value: filters.assignee,
           options: [
             { value: 'All', label: 'All Assignees' },
@@ -327,7 +323,6 @@ function TableLayout({
         {
           key: 'sortBy',
           label: 'Sort by',
-          type: 'select' as const,
           value: filters.sortBy,
           options: [
             { value: 'Status', label: 'Status' },
@@ -346,7 +341,6 @@ function TableLayout({
         {
           key: 'status',
           label: 'Status',
-          type: 'select' as const,
           value: filters.status,
           options: [
             { value: 'All', label: 'All Status' },
@@ -358,7 +352,6 @@ function TableLayout({
         {
           key: 'priority',
           label: 'Priority',
-          type: 'select' as const,
           value: filters.priority,
           options: [
             { value: 'All', label: 'All Priority' },
@@ -371,7 +364,6 @@ function TableLayout({
         {
           key: 'sortBy',
           label: 'Sort by',
-          type: 'select' as const,
           value: filters.sortBy,
           options: [
             { value: 'Created Date', label: 'Created Date' },
