@@ -1,10 +1,5 @@
-import { type User, getInitials } from '@artco-group/artco-ticketing-sync';
-import {
-  Avatar,
-  AvatarFallback,
-  DropdownMenuItem,
-  Icon,
-} from '@/shared/components/ui';
+import type { User } from '@artco-group/artco-ticketing-sync';
+import { Avatar, DropdownMenuItem, Icon } from '@/shared/components/ui';
 
 interface MemberOptionProps {
   user: User;
@@ -25,11 +20,7 @@ export function MemberOption({
       }}
     >
       <div className="flex flex-1 items-center gap-2">
-        <Avatar className="h-6 w-6">
-          <AvatarFallback className="text-xs">
-            {getInitials(user.name || '')}
-          </AvatarFallback>
-        </Avatar>
+        <Avatar fallback={user.name || ''} size="sm" className="h-6 w-6" />
         <div className="flex flex-col">
           <span className="text-sm font-medium">{user.name}</span>
           <span className="text-muted-foreground text-xs">{user.email}</span>
