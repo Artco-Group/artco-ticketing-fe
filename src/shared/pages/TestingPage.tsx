@@ -42,6 +42,8 @@ import {
   Icon,
   Switch,
   FilterButton,
+  FilterPanel,
+  type FilterPanelValues,
 } from '@/shared/components/ui';
 import { MemberPicker, StatsCard } from '@/shared/components/composite';
 import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
@@ -126,7 +128,10 @@ export default function TestingPage() {
       items.map((item) => (item.id === id ? { ...item, checked } : item))
     );
   };
- 
+   const [filterPanelValues, setFilterPanelValues] = useState<FilterPanelValues>(
+    {}
+  );
+
   return (
     <div className="container mx-auto space-y-8 p-6">
       <div>
@@ -203,6 +208,59 @@ export default function TestingPage() {
             </Button>
           </div>
         </div>
+      </section>
+
+      <Separator />
+
+      {/* Filter Panel Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Filter Panel</h2>
+        <p className="text-muted-foreground text-sm">
+          Multi-select dropdown with searchable groups and filter tags
+        </p>
+        <FilterPanel
+          label="Filter"
+          groups={[
+            {
+              key: 'category',
+              label: 'Category',
+              icon: <Icon name="tickets" size="sm" />,
+              options: [
+                { value: 'bug', label: 'Bug' },
+                { value: 'feature', label: 'Feature' },
+                { value: 'task', label: 'Task' },
+                { value: 'improvement', label: 'Improvement' },
+              ],
+            },
+            {
+              key: 'assignee',
+              label: 'Assignee',
+              icon: <Icon name="user" size="sm" />,
+              searchable: true,
+              options: [
+                { value: 'john', label: 'John Doe' },
+                { value: 'jane', label: 'Jane Smith' },
+                { value: 'bob', label: 'Bob Johnson' },
+                { value: 'alice', label: 'Alice Williams' },
+                { value: 'charlie', label: 'Charlie Brown' },
+                { value: 'diana', label: 'Diana Prince' },
+              ],
+            },
+            {
+              key: 'date',
+              label: 'Date',
+              icon: <Icon name="clock" size="sm" />,
+              options: [
+                { value: 'today', label: 'Today' },
+                { value: 'yesterday', label: 'Yesterday' },
+                { value: 'this-week', label: 'This Week' },
+                { value: 'this-month', label: 'This Month' },
+              ],
+            },
+          ]}
+          value={filterPanelValues}
+          onChange={setFilterPanelValues}
+        />
       </section>
 
       <Separator />
