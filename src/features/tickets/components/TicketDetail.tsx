@@ -11,6 +11,8 @@ import {
 } from '@/types';
 import { Loader2 } from 'lucide-react';
 import { Icon } from '@/shared/components/ui';
+import { Breadcrumbs } from '@/shared/components';
+import { PAGE_ROUTES } from '@/shared/constants';
 import CommentThread from './CommentThread';
 import TicketDetails from './TicketDetails';
 import { resolveAssigneeName } from '@/shared/utils/ticket-helpers';
@@ -109,16 +111,13 @@ function TicketDetail({
             <Icon name="arrow-left" size="md" />
           </Button>
           <div>
-            <nav className="text-muted-foreground mb-1 text-sm">
-              <span
-                className="hover:text-foreground cursor-pointer"
-                onClick={onBack}
-              >
-                All Tickets
-              </span>
-              <span className="mx-2">&gt;</span>
-              <span className="text-foreground">{ticket.title}</span>
-            </nav>
+            <Breadcrumbs
+              items={[
+                { label: 'All Tickets', href: PAGE_ROUTES.TICKETS.LIST },
+                { label: ticket.title, href: '#' },
+              ]}
+              className="mb-1"
+            />
             <h1 className="text-foreground text-2xl font-bold">
               {ticket.title}
             </h1>
