@@ -1,9 +1,11 @@
 import { UserList } from '../components';
 import { QueryStateWrapper } from '@/shared/components/ui';
+import { usePageHeader } from '@/shared/components/patterns';
 import { useUserList } from '../hooks';
 
 export default function UsersPage() {
   const {
+    users,
     filteredUsers,
     data,
     editingUser,
@@ -25,6 +27,8 @@ export default function UsersPage() {
     onFormSubmit,
     onConfirmDelete,
   } = useUserList();
+
+  usePageHeader({ count: users?.length });
 
   return (
     <QueryStateWrapper
