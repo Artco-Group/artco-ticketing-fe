@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from './dialog';
-import { Button } from './button';
+import { Button } from './Button';
 
 interface ModalProps {
   isOpen: boolean;

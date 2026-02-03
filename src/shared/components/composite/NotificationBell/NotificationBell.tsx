@@ -52,11 +52,10 @@ export function NotificationBell({
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          size="icon"
-          className="relative ml-2 rounded-full focus-visible:ring-0 focus-visible:outline-none"
+          className="relative h-10 w-10 rounded-full p-0 focus-visible:ring-0 focus-visible:outline-none"
           aria-label="Notifications"
         >
-          <Icon name="notification" size="lg" />
+          <Icon name="notification" size="xxl" />
           {badgeLabel && (
             <span className="bg-destructive text-primary-foreground absolute -top-0.5 -right-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full px-1 text-[0.7rem] leading-none font-semibold">
               {badgeLabel}

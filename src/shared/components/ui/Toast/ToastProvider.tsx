@@ -1,6 +1,13 @@
-import { useState, useCallback, type ReactNode } from 'react';
+import {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  type ReactNode,
+} from 'react';
 import { Toast } from './Toast';
 import { ToastContext, type ToastData } from './ToastContext';
+import { TOAST_EVENT, type ToastEventDetail } from './toast-events';
 
 interface ToastProviderProps {
   children: ReactNode;
@@ -10,10 +17,27 @@ export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const [exitingIds, setExitingIds] = useState<Set<string>>(new Set());
 
-  const addToast = useCallback((toast: Omit<ToastData, 'id'>) => {
+  const addToast = useCallback((toastData: Omit<ToastData, 'id'>) => {
     const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
-    setToasts((prev) => [...prev, { ...toast, id }]);
+    setToasts((prev) => [...prev, { ...toastData, id }]);
     return id;
+  }, []);
+
+  const addToastRef = useRef(addToast);
+
+  // Keep ref in sync with latest addToast
+  useEffect(() => {
+    addToastRef.current = addToast;
+  }, [addToast]);
+
+  // Listen for toast events from outside React (e.g., axios interceptors)
+  useEffect(() => {
+    const handleToastEvent = (event: CustomEvent<ToastEventDetail>) => {
+      addToastRef.current(event.detail);
+    };
+
+    window.addEventListener(TOAST_EVENT, handleToastEvent);
+    return () => window.removeEventListener(TOAST_EVENT, handleToastEvent);
   }, []);
 
   const removeToast = useCallback((id: string) => {

@@ -2,6 +2,7 @@ import { UserRole } from '@/types';
 
 import { TicketList } from '@/features/tickets/components';
 import { QueryStateWrapper, EmptyState } from '@/shared/components/ui';
+import { usePageHeader } from '@/shared/components/patterns';
 import { useTicketList } from '../hooks';
 
 export default function TicketListPage() {
@@ -20,6 +21,8 @@ export default function TicketListPage() {
     onFilterChange,
     onCreateTicket,
   } = useTicketList();
+
+  usePageHeader({ count: allTickets?.length });
 
   if (!userRole) {
     return (

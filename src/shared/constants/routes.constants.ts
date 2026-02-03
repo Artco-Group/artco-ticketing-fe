@@ -43,7 +43,7 @@ export const PAGE_ROUTES = {
   TESTING: {
     LIST: '/testing',
   },
-    
+
   // Inbox
   INBOX: {
     ROOT: '/inbox',
@@ -63,6 +63,10 @@ export const PAGE_ROUTES = {
   AUTOMATIONS: {
     ROOT: '/automations',
   },
+
+  // User account
+  PROFILE: '/profile',
+  SETTINGS: '/settings',
 
   // Utility
   HOME: '/',

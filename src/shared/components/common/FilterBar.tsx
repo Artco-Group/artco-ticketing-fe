@@ -36,6 +36,7 @@ interface FilterBarProps {
   onFilterChange?: (filterKey: string, value: string) => void;
   onSearchChange?: (value: string) => void;
   className?: string;
+  children?: ReactNode;
 }
 
 function FilterBar({
@@ -44,6 +45,7 @@ function FilterBar({
   onFilterChange,
   onSearchChange,
   className = '',
+  children,
 }: FilterBarProps) {
   // Generate IDs for all filters upfront to avoid calling hooks in callbacks
   const baseId = useId();
@@ -154,6 +156,8 @@ function FilterBar({
             </div>
           );
         })}
+
+        {children && <div className="ml-auto">{children}</div>}
       </div>
     </Card>
   );

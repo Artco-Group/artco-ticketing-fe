@@ -1,5 +1,5 @@
 import { Icon } from '../Icon';
-import { Button } from '../button';
+import { Button } from '../Button';
 import { cn } from '@/lib/utils';
 
 interface RetryableErrorProps {
