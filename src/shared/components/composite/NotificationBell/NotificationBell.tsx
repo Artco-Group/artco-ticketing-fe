@@ -127,7 +127,7 @@ export function NotificationBell({
 
         {hasNotifications && (
           <>
-            <div className="max-h-[320px] overflow-y-auto">
+            <div className="max-h-80 overflow-y-auto">
               {notifications.map((notification) => (
                 <DropdownMenuItem
                   key={notification.id}

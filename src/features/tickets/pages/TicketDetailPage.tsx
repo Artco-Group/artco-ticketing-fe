@@ -5,20 +5,16 @@ import { useTicketDetail } from '../hooks';
 export default function TicketDetailPage() {
   const {
     ticket,
-    comments,
     currentUser,
     users,
     ticketLoading,
     ticketError,
     refetchTicket,
     ticketRefetching,
-    newComment,
     onBack,
     onStatusUpdate,
     onPriorityUpdate,
     onAssignTicket,
-    onCommentChange,
-    onAddComment,
   } = useTicketDetail();
 
   if (!currentUser?.role) {
@@ -48,16 +44,12 @@ export default function TicketDetailPage() {
       {(ticketData) => (
         <TicketDetail
           ticket={ticketData}
-          comments={comments}
           currentUser={currentUser}
           users={users}
           onBack={onBack}
           onStatusUpdate={onStatusUpdate}
           onPriorityUpdate={onPriorityUpdate}
           onAssignTicket={onAssignTicket}
-          newComment={newComment}
-          onCommentChange={onCommentChange}
-          onAddComment={onAddComment}
         />
       )}
     </QueryStateWrapper>

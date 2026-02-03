@@ -131,7 +131,7 @@ export function MemberPicker({
             <Icon name="chevron-down" size="md" />
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+        <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width)">
           {validUsers.length === 0 ? (
             <div className="text-muted-foreground px-2 py-4 text-center text-sm">
               No members available

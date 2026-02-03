@@ -43,6 +43,9 @@ import {
 } from '@/shared/components/ui';
 import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
 import { MemberPicker } from '@/shared/components/composite';
+import { CommentForm } from '@/features/tickets/components/CommentForm';
+import { CommentList } from '@/features/tickets/components/CommentList';
+import type { Comment } from '@/types';
 
 // Mock user data for MemberPicker demo
 const mockUsers = [
@@ -88,6 +91,43 @@ const mockUsers = [
   },
 ];
 
+// Mock comment data
+const mockComments: Comment[] = [
+  {
+    _id: '1',
+    ticketId: 'ticket-1',
+    authorId: {
+      _id: '2',
+      name: 'Jane Smith',
+      email: 'jane.smith@artco.com',
+    },
+    text: 'Ovo je prvi komentar na ovom tiketu. Trebamo provjeriti da li sve radi kako treba.',
+    createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+  },
+  {
+    _id: '2',
+    ticketId: 'ticket-1',
+    authorId: {
+      _id: '1',
+      name: 'John Doe',
+      email: 'john.doe@artco.com',
+    },
+    text: 'Slažem se, moramo biti pažljivi sa ovim. Primijetio sam par problema.',
+    createdAt: new Date(Date.now() - 43200000).toISOString(), // 12 hours ago
+  },
+  {
+    _id: '3',
+    ticketId: 'ticket-1',
+    authorId: {
+      _id: '3',
+      name: 'Bob Johnson',
+      email: 'bob.johnson@artco.com',
+    },
+    text: 'Završio sam pregled koda. Sve izgleda dobro osim jedne sitnice koju treba popraviti.',
+    createdAt: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
+  },
+];
+
 export default function TestingPage() {
   const [inputValue, setInputValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
@@ -111,6 +151,11 @@ export default function TestingPage() {
     { id: 3, label: 'Item 3', checked: false },
   ]);
 
+  // Comment components state
+  const [comments, setComments] = useState<Comment[]>(mockComments);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const currentUserId = '1'; // John Doe is the current user
+
   const allChecked = items.every((item) => item.checked);
   const someChecked = items.some((item) => item.checked) && !allChecked;
 
@@ -124,7 +169,115 @@ export default function TestingPage() {
       items.map((item) => (item.id === id ? { ...item, checked } : item))
     );
   };
- 
+
+  // Comment handlers
+  const handleAddComment = (text: string) => {
+    const newComment: Comment = {
+      _id: `comment-${Date.now()}`,
+      ticketId: 'ticket-1',
+      authorId: {
+        _id: currentUserId,
+        name: 'John Doe',
+        email: 'john.doe@artco.com',
+      },
+      text,
+      createdAt: new Date().toISOString(),
+    };
+    setComments([...comments, newComment]);
+  };
+
+  const handleEditComment = (commentId: string, text: string) => {
+    setComments(
+      comments.map((comment) =>
+        comment._id === commentId
+          ? { ...comment, text, updatedAt: new Date().toISOString() }
+          : comment
+      )
+    );
+    setEditingCommentId(null);
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    setComments(comments.filter((comment) => comment._id !== commentId));
+  };
+
+  const handleReply = (commentId: string) => {
+    console.log('Reply to comment:', commentId);
+    // In real implementation, this would open reply mode
+  };
+
+  // Helper function to format date for grouping
+  const formatDateKey = (date: string | Date | undefined): string => {
+    if (!date) return 'Unknown';
+    const d = new Date(date);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const dateOnly = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const todayOnly = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+    const yesterdayOnly = new Date(
+      yesterday.getFullYear(),
+      yesterday.getMonth(),
+      yesterday.getDate()
+    );
+
+    if (dateOnly.getTime() === todayOnly.getTime()) {
+      return 'Today';
+    } else if (dateOnly.getTime() === yesterdayOnly.getTime()) {
+      return 'Yesterday';
+    } else {
+      return d.toLocaleDateString('en-GB');
+    }
+  };
+
+  // Group comments by date
+  const groupedComments = comments.reduce(
+    (groups: { [key: string]: Comment[] }, comment) => {
+      const dateKey = formatDateKey(comment.createdAt);
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(comment);
+      return groups;
+    },
+    {}
+  );
+
+  // Check if a comment was edited
+  const isCommentEdited = (comment: Comment): boolean => {
+    return !!(
+      comment.createdAt &&
+      comment.updatedAt &&
+      new Date(comment.createdAt).getTime() !==
+        new Date(comment.updatedAt).getTime()
+    );
+  };
+
+  // Get time display for a comment
+  const getCommentTimeDisplay = (comment: Comment): string => {
+    const edited = isCommentEdited(comment);
+
+    if (edited && comment.updatedAt) {
+      const time = new Date(comment.updatedAt).toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      return `Edited: ${time}`;
+    }
+    if (comment.createdAt) {
+      return new Date(comment.createdAt).toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    }
+    return '—';
+  };
+
   return (
     <div className="container mx-auto space-y-8 p-6">
       <div>
@@ -991,6 +1144,54 @@ export default function TestingPage() {
             </Button>
           }
         />
+      </section>
+
+      <Separator />
+
+      {/* Comment Components Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Comment Components</h2>
+        <p className="text-muted-foreground">
+          CommentList and CommentForm with date grouping, reply functionality,
+          and edit mode
+        </p>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Discussion</CardTitle>
+            <CardDescription>
+              Full-featured comment thread with date grouping and white gradient
+              bubbles - Current user (John Doe) comments appear in blue on the
+              right
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <CommentList
+              comments={comments}
+              groupedComments={groupedComments}
+              currentUserId={currentUserId}
+              onReply={handleReply}
+              onEdit={handleEditComment}
+              onDelete={handleDeleteComment}
+              getCommentTimeDisplay={getCommentTimeDisplay}
+            />
+
+            <div className="border-t pt-4">
+              {editingCommentId ? (
+                <CommentForm
+                  onSubmit={(text) => handleEditComment(editingCommentId, text)}
+                  onCancel={() => setEditingCommentId(null)}
+                  initialValue={
+                    comments.find((c) => c._id === editingCommentId)?.text || ''
+                  }
+                  submitLabel="Sačuvaj"
+                />
+              ) : (
+                <CommentForm onSubmit={handleAddComment} />
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </section>
     </div>
   );
