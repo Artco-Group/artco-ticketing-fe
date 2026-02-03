@@ -107,16 +107,12 @@ export type IconName =
   | 'arrow-left'
   | 'notification'
   | 'double-check'
-<<<<<<< feature/ARTCOCRM-224/comments
-  | 'command-k'
-  | 'more-horizontal';
-=======
+  | 'more-horizontal'
   | 'filter'
   | 'trend-up'
   | 'trend-down'
   | 'command-k';
->>>>>>> develop
-
+  
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 const iconMap: Record<IconName, string> = {
