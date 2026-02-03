@@ -1,10 +1,9 @@
-import type { FormEvent } from 'react';
 import { useId } from 'react';
 import {
   UserRole,
   asTicketId,
+  asCommentId,
   type Ticket,
-  type Comment,
   type User,
   type TicketId,
   type UserId,
@@ -13,10 +12,13 @@ import { Loader2 } from 'lucide-react';
 import { Icon } from '@/shared/components/ui';
 import { Breadcrumbs } from '@/shared/components';
 import { PAGE_ROUTES } from '@/shared/constants';
-import CommentThread from './CommentThread';
+import { CommentList } from './CommentList';
+import { CommentForm } from './CommentForm';
+import { useComments } from '../hooks/useComments';
 import TicketDetails from './TicketDetails';
 import { resolveAssigneeName } from '@/shared/utils/ticket-helpers';
 import { useTicketDetailActions } from '../hooks/useTicketDetailActions';
+import { cn } from '@/lib/utils';
 import {
   useRoleFlags,
   Button,
@@ -30,31 +32,34 @@ import {
 
 interface TicketDetailProps {
   ticket: Ticket | null;
-  comments: Comment[];
   currentUser: User | null;
   users?: User[];
   onBack: () => void;
   onStatusUpdate?: (ticketId: TicketId, status: string) => Promise<void>;
   onPriorityUpdate?: (ticketId: TicketId, priority: string) => void;
   onAssignTicket?: (ticketId: TicketId, developerId: UserId) => void;
-  newComment: string;
-  onCommentChange: (value: string) => void;
-  onAddComment: (e: FormEvent<HTMLFormElement>) => void;
 }
 
 function TicketDetail({
   ticket,
-  comments,
   currentUser,
   users = [],
   onBack,
   onStatusUpdate,
   onPriorityUpdate,
   onAssignTicket,
-  newComment,
-  onCommentChange,
-  onAddComment,
 }: TicketDetailProps) {
+  // Add useComments hook
+  const commentsHook = useComments({
+    ticketId: ticket?._id ? asTicketId(ticket._id) : asTicketId(''),
+    currentUserId: currentUser?._id || currentUser?.id || '',
+  });
+
+  // Wrapper for onDelete to handle type conversion
+  const handleDeleteComment = (commentId: string) => {
+    commentsHook.onDelete(asCommentId(commentId));
+  };
+
   const {
     selectedDeveloper,
     setSelectedDeveloper,
@@ -296,13 +301,62 @@ function TicketDetail({
         )}
 
         {/* Comments Section - All roles */}
-        <CommentThread
-          comments={comments}
-          newComment={newComment}
-          onCommentChange={onCommentChange}
-          onSubmit={onAddComment}
-          currentUser={currentUser}
-        />
+        <Card>
+          <CardHeader>
+            <CardTitle>Diskusija</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Comment List */}
+            <CommentList
+              comments={commentsHook.comments}
+              groupedComments={commentsHook.groupedComments}
+              currentUserId={commentsHook.currentUserId}
+              onReply={commentsHook.onReply}
+              onEdit={commentsHook.onEdit}
+              onDelete={handleDeleteComment}
+              getCommentTimeDisplay={commentsHook.getCommentTimeDisplay}
+            />
+
+            {/* Comment Form - handles both add/reply and edit modes */}
+            <div className={cn(commentsHook.isEditing && 'border-t pt-4')}>
+              {commentsHook.isEditing && (
+                <p className="text-muted-foreground mb-2 text-sm">
+                  Editing comment
+                </p>
+              )}
+              <CommentForm
+                onSubmit={commentsHook.onSubmit}
+                onCancel={
+                  commentsHook.isEditing
+                    ? commentsHook.onCancelEdit
+                    : commentsHook.isReplying
+                      ? commentsHook.onCancelReply
+                      : undefined
+                }
+                placeholder={
+                  commentsHook.isEditing
+                    ? undefined
+                    : commentsHook.isReplying && commentsHook.replyingToComment
+                      ? `Reply to ${commentsHook.replyingToComment.authorId?.name || 'Unknown'}`
+                      : 'Add Comment...'
+                }
+                initialValue={
+                  commentsHook.isEditing
+                    ? commentsHook.editingComment.text
+                    : undefined
+                }
+                submitLabel={
+                  commentsHook.isEditing
+                    ? 'Save'
+                    : commentsHook.isReplying
+                      ? 'Reply'
+                      : 'Send'
+                }
+                disabled={commentsHook.isSubmitting}
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

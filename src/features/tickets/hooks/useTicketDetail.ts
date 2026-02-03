@@ -1,13 +1,6 @@
-import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  asTicketId,
-  type Comment,
-  type Ticket,
-  type TicketId,
-  type UserId,
-} from '@/types';
+import { asTicketId, type Ticket, type TicketId, type UserId } from '@/types';
 
 import { PAGE_ROUTES, getErrorMessage } from '@/shared';
 import { useToast } from '@/shared/components/ui';
@@ -18,7 +11,6 @@ import {
   useAssignTicket,
   useUpdateTicketPriority,
 } from '../api/tickets-api';
-import { useComments, useAddComment } from '../api/comments-api';
 import { useUsers } from '@/features/users/api';
 
 /**
@@ -31,9 +23,7 @@ export function useTicketDetail() {
   const { user } = useAuth();
   const toast = useToast();
 
-  const [newComment, setNewComment] = useState('');
   const [localTicket, setLocalTicket] = useState<Ticket | null>(null);
-  const [localComments, setLocalComments] = useState<Comment[] | null>(null);
 
   // Fetch ticket data
   const ticketId = id ? asTicketId(id) : asTicketId('');
@@ -49,19 +39,13 @@ export function useTicketDetail() {
   const { data: usersData } = useUsers();
   const users = usersData?.data?.users || [];
 
-  // Fetch comments
-  const { data: commentsData, refetch: refetchComments } =
-    useComments(ticketId);
-
   // Mutations
   const updateStatusMutation = useUpdateTicketStatus();
   const assignTicketMutation = useAssignTicket();
   const updatePriorityMutation = useUpdateTicketPriority();
-  const addCommentMutation = useAddComment();
 
   // Use local state if available, otherwise use fetched data
   const ticket = localTicket ?? ticketData?.data?.ticket ?? null;
-  const comments = localComments ?? commentsData?.data?.comments ?? [];
 
   const handleBack = () => {
     navigate(PAGE_ROUTES.DASHBOARD.ROOT);
@@ -107,30 +91,9 @@ export function useTicketDetail() {
     }
   };
 
-  const handleAddComment = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim() || !id) return;
-
-    try {
-      await addCommentMutation.mutateAsync({
-        ticketId: asTicketId(id),
-        text: newComment,
-      });
-      setNewComment('');
-      toast.success('Comment added successfully');
-      const result = await refetchComments();
-      if (result.data?.data?.comments) {
-        setLocalComments(result.data.data.comments);
-      }
-    } catch (error) {
-      toast.error(getErrorMessage(error));
-    }
-  };
-
   return {
     // Data
     ticket,
-    comments,
     currentUser: user,
     users,
 
@@ -139,14 +102,11 @@ export function useTicketDetail() {
     ticketError,
     refetchTicket,
     ticketRefetching,
-    newComment,
 
     // Handlers
     onBack: handleBack,
     onStatusUpdate: handleStatusUpdate,
     onPriorityUpdate: handlePriorityUpdate,
     onAssignTicket: handleAssignTicket,
-    onCommentChange: setNewComment,
-    onAddComment: handleAddComment,
   };
 }

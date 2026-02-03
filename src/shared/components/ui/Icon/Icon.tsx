@@ -24,6 +24,7 @@ import eyeOffSvg from '@/assets/icons/actions/eye-off.svg?raw';
 import mailSvg from '@/assets/icons/actions/mail.svg?raw';
 import shieldCheckSvg from '@/assets/icons/actions/shield-check.svg?raw';
 import logoutSvg from '@/assets/icons/actions/logout.svg?raw';
+import MoreHorizontal from '@/assets/icons/actions/more-horizontal.svg?raw';
 
 import chevronDownSvg from '@/assets/icons/arrows/chevron-down.svg?raw';
 import chevronUpSvg from '@/assets/icons/arrows/chevron-up.svg?raw';
@@ -103,7 +104,8 @@ export type IconName =
   | 'arrow-left'
   | 'notification'
   | 'double-check'
-  | 'command-k';
+  | 'command-k'
+  | 'more-horizontal';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -155,6 +157,7 @@ const iconMap: Record<IconName, string> = {
   notification: notificationSvg,
   'double-check': doubleCheckSvg,
   'command-k': commandKSvg,
+  'more-horizontal': MoreHorizontal,
 };
 
 const sizeMap: Record<IconSize, string> = {
