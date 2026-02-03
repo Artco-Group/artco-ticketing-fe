@@ -31,4 +31,10 @@ export interface MetaItem {
   value: ReactNode;
 }
 
+/** API response wrapper type */
+export interface ApiResponse<T> {
+  status: string;
+  data: T;
+}
+
 export * from './branded';
