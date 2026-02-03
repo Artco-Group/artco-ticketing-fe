@@ -48,6 +48,7 @@ import fileTextSvg from '@/assets/icons/system/file-text.svg?raw';
 import settingsSvg from '@/assets/icons/system/settings.svg?raw';
 import notificationSvg from '@/assets/icons/system/notification.svg?raw';
 import doubleCheckSvg from '@/assets/icons/system/double-check.svg?raw';
+import filterSvg from '@/assets/icons/system/filter.svg?raw';
 
 import pinSvg from '@/assets/icons/navigation/pin.svg?raw';
 import automationsSvg from '@/assets/icons/navigation/automations.svg?raw';
@@ -55,6 +56,8 @@ import sidebarSvg from '@/assets/icons/navigation/sidebar.svg?raw';
 import chevronSelectorSvg from '@/assets/icons/arrows/chevron-selector.svg?raw';
 
 import arrowLeftSvg from '@/assets/icons/arrows/arrow-left.svg?raw';
+import trendUpSvg from '@/assets/icons/arrows/trend-up.svg?raw';
+import trendDownSvg from '@/assets/icons/arrows/trend-down.svg?raw';
 import commandKSvg from '@/assets/icons/system/command-k.svg?raw';
 
 export type IconName =
@@ -104,8 +107,15 @@ export type IconName =
   | 'arrow-left'
   | 'notification'
   | 'double-check'
+<<<<<<< feature/ARTCOCRM-224/comments
   | 'command-k'
   | 'more-horizontal';
+=======
+  | 'filter'
+  | 'trend-up'
+  | 'trend-down'
+  | 'command-k';
+>>>>>>> develop
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -156,8 +166,15 @@ const iconMap: Record<IconName, string> = {
   'arrow-left': arrowLeftSvg,
   notification: notificationSvg,
   'double-check': doubleCheckSvg,
+<<<<<<< feature/ARTCOCRM-224/comments
   'command-k': commandKSvg,
   'more-horizontal': MoreHorizontal,
+=======
+  'trend-up': trendUpSvg,
+  'trend-down': trendDownSvg,
+  filter: filterSvg,
+  'command-k': commandKSvg
+>>>>>>> develop
 };
 
 const sizeMap: Record<IconSize, string> = {
@@ -190,10 +207,10 @@ export function Icon({
     return null;
   }
 
-  const svgWithClass = svgContent.replace(
-    /<svg\s/,
-    `<svg class="${cn(sizeMap[size], className)}" `
-  );
+  const svgWithClass = svgContent
+    .replace(/\s*width="[^"]*"/g, '')
+    .replace(/\s*height="[^"]*"/g, '')
+    .replace(/<svg\s/, `<svg class="${cn(sizeMap[size], className)}" `);
 
   return (
     <span

@@ -5,6 +5,7 @@ import {
   type MouseEvent,
 } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { Icon } from './Icon';
 
 const filterButtonVariants = cva(
   'inline-flex items-center gap-1.5 rounded-[10px] border px-2.5 py-1 text-[13px] font-medium tracking-[-0.28px] transition-colors duration-150 focus:outline-none',
@@ -35,6 +36,7 @@ export interface FilterButtonProps
   value?: string | null;
   onChange?: (value: string | null) => void;
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onRemove?: () => void;
 }
 
 export const FilterButton = ({
@@ -45,6 +47,7 @@ export const FilterButton = ({
   value,
   onChange,
   onClick,
+  onRemove,
   className,
   ...props
 }: FilterButtonProps) => {
@@ -63,10 +66,13 @@ export const FilterButton = ({
   };
 
   const currentIndex = getCurrentIndex();
-  const currentValue =
-    hasOptions && currentIndex >= 0 && options ? options[currentIndex] : null;
+  const currentValue = hasOptions
+    ? currentIndex >= 0 && options
+      ? options[currentIndex]
+      : null
+    : value;
   const isActive =
-    active !== undefined ? active : hasOptions && currentIndex >= 0;
+    active !== undefined ? active : hasOptions ? currentIndex >= 0 : !!value;
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     if (hasOptions && options) {
@@ -105,6 +111,25 @@ export const FilterButton = ({
           <span className="bg-greyscale-200 h-3 w-px" />
           <span>{currentValue}</span>
         </>
+      )}
+      {onRemove && (
+        <span
+          role="button"
+          tabIndex={0}
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+              onRemove();
+            }
+          }}
+          className="text-greyscale-400 hover:text-greyscale-600 -mr-0.5 ml-0.5 inline-flex cursor-pointer items-center"
+        >
+          <Icon name="close" size="xs" />
+        </span>
       )}
     </button>
   );

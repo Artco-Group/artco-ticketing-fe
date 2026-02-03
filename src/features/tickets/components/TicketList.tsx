@@ -24,6 +24,8 @@ import {
   Badge,
   EmptyState,
   Icon,
+  FilterPanel,
+  type FilterPanelValues,
 } from '@/shared';
 import {
   categoryBadgeConfig,
@@ -246,7 +248,7 @@ function TableLayout({
 
   const columns = isEngLead ? engLeadColumns : developerColumns;
 
-  // Filters for Eng Lead (5 filters)
+  // Filters for Eng Lead (3 filters - status, priority, sortBy)
   const engLeadFilters: FilterConfig[] = filters
     ? [
         {
@@ -275,39 +277,6 @@ function TableLayout({
           ],
         },
         {
-          key: 'client',
-          label: 'Client',
-          value: filters.client,
-          options: [
-            { value: 'All', label: 'All Clients' },
-            ...[
-              ...new Set(
-                (allTickets || tickets)
-                  .map((t) => t.clientEmail)
-                  .filter((e): e is string => !!e)
-              ),
-            ].map((client) => ({
-              value: client,
-              label: client,
-            })),
-          ],
-        },
-        {
-          key: 'assignee',
-          label: 'Assignee',
-          value: filters.assignee,
-          options: [
-            { value: 'All', label: 'All Assignees' },
-            { value: 'Unassigned', label: 'Unassigned' },
-            ...users
-              .filter((u) => u.role === UserRole.DEVELOPER)
-              .map((dev) => ({
-                value: dev.email || '',
-                label: dev.name || dev.email || '',
-              })),
-          ],
-        },
-        {
           key: 'sortBy',
           label: 'Sort by',
           value: filters.sortBy,
@@ -321,6 +290,75 @@ function TableLayout({
         },
       ]
     : [];
+
+  // FilterPanel groups for Eng Lead (assignee and client)
+  const filterPanelGroups = [
+    {
+      key: 'assignee',
+      label: 'Assignee',
+      searchable: true,
+      options: [
+        { value: 'Unassigned', label: 'Unassigned' },
+        ...users
+          .filter((u) => u.role === UserRole.DEVELOPER)
+          .map((dev) => ({
+            value: dev.email || '',
+            label: dev.name || dev.email || '',
+          })),
+      ],
+    },
+    {
+      key: 'client',
+      label: 'Client',
+      searchable: true,
+      options: [
+        ...new Set(
+          (allTickets || tickets)
+            .map((t) => t.clientEmail)
+            .filter((e): e is string => !!e)
+        ),
+      ].map((client) => ({
+        value: client,
+        label: client,
+      })),
+    },
+  ];
+
+  // Handle FilterPanel changes (multi-select - comma-separated values)
+  const handleFilterPanelChange = (values: FilterPanelValues) => {
+    if (onFilterChange) {
+      // Convert arrays to comma-separated strings, or 'All' if empty
+      const newAssignee =
+        values.assignee && values.assignee.length > 0
+          ? values.assignee.join(',')
+          : 'All';
+      const newClient =
+        values.client && values.client.length > 0
+          ? values.client.join(',')
+          : 'All';
+
+      const currentAssignee = filters?.assignee || 'All';
+      const currentClient = filters?.client || 'All';
+
+      // Update whichever filter changed
+      if (newAssignee !== currentAssignee) {
+        onFilterChange('assignee', newAssignee);
+      } else if (newClient !== currentClient) {
+        onFilterChange('client', newClient);
+      }
+    }
+  };
+
+  // Convert current filters to FilterPanel values for controlled state
+  // Parse comma-separated URL values back into arrays
+  const filterPanelValue: FilterPanelValues = {
+    ...(filters?.assignee && filters.assignee !== 'All'
+      ? { assignee: filters.assignee.split(',') }
+      : {}),
+    ...(filters?.client && filters.client !== 'All'
+      ? { client: filters.client.split(',') }
+      : {}),
+  };
 
   // Filters for Developer (3 filters)
   const developerFilters: FilterConfig[] = filters
@@ -391,7 +429,16 @@ function TableLayout({
           filters={filterConfig}
           onFilterChange={onFilterChange}
           className="mb-6"
-        />
+        >
+          {isEngLead && (
+            <FilterPanel
+              label="Filter"
+              groups={filterPanelGroups}
+              value={filterPanelValue}
+              onChange={handleFilterPanelChange}
+            />
+          )}
+        </FilterBar>
       )}
 
       {/* Tickets Table */}

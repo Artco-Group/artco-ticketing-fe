@@ -1,16 +1,26 @@
 import type { ReactNode } from 'react';
 import { Sidebar } from './Sidebar';
-import { Header } from './Header';
 import { SidebarProvider } from './SidebarProvider';
 import { useSidebar } from './useSidebar';
-import type { PageConfig } from '@/app/config/page-configs';
+import { PageHeader, PageHeaderProvider } from '@/shared/components/patterns';
+import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
 
 interface MainLayoutProps {
   children: ReactNode;
-  pageConfig?: PageConfig;
+  /** Page title displayed in the header */
+  title?: string;
+  /** Optional count to display as a badge next to the title */
+  count?: number;
+  /** Optional breadcrumbs for nested page navigation */
+  breadcrumbs?: BreadcrumbItem[];
 }
 
-function MainLayoutContent({ children, pageConfig }: MainLayoutProps) {
+function MainLayoutContent({
+  children,
+  title,
+  count,
+  breadcrumbs,
+}: MainLayoutProps) {
   const { collapsed } = useSidebar();
 
   return (
@@ -20,7 +30,11 @@ function MainLayoutContent({ children, pageConfig }: MainLayoutProps) {
         className="transition-[padding] duration-300"
         style={{ paddingLeft: collapsed ? '5rem' : '18rem' }}
       >
-        <Header pageConfig={pageConfig} />
+        <PageHeader
+          title={title ?? ''}
+          count={count}
+          breadcrumbs={breadcrumbs}
+        />
         <main
           className="overflow-x-auto px-4 py-6 sm:px-6 lg:px-8"
           style={{ width: '100%', minWidth: 0 }}
@@ -32,10 +46,23 @@ function MainLayoutContent({ children, pageConfig }: MainLayoutProps) {
   );
 }
 
-export function MainLayout({ children, pageConfig }: MainLayoutProps) {
+export function MainLayout({
+  children,
+  title,
+  count,
+  breadcrumbs,
+}: MainLayoutProps) {
   return (
     <SidebarProvider>
-      <MainLayoutContent pageConfig={pageConfig}>{children}</MainLayoutContent>
+      <PageHeaderProvider>
+        <MainLayoutContent
+          title={title}
+          count={count}
+          breadcrumbs={breadcrumbs}
+        >
+          {children}
+        </MainLayoutContent>
+      </PageHeaderProvider>
     </SidebarProvider>
   );
 }

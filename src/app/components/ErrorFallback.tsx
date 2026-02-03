@@ -1,6 +1,4 @@
-import { useNavigate } from 'react-router-dom';
 import type { ErrorInfo } from 'react';
-import { createPortal } from 'react-dom';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { Icon, Button } from '@/shared/components/ui';
 
@@ -13,33 +11,44 @@ interface ErrorFallbackProps {
 export function ErrorFallback({
   error,
   errorInfo,
-  resetErrorBoundary,
+  resetErrorBoundary: _resetErrorBoundary,
 }: ErrorFallbackProps) {
-  const navigate = useNavigate();
   const isDevelopment = import.meta.env.DEV;
 
   const handleGoHome = () => {
-    resetErrorBoundary();
-    navigate(PAGE_ROUTES.DASHBOARD.ROOT);
+    // Full page reload to clear all state and navigate
+    window.location.href = PAGE_ROUTES.DASHBOARD.ROOT;
   };
 
   const handleGoBack = () => {
-    resetErrorBoundary();
-    navigate(-1);
+    // Go back in browser history
+    window.history.back();
   };
 
   const handleRetry = () => {
     window.location.reload();
   };
 
-  const content = (
+  return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-gray-50 p-4"
-      style={{ width: '100vw', height: '100vh' }}
+      className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12"
+      style={{
+        display: 'flex',
+        minHeight: '100vh',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '3rem 1rem',
+      }}
     >
       <div
-        className="rounded-lg bg-white p-8 shadow-lg"
-        style={{ width: '100%', maxWidth: '42rem', minWidth: '320px' }}
+        className="w-full max-w-3xl rounded-lg bg-white p-8 shadow-lg"
+        style={{
+          width: '100%',
+          maxWidth: '768px',
+          padding: '2rem',
+          backgroundColor: 'white',
+          borderRadius: '0.5rem',
+        }}
       >
         {/* Error Icon */}
         <div className="mb-6 flex justify-center">
@@ -65,7 +74,10 @@ export function ErrorFallback({
             <h2 className="text-error-700 mb-2 text-sm font-semibold">
               Error Details (Development Only):
             </h2>
-            <p className="text-error-600 mb-2 font-mono text-xs break-all">
+            <p
+              className="text-error-600 mb-2 font-mono text-xs"
+              style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+            >
               {error.toString()}
             </p>
             {error.stack && (
@@ -73,7 +85,14 @@ export function ErrorFallback({
                 <summary className="text-error-700 cursor-pointer text-xs font-semibold">
                   Stack Trace
                 </summary>
-                <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs break-all whitespace-pre-wrap">
+                <pre
+                  className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs"
+                  style={{
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'anywhere',
+                  }}
+                >
                   {error.stack}
                 </pre>
               </details>
@@ -83,7 +102,14 @@ export function ErrorFallback({
                 <summary className="text-error-700 cursor-pointer text-xs font-semibold">
                   Component Stack
                 </summary>
-                <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs break-all whitespace-pre-wrap">
+                <pre
+                  className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs"
+                  style={{
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'anywhere',
+                  }}
+                >
                   {errorInfo.componentStack}
                 </pre>
               </details>
@@ -113,7 +139,4 @@ export function ErrorFallback({
       </div>
     </div>
   );
-
-  // Render via portal to escape any parent layout constraints
-  return createPortal(content, document.body);
 }

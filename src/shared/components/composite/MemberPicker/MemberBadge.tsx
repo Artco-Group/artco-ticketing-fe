@@ -1,11 +1,5 @@
-import { type User, getInitials } from '@artco-group/artco-ticketing-sync';
-import {
-  Avatar,
-  AvatarFallback,
-  Badge,
-  Button,
-  Icon,
-} from '@/shared/components/ui';
+import type { User } from '@artco-group/artco-ticketing-sync';
+import { Avatar, Badge, Button, Icon } from '@/shared/components/ui';
 
 interface MemberBadgeProps {
   user: User;
@@ -20,11 +14,7 @@ export function MemberBadge({
 }: MemberBadgeProps) {
   return (
     <Badge variant="secondary" className="gap-1 pr-1">
-      <Avatar className="h-4 w-4">
-        <AvatarFallback className="text-[0.5rem]">
-          {getInitials(user.name || '')}
-        </AvatarFallback>
-      </Avatar>
+      <Avatar fallback={user.name || ''} size="sm" className="h-4 w-4" />
       <span className="text-xs">{user.name}</span>
       <Button
         type="button"

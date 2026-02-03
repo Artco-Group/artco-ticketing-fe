@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { CompanyLogo } from '@/shared/components/composite';
+import { clientLogos } from '@/assets/logos';
 import {
   Button,
   Badge,
@@ -32,7 +34,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Avatar,
-  AvatarFallback,
+  AvatarGroup,
   Label,
   Separator,
   Spinner,
@@ -40,9 +42,11 @@ import {
   Icon,
   Switch,
   FilterButton,
+  FilterPanel,
+  type FilterPanelValues,
 } from '@/shared/components/ui';
+import { MemberPicker, StatsCard } from '@/shared/components/composite';
 import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
-import { MemberPicker } from '@/shared/components/composite';
 import { CommentForm } from '@/features/tickets/components/CommentForm';
 import { CommentList } from '@/features/tickets/components/CommentList';
 import type { Comment } from '@/types';
@@ -278,6 +282,10 @@ export default function TestingPage() {
     return '—';
   };
 
+   const [filterPanelValues, setFilterPanelValues] = useState<FilterPanelValues>(
+    {}
+  );
+
   return (
     <div className="container mx-auto space-y-8 p-6">
       <div>
@@ -354,6 +362,59 @@ export default function TestingPage() {
             </Button>
           </div>
         </div>
+      </section>
+
+      <Separator />
+
+      {/* Filter Panel Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Filter Panel</h2>
+        <p className="text-muted-foreground text-sm">
+          Multi-select dropdown with searchable groups and filter tags
+        </p>
+        <FilterPanel
+          label="Filter"
+          groups={[
+            {
+              key: 'category',
+              label: 'Category',
+              icon: <Icon name="tickets" size="sm" />,
+              options: [
+                { value: 'bug', label: 'Bug' },
+                { value: 'feature', label: 'Feature' },
+                { value: 'task', label: 'Task' },
+                { value: 'improvement', label: 'Improvement' },
+              ],
+            },
+            {
+              key: 'assignee',
+              label: 'Assignee',
+              icon: <Icon name="user" size="sm" />,
+              searchable: true,
+              options: [
+                { value: 'john', label: 'John Doe' },
+                { value: 'jane', label: 'Jane Smith' },
+                { value: 'bob', label: 'Bob Johnson' },
+                { value: 'alice', label: 'Alice Williams' },
+                { value: 'charlie', label: 'Charlie Brown' },
+                { value: 'diana', label: 'Diana Prince' },
+              ],
+            },
+            {
+              key: 'date',
+              label: 'Date',
+              icon: <Icon name="clock" size="sm" />,
+              options: [
+                { value: 'today', label: 'Today' },
+                { value: 'yesterday', label: 'Yesterday' },
+                { value: 'this-week', label: 'This Week' },
+                { value: 'this-month', label: 'This Month' },
+              ],
+            },
+          ]}
+          value={filterPanelValues}
+          onChange={setFilterPanelValues}
+        />
       </section>
 
       <Separator />
@@ -1052,18 +1113,188 @@ export default function TestingPage() {
       <Separator />
 
       {/* Avatar Section */}
-      <section className="space-y-4">
+      <section className="space-y-6">
         <h2 className="text-2xl font-semibold">Avatars</h2>
-        <div className="flex gap-4">
-          <Avatar>
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <Avatar>
-            <AvatarFallback>AB</AvatarFallback>
-          </Avatar>
-          <Avatar>
-            <AvatarFallback>CD</AvatarFallback>
-          </Avatar>
+
+        {/* Avatar Sizes */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium">Sizes</h3>
+          <div className="flex items-end gap-4">
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Doe" size="sm" />
+              <span className="text-xs">sm (24px)</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Doe" size="md" />
+              <span className="text-xs">md (32px)</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Doe" size="lg" />
+              <span className="text-xs">lg (40px)</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Doe" size="xl" />
+              <span className="text-xs">xl (48px)</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Avatar Initials */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium">Initials Extraction</h3>
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John" size="lg" />
+              <span className="text-xs">&quot;John&quot; → J</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Doe" size="lg" />
+              <span className="text-xs">&quot;John Doe&quot; → JD</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar fallback="John Middle Doe" size="lg" />
+              <span className="text-xs">&quot;John Middle Doe&quot; → JD</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Avatar Group */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Avatar Group</h3>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <span className="text-muted-foreground text-sm">
+                6 users, max 3 shown:
+              </span>
+              <AvatarGroup
+                avatars={[
+                  { fallback: 'David Lee' },
+                  { fallback: 'Eve Martin' },
+                  { fallback: 'Frank White' },
+                  { fallback: 'Gina Brown' },
+                  { fallback: 'Harry Green' },
+                ]}
+                max={3}
+                size="md"
+              />
+            </div>
+            <div className="space-y-2">
+              <span className="text-muted-foreground text-sm">
+                Different sizes:
+              </span>
+              <div className="flex items-end gap-6">
+                <div className="flex flex-col items-center gap-2">
+                  <AvatarGroup
+                    avatars={[
+                      { fallback: 'A B' },
+                      { fallback: 'C D' },
+                      { fallback: 'E F' },
+                      { fallback: 'G H' },
+                    ]}
+                    max={2}
+                    size="sm"
+                  />
+                  <span className="text-xs">sm</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <AvatarGroup
+                    avatars={[
+                      { fallback: 'A B' },
+                      { fallback: 'C D' },
+                      { fallback: 'E F' },
+                      { fallback: 'G H' },
+                    ]}
+                    max={2}
+                    size="md"
+                  />
+                  <span className="text-xs">md</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <AvatarGroup
+                    avatars={[
+                      { fallback: 'A B' },
+                      { fallback: 'C D' },
+                      { fallback: 'E F' },
+                      { fallback: 'G H' },
+                    ]}
+                    max={2}
+                    size="lg"
+                  />
+                  <span className="text-xs">lg</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <AvatarGroup
+                    avatars={[
+                      { fallback: 'A B' },
+                      { fallback: 'C D' },
+                      { fallback: 'E F' },
+                      { fallback: 'G H' },
+                    ]}
+                    max={2}
+                    size="xl"
+                  />
+                  <span className="text-xs">xl</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* Company Logo Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Company Logo</h2>
+        <p className="text-muted-foreground text-sm">
+          Fallback to initials in a colored circle when no image.
+        </p>
+        <div className="flex flex-wrap items-end gap-6">
+          <div className="flex flex-col items-center gap-2">
+            <CompanyLogo alt="Acme" fallback="Acme" size="sm" colorIndex={0} />
+            <span className="text-muted-foreground text-xs">sm</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <CompanyLogo
+              alt="Brand Co"
+              fallback="Brand Co"
+              size="md"
+              colorIndex={1}
+            />
+            <span className="text-muted-foreground text-xs">md</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <CompanyLogo
+              alt="Client Inc"
+              fallback="Client Inc"
+              size="lg"
+              colorIndex={2}
+            />
+            <span className="text-muted-foreground text-xs">lg</span>
+          </div>
+          <div className="flex items-end gap-4">
+            <CompanyLogo alt="Company A" fallback="A" colorIndex={3} />
+            <CompanyLogo alt="Company B" fallback="XY" colorIndex={4} />
+            <CompanyLogo alt="Company C" fallback="Artco" colorIndex={5} />
+          </div>
+        </div>
+
+        <h3 className="mt-6 text-lg font-medium">Client Logos (21 variants)</h3>
+        <div className="grid grid-cols-7 gap-4">
+          {clientLogos.map((logo, i) => (
+            <div key={i} className="flex flex-col items-center gap-2">
+              <CompanyLogo
+                src={logo}
+                alt={`Logo ${i + 1}`}
+                fallback={`L${i + 1}`}
+                size="lg"
+                variant="rounded"
+              />
+              <span className="text-muted-foreground text-xs">
+                Logo {i + 1}
+              </span>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -1126,6 +1357,43 @@ export default function TestingPage() {
               placeholder="Select a member..."
             />
           </div>
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* StatsCard Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Stats Cards</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatsCard
+            label="Total tickets"
+            value={50}
+            trend="up"
+            trendValue="12%"
+            trendLabel="from last month"
+          />
+          <StatsCard
+            label="Solved tickets"
+            value={37}
+            trend="down"
+            trendValue="-5%"
+            trendLabel="from last month"
+          />
+          <StatsCard
+            label="Projects on track"
+            value="75%"
+            trend="up"
+            trendValue="15%"
+            trendLabel="from last month"
+          />
+          <StatsCard
+            label="Projects on track"
+            value="2d 8h"
+            trend="up"
+            trendValue="-1d 2h"
+            trendLabel="from last month"
+          />
         </div>
       </section>
 

@@ -1,14 +1,14 @@
 // shadcn components
-export * from './avatar';
+export * from './Avatar';
 export * from './badge';
-export * from './button';
+export * from './Button';
 export * from './card';
 export * from './checkbox';
 export * from './dialog';
 export * from './dropdown-menu';
 export * from './form';
-export * from './input';
-export * from './passwordInput';
+export * from './Input';
+export * from './PasswordInput';
 export * from './label';
 export * from './select';
 export * from './separator';
@@ -28,3 +28,4 @@ export * from './Icon';
 export * from './Toast';
 export * from './RetryableError';
 export * from './filterButton';
+export * from './FilterPanel';
