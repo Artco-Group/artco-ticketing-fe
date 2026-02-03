@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { useAuth } from '@/features/auth/context';
 import { cn } from '@/lib/utils';
@@ -9,7 +9,7 @@ import {
 } from '@/shared/components/composite';
 import type { NotificationItem } from '@/shared/components/composite/NotificationBell/NotificationBell';
 import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
-import { PageHeaderContext } from './pageHeaderContext';
+import { usePageHeaderContext } from './pageHeaderContext';
 
 export interface PageHeaderProps {
   title: string;
@@ -26,7 +26,7 @@ export function PageHeader({
   actions,
   className,
 }: PageHeaderProps) {
-  const contextValue = useContext(PageHeaderContext);
+  const contextValue = usePageHeaderContext();
   const count = countProp ?? contextValue?.count;
   const { user, logout } = useAuth();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);

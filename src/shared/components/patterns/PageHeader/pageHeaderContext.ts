@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext, useContext } from 'react';
 
 export interface PageHeaderContextValue {
   count: number | undefined;
@@ -8,3 +8,7 @@ export interface PageHeaderContextValue {
 export const PageHeaderContext = createContext<
   PageHeaderContextValue | undefined
 >(undefined);
+
+export function usePageHeaderContext() {
+  return useContext(PageHeaderContext);
+}
