@@ -3,6 +3,7 @@ import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
+import { Tooltip } from './Tooltip';
 
 const avatarColors = [
   { bg: 'bg-teal-500', text: 'text-white' },
@@ -43,10 +44,11 @@ export interface AvatarProps extends VariantProps<typeof avatarVariants> {
   alt?: string;
   fallback?: string;
   className?: string;
+  tooltip?: string;
 }
 
 const Avatar = React.forwardRef<HTMLSpanElement, AvatarProps>(
-  ({ src, alt, fallback, size, className }, ref) => {
+  ({ src, alt, fallback, size, className, tooltip }, ref) => {
     const [isLoading, setIsLoading] = React.useState(!!src);
 
     const name = fallback || alt || '';
@@ -64,7 +66,7 @@ const Avatar = React.forwardRef<HTMLSpanElement, AvatarProps>(
       ).toUpperCase();
     }, [name]);
 
-    return (
+    const avatarElement = (
       <AvatarPrimitive.Root
         ref={ref}
         className={cn(avatarVariants({ size }), className)}
@@ -92,6 +94,16 @@ const Avatar = React.forwardRef<HTMLSpanElement, AvatarProps>(
         </AvatarPrimitive.Fallback>
       </AvatarPrimitive.Root>
     );
+
+    if (tooltip) {
+      return (
+        <Tooltip content={tooltip}>
+          <span>{avatarElement}</span>
+        </Tooltip>
+      );
+    }
+
+    return avatarElement;
   }
 );
 Avatar.displayName = 'Avatar';
