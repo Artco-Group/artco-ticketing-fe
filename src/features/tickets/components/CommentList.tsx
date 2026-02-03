@@ -1,6 +1,6 @@
 import { memo, useRef, useEffect } from 'react';
 import type { Comment } from '@/types';
-import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar';
+import { Avatar } from '@/shared/components/ui/Avatar';
 import { EmptyState } from '@/shared/components/ui/EmptyState';
 import { Separator } from '@/shared/components/ui/separator';
 import { Icon } from '@/shared/components/ui';
@@ -52,11 +52,7 @@ const CommentItem = memo(function CommentItem({
     >
       <div className="flex max-w-[70%] items-start gap-2">
         {!isCurrentUser && (
-          <Avatar className="h-8 w-8 shrink-0">
-            <AvatarFallback className="bg-greyscale-200 text-greyscale-700 text-xs font-medium">
-              {authorInitial}
-            </AvatarFallback>
-          </Avatar>
+          <Avatar size="md" fallback={authorInitial} alt={authorName} />
         )}
 
         <div className="flex-1">
@@ -167,11 +163,7 @@ const CommentItem = memo(function CommentItem({
         </div>
 
         {isCurrentUser && (
-          <Avatar className="h-8 w-8 shrink-0">
-            <AvatarFallback className="bg-brand-primary text-xs font-medium text-white">
-              {authorInitial}
-            </AvatarFallback>
-          </Avatar>
+          <Avatar size="md" fallback={authorInitial} alt={authorName} />
         )}
       </div>
     </div>
