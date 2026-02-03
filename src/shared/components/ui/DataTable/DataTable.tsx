@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import {
   useReactTable,
@@ -72,7 +72,41 @@ function DataTable<T extends TableRowData>({
     return selection;
   }, [selectedRows]);
 
-  const renderCellContent = (col: Column<T>, row: T): ReactNode => {
+  const renderActionMenu = useCallback(
+    (row: T, rowActions: RowAction<T>[]) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className="hover:bg-muted text-greyscale-500 flex h-8 w-8 items-center justify-center rounded transition-colors"
+            aria-label="Row actions"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Icon name="more-vertical" size="sm" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {rowActions.map((action, actionIndex) => (
+            <div key={actionIndex}>
+              {action.separator && actionIndex > 0 && <DropdownMenuSeparator />}
+              <DropdownMenuItem
+                onClick={() => action.onClick(row)}
+                className={cn(
+                  action.variant === 'destructive' &&
+                    'text-red-600 focus:text-red-600'
+                )}
+              >
+                {action.icon && <span className="mr-2">{action.icon}</span>}
+                {action.label}
+              </DropdownMenuItem>
+            </div>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
+    []
+  );
+
+  const renderCellContent = useCallback((col: Column<T>, row: T): ReactNode => {
     const rowData = row as Record<string, unknown>;
     const value = rowData[col.key];
 
@@ -137,7 +171,7 @@ function DataTable<T extends TableRowData>({
       default:
         return value as ReactNode;
     }
-  };
+  }, []);
 
   const tanstackColumns: ColumnDef<T>[] = useMemo(() => {
     const cols: ColumnDef<T>[] = [];
@@ -208,8 +242,9 @@ function DataTable<T extends TableRowData>({
     }
 
     return cols;
-  }, [columns, selectable, actions]);
+  }, [columns, selectable, actions, renderCellContent, renderActionMenu]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns: tanstackColumns,
@@ -254,37 +289,6 @@ function DataTable<T extends TableRowData>({
       table.setRowSelection(newSelection);
     }
   }, [selectedRows, table]);
-
-  const renderActionMenu = (row: T, rowActions: RowAction<T>[]) => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          className="hover:bg-muted text-greyscale-500 flex h-8 w-8 items-center justify-center rounded transition-colors"
-          aria-label="Row actions"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Icon name="more-vertical" size="sm" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {rowActions.map((action, actionIndex) => (
-          <div key={actionIndex}>
-            {action.separator && actionIndex > 0 && <DropdownMenuSeparator />}
-            <DropdownMenuItem
-              onClick={() => action.onClick(row)}
-              className={cn(
-                action.variant === 'destructive' &&
-                  'text-red-600 focus:text-red-600'
-              )}
-            >
-              {action.icon && <span className="mr-2">{action.icon}</span>}
-              {action.label}
-            </DropdownMenuItem>
-          </div>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
 
   const renderSortIcon = (columnId: string, canSort: boolean) => {
     if (!canSort) return null;
