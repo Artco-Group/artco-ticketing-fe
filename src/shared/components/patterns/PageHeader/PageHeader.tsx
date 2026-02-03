@@ -9,7 +9,7 @@ import {
 } from '@/shared/components/composite';
 import type { NotificationItem } from '@/shared/components/composite/NotificationBell/NotificationBell';
 import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
-import { usePageHeaderContext } from './pageHeaderContext';
+import { usePageHeaderContext } from './usePageHeaderContext';
 
 export interface PageHeaderProps {
   title: string;
