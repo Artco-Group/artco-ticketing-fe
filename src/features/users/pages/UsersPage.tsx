@@ -1,7 +1,14 @@
+import { useMemo, useCallback } from 'react';
 import { UserList } from '../components';
-import { QueryStateWrapper } from '@/shared/components/ui';
-import { usePageHeader } from '@/shared/components/patterns';
+import { QueryStateWrapper, Button } from '@/shared/components/ui';
+import {
+  usePageHeader,
+  usePageHeaderTabs,
+  type Tab,
+} from '@/shared/components/patterns';
 import { useUserList } from '../hooks';
+
+const USER_TABS: Tab[] = [{ id: 'all', label: 'All', icon: 'all' }];
 
 export default function UsersPage() {
   const {
@@ -30,6 +37,33 @@ export default function UsersPage() {
 
   usePageHeader({ count: users?.length });
 
+  const tabBarActions = useMemo(
+    () => (
+      <>
+        <Button variant="outline" leftIcon="download" rightIcon="chevron-down">
+          Import / Export
+        </Button>
+        <Button
+          onClick={onAddUser}
+          leftIcon="plus"
+          className="bg-greyscale-900 hover:bg-greyscale-800 text-white"
+        >
+          Add User
+        </Button>
+      </>
+    ),
+    [onAddUser]
+  );
+
+  const handleTabChange = useCallback(() => {}, []);
+
+  usePageHeaderTabs({
+    tabs: USER_TABS,
+    activeTab: 'all',
+    onTabChange: handleTabChange,
+    actions: tabBarActions,
+  });
+
   return (
     <QueryStateWrapper
       isLoading={isLoading}
@@ -52,7 +86,6 @@ export default function UsersPage() {
           showFormModal={showFormModal}
           onSearchChange={setSearchTerm}
           onRoleFilterChange={setRoleFilter}
-          onAddUser={onAddUser}
           onEditUser={onEditUser}
           onDeleteUser={setUserToDelete}
           onCloseFormModal={onCloseFormModal}

@@ -10,6 +10,7 @@ import {
 import type { NotificationItem } from '@/shared/components/composite/NotificationBell/NotificationBell';
 import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
 import { usePageHeaderContext } from './usePageHeaderContext';
+import { TabBar } from '../TabBar';
 
 export interface PageHeaderProps {
   title: string;
@@ -45,14 +46,16 @@ export function PageHeader({
     setNotifications([]);
   };
 
+  const tabBarConfig = contextValue?.tabBarConfig;
+
   return (
     <header
       className={cn(
-        'bg-card sticky top-0 z-10 flex h-16 shrink-0 border-b shadow-sm',
+        'bg-card sticky top-0 z-10 shrink-0 border-b shadow-sm',
         className
       )}
     >
-      <div className="flex flex-1 items-center justify-between px-4">
+      <div className="flex h-16 flex-1 items-center justify-between px-4">
         <div className="flex flex-col justify-center">
           {breadcrumbs && breadcrumbs.length > 0 && (
             <Breadcrumbs items={breadcrumbs} className="mb-0.5" />
@@ -85,6 +88,19 @@ export function PageHeader({
           />
         </div>
       </div>
+
+      {tabBarConfig && (
+        <>
+          <div className="border-border-default border-t" />
+          <TabBar
+            tabs={tabBarConfig.tabs}
+            activeTab={tabBarConfig.activeTab}
+            onTabChange={tabBarConfig.onTabChange}
+            actions={tabBarConfig.actions}
+            className="px-4 py-3"
+          />
+        </>
+      )}
     </header>
   );
 }
