@@ -18,14 +18,14 @@ const DefaultFloatingCards = () => (
       <div className="flex flex-1 flex-col justify-center gap-1.5">
         <div className="flex-between gap-2.5">
           <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
-            Brza prijava
+            Quick Access
           </span>
           <span className="text-caption py-xxs rounded-3xl bg-linear-to-br from-blue-400 to-blue-800 px-2 font-semibold tracking-[0.5px] text-white uppercase">
-            Novo
+            New
           </span>
         </div>
         <span className="text-body-sm text-white/70">
-          Prijavite problem u par klikova
+          Report a problem in a few clicks
         </span>
       </div>
     </div>
@@ -37,19 +37,19 @@ const DefaultFloatingCards = () => (
       <div className="flex flex-1 flex-col justify-center gap-1.5">
         <div className="flex-between gap-2.5">
           <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
-            Praćenje statusa
+            Status Tracking
           </span>
           <span className="border-success-500/40 bg-success-500/30 text-caption gap-xs py-xxs flex items-center rounded-3xl border border-solid px-2 font-semibold text-white uppercase">
             <span className="animate-live-dot mr-1 h-1.5 w-1.5 rounded-full bg-white"></span>
             Live
           </span>
         </div>
-        <span className="text-body-sm text-white/70">Real-time ažuriranja</span>
+        <span className="text-body-sm text-white/70">Real-time updates</span>
         <div className="mt-1.5">
           <div className="mb-1.5 h-1 overflow-hidden rounded-xs bg-white/15">
             <div className="animate-soft-pulse h-full w-[65%] rounded-xs bg-linear-to-b from-orange-500 to-orange-400"></div>
           </div>
-          <span className="text-caption text-white/60">3 aktivna zahtjeva</span>
+          <span className="text-caption text-white/60">3 active requests</span>
         </div>
       </div>
     </div>
@@ -61,16 +61,16 @@ const DefaultFloatingCards = () => (
       <div className="flex flex-1 flex-col justify-center gap-1.5">
         <div className="flex-between gap-2.5">
           <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
-            Sigurna komunikacija
+            Secure Communication
           </span>
           <Icon name="check" size="md" className="shrink-0 text-white" />
         </div>
-        <span className="text-body-sm text-white/70">Zaštićeni podaci</span>
+        <span className="text-body-sm text-white/70">Protected data</span>
         <div className="flex-start-gap-3 mt-2 border-t border-white/10 pt-2.5">
           <div className="flex flex-col gap-0.5">
             <span className="text-body-sm font-bold text-white">256-bit</span>
             <span className="text-caption tracking-[0.5px] text-white/50 uppercase">
-              Enkripcija
+              Encryption
             </span>
           </div>
           <div className="h-7 w-px bg-white/10"></div>
@@ -88,13 +88,14 @@ const DefaultFloatingCards = () => (
 
 const defaultHeadline = (
   <>
-    Sistem za prijavu
-    <br />i podršku
+    Ticket and Support
+    <br />
+    System
   </>
 );
 
 const defaultDescription =
-  'Prijavite tehničke probleme, zatražite podršku ili pratite status vaših zahtjeva na jednom mjestu.';
+  'Report technical issues, request support, or track the status of your requests in one place.';
 
 export function AuthLayout({
   children,
@@ -154,7 +155,7 @@ export function AuthLayout({
               className="max-mdx:flex max-mdx:items-center max-mdx:justify-center max-mdx:mt-5 max-mdx:gap-2 max-mdx:w-full max-mdx:h-14 max-mdx:py-4.5 max-mdx:px-6 max-mdx:bg-linear-135 max-mdx:text-white max-mdx:font-semibold max-mdx:text-body-md max-mdx:border-none max-mdx:rounded-lg max-mdx:cursor-pointer max-mdx:shadow-card-button-md max-mdx:transition-all max-mdx:duration-300 max-mdx:ease-in-out max-mdx:tracking[0.3px] max-mdx:hover:bg-linear-135 max-mdx:hover:transform max-mdx:hover:-translate-y-0.5 max-mdx:hover:shadow-button-hover max-mdx:active:translate-y-0 from-primary-500 to-primary-600 text-body-md z-10 hidden cursor-pointer border-none bg-linear-to-br text-white"
               onClick={closeBrandingModal}
             >
-              <span>Nastavi</span>
+              <span>Continue</span>
               <Icon
                 name="chevron-down"
                 size="md"
@@ -171,28 +172,28 @@ export function AuthLayout({
 
         <footer className="login-footer max-mdx:relative max-mdx:bottom-auto max-mdx:left-auto max-mdx:right-auto max-mdx:flex-col max-mdx:gap-4 max-mdx:mt-10 flex-between absolute right-12 bottom-8 left-12">
           <span className="text-body-sm text-greyscale-400">
-            © 2024 Artco Group
+            © 2026 Artco Group d.o.o.
           </span>
-          <div className="max-smx:gap-4 flex gap-6">
+          {/* <div className="max-smx:gap-4 flex gap-6">
             <a
               href="#privacy"
               className="decoration-none text-body-sm text-greyscale-400 hover:text-greyscale-700 transition-colors duration-200 ease-in-out"
             >
-              Privatnost
+              Privacy
             </a>
             <a
               href="#terms"
               className="decoration-none text-body-sm text-greyscale-400 hover:text-greyscale-700 transition-colors duration-200 ease-in-out"
             >
-              Uslovi korištenja
+              Terms of Service
             </a>
             <a
               href="#help"
               className="decoration-none text-body-sm text-greyscale-400 hover:text-greyscale-700 transition-colors duration-200 ease-in-out"
             >
-              Pomoć
+              Help
             </a>
-          </div>
+          </div> */}
         </footer>
       </div>
     </div>

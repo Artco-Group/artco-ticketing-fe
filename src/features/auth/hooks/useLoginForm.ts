@@ -29,10 +29,10 @@ export function useLoginForm() {
     defaultValues: {
       email: '',
       password: '',
+      rememberMe: false,
     },
   });
 
-  // Redirect to dashboard when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate(PAGE_ROUTES.DASHBOARD.ROOT, { replace: true });
