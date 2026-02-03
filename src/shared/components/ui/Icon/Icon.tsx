@@ -162,15 +162,11 @@ const iconMap: Record<IconName, string> = {
   'arrow-left': arrowLeftSvg,
   notification: notificationSvg,
   'double-check': doubleCheckSvg,
-<<<<<<< feature/ARTCOCRM-224/comments
-  'command-k': commandKSvg,
   'more-horizontal': MoreHorizontal,
-=======
   'trend-up': trendUpSvg,
   'trend-down': trendDownSvg,
   filter: filterSvg,
   'command-k': commandKSvg
->>>>>>> develop
 };
 
 const sizeMap: Record<IconSize, string> = {
