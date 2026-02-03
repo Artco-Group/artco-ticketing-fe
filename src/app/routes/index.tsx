@@ -9,6 +9,7 @@ import { inboxRoutes } from '@/features/inbox/routes';
 import { notesRoutes } from '@/features/notes/routes';
 import { reportsRoutes } from '@/features/reports/routes';
 import { automationsRoutes } from '@/features/automations/routes';
+import { settingsRoutes } from '@/features/settings/routes';
 import { createSimpleRoute } from '@/shared/utils/route-helpers';
 import { PAGE_ROUTES } from '@/shared/constants';
 
@@ -38,6 +39,7 @@ export const allRoutes = [
   ...notesRoutes,
   ...reportsRoutes,
   ...automationsRoutes,
+  ...settingsRoutes,
 
   // 404 catch-all route - must be last
   createSimpleRoute('not-found', '*', NotFoundPage),
@@ -64,4 +66,5 @@ export {
   notesRoutes,
   reportsRoutes,
   automationsRoutes,
+  settingsRoutes,
 };

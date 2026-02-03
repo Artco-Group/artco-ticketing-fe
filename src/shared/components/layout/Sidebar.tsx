@@ -328,6 +328,8 @@ export function Sidebar() {
             <MenuItem
               icon="settings"
               label="Settings"
+              href={PAGE_ROUTES.SETTINGS}
+              active={isActive(PAGE_ROUTES.SETTINGS)}
               collapsed={collapsed}
               className="text-sidebar-foreground/70"
             />
