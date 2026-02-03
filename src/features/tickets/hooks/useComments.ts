@@ -64,7 +64,6 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
    */
   const handleAddComment = async (text: string) => {
     try {
-      console.log('[useComments] replyingToCommentId:', replyingToCommentId);
       const payload: any = {
         ticketId,
         text,
@@ -72,13 +71,8 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
 
       if (replyingToCommentId) {
         payload.replyId = String(replyingToCommentId);
-        console.log(
-          '[useComments] Adding replyId to payload:',
-          payload.replyId
-        );
       }
 
-      console.log('[useComments] Full payload:', payload);
       await addCommentMutation.mutateAsync(payload);
       toast.success('Komentar uspješno dodan');
       // Clear reply state after successful add
@@ -145,7 +139,6 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
    * Handle starting reply mode for a comment
    */
   const handleStartReply = (commentId: string) => {
-    console.log('[useComments] Setting replyingToCommentId:', commentId);
     setReplyingToCommentId(asCommentId(commentId));
     // Clear edit state when starting reply
     setEditingComment({ commentId: null, text: '' });
