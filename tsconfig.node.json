@@ -15,6 +15,15 @@
     "moduleDetection": "force",
     "noEmit": true,
 
+    /* Path Mapping - ADD THESE */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@features/*": ["./src/features/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@app/*": ["./src/app/*"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
