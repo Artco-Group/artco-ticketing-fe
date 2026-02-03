@@ -338,7 +338,7 @@ function TicketDetail({
                     ? undefined
                     : commentsHook.isReplying && commentsHook.replyingToComment
                       ? `Reply to ${commentsHook.replyingToComment.authorId?.name || 'Unknown'}`
-                      : 'Napišite komentar...'
+                      : 'Add Comment...'
                 }
                 initialValue={
                   commentsHook.isEditing
@@ -347,10 +347,10 @@ function TicketDetail({
                 }
                 submitLabel={
                   commentsHook.isEditing
-                    ? 'Sačuvaj'
+                    ? 'Save'
                     : commentsHook.isReplying
-                      ? 'Odgovori'
-                      : 'Pošalji'
+                      ? 'Reply'
+                      : 'Send'
                 }
                 disabled={commentsHook.isSubmitting}
               />
