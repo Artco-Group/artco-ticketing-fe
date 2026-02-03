@@ -34,9 +34,9 @@ export function useTicketList() {
       priority: searchParams.get('priority') || 'All',
       client: searchParams.get('client') || 'All',
       assignee: searchParams.get('assignee') || 'All',
-      sortBy: searchParams.get('sortBy') || isEngLead ? '' : '',
+      sortBy: searchParams.get('sortBy') || 'Created Date',
     }),
-    [searchParams, isEngLead]
+    [searchParams]
   );
 
   // Fetch tickets

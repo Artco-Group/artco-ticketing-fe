@@ -47,6 +47,7 @@ import fileTextSvg from '@/assets/icons/system/file-text.svg?raw';
 import settingsSvg from '@/assets/icons/system/settings.svg?raw';
 import notificationSvg from '@/assets/icons/system/notification.svg?raw';
 import doubleCheckSvg from '@/assets/icons/system/double-check.svg?raw';
+import filterSvg from '@/assets/icons/system/filter.svg?raw';
 
 import pinSvg from '@/assets/icons/navigation/pin.svg?raw';
 import automationsSvg from '@/assets/icons/navigation/automations.svg?raw';
@@ -105,6 +106,7 @@ export type IconName =
   | 'arrow-left'
   | 'notification'
   | 'double-check'
+  | 'filter'
   | 'trend-up'
   | 'trend-down'
   | 'command-k';
@@ -160,7 +162,8 @@ const iconMap: Record<IconName, string> = {
   'double-check': doubleCheckSvg,
   'trend-up': trendUpSvg,
   'trend-down': trendDownSvg,
-  'command-k': commandKSvg,
+  filter: filterSvg,
+  'command-k': commandKSvg
 };
 
 const sizeMap: Record<IconSize, string> = {
