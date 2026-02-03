@@ -35,7 +35,7 @@ export default function TicketListPage() {
     onTabChange,
   } = useTicketList();
 
-  usePageHeader({ count: allTickets?.length });
+  usePageHeader({ count: tickets.length });
 
   const tabBarActions = useMemo(
     () => (
