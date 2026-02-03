@@ -21,6 +21,7 @@ const AVAILABLE_ROLES: UserRole[] = [
   UserRole.CLIENT,
   UserRole.DEVELOPER,
   UserRole.ENG_LEAD,
+  UserRole.ADMIN,
 ];
 
 interface UserFormProps {

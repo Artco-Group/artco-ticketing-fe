@@ -44,10 +44,6 @@ import {
   FilterButton,
   FilterPanel,
   type FilterPanelValues,
-  DataTable,
-  type Column,
-  type SortDirection,
-  type RowAction,
 } from '@/shared/components/ui';
 import { MemberPicker, StatsCard } from '@/shared/components/composite';
 import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
@@ -188,12 +184,6 @@ export default function TestingPage() {
   const [disabledChecked, setDisabledChecked] = useState(true);
   const [disabledUnchecked, setDisabledUnchecked] = useState(false);
   const [indeterminateState, setIndeterminateState] = useState(false);
-
-  // DataTable state
-  const [tableSelectedRows, setTableSelectedRows] = useState<string[]>([]);
-  const [tableSortColumn, setTableSortColumn] = useState<string | null>(null);
-  const [tableSortDirection, setTableSortDirection] =
-    useState<SortDirection>(null);
 
   const [items, setItems] = useState([
     { id: 1, label: 'Item 1', checked: false },
@@ -1444,132 +1434,6 @@ export default function TestingPage() {
       </section>
 
       <Separator />
-
-      {/* DataTable Section */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Data Table</h2>
-        <p className="text-muted-foreground">
-          Enhanced table with selection, sorting, and row actions.
-        </p>
-
-        <div className="space-y-2">
-          <p className="text-sm">
-            Selected rows:{' '}
-            {tableSelectedRows.length > 0
-              ? tableSelectedRows.join(', ')
-              : 'None'}
-          </p>
-          <p className="text-sm">
-            Sort:{' '}
-            {tableSortColumn
-              ? `${tableSortColumn} (${tableSortDirection})`
-              : 'None'}
-          </p>
-        </div>
-
-        <DataTable
-          columns={
-            [
-              {
-                key: 'name',
-                label: 'Name',
-                sortable: true,
-                render: (row) => (
-                  <div className="flex items-center gap-3">
-                    <Avatar fallback={row.name} size="md" />
-                    <div>
-                      <p className="font-medium">{row.name}</p>
-                      <p className="text-muted-foreground text-sm">
-                        {row.email}
-                      </p>
-                    </div>
-                  </div>
-                ),
-              },
-              {
-                key: 'role',
-                label: 'Role',
-                sortable: true,
-                render: (row) => (
-                  <span className="border-greyscale-200 bg-greyscale-50 text-greyscale-700 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium">
-                    {row.role}
-                  </span>
-                ),
-              },
-              {
-                key: 'status',
-                label: 'Status',
-                render: (row) => (
-                  <span
-                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      row.status === 'Active'
-                        ? 'bg-green-50 text-green-700'
-                        : 'bg-orange-50 text-orange-700'
-                    }`}
-                  >
-                    <span
-                      className={`h-1.5 w-1.5 rounded-full ${
-                        row.status === 'Active'
-                          ? 'bg-green-500'
-                          : 'bg-orange-500'
-                      }`}
-                    />
-                    {row.status}
-                  </span>
-                ),
-              },
-              {
-                key: 'createdAt',
-                label: 'Created',
-                sortable: true,
-                render: (row) => (
-                  <div className="flex items-center gap-2">
-                    <Icon
-                      name="clock"
-                      size="sm"
-                      className="text-greyscale-400"
-                    />
-                    <span>
-                      {new Date(row.createdAt).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
-                    </span>
-                  </div>
-                ),
-              },
-            ] as Column<(typeof mockTableData)[0]>[]
-          }
-          data={mockTableData}
-          selectable
-          selectedRows={tableSelectedRows}
-          onSelect={setTableSelectedRows}
-          sortColumn={tableSortColumn}
-          sortDirection={tableSortDirection}
-          onSort={(col, dir) => {
-            setTableSortColumn(col);
-            setTableSortDirection(dir);
-          }}
-          actions={
-            [
-              {
-                label: 'Edit',
-                icon: <Icon name="edit" size="sm" />,
-                onClick: (row) => alert(`Edit ${row.name}`),
-              },
-              {
-                label: 'Delete',
-                icon: <Icon name="trash" size="sm" />,
-                onClick: (row) => alert(`Delete ${row.name}`),
-                variant: 'destructive',
-                separator: true,
-              },
-            ] as RowAction<(typeof mockTableData)[0]>[]
-          }
-          onRowClick={(row) => console.log('Row clicked:', row)}
-        />
-      </section>
 
       <Separator />
 
