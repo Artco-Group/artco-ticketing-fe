@@ -33,6 +33,7 @@ interface UserListProps {
   showFormModal: boolean;
   onSearchChange: (value: string) => void;
   onRoleFilterChange: (value: string) => void;
+  onAddUser: () => void;
   onEditUser: (user: User) => void;
   onDeleteUser: (user: User) => void;
   onCloseFormModal: () => void;
@@ -53,6 +54,7 @@ function UserList({
   showFormModal,
   onSearchChange,
   onRoleFilterChange,
+  onAddUser,
   onEditUser,
   onDeleteUser,
   onCloseFormModal,
