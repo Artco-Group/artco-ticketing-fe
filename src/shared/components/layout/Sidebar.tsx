@@ -119,7 +119,9 @@ const groups = [
   },
 ];
 
-export function Sidebar() {
+export function Sidebar({
+  hideActiveIndicator = false,
+}: { hideActiveIndicator?: boolean } = {}) {
   const { user } = useAuth();
   const location = useLocation();
   const { collapsed, setCollapsed } = useSidebar();
@@ -137,6 +139,8 @@ export function Sidebar() {
   );
 
   const isActive = (href: string) => {
+    // Don't show active indicator when shown from settings page
+    if (hideActiveIndicator) return false;
     if (href === '#') return false;
     return (
       location.pathname === href || location.pathname.startsWith(href + '/')
@@ -248,6 +252,7 @@ export function Sidebar() {
                   href={item.href}
                   active={isActive(item.href)}
                   collapsed={collapsed}
+                  hideActiveIndicator={hideActiveIndicator}
                 />
               </li>
             ))}
@@ -285,6 +290,7 @@ export function Sidebar() {
                       href={item.href}
                       active={isActive(item.href)}
                       collapsed={collapsed}
+                      hideActiveIndicator={hideActiveIndicator}
                     />
                   </li>
                 ))}

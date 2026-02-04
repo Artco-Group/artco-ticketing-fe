@@ -1,105 +1,56 @@
 import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/shared/components/ui';
 import { SearchBar } from '@/shared/components/composite';
 import { MenuItem } from '@/shared/components/composite/MenuItem';
-import { PAGE_ROUTES } from '@/shared/constants';
 import { useSettingsSidebar } from './useSettingsSidebar';
 import type { IconName } from '@/shared/components/ui/Icon/Icon';
 
-interface SettingsNavItem {
+export interface SettingsSideBarItem {
   id: string;
   label: string;
   icon: IconName;
   href: string;
 }
 
-interface SettingsNavGroup {
-  title: string;
-  items: SettingsNavItem[];
+export interface SettingsSideBarGroup {
+  title?: string;
+  items: SettingsSideBarItem[];
 }
 
-const settingsNavGroups: SettingsNavGroup[] = [
-  {
-    title: 'Account',
-    items: [
-      {
-        id: 'profile',
-        label: 'Profile',
-        icon: 'profile',
-        href: '/settings/profile',
-      },
-      {
-        id: 'notification',
-        label: 'Notification',
-        icon: 'notification',
-        href: '/settings/notification',
-      },
-      {
-        id: 'security',
-        label: 'Security & Access',
-        icon: 'security',
-        href: '/settings/security',
-      },
-      {
-        id: 'connected-account',
-        label: 'Connected Account',
-        icon: 'connected-account',
-        href: '/settings/connected-account',
-      },
-      {
-        id: 'integrations',
-        label: 'Integrations',
-        icon: 'integrations',
-        href: '/settings/integrations',
-      },
-    ],
-  },
-  {
-    title: 'Administration',
-    items: [
-      {
-        id: 'preference',
-        label: 'Preference',
-        icon: 'preference',
-        href: '/settings/preference',
-      },
-      {
-        id: 'billing',
-        label: 'Billing',
-        icon: 'billing',
-        href: '/settings/billing',
-      },
-      {
-        id: 'application',
-        label: 'Application',
-        icon: 'application',
-        href: '/settings/application',
-      },
-      {
-        id: 'import-export',
-        label: 'Import / Export',
-        icon: 'import-export',
-        href: '/settings/import-export',
-      },
-      { id: 'api', label: 'API', icon: 'api', href: '/settings/api' },
-    ],
-  },
-];
+interface SettingsSidebarProps {
+  groups: SettingsSideBarGroup[];
+  /** currently-active item id (optional). If provided, takes precedence over pathname-based active detection */
+  activeItem?: string;
+  /** optional navigation callback: receives `item.id` when an item is clicked. If omitted, items will render as links using `href` */
+  onNavigate?: (id: string) => void;
+  className?: string;
+  onBackToTop?: () => void;
+}
 
-export function SettingsSidebar() {
+// `groups` are provided via props; default static nav groups removed to avoid unused constants.
+
+export function SettingsSidebar({
+  groups,
+  onBackToTop,
+  activeItem,
+  onNavigate,
+  className,
+}: SettingsSidebarProps) {
   const location = useLocation();
   const { collapsed, setCollapsed } = useSettingsSidebar();
   const [searchValue, setSearchValue] = useState('');
 
   const isActive = (href: string) => {
+    // If an explicit active id was provided, don't use href-based detection
+    if (activeItem) return false;
     return (
       location.pathname === href || location.pathname.startsWith(href + '/')
     );
   };
 
-  const filteredGroups = settingsNavGroups
+  const filteredGroups = groups
     .map((group) => ({
       ...group,
       items: group.items.filter((item) =>
@@ -114,7 +65,8 @@ export function SettingsSidebar() {
         'fixed inset-y-0 flex flex-col',
         'border-sidebar-border bg-sidebar text-sidebar-foreground border-r',
         'transition-[width] duration-300',
-        collapsed ? 'w-20' : 'w-72'
+        collapsed ? 'w-20' : 'w-72',
+        className
       )}
       aria-label="Settings sidebar"
     >
@@ -198,8 +150,9 @@ export function SettingsSidebar() {
 
         {/* Back to Top */}
         <div className={cn('py-2', collapsed ? 'px-2' : 'px-4')}>
-          <NavLink
-            to={PAGE_ROUTES.DASHBOARD.ROOT}
+          <button
+            type="button"
+            onClick={() => onBackToTop?.()}
             className={cn(
               'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors',
               'hover:bg-sidebar-accent text-sidebar-foreground/70',
@@ -208,30 +161,46 @@ export function SettingsSidebar() {
           >
             <Icon name="chevron-left" size="md" />
             {!collapsed && <span>Back to Top</span>}
-          </NavLink>
+          </button>
         </div>
 
         {/* Navigation Groups */}
         <nav
           className={cn('flex-1 space-y-4 pt-2', collapsed ? 'px-2' : 'px-2')}
         >
-          {filteredGroups.map((group) => (
-            <div key={group.title} className={cn(!collapsed && 'px-2')}>
-              {!collapsed && (
+          {filteredGroups.map((group, idx) => (
+            <div key={group.title || idx}>
+              {!collapsed && group.title && (
                 <p className="text-sidebar-foreground/50 mb-2 px-2 text-xs font-medium tracking-wide uppercase">
                   {group.title}
                 </p>
               )}
-              <ul className={cn('space-y-0.5', collapsed && 'space-y-1')}>
+              <ul
+                className={cn(
+                  'space-y-0.5',
+                  !collapsed && 'px-2',
+                  collapsed && 'space-y-1'
+                )}
+              >
                 {group.items.map((item) => (
                   <li key={item.id} className="relative">
-                    <MenuItem
-                      icon={item.icon}
-                      label={item.label}
-                      href={item.href}
-                      active={isActive(item.href)}
-                      collapsed={collapsed}
-                    />
+                    {onNavigate ? (
+                      <MenuItem
+                        icon={item.icon}
+                        label={item.label}
+                        onClick={() => onNavigate(item.id)}
+                        active={activeItem ? activeItem === item.id : false}
+                        collapsed={collapsed}
+                      />
+                    ) : (
+                      <MenuItem
+                        icon={item.icon}
+                        label={item.label}
+                        href={item.href}
+                        active={isActive(item.href)}
+                        collapsed={collapsed}
+                      />
+                    )}
                   </li>
                 ))}
               </ul>

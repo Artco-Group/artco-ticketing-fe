@@ -1,12 +1,20 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { SettingsSidebarContext } from './SettingsSidebarContext';
+import { SettingsSidebar } from './SettingsSidebar';
+import type { SettingsSideBarGroup } from './SettingsSidebar';
 
 interface SettingsSidebarProviderProps {
   children: ReactNode;
+  groups: SettingsSideBarGroup[];
+  onBackToTop?: () => void;
+  showMainSidebar?: boolean;
 }
 
 export function SettingsSidebarProvider({
   children,
+  groups,
+  onBackToTop,
+  showMainSidebar = false,
 }: SettingsSidebarProviderProps) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -24,6 +32,9 @@ export function SettingsSidebarProvider({
 
   return (
     <SettingsSidebarContext.Provider value={{ collapsed, setCollapsed }}>
+      {!showMainSidebar && (
+        <SettingsSidebar groups={groups} onBackToTop={onBackToTop} />
+      )}
       {children}
     </SettingsSidebarContext.Provider>
   );
