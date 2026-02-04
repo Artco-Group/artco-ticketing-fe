@@ -12,10 +12,6 @@ import {
   getAssigneeEmail,
 } from '@/shared/utils/ticket-helpers';
 
-/**
- * Custom hook for ticket list page logic.
- * Separates business logic from UI for better testability and maintainability.
- */
 export function useTicketList() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -27,7 +23,8 @@ export function useTicketList() {
   const isDeveloper = userRole === UserRole.DEVELOPER;
   const isClient = userRole === UserRole.CLIENT;
 
-  // Derive filters from URL params (role-specific defaults)
+  const activeTab = searchParams.get('tab') || 'active';
+
   const filters: Filters = useMemo(
     () => ({
       status: searchParams.get('status') || 'All',
@@ -39,7 +36,6 @@ export function useTicketList() {
     [searchParams]
   );
 
-  // Fetch tickets
   const {
     data: ticketsData,
     isLoading: ticketsLoading,
@@ -55,27 +51,44 @@ export function useTicketList() {
     return ticketsData?.tickets || [];
   }, [ticketsData]);
 
-  // Fetch users (only for EngLead)
   const { data: usersData } = useUsers();
   const users = usersData?.data?.users || [];
 
-  // Filter tickets based on role
   const roleFilteredTickets = useMemo(() => {
     if (isDeveloper) {
       return allTickets.filter(
         (ticket) => getAssigneeEmail(ticket.assignedTo) === user?.email
       );
     }
+    if (isClient) {
+      return allTickets.filter((ticket) => ticket.clientEmail === user?.email);
+    }
     return allTickets;
-  }, [allTickets, isDeveloper, user?.email]);
+  }, [allTickets, isDeveloper, isClient, user?.email]);
 
-  // Filter and sort tickets using utility functions
+  const tabFilteredTickets = useMemo(() => {
+    if (activeTab === 'all') {
+      return roleFilteredTickets;
+    }
+    if (activeTab === 'backlog') {
+      return roleFilteredTickets.filter(
+        (ticket) => ticket.status === 'New' || ticket.status === 'Open'
+      );
+    }
+    return roleFilteredTickets.filter(
+      (ticket) =>
+        ticket.status === 'In Progress' ||
+        ticket.status === 'Resolved' ||
+        ticket.status === 'Closed'
+    );
+  }, [roleFilteredTickets, activeTab]);
+
   const filteredTickets = useMemo(() => {
     return sortTickets(
-      filterTickets(roleFilteredTickets, filters, { isEngLead }),
+      filterTickets(tabFilteredTickets, filters, { isEngLead }),
       filters.sortBy
     );
-  }, [roleFilteredTickets, filters, isEngLead]);
+  }, [tabFilteredTickets, filters, isEngLead]);
 
   const handleViewTicket = (ticket: Ticket) => {
     navigate(PAGE_ROUTES.TICKETS.detail(ticket._id || ''));
@@ -83,15 +96,23 @@ export function useTicketList() {
 
   const handleFilterChange = (filterType: string, value: string) => {
     const newFilters = { ...filters, [filterType]: value };
-
-    // Build query params (omit default values)
     const params: Record<string, string> = {};
+    if (activeTab !== 'active') {
+      params.tab = activeTab;
+    }
     Object.entries(newFilters).forEach(([key, val]) => {
       if (val !== 'All' && !(key === 'sortBy' && val === 'Created Date')) {
         params[key] = val;
       }
     });
+    setSearchParams(params);
+  };
 
+  const handleTabChange = (tabId: string) => {
+    const params: Record<string, string> = {};
+    if (tabId !== 'active') {
+      params.tab = tabId;
+    }
     setSearchParams(params);
   };
 
@@ -100,28 +121,23 @@ export function useTicketList() {
   };
 
   return {
-    // Data
     tickets: filteredTickets,
     allTickets: isEngLead ? allTickets : undefined,
     users: isEngLead ? users : undefined,
     filters: !isClient ? filters : undefined,
-
-    // State
     isLoading: ticketsLoading,
     error: ticketsError,
     ticketsData,
     refetch: refetchTickets,
     isRefetching: ticketsRefetching,
-
-    // Role info
+    activeTab,
     userRole: userRole as UserRole | undefined,
     isEngLead,
     isDeveloper,
     isClient,
-
-    // Handlers
     onViewTicket: handleViewTicket,
     onFilterChange: !isClient ? handleFilterChange : undefined,
-    onCreateTicket: isClient ? handleCreateTicket : undefined,
+    onCreateTicket: handleCreateTicket,
+    onTabChange: handleTabChange,
   };
 }

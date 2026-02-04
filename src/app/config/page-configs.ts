@@ -16,14 +16,14 @@ export const pageConfigs: Record<string, PageConfig> = {
     breadcrumbs: [{ label: 'Dashboard' }],
   },
   tickets: {
-    title: 'Tickets',
-    description: 'Manage support tickets',
-    breadcrumbs: [{ label: 'Tickets' }],
+    title: 'Tasks',
+    description: 'Manage support tasks',
+    breadcrumbs: [{ label: 'Tasks' }],
   },
   'ticket-detail': {
-    title: 'Ticket Details',
-    description: 'View and manage ticket',
-    breadcrumbs: [{ label: 'Tickets', href: '/tickets' }, { label: 'Details' }],
+    title: 'Task Details',
+    description: 'View and manage task',
+    breadcrumbs: [{ label: 'Tasks', href: '/tickets' }, { label: 'Details' }],
   },
   users: {
     title: 'Users',

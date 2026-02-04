@@ -1,9 +1,20 @@
+import { useMemo } from 'react';
 import { UserRole } from '@/types';
 
 import { TicketList } from '@/features/tickets/components';
-import { QueryStateWrapper, EmptyState } from '@/shared/components/ui';
-import { usePageHeader } from '@/shared/components/patterns';
+import { QueryStateWrapper, EmptyState, Button } from '@/shared/components/ui';
+import {
+  usePageHeader,
+  usePageHeaderTabs,
+  type Tab,
+} from '@/shared/components/patterns';
 import { useTicketList } from '../hooks';
+
+const TICKET_TABS: Tab[] = [
+  { id: 'active', label: 'Active', icon: 'tasks' },
+  { id: 'backlog', label: 'Backlog', icon: 'backlog' },
+  { id: 'all', label: 'All', icon: 'all' },
+];
 
 export default function TicketListPage() {
   const {
@@ -16,13 +27,40 @@ export default function TicketListPage() {
     ticketsData,
     refetch,
     isRefetching,
+    activeTab,
     userRole,
     onViewTicket,
     onFilterChange,
     onCreateTicket,
+    onTabChange,
   } = useTicketList();
 
-  usePageHeader({ count: allTickets?.length });
+  usePageHeader({ count: tickets.length });
+
+  const tabBarActions = useMemo(
+    () => (
+      <>
+        <Button variant="outline" leftIcon="download" rightIcon="chevron-down">
+          Import / Export
+        </Button>
+        <Button
+          leftIcon="plus"
+          onClick={onCreateTicket}
+          className="bg-greyscale-900 hover:bg-greyscale-800 text-white"
+        >
+          Create Task
+        </Button>
+      </>
+    ),
+    [onCreateTicket]
+  );
+
+  usePageHeaderTabs({
+    tabs: TICKET_TABS,
+    activeTab,
+    onTabChange: onTabChange ?? (() => {}),
+    actions: tabBarActions,
+  });
 
   if (!userRole) {
     return (

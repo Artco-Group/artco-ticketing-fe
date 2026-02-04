@@ -100,16 +100,6 @@ function ClientLayout({
 }: ClientLayoutProps) {
   return (
     <div className="p-6">
-      <div className="flex-between mb-6">
-        <h1 className="text-foreground text-2xl font-bold">My Tickets</h1>
-        {onCreateTicket && (
-          <Button onClick={onCreateTicket}>
-            <Icon name="plus" size="lg" className="mr-2" />
-            Create New Ticket
-          </Button>
-        )}
-      </div>
-
       {tickets.length === 0 ? (
         <ClientEmptyState onCreateTicket={onCreateTicket} />
       ) : (
@@ -131,13 +121,17 @@ function ClientEmptyState({ onCreateTicket }: { onCreateTicket?: () => void }) {
   return (
     <EmptyState
       variant="no-tickets"
-      title="No tickets yet"
-      message="Create your first support ticket to get started"
+      title="No Tasks Found"
+      message="Create your first task"
       action={
         onCreateTicket && (
-          <Button onClick={onCreateTicket} size="lg">
+          <Button
+            onClick={onCreateTicket}
+            size="lg"
+            className="bg-greyscale-900 hover:bg-greyscale-800 text-white"
+          >
             <Icon name="plus" size="lg" className="mr-2" />
-            Create New Ticket
+            Create Task
           </Button>
         )
       }
