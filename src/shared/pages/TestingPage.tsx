@@ -282,7 +282,7 @@ export default function TestingPage() {
     return '—';
   };
 
-   const [filterPanelValues, setFilterPanelValues] = useState<FilterPanelValues>(
+  const [filterPanelValues, setFilterPanelValues] = useState<FilterPanelValues>(
     {}
   );
 
@@ -1396,6 +1396,8 @@ export default function TestingPage() {
           />
         </div>
       </section>
+
+      <Separator />
 
       <Separator />
 

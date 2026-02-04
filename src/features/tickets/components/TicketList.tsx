@@ -1,12 +1,7 @@
-import {
-  formatDateLocalized,
-  formatDateTime,
-} from '@artco-group/artco-ticketing-sync';
+import { useState } from 'react';
 import {
   UserRole,
-  TicketStatus,
   TicketPriority,
-  TicketCategory,
   type Ticket,
   type User,
   type Filters,
@@ -17,23 +12,23 @@ import {
   FilterBar,
   type FilterConfig,
   DataTable,
-  textColumn,
-  customColumn,
-  dateColumn,
+  type Column,
   Button,
-  Badge,
   EmptyState,
   Icon,
+  Avatar,
   FilterPanel,
   type FilterPanelValues,
+  type SortDirection,
+  type RowAction,
+  BulkActionsBar,
+  type BulkAction,
 } from '@/shared';
 import {
-  categoryBadgeConfig,
   resolveAssigneeName,
   getPriorityIcon,
   getPriorityLabel,
-  getStatusIcon,
-  getStatusLabel,
+  PRIORITY_ORDER,
 } from '@/shared/utils/ticket-helpers';
 import TicketCard from './TicketCard';
 
@@ -162,85 +157,103 @@ function TableLayout({
   onViewTicket,
   onFilterChange,
 }: TableLayoutProps) {
-  // Columns for Eng Lead (includes assignedTo column)
-  const engLeadColumns = [
-    customColumn<Ticket>('title', 'Title', (ticket) => (
-      <div className="text-foreground font-semibold">{ticket.title}</div>
-    )),
-    textColumn<Ticket>('ticketId', 'Ticket ID', {
-      className: 'text-sm text-muted-foreground',
-    }),
-    textColumn<Ticket>('clientEmail', 'Client', {
-      className: 'text-sm text-foreground',
-    }),
-    customColumn<Ticket>('category', 'Category', (ticket) => (
-      <Badge>
-        {categoryBadgeConfig[ticket.category as TicketCategory].label}
-      </Badge>
-    )),
-    customColumn<Ticket>('priority', 'Priority', (ticket) => (
-      <Badge icon={getPriorityIcon(ticket.priority as TicketPriority)}>
-        {getPriorityLabel(ticket.priority as TicketPriority)}
-      </Badge>
-    )),
-    customColumn<Ticket>('status', 'Status', (ticket) => (
-      <Badge icon={getStatusIcon(ticket.status as TicketStatus)}>
-        {getStatusLabel(ticket.status as TicketStatus)}
-      </Badge>
-    )),
-    customColumn<Ticket>('assignedTo', 'Assigned To', (ticket) => (
-      <div className="text-foreground text-sm">
-        {ticket.assignedTo ? (
-          <Badge>{resolveAssigneeName(ticket.assignedTo, users)}</Badge>
-        ) : (
-          <Badge>Unassigned</Badge>
-        )}
-      </div>
-    )),
-    dateColumn<Ticket>('createdAt', 'Created', formatDateLocalized, {
-      className: 'text-muted-foreground',
-    }),
+  // Sorting state
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+
+  // Selection state
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+  // Row actions
+  const rowActions: RowAction<Ticket>[] = [
+    {
+      label: 'View Details',
+      icon: <Icon name="eye" size="sm" />,
+      onClick: (ticket) => onViewTicket(ticket),
+    },
   ];
 
-  // Columns for Developer (includes lastUpdated column)
-  const developerColumns = [
-    customColumn<Ticket>('title', 'Title', (ticket) => (
-      <div className="text-foreground line-clamp-2 font-semibold">
-        {ticket.title}
-      </div>
-    )),
-    textColumn<Ticket>('ticketId', 'Ticket ID', {
-      className: 'text-sm text-muted-foreground',
-    }),
-    textColumn<Ticket>('clientEmail', 'Client', {
-      className: 'text-sm text-muted-foreground',
-    }),
-    customColumn<Ticket>('category', 'Category', (ticket) => (
-      <Badge>
-        {categoryBadgeConfig[ticket.category as TicketCategory].label}
-      </Badge>
-    )),
-    customColumn<Ticket>('priority', 'Priority', (ticket) => (
-      <Badge icon={getPriorityIcon(ticket.priority as TicketPriority)}>
-        {getPriorityLabel(ticket.priority as TicketPriority)}
-      </Badge>
-    )),
-    customColumn<Ticket>('status', 'Status', (ticket) => (
-      <Badge icon={getStatusIcon(ticket.status as TicketStatus)}>
-        {getStatusLabel(ticket.status as TicketStatus)}
-      </Badge>
-    )),
-    dateColumn<Ticket>('createdAt', 'Created', formatDateLocalized, {
-      className: 'text-muted-foreground',
-    }),
-    customColumn<Ticket>('lastUpdated', 'Last Updated', (ticket) => (
-      <div className="text-muted-sm">
-        {formatDateTime(ticket.lastUpdated || ticket.createdAt || '')}
-      </div>
-    )),
+  // Bulk actions
+  const bulkActions: BulkAction[] = [
+    {
+      label: 'Change Priority',
+      icon: <Icon name="edit" size="sm" />,
+      onClick: () => {
+        // TODO: Implement bulk priority change
+      },
+    },
+    {
+      label: 'Delete',
+      icon: <Icon name="trash" size="sm" />,
+      onClick: () => {
+        // TODO: Implement bulk delete
+      },
+      variant: 'destructive',
+    },
   ];
 
-  const columns = isEngLead ? engLeadColumns : developerColumns;
+  // Shared columns for Eng Lead and Developer
+  const columns: Column<Ticket>[] = [
+    {
+      key: 'name',
+      label: 'Name',
+      width: 'w-full',
+      sortable: true,
+      render: (ticket) => (
+        <div className="flex items-center gap-3">
+          <span className="text-muted-foreground font-mono text-sm">
+            {ticket.ticketId}
+          </span>
+          <span className="text-foreground font-medium">{ticket.title}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'assignedTo',
+      label: 'Assignee',
+      align: 'center',
+      sortable: true,
+      sortValue: (ticket) =>
+        ticket.assignedTo
+          ? resolveAssigneeName(ticket.assignedTo, users).toLowerCase()
+          : 'zzz',
+      render: (ticket) => {
+        const assigneeName = ticket.assignedTo
+          ? resolveAssigneeName(ticket.assignedTo, users)
+          : 'Unassigned';
+        return (
+          <div className="flex justify-center">
+            <Avatar size="md" fallback={assigneeName} tooltip={assigneeName} />
+          </div>
+        );
+      },
+    },
+    {
+      key: 'createdAt',
+      label: 'Due date',
+      type: 'date',
+      sortable: true,
+      formatDate: (date) => {
+        const d = date instanceof Date ? date : new Date(date);
+        return d.toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+        });
+      },
+    },
+    {
+      key: 'priority',
+      label: 'Priority',
+      type: 'badge',
+      sortable: true,
+      sortValue: (ticket) => PRIORITY_ORDER[ticket.priority] ?? 0,
+      getBadgeProps: (_value, ticket) => ({
+        icon: getPriorityIcon(ticket.priority as TicketPriority),
+        children: getPriorityLabel(ticket.priority as TicketPriority),
+      }),
+    },
+  ];
 
   // Filters for Eng Lead (3 filters - status, priority, sortBy)
   const engLeadFilters: FilterConfig[] = filters
@@ -441,6 +454,22 @@ function TableLayout({
         data={tickets}
         onRowClick={onViewTicket}
         emptyState={emptyState}
+        selectable
+        selectedRows={selectedRows}
+        onSelect={setSelectedRows}
+        sortColumn={sortColumn}
+        sortDirection={sortDirection}
+        onSort={(col, dir) => {
+          setSortColumn(col);
+          setSortDirection(dir);
+        }}
+        actions={rowActions}
+      />
+
+      <BulkActionsBar
+        selectedCount={selectedRows.length}
+        actions={bulkActions}
+        onClear={() => setSelectedRows([])}
       />
     </div>
   );

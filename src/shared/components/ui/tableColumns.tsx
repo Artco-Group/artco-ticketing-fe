@@ -1,21 +1,24 @@
 import type { ReactNode, MouseEvent, ComponentType } from 'react';
+import type { ColumnAlign } from './DataTable/types';
 
-type TextAlign = 'left' | 'center' | 'right';
-
-interface ColumnOptions {
+interface ColumnOptions<T = unknown> {
   className?: string;
   headerClassName?: string;
   width?: string;
-  align?: TextAlign;
+  align?: ColumnAlign;
+  sortable?: boolean;
+  sortValue?: (row: T) => string | number | Date | null;
 }
 
 interface Column<T> {
   key: string;
   label: string;
-  width: string;
-  align: TextAlign;
-  className: string;
-  headerClassName: string;
+  width?: string;
+  align?: ColumnAlign;
+  className?: string;
+  headerClassName?: string;
+  sortable?: boolean;
+  sortValue?: (row: T) => string | number | Date | null;
   render: (row: T) => ReactNode;
 }
 
@@ -26,36 +29,32 @@ interface ActionConfig<T> {
   className?: string;
 }
 
-const alignClassMap: Record<TextAlign, string> = {
-  left: 'text-left',
-  center: 'text-center',
-  right: 'text-right',
-};
-
 /**
  * Creates a simple text column
  */
 export function textColumn<T>(
   key: string,
   label: string,
-  options: ColumnOptions = {}
+  options: ColumnOptions<T> = {}
 ): Column<T> {
   const {
-    className = '',
-    headerClassName = '',
-    width = '',
+    className,
+    headerClassName,
+    width,
     align = 'left',
+    sortable = false,
+    sortValue,
   } = options;
-
-  const alignClass = alignClassMap[align] || 'text-left';
 
   return {
     key,
     label,
     width,
     align,
-    className: `${alignClass} ${className}`.trim(),
-    headerClassName: `${alignClass} ${headerClassName}`.trim(),
+    sortable,
+    sortValue,
+    className,
+    headerClassName,
     render: (row: T) => (
       <div className={className || ''}>
         {(row as Record<string, unknown>)[key] as ReactNode}
@@ -71,24 +70,26 @@ export function badgeColumn<T>(
   key: string,
   label: string,
   getBadgeClass: (value: string) => string,
-  options: ColumnOptions = {}
+  options: ColumnOptions<T> = {}
 ): Column<T> {
   const {
-    className = '',
-    headerClassName = '',
-    width = '',
+    className,
+    headerClassName,
+    width,
     align = 'left',
+    sortable = false,
+    sortValue,
   } = options;
-
-  const alignClass = alignClassMap[align] || 'text-left';
 
   return {
     key,
     label,
     width,
     align,
-    className: `${alignClass} ${className}`.trim(),
-    headerClassName: `${alignClass} ${headerClassName}`.trim(),
+    sortable,
+    sortValue,
+    className,
+    headerClassName,
     render: (row: T) => {
       const value = (row as Record<string, unknown>)[key] as string;
       const badgeClass = getBadgeClass(value);
@@ -113,31 +114,33 @@ export function dateColumn<T>(
   key: string,
   label: string,
   formatFn: (dateValue: string | Date) => string,
-  options: ColumnOptions = {}
+  options: ColumnOptions<T> = {}
 ): Column<T> {
   const {
-    className = '',
-    headerClassName = '',
-    width = '',
+    className,
+    headerClassName,
+    width,
     align = 'left',
+    sortable = false,
+    sortValue,
   } = options;
-
-  const alignClass = alignClassMap[align] || 'text-left';
 
   return {
     key,
     label,
     width,
     align,
-    className: `${alignClass} ${className}`.trim(),
-    headerClassName: `${alignClass} ${headerClassName}`.trim(),
+    sortable,
+    sortValue,
+    className,
+    headerClassName,
     render: (row: T) => {
       const value = (row as Record<string, unknown>)[key] as
         | string
         | Date
         | undefined;
       return (
-        <div className={`text-sm ${className}`.trim()}>
+        <div className={`text-sm ${className || ''}`.trim()}>
           {value ? formatFn(value) : ''}
         </div>
       );
@@ -152,24 +155,26 @@ export function actionsColumn<T>(
   key: string,
   label: string,
   actions: ActionConfig<T>[],
-  options: ColumnOptions = {}
+  options: ColumnOptions<T> = {}
 ): Column<T> {
   const {
-    className = '',
-    headerClassName = '',
-    width = '',
+    className,
+    headerClassName,
+    width,
     align = 'right',
+    sortable = false,
+    sortValue,
   } = options;
-
-  const alignClass = alignClassMap[align] || 'text-right';
 
   return {
     key,
     label,
     width,
     align,
-    className: `${alignClass} ${className}`.trim(),
-    headerClassName: `${alignClass} ${headerClassName}`.trim(),
+    sortable,
+    sortValue,
+    className,
+    headerClassName,
     render: (row: T) => (
       <div className="flex-start-gap-2">
         {actions.map((action, index) => {
@@ -203,24 +208,26 @@ export function customColumn<T>(
   key: string,
   label: string,
   renderFn: (row: T) => ReactNode,
-  options: ColumnOptions = {}
+  options: ColumnOptions<T> = {}
 ): Column<T> {
   const {
-    className = '',
-    headerClassName = '',
-    width = '',
+    className,
+    headerClassName,
+    width,
     align = 'left',
+    sortable = false,
+    sortValue,
   } = options;
-
-  const alignClass = alignClassMap[align] || 'text-left';
 
   return {
     key,
     label,
     width,
     align,
-    className: `${alignClass} ${className}`.trim(),
-    headerClassName: `${alignClass} ${headerClassName}`.trim(),
+    sortable,
+    sortValue,
+    className,
+    headerClassName,
     render: renderFn,
   };
 }

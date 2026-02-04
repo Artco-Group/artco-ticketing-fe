@@ -90,6 +90,8 @@ export default {
         'card-icon-blue': '0 4px 12px rgba(59, 130, 246, 0.4)',
         'card-icon-warm': '0 4px 12px rgba(245, 158, 11, 0.4)',
         'card-button-md': '0 4px 12px rgba(0, 0, 0, 0.15)',
+        'floating-bar':
+          '0px 4px 12px -2px var(--effectgeneral3), 0px 4px 8px -4px var(--effectgeneral5), 0px 0px 0px 1px var(--effectgeneral3) inset',
       },
       colors: {
         // Brand primary (Blue from Figma - mapped to primary)

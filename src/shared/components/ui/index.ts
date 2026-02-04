@@ -15,6 +15,7 @@ export * from './separator';
 export * from './shadcn-table';
 export * from './Switch';
 export * from './textarea';
+export * from './Tooltip';
 
 // Custom components
 export * from './DataTable';
@@ -29,3 +30,4 @@ export * from './Toast';
 export * from './RetryableError';
 export * from './filterButton';
 export * from './FilterPanel';
+export * from './BulkActionsBar';
