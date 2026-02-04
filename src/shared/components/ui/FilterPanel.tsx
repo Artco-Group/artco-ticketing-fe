@@ -12,7 +12,11 @@ import {
 import { Icon } from './Icon';
 import { FilterButton } from './filterButton';
 import { cn } from '@/lib/utils';
-import type { FilterOption } from '@/shared/components/common/FilterBar';
+
+export interface FilterOption {
+  value: string;
+  label: string;
+}
 
 const filterPanelButtonVariants = cva(
   'inline-flex items-center gap-1.5 rounded-[10px] border px-2.5 py-1 text-[13px] font-medium tracking-[-0.28px] transition-colors duration-150 focus:outline-none',

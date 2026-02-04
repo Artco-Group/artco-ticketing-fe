@@ -9,6 +9,7 @@ import {
   type FilterConfig,
   Modal,
   ConfirmModal,
+  Input,
   Button,
   Icon,
   FilterButton,
@@ -64,17 +65,10 @@ function UserList({
 }: UserListProps) {
   const filterConfig: FilterConfig[] = [
     {
-      key: 'role',
+      id: 'role',
       label: 'Role',
-      type: 'select' as const,
+      options: ['All', ...AVAILABLE_ROLES.map((role) => UserRoleDisplay[role])],
       value: roleFilter,
-      options: [
-        { value: 'All', label: 'All Roles' },
-        ...AVAILABLE_ROLES.map((role) => ({
-          value: role,
-          label: UserRoleDisplay[role],
-        })),
-      ],
     },
   ];
 
@@ -105,20 +99,22 @@ function UserList({
       </div>
 
       {/* Search & Filters */}
-      <FilterBar
-        filters={filterConfig}
-        searchConfig={{
-          placeholder: 'Search by name or email',
-          value: searchTerm,
-          onChange: onSearchChange,
-        }}
-        onFilterChange={(key, value) => {
-          if (key === 'role') {
-            onRoleFilterChange(value);
-          }
-        }}
-        className="mb-6"
-      />
+      <div className="mb-6 flex gap-4">
+        <Input
+          placeholder="Search by name or email"
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="max-w-sm"
+        />
+        <FilterBar
+          filters={filterConfig}
+          onFilterChange={(id, value) => {
+            if (id === 'role' && value) {
+              onRoleFilterChange(value);
+            }
+          }}
+        />
+      </div>
 
       {/* Users Table */}
       <UserTable users={users} onEdit={onEditUser} onDelete={onDeleteUser} />
