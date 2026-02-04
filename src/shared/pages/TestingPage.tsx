@@ -132,42 +132,6 @@ const mockComments: Comment[] = [
   },
 ];
 
-// Mock data for DataTable demo
-const mockTableData = [
-  {
-    _id: '1',
-    name: 'John Doe',
-    email: 'john.doe@artco.com',
-    role: 'Developer',
-    status: 'Active',
-    createdAt: '2024-01-15T10:30:00Z',
-  },
-  {
-    _id: '2',
-    name: 'Jane Smith',
-    email: 'jane.smith@artco.com',
-    role: 'Designer',
-    status: 'Active',
-    createdAt: '2024-02-20T14:45:00Z',
-  },
-  {
-    _id: '3',
-    name: 'Bob Johnson',
-    email: 'bob.johnson@artco.com',
-    role: 'Manager',
-    status: 'Inactive',
-    createdAt: '2023-11-05T09:15:00Z',
-  },
-  {
-    _id: '4',
-    name: 'Alice Williams',
-    email: 'alice.williams@artco.com',
-    role: 'Developer',
-    status: 'Active',
-    createdAt: '2024-03-10T16:00:00Z',
-  },
-];
-
 export default function TestingPage() {
   const [inputValue, setInputValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
@@ -318,7 +282,7 @@ export default function TestingPage() {
     return '—';
   };
 
-   const [filterPanelValues, setFilterPanelValues] = useState<FilterPanelValues>(
+  const [filterPanelValues, setFilterPanelValues] = useState<FilterPanelValues>(
     {}
   );
 
