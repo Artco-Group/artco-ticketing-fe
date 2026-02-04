@@ -64,6 +64,7 @@ function useDeleteComment() {
   return useApiMutation<void, CommentId>({
     url: (commentId) => API_ROUTES.COMMENTS.BY_ID(commentId),
     method: 'DELETE',
+    getBody: () => undefined,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.comments.all() });
     },
