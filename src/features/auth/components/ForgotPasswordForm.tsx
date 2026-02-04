@@ -9,49 +9,19 @@ import {
   FormItem,
   Input,
   Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from '@/shared/components/ui';
 
 export function ForgotPasswordForm() {
-  const { form, onSubmit, isPending, serverError, success } =
-    useForgotPasswordForm();
-
-  if (success) {
-    return (
-      <Card className="border-none bg-transparent shadow-none">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-            <Icon name="check-circle" size="lg" className="text-green-600" />
-          </div>
-          <CardTitle className="max-smx:text-2xl text-3xl">
-            Email poslan!
-          </CardTitle>
-          <CardDescription className="text-base">
-            Link za resetovanje lozinke je poslat na vaš email. Molimo
-            provjerite vašu inbox.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-center">
-          <Link to={PAGE_ROUTES.AUTH.LOGIN} className="link text-sm">
-            ← Nazad na prijavu
-          </Link>
-        </CardContent>
-      </Card>
-    );
-  }
+  const { form, onSubmit, isPending, serverError } = useForgotPasswordForm();
 
   return (
     <div>
       <div>
         <h2 className="text-foreground max-smx:text-2xl mb-4 text-3xl font-bold tracking-tight">
-          Zaboravljena lozinka
+          Forgot password
         </h2>
         <p className="text-muted-foreground max-smx:mb-6 max-smx:text-sm mb-8 text-base">
-          Unesite vaš email i poslat ćemo vam link za resetovanje lozinke.
+          Enter your email and we'll send you a link to reset your password.
         </p>
       </div>
 
@@ -62,7 +32,7 @@ export function ForgotPasswordForm() {
       )}
 
       <Form {...form}>
-        <form onSubmit={onSubmit} className="space-y-5">
+        <form onSubmit={onSubmit} className="space-y-3">
           <FormField
             control={form.control}
             name="email"
@@ -72,8 +42,8 @@ export function ForgotPasswordForm() {
                   <Input
                     type="email"
                     autoComplete="email"
-                    label="Email adresa"
-                    placeholder="vase.ime@kompanija.ba"
+                    label="Email address"
+                    placeholder="your.name@company.com"
                     leftIcon={<Icon name="mail" size="md" />}
                     error={fieldState.error?.message}
                     {...field}
@@ -85,22 +55,23 @@ export function ForgotPasswordForm() {
 
           <Button
             type="submit"
-            className="w-full"
+            className="mt-1 w-full"
             size="lg"
-            disabled={isPending}
+            loading={isPending}
+            rightIcon="arrow-right"
           >
-            {isPending ? 'Slanje...' : 'Pošalji link'}
-            <Icon name="arrow-right" size="md" className="ml-2" />
+            {isPending ? 'Sending...' : 'Send link'}
           </Button>
         </form>
       </Form>
 
-      <div className="mt-7 text-center">
+      <div className="mt-5 text-center">
         <Link
           to={PAGE_ROUTES.AUTH.LOGIN}
-          className="text-primary text-sm font-medium hover:underline"
+          className="link inline-flex items-center gap-1 text-sm"
         >
-          ← Nazad na prijavu
+          <Icon name="chevron-left" size="sm" />
+          Back to login
         </Link>
       </div>
     </div>

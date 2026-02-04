@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom';
 import { usePasswordResetForm } from '../hooks';
+import { PAGE_ROUTES } from '@/shared/constants';
 import { Icon } from '@/shared/components/ui';
 import {
   Form,
@@ -27,11 +29,9 @@ export function PasswordResetForm() {
     return (
       <div className="text-center">
         <div className="mb-4">
-          <div className="border-brand-primary/20 border-t-brand-primary mx-auto h-12 w-12 animate-spin rounded-full border-4"></div>
+          <div className="border-primary/20 border-t-primary mx-auto h-12 w-12 animate-spin rounded-full border-4"></div>
         </div>
-        <p className="text-body-md text-greyscale-500">
-          Verificiranje tokena...
-        </p>
+        <p className="text-muted-foreground text-base">Verifying token...</p>
       </div>
     );
   }
@@ -39,18 +39,19 @@ export function PasswordResetForm() {
   // Invalid token state
   if (!tokenValid) {
     return (
-      <div>
-        <div>
-          <h2 className="max-smx:text-heading-h4 text-heading-h3 text-greyscale-1000 mb-4 font-bold tracking-[-0.5px]">
-            Nevažeći Token
-          </h2>
-          <p className="max-smx:mb-6 max-smx:text-body-sm text-body-md text-greyscale-500 mb-8 leading-normal">
-            {tokenError ||
-              'Link za resetovanje lozinke je nevažeći ili je istekao.'}
-          </p>
-        </div>
+      <div className="text-center">
+        <Icon name="info" size="xl" className="text-destructive mb-3" />
+        <h2 className="text-foreground max-smx:text-2xl mb-4 text-3xl font-bold tracking-tight">
+          Link Expired
+        </h2>
+        <p className="text-muted-foreground max-smx:text-sm mb-6 text-base">
+          {tokenError || 'This password reset link is invalid or has expired.'}
+        </p>
+        <p className="text-muted-foreground max-smx:text-sm mb-6 text-sm">
+          Please request a new password reset link.
+        </p>
         <Button onClick={navigateToLogin} className="w-full" size="lg">
-          Nazad na prijavu
+          Back to login
         </Button>
       </div>
     );
@@ -59,19 +60,16 @@ export function PasswordResetForm() {
   // Success state
   if (success) {
     return (
-      <div>
-        <div className="text-center">
-          <div className="bg-success-500/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-            <Icon name="check-circle" size="xl" className="text-success-500" />
-          </div>
-          <h2 className="max-smx:text-heading-h4 text-heading-h3 text-greyscale-1000 mb-4 font-bold tracking-[-0.5px]">
-            Uspješno!
-          </h2>
-          <p className="max-smx:text-body-sm text-body-md text-greyscale-500 mb-6 leading-normal">
-            Vaša lozinka je uspješno resetovana. Preusmeravanje na stranicu za
-            prijavu...
-          </p>
+      <div className="text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+          <Icon name="check-circle" size="xl" className="text-green-600" />
         </div>
+        <h2 className="text-foreground max-smx:text-2xl mb-4 text-3xl font-bold tracking-tight">
+          Success!
+        </h2>
+        <p className="text-muted-foreground max-smx:text-sm mb-6 text-base">
+          Your password has been reset successfully. Redirecting to login...
+        </p>
       </div>
     );
   }
@@ -80,16 +78,22 @@ export function PasswordResetForm() {
   return (
     <div>
       <div>
-        <h2 className="max-smx:text-heading-h4 text-heading-h3 text-greyscale-1000 mb-4 font-bold tracking-[-0.5px]">
-          Nova Lozinka
+        <h2 className="text-foreground max-smx:text-2xl mb-4 text-3xl font-bold tracking-tight">
+          New Password
         </h2>
-        <p className="max-smx:mb-6 max-smx:text-body-sm text-body-md text-greyscale-500 mb-8 leading-normal">
-          Unesite novu lozinku za vaš račun.
+        <p className="text-muted-foreground max-smx:mb-6 max-smx:text-sm mb-8 text-base">
+          Enter a new password for your account.
         </p>
       </div>
 
+      {formError && (
+        <div className="bg-destructive/10 text-destructive mb-4 rounded-lg p-3 text-sm">
+          {formError}
+        </div>
+      )}
+
       <Form {...form}>
-        <form onSubmit={onSubmit} className="space-y-5">
+        <form onSubmit={onSubmit} className="space-y-4">
           <FormField
             control={form.control}
             name="newPassword"
@@ -97,9 +101,9 @@ export function PasswordResetForm() {
               <FormItem>
                 <FormControl>
                   <PasswordInput
-                    label="Nova Lozinka"
+                    label="New password"
                     autoComplete="new-password"
-                    placeholder="Unesite novu lozinku"
+                    placeholder="Enter new password"
                     leftIcon={<Icon name="lock" size="md" />}
                     disabled={isPending}
                     showStrengthMeter
@@ -118,9 +122,9 @@ export function PasswordResetForm() {
               <FormItem>
                 <FormControl>
                   <PasswordInput
-                    label="Potvrdi Lozinku"
+                    label="Confirm password"
                     autoComplete="new-password"
-                    placeholder="Potvrdite novu lozinku"
+                    placeholder="Confirm new password"
                     leftIcon={<Icon name="lock" size="md" />}
                     disabled={isPending}
                     error={fieldState.error?.message}
@@ -131,41 +135,26 @@ export function PasswordResetForm() {
             )}
           />
 
-          {formError && (
-            <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">
-              {formError}
-            </div>
-          )}
-
           <Button
             type="submit"
-            className="w-full"
+            className="mt-2 w-full"
             size="lg"
-            disabled={isPending}
+            loading={isPending}
           >
-            {isPending ? (
-              <>
-                <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
-                Resetovanje...
-              </>
-            ) : (
-              <>
-                Resetuj Lozinku
-                <Icon name="chevron-right" size="md" className="ml-2" />
-              </>
-            )}
+            {isPending ? 'Resetting...' : 'Reset password'}
           </Button>
         </form>
       </Form>
 
-      <div className="mt-6 text-center">
-        <button
-          type="button"
-          onClick={navigateToLogin}
-          className="link text-sm"
+      <div className="mt-5 text-center">
+        <Button
+          variant="link"
+          className="h-auto p-0 pr-2"
+          asChild
+          leftIcon="chevron-left"
         >
-          ← Nazad na prijavu
-        </button>
+          <Link to={PAGE_ROUTES.AUTH.LOGIN}>Back to login</Link>
+        </Button>
       </div>
     </div>
   );

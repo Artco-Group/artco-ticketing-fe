@@ -37,11 +37,8 @@ export function useForgotPasswordForm() {
     try {
       await forgotPasswordMutation.mutateAsync(data);
       setSuccess(true);
-      form.reset();
-      toast.success('Email za resetovanje lozinke je poslat');
-      setTimeout(() => {
-        navigate(PAGE_ROUTES.AUTH.LOGIN);
-      }, 2000);
+      toast.success('Password reset email sent successfully');
+      navigate(PAGE_ROUTES.AUTH.CHECK_EMAIL, { state: { email: data.email } });
     } catch (err) {
       const errorMessage = extractAuthError(err);
       setServerError(errorMessage);

@@ -32,8 +32,12 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     const status = error.response?.status;
-    const url = error.config?.url;
-    const isAuthEndpoint = url === '/auth/me' || url === '/auth/login';
+    const url = error.config?.url || '';
+    const isAuthEndpoint =
+      url === '/auth/me' ||
+      url === '/auth/login' ||
+      url.includes('verify-reset-token') ||
+      url.includes('reset-password');
 
     if (!error.response) {
       toast.error('Network error. Check your connection.');
