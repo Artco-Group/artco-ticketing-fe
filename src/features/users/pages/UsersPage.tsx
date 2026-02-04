@@ -86,6 +86,7 @@ export default function UsersPage() {
           showFormModal={showFormModal}
           onSearchChange={setSearchTerm}
           onRoleFilterChange={setRoleFilter}
+          onAddUser={onAddUser}
           onEditUser={onEditUser}
           onDeleteUser={setUserToDelete}
           onCloseFormModal={onCloseFormModal}

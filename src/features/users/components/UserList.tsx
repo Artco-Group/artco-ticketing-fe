@@ -4,7 +4,15 @@ import {
   UserRoleDisplay,
 } from '@artco-group/artco-ticketing-sync';
 import { UserRole, type User } from '@/types';
-import { FilterBar, type FilterConfig, Modal, ConfirmModal } from '@/shared';
+import {
+  FilterBar,
+  type FilterConfig,
+  Modal,
+  ConfirmModal,
+  Button,
+  Icon,
+  FilterButton,
+} from '@/shared';
 import UserForm from './UserForm';
 import UserTable from './UserTable';
 
@@ -12,6 +20,7 @@ const AVAILABLE_ROLES: UserRole[] = [
   UserRole.CLIENT,
   UserRole.DEVELOPER,
   UserRole.ENG_LEAD,
+  UserRole.ADMIN,
 ];
 
 interface UserListProps {
@@ -24,6 +33,7 @@ interface UserListProps {
   showFormModal: boolean;
   onSearchChange: (value: string) => void;
   onRoleFilterChange: (value: string) => void;
+  onAddUser: () => void;
   onEditUser: (user: User) => void;
   onDeleteUser: (user: User) => void;
   onCloseFormModal: () => void;
@@ -44,6 +54,7 @@ function UserList({
   showFormModal,
   onSearchChange,
   onRoleFilterChange,
+  onAddUser,
   onEditUser,
   onDeleteUser,
   onCloseFormModal,
@@ -70,9 +81,28 @@ function UserList({
   return (
     <div className="p-6">
       {/* Page Header */}
-      <h1 className="text-foreground mb-6 text-2xl font-bold">
-        User Management
-      </h1>
+      <div className="flex-between mb-6">
+        <h1 className="text-foreground text-2xl font-bold">
+          Members {users.length}
+        </h1>
+        <Button onClick={onAddUser}>
+          <Icon name="plus" size="sm" className="mr-2" />
+          Invite Member
+        </Button>
+      </div>
+
+      {/* Filter Buttons */}
+      <div className="mb-4 flex items-center gap-2">
+        <FilterButton label="Sort" />
+        <FilterButton label="Status" />
+        <FilterButton label="Role" />
+        <div className="ml-auto flex items-center gap-2">
+          <FilterButton
+            label="Filter"
+            icon={<Icon name="filter" size="sm" />}
+          />
+        </div>
+      </div>
 
       {/* Search & Filters */}
       <FilterBar
@@ -111,7 +141,7 @@ function UserList({
                   email: editingUser.email || '',
                   role:
                     (editingUser.role as CreateUserFormData['role']) ||
-                    'client',
+                    UserRole.CLIENT,
                 }
               : undefined
           }

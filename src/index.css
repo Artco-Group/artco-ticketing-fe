@@ -298,6 +298,9 @@
   --border-inverse: #FFFFFF; /* base white */
   --border-selected: #383838; /* greyscale-700 */
   --border-component: #9747FF; /* purple-500 */
+  /* Effect tokens for shadows */
+  --effectgeneral3: rgba(0, 0, 0, 0.08);
+  --effectgeneral5: rgba(0, 0, 0, 0.12);
 }
 
 .dark {
@@ -387,6 +390,9 @@
   --border-inverse: #1E1E1E; /* greyscale-900 */
   --border-selected: #E0E0E0; /* greyscale-200 */
   --border-component: #D9BBFF; /* purple-400 */
+  /* Effect tokens for shadows - dark mode */
+  --effectgeneral3: rgba(0, 0, 0, 0.24);
+  --effectgeneral5: rgba(0, 0, 0, 0.32);
 }
 
 @layer base {
