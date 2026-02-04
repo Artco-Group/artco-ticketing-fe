@@ -25,23 +25,24 @@ interface CommentListProps {
 
 interface CommentItemProps {
   comment: Comment;
+  commentId: string;
   isCurrentUser: boolean;
-  onReply: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-  getTimeDisplay: () => string;
+  onReply: (commentId: string) => void;
+  onEdit: (commentId: string, text: string) => void;
+  onDelete: (commentId: string) => void;
+  getCommentTimeDisplay: (comment: Comment) => string;
 }
 
 const CommentItem = memo(function CommentItem({
   comment,
+  commentId,
   isCurrentUser,
   onReply,
   onEdit,
   onDelete,
-  getTimeDisplay,
+  getCommentTimeDisplay,
 }: CommentItemProps) {
   const authorName = comment.authorId?.name || 'Unknown User';
-  const authorInitial = authorName.charAt(0).toUpperCase();
 
   return (
     <div
@@ -51,9 +52,7 @@ const CommentItem = memo(function CommentItem({
       )}
     >
       <div className="flex max-w-[70%] items-start gap-2">
-        {!isCurrentUser && (
-          <Avatar size="md" fallback={authorInitial} alt={authorName} />
-        )}
+        {!isCurrentUser && <Avatar size="md" alt={authorName} />}
 
         <div className="flex-1">
           <div
@@ -78,7 +77,7 @@ const CommentItem = memo(function CommentItem({
                       isCurrentUser ? 'text-white/70' : 'text-greyscale-600'
                     )}
                   >
-                    {getTimeDisplay()}
+                    {getCommentTimeDisplay(comment)}
                   </span>
                 </div>
 
@@ -91,7 +90,7 @@ const CommentItem = memo(function CommentItem({
                           ? 'hover:bg-white/20'
                           : 'hover:bg-greyscale-200'
                       )}
-                      aria-label="Opcije komentara"
+                      aria-label="Options"
                     >
                       <Icon
                         name="more-horizontal"
@@ -103,17 +102,19 @@ const CommentItem = memo(function CommentItem({
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={onReply}>
+                    <DropdownMenuItem onClick={() => onReply(commentId)}>
                       <span>Reply</span>
                     </DropdownMenuItem>
                     {isCurrentUser && (
                       <>
-                        <DropdownMenuItem onClick={onEdit}>
+                        <DropdownMenuItem
+                          onClick={() => onEdit(commentId, comment.text)}
+                        >
                           <span>Edit</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          onClick={onDelete}
+                          onClick={() => onDelete(commentId)}
                           className="text-destructive focus:text-destructive"
                         >
                           <span>Delete</span>
@@ -162,9 +163,7 @@ const CommentItem = memo(function CommentItem({
           </div>
         </div>
 
-        {isCurrentUser && (
-          <Avatar size="md" fallback={authorInitial} alt={authorName} />
-        )}
+        {isCurrentUser && <Avatar size="md" alt={authorName} />}
       </div>
     </div>
   );
@@ -191,8 +190,8 @@ export function CommentList({
   if (comments.length === 0) {
     return (
       <EmptyState
-        title="Nema komentara"
-        message="Budite prvi koji će započeti diskusiju"
+        title="No comments"
+        message="Be the first to start discussion"
         className="min-h-0 py-8"
       />
     );
@@ -227,11 +226,12 @@ export function CommentList({
                 <CommentItem
                   key={commentId}
                   comment={comment}
+                  commentId={commentId}
                   isCurrentUser={isCurrentUser}
-                  onReply={() => onReply(commentId)}
-                  onEdit={() => onEdit(commentId, comment.text)}
-                  onDelete={() => onDelete(commentId)}
-                  getTimeDisplay={() => getCommentTimeDisplay(comment)}
+                  onReply={onReply}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  getCommentTimeDisplay={getCommentTimeDisplay}
                 />
               );
             })}

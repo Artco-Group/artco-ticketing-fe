@@ -9,15 +9,17 @@ interface CommentFormProps {
   initialValue?: string;
   submitLabel?: string;
   disabled?: boolean;
+  isLoading?: boolean;
 }
 
 export function CommentForm({
   onSubmit,
   onCancel,
-  placeholder = 'Napišite odgovor...',
+  placeholder = 'Write a reply...',
   initialValue = '',
-  submitLabel = 'Pošalji',
+  submitLabel = 'Send',
   disabled = false,
+  isLoading = false,
 }: CommentFormProps) {
   const [text, setText] = useState(initialValue);
 
@@ -68,6 +70,7 @@ export function CommentForm({
             size="sm"
             onClick={handleCancel}
             disabled={disabled}
+            loading={isLoading}
           >
             Odustani
           </Button>
@@ -78,6 +81,7 @@ export function CommentForm({
           variant="default"
           size="sm"
           disabled={isSubmitDisabled}
+          loading={isLoading}
         >
           {submitLabel}
         </Button>

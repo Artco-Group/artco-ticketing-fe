@@ -353,6 +353,7 @@ function TicketDetail({
                       : 'Send'
                 }
                 disabled={commentsHook.isSubmitting}
+                isLoading={commentsHook.isSubmitting}
               />
             </div>
           </CardContent>
