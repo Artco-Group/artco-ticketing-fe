@@ -129,14 +129,16 @@ export const FilterPanel = ({
   label,
   icon,
   groups,
-  value = {},
+  value,
   onChange,
   className,
   singleSelect = false,
 }: FilterPanelProps) => {
   const [internalValue, setInternalValue] = useState<FilterPanelValues>({});
 
-  const selectedValues = Object.keys(value).length > 0 ? value : internalValue;
+  // Use value prop if provided (controlled), otherwise use internal state
+  const isControlled = value !== undefined;
+  const selectedValues = isControlled ? value : internalValue;
 
   const totalSelected = Object.values(selectedValues).reduce(
     (sum, arr) => sum + arr.length,
@@ -169,7 +171,8 @@ export const FilterPanel = ({
       delete newValue[groupKey];
     }
 
-    if (Object.keys(value).length === 0 && !onChange) {
+    // Update internal state if uncontrolled
+    if (!isControlled) {
       setInternalValue(newValue);
     }
 

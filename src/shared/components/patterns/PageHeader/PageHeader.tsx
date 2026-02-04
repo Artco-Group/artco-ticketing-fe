@@ -11,6 +11,7 @@ import type { NotificationItem } from '@/shared/components/composite/Notificatio
 import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
 import { usePageHeaderContext } from './usePageHeaderContext';
 import { TabBar } from '../TabBar';
+import { FilterBar } from '../FilterBar';
 
 export interface PageHeaderProps {
   title: string;
@@ -47,6 +48,7 @@ export function PageHeader({
   };
 
   const tabBarConfig = contextValue?.tabBarConfig;
+  const filterBarConfig = contextValue?.filterBarConfig;
 
   return (
     <header
@@ -100,6 +102,25 @@ export function PageHeader({
             className="px-4 py-3"
           />
         </>
+      )}
+
+      {filterBarConfig && (
+        <FilterBar
+          filters={filterBarConfig.filters}
+          onFilterChange={filterBarConfig.onFilterChange}
+          sortOptions={filterBarConfig.sortOptions}
+          sortValue={filterBarConfig.sortValue}
+          onSortChange={filterBarConfig.onSortChange}
+          filterGroups={filterBarConfig.filterGroups}
+          filterPanelValue={filterBarConfig.filterPanelValue}
+          onFilterPanelChange={filterBarConfig.onFilterPanelChange}
+          filterPanelSingleSelect={filterBarConfig.filterPanelSingleSelect}
+          viewMode={filterBarConfig.viewMode}
+          onViewChange={filterBarConfig.onViewChange}
+          showFilter={filterBarConfig.showFilter}
+          showAddButton={filterBarConfig.showAddButton}
+          onAddClick={filterBarConfig.onAddClick}
+        />
       )}
     </header>
   );

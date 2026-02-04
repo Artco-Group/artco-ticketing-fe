@@ -26,6 +26,9 @@ import shieldCheckSvg from '@/assets/icons/actions/shield-check.svg?raw';
 import logoutSvg from '@/assets/icons/actions/logout.svg?raw';
 import moreVerticalSvg from '@/assets/icons/actions/more-vertical.svg?raw';
 import MoreHorizontal from '@/assets/icons/actions/more-horizontal.svg?raw';
+import sortSvg from '@/assets/icons/actions/sort.svg?raw';
+import groupBySvg from '@/assets/icons/actions/group-by.svg?raw';
+import starSvg from '@/assets/icons/actions/star.svg?raw';
 
 import chevronDownSvg from '@/assets/icons/arrows/chevron-down.svg?raw';
 import chevronUpSvg from '@/assets/icons/arrows/chevron-up.svg?raw';
@@ -50,6 +53,8 @@ import settingsSvg from '@/assets/icons/system/settings.svg?raw';
 import notificationSvg from '@/assets/icons/system/notification.svg?raw';
 import doubleCheckSvg from '@/assets/icons/system/double-check.svg?raw';
 import filterSvg from '@/assets/icons/system/filter.svg?raw';
+import gridSvg from '@/assets/icons/system/grid.svg?raw';
+import listSvg from '@/assets/icons/system/list.svg?raw';
 
 import pinSvg from '@/assets/icons/navigation/pin.svg?raw';
 import automationsSvg from '@/assets/icons/navigation/automations.svg?raw';
@@ -113,7 +118,12 @@ export type IconName =
   | 'trend-up'
   | 'trend-down'
   | 'command-k'
-  | 'more-vertical';
+  | 'more-vertical'
+  | 'sort'
+  | 'group-by'
+  | 'star'
+  | 'grid'
+  | 'list';
   
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -170,6 +180,11 @@ const iconMap: Record<IconName, string> = {
   filter: filterSvg,
   'command-k': commandKSvg,
   'more-vertical': moreVerticalSvg,
+  sort: sortSvg,
+  'group-by': groupBySvg,
+  star: starSvg,
+  grid: gridSvg,
+  list: listSvg,
 };
 
 const sizeMap: Record<IconSize, string> = {
