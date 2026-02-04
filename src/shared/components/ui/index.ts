@@ -29,3 +29,4 @@ export * from './Toast';
 export * from './RetryableError';
 export * from './filterButton';
 export * from './FilterPanel';
+export * from './input-otp';
