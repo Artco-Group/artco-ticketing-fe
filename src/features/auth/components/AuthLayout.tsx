@@ -11,7 +11,7 @@ interface AuthLayoutProps {
 
 const DefaultFloatingCards = () => (
   <>
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] max-mdx:ml-0 shadow-card-glass hover:shadow-card-glass-hover ml-[-30px] flex items-start gap-4 rounded-2xl border border-white/12 p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
+    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-smx:py-lg max-smx:px-4 max-smx:gap-lg max-smx:min-h-0 shadow-card-glass hover:shadow-card-glass-hover mx-auto flex min-h-[120px] w-full items-center justify-center gap-4 rounded-2xl border border-white/12 bg-[rgba(255,255,255,0.08)] p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
       <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-blue card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-blue-400 to-blue-800 text-white">
         <Icon name="priority" size="lg" className="shrink-0" />
       </div>
@@ -30,7 +30,7 @@ const DefaultFloatingCards = () => (
       </div>
     </div>
 
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] max-mdx:ml-0 shadow-card-glass hover:shadow-card-glass-hover ml-10 flex items-start gap-4 rounded-2xl border border-white/12 p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
+    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-smx:py-lg max-smx:px-4 max-smx:gap-lg max-smx:min-h-0 shadow-card-glass hover:shadow-card-glass-hover mx-auto flex min-h-[120px] w-full items-center justify-center gap-4 rounded-2xl border border-white/12 bg-[rgba(255,255,255,0.08)] p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
       <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-warm card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-orange-500 to-orange-600 text-white">
         <Icon name="tasks" size="lg" className="shrink-0" />
       </div>
@@ -54,7 +54,7 @@ const DefaultFloatingCards = () => (
       </div>
     </div>
 
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-mdx:ml-0 max-smx:py-lg max-smx:px-4 max-smx:gap-lg bg-[rgba(255, 255, 255, 0.08)] ml-xs max-mdx:ml-0 shadow-card-glass hover:shadow-card-glass-hover flex items-start gap-4 rounded-2xl border border-white/12 p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
+    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-smx:py-lg max-smx:px-4 max-smx:gap-lg max-smx:min-h-0 shadow-card-glass hover:shadow-card-glass-hover mx-auto flex min-h-[120px] w-full items-center justify-center gap-4 rounded-2xl border border-white/12 bg-[rgba(255,255,255,0.08)] p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
       <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-warm card-icon from-success-500 flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br to-green-600 text-white">
         <Icon name="shield-check" size="lg" className="shrink-0" />
       </div>

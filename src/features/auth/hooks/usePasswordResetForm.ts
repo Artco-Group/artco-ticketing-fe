@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -38,24 +38,32 @@ export function usePasswordResetForm() {
 
   // Calculate token verification error from query
   const tokenError = useMemo(() => {
+    // No token provided in URL
+    if (!token) {
+      return 'No reset token provided. Please use the link from your email.';
+    }
     if (verifyTokenQuery.isError) {
       return (
         extractAuthError(verifyTokenQuery.error) ||
-        'Token je nevažeći ili je istekao'
+        'This password reset link is invalid or has expired.'
       );
     }
     if (verifyTokenQuery.data && !verifyTokenQuery.data.valid) {
-      return 'Token je nevažeći ili je istekao';
+      return 'This password reset link is invalid or has expired.';
     }
     return '';
-  }, [verifyTokenQuery.isError, verifyTokenQuery.data, verifyTokenQuery.error]);
+  }, [
+    token,
+    verifyTokenQuery.isError,
+    verifyTokenQuery.data,
+    verifyTokenQuery.error,
+  ]);
 
-  // Show toast notification for token verification errors
-  useEffect(() => {
-    if (tokenError) {
-      toast.error(tokenError);
-    }
-  }, [tokenError, toast]);
+  // Determine if we're still verifying (only if we have a token)
+  const verifyingToken = !!token && verifyTokenQuery.isLoading;
+
+  // Token is valid only if query succeeded and returned valid: true
+  const tokenValid = !!token && verifyTokenQuery.data?.valid === true;
 
   const onSubmit = async (data: PasswordResetFormInput) => {
     setFormError('');
@@ -66,11 +74,10 @@ export function usePasswordResetForm() {
         newPassword: data.newPassword,
       });
       setSuccess(true);
-      toast.success('Lozinka je uspješno resetovana');
-      // Redirect to login after 2 seconds
+      toast.success('Password reset successfully');
       setTimeout(() => {
         navigate(PAGE_ROUTES.AUTH.LOGIN);
-      }, 2000);
+      }, 3000);
     } catch (err) {
       const errorMsg = extractAuthError(err);
       setFormError(errorMsg);
@@ -82,8 +89,8 @@ export function usePasswordResetForm() {
     form,
     onSubmit: form.handleSubmit(onSubmit),
     isPending: resetPasswordMutation.isPending,
-    verifyingToken: verifyTokenQuery.isLoading,
-    tokenValid: verifyTokenQuery.data?.valid ?? false,
+    verifyingToken,
+    tokenValid,
     tokenError,
     formError,
     success,

@@ -6,6 +6,7 @@ import { mapToPublicRoutes } from '@/shared/utils/route-helpers';
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const PasswordResetPage = lazy(() => import('./pages/PasswordResetPage'));
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
+const CheckEmailPage = lazy(() => import('./pages/CheckEmailPage'));
 
 /**
  * Public authentication routes
@@ -17,6 +18,11 @@ export const authRoutes = mapToPublicRoutes([
     key: 'forgot-password',
     path: PAGE_ROUTES.AUTH.FORGOT_PASSWORD,
     component: ForgotPasswordPage,
+  },
+  {
+    key: 'check-email',
+    path: PAGE_ROUTES.AUTH.CHECK_EMAIL,
+    component: CheckEmailPage,
   },
   {
     key: 'reset-password',

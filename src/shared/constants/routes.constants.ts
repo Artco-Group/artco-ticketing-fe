@@ -7,7 +7,7 @@ export const PAGE_ROUTES = {
   AUTH: {
     LOGIN: '/login',
     FORGOT_PASSWORD: '/forgot-password',
-    EMAIL_SENT: '/email-sent',
+    CHECK_EMAIL: '/check-email',
     RESET_PASSWORD: '/reset-password/:token',
     PASSWORD_RESET_SUCCESS: '/password-reset-success',
     resetPassword: (token: string) => `/reset-password/${token}` as const,

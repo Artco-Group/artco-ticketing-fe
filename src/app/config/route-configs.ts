@@ -27,11 +27,11 @@ export const routeConfigs: Record<string, RouteConfig> = {
     title: 'Forgot Password',
     group: 'auth',
   },
-  [PAGE_ROUTES.AUTH.EMAIL_SENT]: {
-    path: PAGE_ROUTES.AUTH.EMAIL_SENT,
+  [PAGE_ROUTES.AUTH.CHECK_EMAIL]: {
+    path: PAGE_ROUTES.AUTH.CHECK_EMAIL,
     requiresAuth: false,
     layout: 'auth',
-    title: 'Email Sent',
+    title: 'Check Email',
     group: 'auth',
   },
   [ROUTE_PATTERNS.RESET_PASSWORD]: {
