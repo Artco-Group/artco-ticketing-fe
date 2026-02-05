@@ -165,6 +165,15 @@ export function filterTickets(
 export function sortTickets(tickets: Ticket[], sortBy: string): Ticket[] {
   return [...tickets].sort((a, b) => {
     switch (sortBy) {
+      case 'Title':
+        return (a.title || '').localeCompare(b.title || '');
+
+      case 'Ticket ID':
+        return (a.ticketId || '').localeCompare(b.ticketId || '');
+
+      case 'Category':
+        return (a.category || '').localeCompare(b.category || '');
+
       case 'Status':
         return (STATUS_ORDER[a.status] ?? 0) - (STATUS_ORDER[b.status] ?? 0);
 

@@ -95,17 +95,22 @@ export function useTicketList() {
   };
 
   const handleFilterChange = (filterType: string, value: string) => {
-    const newFilters = { ...filters, [filterType]: value };
-    const params: Record<string, string> = {};
-    if (activeTab !== 'active') {
-      params.tab = activeTab;
-    }
-    Object.entries(newFilters).forEach(([key, val]) => {
-      if (val !== 'All' && !(key === 'sortBy' && val === 'Created Date')) {
-        params[key] = val;
+    // Use functional update to always work with latest params (avoids race conditions)
+    setSearchParams((currentParams) => {
+      const params = new URLSearchParams(currentParams);
+
+      // Set or remove the filter value
+      if (
+        value === 'All' ||
+        (filterType === 'sortBy' && value === 'Created Date')
+      ) {
+        params.delete(filterType);
+      } else {
+        params.set(filterType, value);
       }
+
+      return params;
     });
-    setSearchParams(params);
   };
 
   const handleTabChange = (tabId: string) => {

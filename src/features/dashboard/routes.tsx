@@ -10,10 +10,5 @@ const DashboardPage = lazy(() => import('./pages/DashboardPage'));
  * Main dashboard with role-based content
  */
 export const dashboardRoutes = [
-  createPrivateRoute(
-    'dashboard',
-    PAGE_ROUTES.DASHBOARD.ROOT,
-    'dashboard',
-    DashboardPage
-  ),
+  createPrivateRoute('dashboard', PAGE_ROUTES.DASHBOARD.ROOT, DashboardPage),
 ];

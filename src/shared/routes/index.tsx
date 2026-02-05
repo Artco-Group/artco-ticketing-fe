@@ -9,10 +9,5 @@ const TestingPage = lazy(() => import('@/shared/pages/TestingPage'));
  * Shared/utility routes that don't belong to a specific feature
  */
 export const sharedRoutes = [
-  createPrivateRoute(
-    'testing',
-    PAGE_ROUTES.TESTING.LIST,
-    'testing',
-    TestingPage
-  ),
+  createPrivateRoute('testing', PAGE_ROUTES.TESTING.LIST, TestingPage),
 ];

@@ -1,14 +1,22 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
+import { UserRoleDisplay } from '@artco-group/artco-ticketing-sync';
+import { UserRole } from '@/types';
 import { UserList } from '../components';
-import { QueryStateWrapper, Button } from '@/shared/components/ui';
-import {
-  usePageHeader,
-  usePageHeaderTabs,
-  type Tab,
+import { RetryableError, EmptyState } from '@/shared/components/ui';
+import { ListPageLayout } from '@/shared/components/layouts';
+import { Icon } from '@/shared/components/ui/Icon/Icon';
+import type {
+  FilterGroup,
+  FilterPanelValues,
 } from '@/shared/components/patterns';
 import { useUserList } from '../hooks';
 
-const USER_TABS: Tab[] = [{ id: 'all', label: 'All', icon: 'all' }];
+const AVAILABLE_ROLES = [
+  UserRole.CLIENT,
+  UserRole.DEVELOPER,
+  UserRole.ENG_LEAD,
+  UserRole.ADMIN,
+];
 
 export default function UsersPage() {
   const {
@@ -20,73 +28,130 @@ export default function UsersPage() {
     isLoading,
     error,
     refetch,
-    isRefetching,
     isSubmitting,
-    searchTerm,
     roleFilter,
+    statusFilter,
+    sortBy,
     showFormModal,
-    setSearchTerm,
-    setRoleFilter,
     setUserToDelete,
     onAddUser,
     onEditUser,
     onCloseFormModal,
     onFormSubmit,
     onConfirmDelete,
+    onFilterChange,
   } = useUserList();
 
-  usePageHeader({ count: users?.length });
+  // --- FilterBar configuration ---
 
-  const tabBarActions = useMemo(
-    () => (
-      <>
-        <Button variant="outline" leftIcon="download" rightIcon="chevron-down">
-          Import / Export
-        </Button>
-        <Button
-          onClick={onAddUser}
-          leftIcon="plus"
-          className="bg-greyscale-900 hover:bg-greyscale-800 text-white"
-        >
-          Add User
-        </Button>
-      </>
-    ),
-    [onAddUser]
+  const sortOptions = useMemo(() => ['Name', 'Email', 'Role', 'Joined'], []);
+
+  const filterBarFilters = useMemo(
+    () => [
+      {
+        id: 'role',
+        label: 'Role',
+        icon: 'user' as const,
+        options: AVAILABLE_ROLES.map((role) => UserRoleDisplay[role]),
+        value: roleFilter === 'All' ? null : roleFilter,
+      },
+      {
+        id: 'status',
+        label: 'Status',
+        icon: 'user' as const,
+        options: ['Admin', 'Client', 'Member'],
+        value: statusFilter,
+      },
+    ],
+    [roleFilter, statusFilter]
   );
 
-  const handleTabChange = useCallback(() => {}, []);
+  const roleOptions = useMemo(
+    () =>
+      AVAILABLE_ROLES.map((role) => ({
+        value: UserRoleDisplay[role],
+        label: UserRoleDisplay[role],
+      })),
+    []
+  );
 
-  usePageHeaderTabs({
-    tabs: USER_TABS,
-    activeTab: 'all',
-    onTabChange: handleTabChange,
-    actions: tabBarActions,
-  });
+  const filterGroups: FilterGroup[] = useMemo(
+    () => [
+      {
+        key: 'role',
+        label: 'Role',
+        icon: <Icon name="user" size="sm" />,
+        options: roleOptions,
+        searchable: true,
+      },
+    ],
+    [roleOptions]
+  );
+
+  const filterPanelValue = useMemo<FilterPanelValues>(() => {
+    const value: FilterPanelValues = {};
+    if (roleFilter && roleFilter !== 'All') {
+      value.role = [roleFilter];
+    }
+    return value;
+  }, [roleFilter]);
+
+  const handleFilterPanelChange = (value: FilterPanelValues) => {
+    const roleValues = value.role;
+    if (roleValues && roleValues.length > 0) {
+      onFilterChange('role', roleValues[0]);
+    } else {
+      onFilterChange('role', 'All');
+    }
+  };
+
+  const handleFilterBarChange = (filterId: string, value: string | null) => {
+    onFilterChange(filterId, value ?? 'All');
+  };
+
+  const handleSortChange = (value: string | null) => {
+    onFilterChange('sortBy', value);
+  };
 
   return (
-    <QueryStateWrapper
-      isLoading={isLoading}
-      error={error}
-      data={data}
+    <ListPageLayout
+      title="Users"
+      count={users?.length}
+      filters={filterBarFilters}
+      onFilterChange={handleFilterBarChange}
+      sortOptions={sortOptions}
+      sortValue={sortBy}
+      onSortChange={handleSortChange}
+      filterGroups={filterGroups}
+      filterPanelValue={filterPanelValue}
+      onFilterPanelChange={handleFilterPanelChange}
+      filterPanelSingleSelect
+      showFilter
+      showAddButton
+      onAddClick={onAddUser}
+      addButtonLabel="Invite Member"
+      loading={isLoading}
       loadingMessage="Loading users..."
-      errorTitle="Failed to load users"
-      errorMessage="Failed to load users. Please try again later."
-      onRetry={refetch}
-      isRefetching={isRefetching}
     >
-      {() => (
+      {error ? (
+        <RetryableError
+          title="Failed to load users"
+          message="Failed to load users. Please try again later."
+          onRetry={refetch}
+        />
+      ) : !data || filteredUsers.length === 0 ? (
+        <EmptyState
+          variant="no-users"
+          title="No users found"
+          message="No users match your current filters."
+        />
+      ) : (
         <UserList
           users={filteredUsers}
           editingUser={editingUser}
           userToDelete={userToDelete}
           isSubmitting={isSubmitting}
-          searchTerm={searchTerm}
-          roleFilter={roleFilter}
           showFormModal={showFormModal}
-          onSearchChange={setSearchTerm}
-          onRoleFilterChange={setRoleFilter}
-          onAddUser={onAddUser}
           onEditUser={onEditUser}
           onDeleteUser={setUserToDelete}
           onCloseFormModal={onCloseFormModal}
@@ -95,6 +160,6 @@ export default function UsersPage() {
           onCancelDelete={() => setUserToDelete(null)}
         />
       )}
-    </QueryStateWrapper>
+    </ListPageLayout>
   );
 }

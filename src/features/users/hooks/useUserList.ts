@@ -3,12 +3,19 @@ import {
   type User,
   type CreateUserFormData,
   type UpdateUserFormData,
+  UserRoleDisplay,
 } from '@artco-group/artco-ticketing-sync';
 
 import { getErrorMessage } from '@/shared';
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '../api';
-import { asUserId, type UserId } from '@/types';
+import { UserRole, asUserId, type UserId } from '@/types';
 import { useToast } from '@/shared/components/ui';
+
+function getStatusFromRole(role: string): string {
+  if (role === UserRole.ADMIN) return 'Admin';
+  if (role === UserRole.CLIENT) return 'Client';
+  return 'Member';
+}
 
 /**
  * Custom hook for user list page logic.
@@ -23,7 +30,9 @@ export function useUserList() {
 
   // UI state
   const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState('All');
+  const [roleFilter, setRoleFilter] = useState<string>('All');
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<string | null>(null);
   const [showFormModal, setShowFormModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
@@ -36,16 +45,49 @@ export function useUserList() {
     updateUserMutation.isPending ||
     deleteUserMutation.isPending;
 
-  // Filter users based on search and role
+  // Filter and sort users
   const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
+    let result = users.filter((user) => {
       const matchesSearch =
         (user.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
         (user.email?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-      const matchesRole = roleFilter === 'All' || user.role === roleFilter;
-      return matchesSearch && matchesRole;
+
+      const matchesRole =
+        !roleFilter ||
+        roleFilter === 'All' ||
+        UserRoleDisplay[user.role as UserRole] === roleFilter;
+
+      const matchesStatus =
+        !statusFilter ||
+        getStatusFromRole(user.role as string) === statusFilter;
+
+      return matchesSearch && matchesRole && matchesStatus;
     });
-  }, [users, searchTerm, roleFilter]);
+
+    if (sortBy) {
+      result = [...result].sort((a, b) => {
+        switch (sortBy) {
+          case 'Name':
+            return (a.name || '').localeCompare(b.name || '');
+          case 'Email':
+            return (a.email || '').localeCompare(b.email || '');
+          case 'Role':
+            return (UserRoleDisplay[a.role as UserRole] || '').localeCompare(
+              UserRoleDisplay[b.role as UserRole] || ''
+            );
+          case 'Joined': {
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return dateA - dateB;
+          }
+          default:
+            return 0;
+        }
+      });
+    }
+
+    return result;
+  }, [users, searchTerm, roleFilter, statusFilter, sortBy]);
 
   // CRUD handlers
   const handleCreateUser = async (formData: CreateUserFormData) => {
@@ -121,6 +163,21 @@ export function useUserList() {
     }
   };
 
+  // Generic filter change handler for FilterBar integration
+  const handleFilterChange = (filterId: string, value: string | null) => {
+    switch (filterId) {
+      case 'role':
+        setRoleFilter(!value || value === 'All' ? 'All' : value);
+        break;
+      case 'status':
+        setStatusFilter(!value || value === 'All' ? null : value);
+        break;
+      case 'sortBy':
+        setSortBy(value);
+        break;
+    }
+  };
+
   return {
     // Data
     users,
@@ -137,6 +194,8 @@ export function useUserList() {
     isSubmitting,
     searchTerm,
     roleFilter,
+    statusFilter,
+    sortBy,
     showFormModal,
 
     // State setters
@@ -150,5 +209,6 @@ export function useUserList() {
     onCloseFormModal: handleCloseFormModal,
     onFormSubmit: handleFormSubmit,
     onConfirmDelete: handleConfirmDelete,
+    onFilterChange: handleFilterChange,
   };
 }

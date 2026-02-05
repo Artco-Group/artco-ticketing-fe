@@ -8,7 +8,6 @@ export const automationsRoutes = [
   createPrivateRoute(
     'automations',
     PAGE_ROUTES.AUTOMATIONS.ROOT,
-    'automations',
     AutomationsPage
   ),
 ];

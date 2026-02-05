@@ -12,7 +12,11 @@ import {
 import { Icon } from './Icon';
 import { FilterButton } from './filterButton';
 import { cn } from '@/lib/utils';
-import type { FilterOption } from '@/shared/components/common/FilterBar';
+
+export interface FilterOption {
+  value: string;
+  label: string;
+}
 
 const filterPanelButtonVariants = cva(
   'inline-flex items-center gap-1.5 rounded-[10px] border px-2.5 py-1 text-[13px] font-medium tracking-[-0.28px] transition-colors duration-150 focus:outline-none',
@@ -49,7 +53,6 @@ export interface FilterPanelProps {
   value?: FilterPanelValues;
   onChange?: (value: FilterPanelValues) => void;
   className?: string;
-  /** When true, only one option can be selected per group */
   singleSelect?: boolean;
 }
 
@@ -129,14 +132,16 @@ export const FilterPanel = ({
   label,
   icon,
   groups,
-  value = {},
+  value,
   onChange,
   className,
   singleSelect = false,
 }: FilterPanelProps) => {
   const [internalValue, setInternalValue] = useState<FilterPanelValues>({});
 
-  const selectedValues = Object.keys(value).length > 0 ? value : internalValue;
+  // Use value prop if provided (controlled), otherwise use internal state
+  const isControlled = value !== undefined;
+  const selectedValues = isControlled ? value : internalValue;
 
   const totalSelected = Object.values(selectedValues).reduce(
     (sum, arr) => sum + arr.length,
@@ -169,7 +174,8 @@ export const FilterPanel = ({
       delete newValue[groupKey];
     }
 
-    if (Object.keys(value).length === 0 && !onChange) {
+    // Update internal state if uncontrolled
+    if (!isControlled) {
       setInternalValue(newValue);
     }
 
