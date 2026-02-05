@@ -44,6 +44,7 @@ import {
   FilterButton,
   FilterPanel,
   type FilterPanelValues,
+  OTPInput,
 } from '@/shared/components/ui';
 import { MemberPicker, StatsCard } from '@/shared/components/composite';
 import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
@@ -285,6 +286,7 @@ export default function TestingPage() {
   const [filterPanelValues, setFilterPanelValues] = useState<FilterPanelValues>(
     {}
   );
+  const [otpValue, setOtpValue] = useState('');
 
   return (
     <div className="container mx-auto space-y-8 p-6">
@@ -770,6 +772,44 @@ export default function TestingPage() {
                 </SelectField>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* Input OTP Section */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Input OTP</h2>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          <div>
+            <h3 className="mb-2 text-lg font-medium">Basic (6 digits)</h3>
+            <OTPInput length={6} value={otpValue} onChange={setOtpValue} />
+            <p className="text-muted-foreground mt-2 text-sm">
+              Value: <strong>{otpValue || '—'}</strong>
+            </p>
+          </div>
+
+          <div>
+            <h3 className="mb-2 text-lg font-medium">With Label (4 digits)</h3>
+            <OTPInput
+              length={4}
+              value=""
+              onChange={() => {}}
+              label="Verification code"
+            />
+          </div>
+
+          <div>
+            <h3 className="mb-2 text-lg font-medium">With Error</h3>
+            <OTPInput
+              length={6}
+              value=""
+              onChange={() => {}}
+              label="OTP Code"
+              error="Invalid code. Please try again."
+            />
           </div>
         </div>
       </section>
