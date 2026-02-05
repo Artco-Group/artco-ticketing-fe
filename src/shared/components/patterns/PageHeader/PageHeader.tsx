@@ -9,9 +9,15 @@ import {
 } from '@/shared/components/composite';
 import type { NotificationItem } from '@/shared/components/composite/NotificationBell/NotificationBell';
 import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
-import { usePageHeaderContext } from './usePageHeaderContext';
+import type { Tab } from '../TabBar';
 import { TabBar } from '../TabBar';
 import { FilterBar } from '../FilterBar';
+import type {
+  FilterConfig,
+  ViewMode,
+  FilterGroup,
+  FilterPanelValues,
+} from '../FilterBar';
 
 export interface PageHeaderProps {
   title: string;
@@ -19,17 +25,57 @@ export interface PageHeaderProps {
   breadcrumbs?: BreadcrumbItem[];
   actions?: ReactNode;
   className?: string;
+
+  /** Tab bar (Row 2) */
+  tabs?: Tab[];
+  activeTab?: string;
+  onTabChange?: (tabId: string) => void;
+  tabActions?: ReactNode;
+
+  /** Filter bar (Row 3) */
+  filters?: FilterConfig[];
+  onFilterChange?: (filterId: string, value: string | null) => void;
+  sortOptions?: string[];
+  sortValue?: string | null;
+  onSortChange?: (value: string | null) => void;
+  filterGroups?: FilterGroup[];
+  filterPanelValue?: FilterPanelValues;
+  onFilterPanelChange?: (value: FilterPanelValues) => void;
+  filterPanelSingleSelect?: boolean;
+  viewMode?: ViewMode;
+  onViewChange?: (mode: ViewMode) => void;
+  showFilter?: boolean;
+  showAddButton?: boolean;
+  onAddClick?: () => void;
+  addButtonLabel?: string;
 }
 
 export function PageHeader({
   title,
-  count: countProp,
+  count,
   breadcrumbs,
   actions,
   className,
+  tabs,
+  activeTab,
+  onTabChange,
+  tabActions,
+  filters,
+  onFilterChange,
+  sortOptions,
+  sortValue,
+  onSortChange,
+  filterGroups,
+  filterPanelValue,
+  onFilterPanelChange,
+  filterPanelSingleSelect,
+  viewMode,
+  onViewChange,
+  showFilter,
+  showAddButton,
+  onAddClick,
+  addButtonLabel,
 }: PageHeaderProps) {
-  const contextValue = usePageHeaderContext();
-  const count = countProp ?? contextValue?.count;
   const { user, logout } = useAuth();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
@@ -47,17 +93,13 @@ export function PageHeader({
     setNotifications([]);
   };
 
-  const tabBarConfig = contextValue?.tabBarConfig;
-  const filterBarConfig = contextValue?.filterBarConfig;
+  const hasTabBar = tabs && activeTab !== undefined && onTabChange;
+  const hasFilterBar =
+    filters || sortOptions || filterGroups || onViewChange || showAddButton;
 
   return (
-    <header
-      className={cn(
-        'bg-card sticky top-0 z-10 shrink-0 border-b shadow-sm',
-        className
-      )}
-    >
-      <div className="flex h-16 flex-1 items-center justify-between px-4">
+    <header className={cn('bg-card sticky top-0 z-10 shrink-0', className)}>
+      <div className="border-border-default flex h-16 flex-1 items-center justify-between border-b px-4">
         <div className="flex flex-col justify-center">
           {breadcrumbs && breadcrumbs.length > 0 && (
             <Breadcrumbs items={breadcrumbs} className="mb-0.5" />
@@ -91,35 +133,33 @@ export function PageHeader({
         </div>
       </div>
 
-      {tabBarConfig && (
-        <>
-          <div className="border-border-default border-t" />
-          <TabBar
-            tabs={tabBarConfig.tabs}
-            activeTab={tabBarConfig.activeTab}
-            onTabChange={tabBarConfig.onTabChange}
-            actions={tabBarConfig.actions}
-            className="px-4 py-3"
-          />
-        </>
+      {hasTabBar && (
+        <TabBar
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          actions={tabActions}
+          className="px-4 py-3"
+        />
       )}
 
-      {filterBarConfig && (
+      {hasFilterBar && (
         <FilterBar
-          filters={filterBarConfig.filters}
-          onFilterChange={filterBarConfig.onFilterChange}
-          sortOptions={filterBarConfig.sortOptions}
-          sortValue={filterBarConfig.sortValue}
-          onSortChange={filterBarConfig.onSortChange}
-          filterGroups={filterBarConfig.filterGroups}
-          filterPanelValue={filterBarConfig.filterPanelValue}
-          onFilterPanelChange={filterBarConfig.onFilterPanelChange}
-          filterPanelSingleSelect={filterBarConfig.filterPanelSingleSelect}
-          viewMode={filterBarConfig.viewMode}
-          onViewChange={filterBarConfig.onViewChange}
-          showFilter={filterBarConfig.showFilter}
-          showAddButton={filterBarConfig.showAddButton}
-          onAddClick={filterBarConfig.onAddClick}
+          filters={filters}
+          onFilterChange={onFilterChange}
+          sortOptions={sortOptions}
+          sortValue={sortValue}
+          onSortChange={onSortChange}
+          filterGroups={filterGroups}
+          filterPanelValue={filterPanelValue}
+          onFilterPanelChange={onFilterPanelChange}
+          filterPanelSingleSelect={filterPanelSingleSelect}
+          viewMode={viewMode}
+          onViewChange={onViewChange}
+          showFilter={showFilter}
+          showAddButton={showAddButton}
+          onAddClick={onAddClick}
+          addButtonLabel={addButtonLabel}
         />
       )}
     </header>

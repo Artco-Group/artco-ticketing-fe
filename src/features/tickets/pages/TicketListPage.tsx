@@ -1,18 +1,21 @@
 import { useMemo, useState } from 'react';
 import { UserRole } from '@/types';
 
-import { TicketList } from '@/features/tickets/components';
-import { QueryStateWrapper, EmptyState, Button } from '@/shared/components/ui';
+import { TicketCard, TicketTable } from '@/features/tickets/components';
 import {
-  usePageHeader,
-  usePageHeaderTabs,
-  usePageHeaderFilters,
-  type Tab,
-  type ViewMode,
-  type FilterGroup,
-  type FilterPanelValues,
+  EmptyState,
+  Button,
+  RetryableError,
+  Icon,
+} from '@/shared/components/ui';
+import { ListPageLayout } from '@/shared/components/layouts';
+import type {
+  Tab,
+  ViewMode,
+  FilterGroup,
+  FilterPanelValues,
 } from '@/shared/components/patterns';
-import { Icon } from '@/shared/components/ui/Icon/Icon';
+import { useRoleFlags } from '@/shared';
 import { useTicketList } from '../hooks';
 
 const TICKET_TABS: Tab[] = [
@@ -25,13 +28,12 @@ export default function TicketListPage() {
   const {
     tickets,
     allTickets,
-    users,
+    users = [],
     filters,
     isLoading,
     error,
     ticketsData,
     refetch,
-    isRefetching,
     activeTab,
     userRole,
     onViewTicket,
@@ -40,7 +42,9 @@ export default function TicketListPage() {
     onTabChange,
   } = useTicketList();
 
-  usePageHeader({ count: tickets.length });
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
+
+  const { isClient } = useRoleFlags(userRole as UserRole);
 
   const tabBarActions = useMemo(
     () => (
@@ -60,15 +64,6 @@ export default function TicketListPage() {
     [onCreateTicket]
   );
 
-  usePageHeaderTabs({
-    tabs: TICKET_TABS,
-    activeTab,
-    onTabChange: onTabChange ?? (() => {}),
-    actions: tabBarActions,
-  });
-
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
-
   // Initialize filterPanelValue from URL params so selected filters are displayed
   const filterPanelValue = useMemo<FilterPanelValues>(() => {
     const value: FilterPanelValues = {};
@@ -81,7 +76,7 @@ export default function TicketListPage() {
     return value;
   }, [filters]);
 
-  // Sort options for the Sort button (cycles through Created Date, Title, Ticket ID, Client, Category, Priority, Status)
+  // Sort options for the Sort button
   const sortOptions = useMemo(
     () => ['Title', 'Ticket ID', 'Client', 'Category', 'Priority', 'Status'],
     []
@@ -159,48 +154,30 @@ export default function TicketListPage() {
   );
 
   const handleFilterPanelChange = (value: FilterPanelValues) => {
-    // Apply filter panel selections to URL params (filterPanelValue is derived from URL)
     if (onFilterChange) {
-      // Get all possible filter group keys
       const allGroupKeys = filterGroups.map((g) => g.key);
-
-      // For each group, set the filter value or reset to 'All'
       for (const key of allGroupKeys) {
         const values = value[key];
         if (values && values.length > 0) {
           onFilterChange(key, values[0]);
         } else {
-          // Group was removed or has no selections - reset to 'All'
           onFilterChange(key, 'All');
         }
       }
     }
   };
 
-  usePageHeaderFilters({
-    filters: filterBarFilters,
-    onFilterChange: (filterId, value) => {
-      if (onFilterChange) {
-        onFilterChange(filterId, value ?? 'All');
-      }
-    },
-    sortOptions,
-    sortValue,
-    onSortChange: (value) => {
-      if (onFilterChange) {
-        onFilterChange('sortBy', value ?? 'Created Date');
-      }
-    },
-    filterGroups,
-    filterPanelValue,
-    onFilterPanelChange: handleFilterPanelChange,
-    filterPanelSingleSelect: true,
-    viewMode,
-    onViewChange: setViewMode,
-    showFilter: true,
-    showAddButton: true,
-    onAddClick: onCreateTicket,
-  });
+  const handleFilterBarChange = (filterId: string, value: string | null) => {
+    if (onFilterChange) {
+      onFilterChange(filterId, value ?? 'All');
+    }
+  };
+
+  const handleSortChange = (value: string | null) => {
+    if (onFilterChange) {
+      onFilterChange('sortBy', value ?? 'Created Date');
+    }
+  };
 
   if (!userRole) {
     return (
@@ -212,28 +189,79 @@ export default function TicketListPage() {
     );
   }
 
-  return (
-    <QueryStateWrapper
-      isLoading={isLoading}
-      error={error}
-      data={ticketsData}
-      loadingMessage="Loading tickets..."
-      errorTitle="Failed to load tickets"
-      errorMessage="Failed to load tickets. Please try again later."
-      onRetry={refetch}
-      isRefetching={isRefetching}
-    >
-      {() => (
-        <TicketList
-          tickets={tickets}
-          allTickets={allTickets}
-          users={users}
-          userRole={userRole as UserRole}
-          onViewTicket={onViewTicket}
-          onCreateTicket={onCreateTicket}
-          viewMode={viewMode}
+  // Determine if we should show card layout (client always, or grid mode for eng/dev)
+  const showCards = isClient || viewMode === 'grid';
+
+  const renderContent = () => {
+    if (error) {
+      return (
+        <RetryableError
+          title="Failed to load tickets"
+          message="Failed to load tickets. Please try again later."
+          onRetry={refetch}
         />
-      )}
-    </QueryStateWrapper>
+      );
+    }
+
+    if (!ticketsData || tickets.length === 0) {
+      return (
+        <EmptyState
+          variant="no-tickets"
+          title="No tasks found"
+          message="No tasks match your current filters."
+        />
+      );
+    }
+
+    if (showCards) {
+      return (
+        <div className="p-6">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {tickets.map((ticket) => (
+              <TicketCard
+                key={ticket._id || ticket.id}
+                ticket={ticket}
+                onClick={onViewTicket}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <TicketTable
+        tickets={tickets}
+        users={users}
+        onViewTicket={onViewTicket}
+      />
+    );
+  };
+
+  return (
+    <ListPageLayout
+      title="Tasks"
+      count={tickets.length}
+      tabs={TICKET_TABS}
+      activeTab={activeTab}
+      onTabChange={onTabChange ?? (() => {})}
+      tabActions={tabBarActions}
+      filters={filterBarFilters}
+      onFilterChange={handleFilterBarChange}
+      sortOptions={sortOptions}
+      sortValue={sortValue}
+      onSortChange={handleSortChange}
+      filterGroups={filterGroups}
+      filterPanelValue={filterPanelValue}
+      onFilterPanelChange={handleFilterPanelChange}
+      filterPanelSingleSelect
+      viewMode={viewMode}
+      onViewChange={setViewMode}
+      showFilter
+      loading={isLoading}
+      loadingMessage="Loading tickets..."
+    >
+      {renderContent()}
+    </ListPageLayout>
   );
 }

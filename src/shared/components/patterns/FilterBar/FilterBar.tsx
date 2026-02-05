@@ -21,15 +21,12 @@ export type ViewMode = 'grid' | 'list';
 export interface FilterBarProps {
   filters?: FilterConfig[];
   onFilterChange?: (filterId: string, value: string | null) => void;
-  /** Sort options for the Sort button */
   sortOptions?: string[];
   sortValue?: string | null;
   onSortChange?: (value: string | null) => void;
-  /** Filter panel groups for the Filter dropdown */
   filterGroups?: FilterGroup[];
   filterPanelValue?: FilterPanelValues;
   onFilterPanelChange?: (value: FilterPanelValues) => void;
-  /** When true, only one option can be selected per filter group */
   filterPanelSingleSelect?: boolean;
   viewMode?: ViewMode;
   onViewChange?: (mode: ViewMode) => void;
@@ -38,6 +35,7 @@ export interface FilterBarProps {
   onAddClick?: () => void;
   className?: string;
   children?: ReactNode;
+  addButtonLabel?: string;
 }
 
 export function FilterBar({
@@ -57,6 +55,7 @@ export function FilterBar({
   onAddClick,
   className,
   children,
+  addButtonLabel = 'Add',
 }: FilterBarProps) {
   return (
     <div
@@ -112,7 +111,7 @@ export function FilterBar({
               type="button"
               onClick={() => onViewChange('grid')}
               className={cn(
-                'p-1.5 transition-colors',
+                'px-2.5 py-1 leading-5 transition-colors',
                 viewMode === 'grid'
                   ? 'bg-greyscale-100 text-greyscale-700'
                   : 'text-greyscale-400 hover:text-greyscale-500 bg-white'
@@ -124,7 +123,7 @@ export function FilterBar({
               type="button"
               onClick={() => onViewChange('list')}
               className={cn(
-                'p-1.5 transition-colors',
+                'px-2.5 py-1 leading-5 transition-colors',
                 viewMode === 'list'
                   ? 'bg-greyscale-100 text-greyscale-700'
                   : 'text-greyscale-400 hover:text-greyscale-500 bg-white'
@@ -138,12 +137,12 @@ export function FilterBar({
         {/* Add button */}
         {showAddButton && (
           <Button
-            variant="ghost"
-            size="icon"
+            leftIcon="plus"
             onClick={onAddClick}
-            className="text-text-secondary hover:text-text-primary"
+            className="bg-greyscale-900 hover:bg-greyscale-800 text-white"
+            size="sm"
           >
-            <Icon name="plus" size="sm" />
+            {addButtonLabel}
           </Button>
         )}
       </div>

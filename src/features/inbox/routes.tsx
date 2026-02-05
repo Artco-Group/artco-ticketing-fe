@@ -5,5 +5,5 @@ import { PAGE_ROUTES } from '@/shared/constants';
 const InboxPage = lazy(() => import('./pages'));
 
 export const inboxRoutes = [
-  createPrivateRoute('inbox', PAGE_ROUTES.INBOX.ROOT, 'inbox', InboxPage),
+  createPrivateRoute('inbox', PAGE_ROUTES.INBOX.ROOT, InboxPage),
 ];

@@ -5,7 +5,7 @@ import {
   type ComponentType,
   type JSX,
 } from 'react';
-import { LayoutWrapper } from '@/app/components/LayoutWrapper';
+import { MainLayout } from '@/shared/components/layout/MainLayout';
 import { RouteGuard } from '@/features/auth/components/RouteGuard';
 import { LoadingOverlay } from '@/shared/components/ui';
 
@@ -15,13 +15,13 @@ import { LoadingOverlay } from '@/shared/components/ui';
  */
 
 /**
- * Creates a private route with layout wrapper and suspense
- * Used for authenticated routes that need the main application layout
+ * Creates a private route with MainLayout and suspense
+ * Each page provides its own layout (e.g. ListPageLayout, DashboardLayout)
+ * Renders: RouteGuard > Suspense > MainLayout > Component
  */
 export function createPrivateRoute(
   key: string,
   path: string,
-  pageKey: string,
   Component: LazyExoticComponent<ComponentType<object>>
 ) {
   return (
@@ -31,9 +31,9 @@ export function createPrivateRoute(
       element={
         <RouteGuard requiresAuth={true}>
           <Suspense fallback={<LoadingOverlay />}>
-            <LayoutWrapper pageKey={pageKey}>
+            <MainLayout>
               <Component />
-            </LayoutWrapper>
+            </MainLayout>
           </Suspense>
         </RouteGuard>
       }

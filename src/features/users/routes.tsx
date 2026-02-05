@@ -10,5 +10,5 @@ const UsersPage = lazy(() => import('./pages/UsersPage'));
  * Admin functionality for managing system users
  */
 export const userRoutes = [
-  createPrivateRoute('users', PAGE_ROUTES.USERS.LIST, 'users', UsersPage),
+  createPrivateRoute('users', PAGE_ROUTES.USERS.LIST, UsersPage),
 ];

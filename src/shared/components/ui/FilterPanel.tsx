@@ -53,7 +53,6 @@ export interface FilterPanelProps {
   value?: FilterPanelValues;
   onChange?: (value: FilterPanelValues) => void;
   className?: string;
-  /** When true, only one option can be selected per group */
   singleSelect?: boolean;
 }
 

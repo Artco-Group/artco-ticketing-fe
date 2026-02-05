@@ -320,7 +320,7 @@ function DataTable<T extends TableRowData>({
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow
           key={headerGroup.id}
-          className="border-greyscale-100 border-b bg-white hover:bg-white"
+          className="border-b-0 bg-white hover:bg-white"
         >
           {headerGroup.headers.map((header) => {
             const meta = header.column.columnDef.meta as
