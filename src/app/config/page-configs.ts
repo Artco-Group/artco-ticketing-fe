@@ -55,6 +55,11 @@ export const pageConfigs: Record<string, PageConfig> = {
     description: 'Manage workflow automations',
     breadcrumbs: [{ label: 'Automations' }],
   },
+  settings: {
+    title: 'Settings',
+    description: 'Manage your account settings',
+    breadcrumbs: [{ label: 'Settings' }],
+  },
 };
 
 export type { BreadcrumbItem };

@@ -19,6 +19,8 @@ export interface MenuItemProps {
   collapsed?: boolean;
 
   className?: string;
+
+  hideActiveIndicator?: boolean;
 }
 
 export function MenuItem({
@@ -30,12 +32,13 @@ export function MenuItem({
   onClick,
   collapsed = false,
   className,
+  hideActiveIndicator = false,
 }: MenuItemProps) {
   const badgeLabel =
     badge && badge > 99 ? '99+' : badge && badge > 0 ? String(badge) : null;
 
   const baseClasses = cn(
-    'flex items-center rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
+    'flex w-full items-center rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
     'hover:bg-greyscale-200',
     active && 'bg-greyscale-100',
     collapsed && 'justify-center px-0',
@@ -55,7 +58,7 @@ export function MenuItem({
           {badgeLabel}
         </span>
       )}
-      {active && !collapsed && (
+      {active && !collapsed && !hideActiveIndicator && (
         <div className="bg-sidebar-primary absolute top-0 left-0 h-full w-1 rounded-r" />
       )}
     </>

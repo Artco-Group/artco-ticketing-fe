@@ -59,6 +59,15 @@ import listSvg from '@/assets/icons/system/list.svg?raw';
 import pinSvg from '@/assets/icons/navigation/pin.svg?raw';
 import automationsSvg from '@/assets/icons/navigation/automations.svg?raw';
 import sidebarSvg from '@/assets/icons/navigation/sidebar.svg?raw';
+import profileSvg from '@/assets/icons/navigation/profile.svg?raw';
+import securitySvg from '@/assets/icons/navigation/security.svg?raw';
+import billingSvg from '@/assets/icons/navigation/billing.svg?raw';
+import integrationsSvg from '@/assets/icons/navigation/integrations.svg?raw';
+import connectedAccountSvg from '@/assets/icons/navigation/connected-account.svg?raw';
+import preferenceSvg from '@/assets/icons/navigation/preference.svg?raw';
+import applicationSvg from '@/assets/icons/navigation/application.svg?raw';
+import importExportSvg from '@/assets/icons/navigation/import-export.svg?raw';
+import apiSvg from '@/assets/icons/navigation/api.svg?raw';
 import chevronSelectorSvg from '@/assets/icons/arrows/chevron-selector.svg?raw';
 
 import arrowLeftSvg from '@/assets/icons/arrows/arrow-left.svg?raw';
@@ -123,7 +132,16 @@ export type IconName =
   | 'group-by'
   | 'star'
   | 'grid'
-  | 'list';
+  | 'list'
+  | 'profile'
+  | 'security'
+  | 'billing'
+  | 'integrations'
+  | 'connected-account'
+  | 'preference'
+  | 'application'
+  | 'import-export'
+  | 'api';
   
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -185,6 +203,15 @@ const iconMap: Record<IconName, string> = {
   star: starSvg,
   grid: gridSvg,
   list: listSvg,
+  profile: profileSvg,
+  security: securitySvg,
+  billing: billingSvg,
+  integrations: integrationsSvg,
+  'connected-account': connectedAccountSvg,
+  preference: preferenceSvg,
+  application: applicationSvg,
+  'import-export': importExportSvg,
+  api: apiSvg
 };
 
 const sizeMap: Record<IconSize, string> = {
