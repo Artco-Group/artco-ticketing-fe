@@ -64,6 +64,16 @@ export const PAGE_ROUTES = {
     ROOT: '/automations',
   },
 
+  // Projects
+  PROJECTS: {
+    ROOT: '/projects',
+  },
+
+  // Clients
+  CLIENTS: {
+    ROOT: '/clients',
+  },
+
   // User account
   PROFILE: '/profile',
   SETTINGS: '/settings',

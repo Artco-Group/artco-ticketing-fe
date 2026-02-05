@@ -8,6 +8,7 @@ export interface SearchBarProps {
   onChange: (value: string) => void;
   onSubmit?: (value: string) => void;
   className?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export function SearchBar({
@@ -16,6 +17,7 @@ export function SearchBar({
   onChange,
   onSubmit,
   className,
+  size = 'md',
 }: SearchBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -49,7 +51,7 @@ export function SearchBar({
       placeholder={placeholder}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
-      size="lg"
+      size={size}
       leftIcon={<Icon name="search" size="sm" />}
       rightIcon={<Icon name="command-k" size="xxl" />}
       className={cn(

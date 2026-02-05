@@ -3,7 +3,7 @@ import { UserRoleDisplay } from '@artco-group/artco-ticketing-sync';
 import { UserRole } from '@/types';
 import { UserList } from '../components';
 import { RetryableError, EmptyState } from '@/shared/components/ui';
-import { ListPageLayout } from '@/shared/components/layouts';
+import { ListPageLayout } from '@/shared/components/layout/ListPageLayout';
 import { Icon } from '@/shared/components/ui/Icon/Icon';
 import type {
   FilterGroup,
