@@ -57,7 +57,10 @@ export default function ProjectDetailPage() {
 
   const project = data?.data?.project;
   const tickets = ticketsData?.data?.tickets || [];
-  const users = usersData?.data?.users || [];
+  const users = useMemo(
+    () => usersData?.data?.users || [],
+    [usersData?.data?.users]
+  );
 
   const availableDevelopers = useMemo(() => {
     const currentMemberIds = new Set(

@@ -134,6 +134,7 @@ export function EditTicketModal({
     onClose();
   };
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const category = watch('category');
   const isBug = category === TicketCategory.BUG;
 

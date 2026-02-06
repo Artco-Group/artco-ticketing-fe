@@ -60,7 +60,10 @@ export function TicketCreateDialog({
 
   // Fetch projects for the select dropdown
   const { data: projectsData } = useProjects();
-  const projects = projectsData?.data?.projects || [];
+  const projects = useMemo(
+    () => projectsData?.data?.projects || [],
+    [projectsData?.data?.projects]
+  );
 
   // Build project options for select
   const projectOptions = useMemo(
