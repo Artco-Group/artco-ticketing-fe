@@ -1,12 +1,20 @@
-import { useState, type ReactNode } from 'react';
+import { useState, useMemo, useEffect, type ReactNode } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/features/auth/context';
+import { hasRole } from '@/shared/utils/role-helpers';
 import { Sidebar } from '@/shared/components/layout/Sidebar';
+import type { SidebarItem } from '@/shared/components/layout/Sidebar';
+import {
+  ROUTE_MAP,
+  NAVIGATION,
+  FOOTER_SECTIONS,
+  SIDEBAR_WIDTH,
+} from '@/shared/components/layout/sidebar.config';
 import { SettingsSidebar } from './SettingsSidebar';
 import { SettingsSidebarContext } from './SettingsSidebarContext';
-import { SidebarProvider } from '@/shared/components/layout/SidebarProvider';
+
 import { Icon } from '@/shared/components/ui';
 import { PAGE_ROUTES } from '@/shared/constants';
-import { useEffect } from 'react';
 import type { SettingsSideBarGroup } from './SettingsSidebar';
 
 interface SettingsLayoutProps {
@@ -23,6 +31,9 @@ function SettingsLayoutContent({
   groups,
   onBackToTop,
   onNavigate,
+  onMainSidebarNavigate,
+  onMainSidebarToggle,
+  mainSidebarItems,
 }: {
   children: ReactNode;
   activeSection: string;
@@ -31,12 +42,28 @@ function SettingsLayoutContent({
   groups: SettingsSideBarGroup[];
   onBackToTop: () => void;
   onNavigate?: (id: string) => void;
+  onMainSidebarNavigate: (id: string) => void;
+  onMainSidebarToggle: () => void;
+  mainSidebarItems: SidebarItem[];
 }) {
-  const sidebarWidth = showMainSidebar ? '18rem' : collapsed ? '5rem' : '18rem';
+  const sidebarWidth = showMainSidebar
+    ? SIDEBAR_WIDTH.EXPANDED
+    : collapsed
+      ? SIDEBAR_WIDTH.COLLAPSED
+      : SIDEBAR_WIDTH.EXPANDED;
 
   return (
     <div className="min-h-screen w-full bg-gray-50" style={{ minWidth: 0 }}>
-      {showMainSidebar && <Sidebar hideActiveIndicator={true} />}
+      {showMainSidebar && (
+        <Sidebar
+          items={mainSidebarItems}
+          onNavigate={onMainSidebarNavigate}
+          collapsed={false}
+          onToggle={onMainSidebarToggle}
+          footerSections={FOOTER_SECTIONS}
+          searchPlaceholder="Search"
+        />
+      )}
       {!showMainSidebar && (
         <SettingsSidebar
           groups={groups}
@@ -79,9 +106,18 @@ export function SettingsLayout({
   activeSection,
   groups,
 }: SettingsLayoutProps) {
+  const { user } = useAuth();
   const [showMainSidebar, setShowMainSidebar] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+
+  const mainSidebarItems = useMemo(
+    () =>
+      NAVIGATION.filter(
+        (item) => !item.roles || hasRole(user, item.roles)
+      ) as SidebarItem[],
+    [user]
+  );
 
   const handleBackToTop = () => {
     setShowMainSidebar(true);
@@ -89,6 +125,17 @@ export function SettingsLayout({
 
   const handleNavigate = (id: string) => {
     navigate(`/settings/${id}`);
+  };
+
+  const handleMainSidebarNavigate = (id: string) => {
+    const path = ROUTE_MAP[id];
+    if (path) {
+      navigate(path);
+    }
+  };
+
+  const handleMainSidebarToggle = () => {
+    setShowMainSidebar(false);
   };
 
   useEffect(() => {
@@ -106,19 +153,20 @@ export function SettingsLayout({
   }, []);
 
   return (
-    <SidebarProvider>
-      <SettingsSidebarContext.Provider value={{ collapsed, setCollapsed }}>
-        <SettingsLayoutContent
-          activeSection={activeSection}
-          showMainSidebar={showMainSidebar}
-          collapsed={collapsed}
-          groups={groups}
-          onBackToTop={handleBackToTop}
-          onNavigate={handleNavigate}
-        >
-          {children}
-        </SettingsLayoutContent>
-      </SettingsSidebarContext.Provider>
-    </SidebarProvider>
+    <SettingsSidebarContext.Provider value={{ collapsed, setCollapsed }}>
+      <SettingsLayoutContent
+        activeSection={activeSection}
+        showMainSidebar={showMainSidebar}
+        collapsed={collapsed}
+        groups={groups}
+        onBackToTop={handleBackToTop}
+        onNavigate={handleNavigate}
+        onMainSidebarNavigate={handleMainSidebarNavigate}
+        onMainSidebarToggle={handleMainSidebarToggle}
+        mainSidebarItems={mainSidebarItems}
+      >
+        {children}
+      </SettingsLayoutContent>
+    </SettingsSidebarContext.Provider>
   );
 }

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Icon } from '@/shared/components/ui';
 import { SearchBar } from '@/shared/components/composite';
 import { MenuItem } from '@/shared/components/composite/MenuItem';
+import { SIDEBAR_WIDTH } from '@/shared/components/layout/sidebar.config';
 import { useSettingsSidebar } from './useSettingsSidebar';
 import type { IconName } from '@/shared/components/ui/Icon/Icon';
 
@@ -65,59 +66,37 @@ export function SettingsSidebar({
         'fixed inset-y-0 flex flex-col',
         'border-sidebar-border bg-sidebar text-sidebar-foreground border-r',
         'transition-[width] duration-300',
-        collapsed ? 'w-20' : 'w-72',
         className
       )}
+      style={{
+        width: collapsed ? SIDEBAR_WIDTH.COLLAPSED : SIDEBAR_WIDTH.EXPANDED,
+      }}
       aria-label="Settings sidebar"
     >
       <div className="flex flex-grow flex-col overflow-y-auto">
-        {/* Header / Workspace selector */}
+        {/* Search bar + Toggle */}
         <div
           className={cn(
-            'flex pt-4 pb-3',
-            collapsed
-              ? 'flex-col items-center gap-2 px-0'
-              : 'items-center justify-between px-4'
+            'flex items-center pt-3 pb-2',
+            collapsed ? 'justify-center' : 'gap-2 pr-2 pl-3'
           )}
         >
-          <button
-            type="button"
-            className={cn(
-              'flex items-center gap-2 rounded-md px-2 py-1 text-left transition-colors',
-              'hover:bg-sidebar-accent',
-              collapsed && 'justify-center px-0'
-            )}
-          >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-600 text-[11px] font-semibold text-white uppercase">
-              ws
+          {!collapsed && (
+            <div className="min-w-0 flex-1">
+              <SearchBar
+                value={searchValue}
+                placeholder="Search"
+                onChange={setSearchValue}
+                size="sm"
+              />
             </div>
-            {!collapsed && (
-              <>
-                <div className="min-w-0">
-                  <p
-                    className="text-sidebar-foreground text-h6 truncate"
-                    title="Workspace"
-                  >
-                    Workspace
-                  </p>
-                </div>
-                <Icon
-                  name="chevron-selector"
-                  size="lg"
-                  className="text-sidebar-foreground/70 shrink-0"
-                  aria-label="Switch workspace"
-                />
-              </>
-            )}
-          </button>
-
+          )}
           <button
             type="button"
             className={cn(
-              'inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-sm font-medium',
+              'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-medium',
               'focus-visible:ring-ring transition-colors focus-visible:ring-1 focus-visible:outline-none',
-              'hover:bg-accent hover:text-accent-foreground',
-              collapsed ? 'mx-auto' : 'ml-2'
+              'hover:bg-sidebar-accent text-sidebar-foreground/70'
             )}
             onClick={() => {
               if (window.innerWidth < 1024) return;
@@ -132,21 +111,10 @@ export function SettingsSidebar({
               )}
               aria-hidden
             >
-              <Icon name="sidebar" size="md" />
+              <Icon name="sidebar" size="sm" />
             </span>
           </button>
         </div>
-
-        {/* Search */}
-        {!collapsed && (
-          <div className="px-4 pb-2">
-            <SearchBar
-              value={searchValue}
-              placeholder="Search"
-              onChange={setSearchValue}
-            />
-          </div>
-        )}
 
         {/* Back to Top */}
         <div className={cn('py-2', collapsed ? 'px-2' : 'px-4')}>

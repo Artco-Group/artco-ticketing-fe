@@ -8,7 +8,6 @@ import {
   RetryableError,
   Icon,
 } from '@/shared/components/ui';
-import { ListPageLayout } from '@/shared/components/layouts';
 import type {
   Tab,
   ViewMode,
@@ -17,6 +16,7 @@ import type {
 } from '@/shared/components/patterns';
 import { useRoleFlags } from '@/shared';
 import { useTicketList } from '../hooks';
+import { ListPageLayout } from '@/shared/components/layout/ListPageLayout';
 
 const TICKET_TABS: Tab[] = [
   { id: 'active', label: 'Active', icon: 'tasks' },

@@ -5,21 +5,13 @@ import { Icon, type IconName } from '@/shared/components/ui';
 
 export interface MenuItemProps {
   icon: IconName;
-
   label: string;
-
   active?: boolean;
-
   href?: string;
-
   badge?: number;
-
   onClick?: () => void;
-
   collapsed?: boolean;
-
   className?: string;
-
   hideActiveIndicator?: boolean;
 }
 
@@ -38,7 +30,7 @@ export function MenuItem({
     badge && badge > 99 ? '99+' : badge && badge > 0 ? String(badge) : null;
 
   const baseClasses = cn(
-    'flex w-full items-center rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
+    'flex w-full items-center rounded-md px-2 py-1 text-sm font-medium transition-colors',
     'hover:bg-greyscale-200',
     active && 'bg-greyscale-100',
     collapsed && 'justify-center px-0',
@@ -49,10 +41,10 @@ export function MenuItem({
     <>
       <Icon
         name={icon}
-        size={collapsed ? 'lg' : 'xl'}
-        className={cn(!collapsed && 'mr-3')}
+        size={collapsed ? 'md' : 'lg'}
+        className={cn(!collapsed && 'mr-2')}
       />
-      {!collapsed && <span className="truncate">{label}</span>}
+      {!collapsed && <span className="truncate text-sm">{label}</span>}
       {badgeLabel && !collapsed && (
         <span className="bg-destructive text-primary-foreground ml-auto flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-[0.7rem] leading-none font-semibold">
           {badgeLabel}

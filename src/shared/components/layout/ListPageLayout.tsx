@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { PageHeader } from '@/shared/components/patterns/PageHeader/PageHeader';
 import type { Tab } from '@/shared/components/patterns/TabBar';
+import { TabBar } from '@/shared/components/patterns/TabBar';
+import { FilterBar } from '@/shared/components/patterns/FilterBar';
 import type {
   FilterConfig,
   ViewMode,
@@ -11,22 +13,16 @@ import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/B
 import { SpinnerContainer, EmptyState } from '@/shared/components/ui';
 
 export interface ListPageLayoutProps {
-  /** Page title displayed in the header */
   title: string;
-  /** Optional count badge next to the title */
   count?: number;
-  /** Breadcrumbs for nested page navigation */
   breadcrumbs?: BreadcrumbItem[];
-  /** Extra actions rendered in the header row (right side, before UserMenu) */
   actions?: ReactNode;
 
-  /** Tab bar (Row 2) */
   tabs?: Tab[];
   activeTab?: string;
   onTabChange?: (tabId: string) => void;
   tabActions?: ReactNode;
 
-  /** Filter bar (Row 3) */
   filters?: FilterConfig[];
   onFilterChange?: (filterId: string, value: string | null) => void;
   sortOptions?: string[];
@@ -43,16 +39,11 @@ export interface ListPageLayoutProps {
   onAddClick?: () => void;
   addButtonLabel?: string;
 
-  /** Shows a loading spinner instead of children */
   loading?: boolean;
-  /** Shows emptyState instead of children */
   empty?: boolean;
-  /** Custom empty state element (defaults to a generic EmptyState) */
   emptyState?: ReactNode;
-  /** Optional message for the loading spinner */
   loadingMessage?: string;
 
-  /** Page content */
   children: ReactNode;
   className?: string;
 }
@@ -87,33 +78,51 @@ export function ListPageLayout({
   loadingMessage,
   children,
 }: ListPageLayoutProps) {
+  const hasTabBar = tabs && activeTab !== undefined && onTabChange;
+  const hasFilterBar =
+    filters || sortOptions || filterGroups || onViewChange || showAddButton;
+
   return (
     <>
-      <PageHeader
-        title={title}
-        count={count}
-        breadcrumbs={breadcrumbs}
-        actions={actions}
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={onTabChange}
-        tabActions={tabActions}
-        filters={filters}
-        onFilterChange={onFilterChange}
-        sortOptions={sortOptions}
-        sortValue={sortValue}
-        onSortChange={onSortChange}
-        filterGroups={filterGroups}
-        filterPanelValue={filterPanelValue}
-        onFilterPanelChange={onFilterPanelChange}
-        filterPanelSingleSelect={filterPanelSingleSelect}
-        viewMode={viewMode}
-        onViewChange={onViewChange}
-        showFilter={showFilter}
-        showAddButton={showAddButton}
-        onAddClick={onAddClick}
-        addButtonLabel={addButtonLabel}
-      />
+      <header className="bg-card sticky top-0 z-10 shrink-0">
+        <PageHeader
+          title={title}
+          count={count}
+          breadcrumbs={breadcrumbs}
+          actions={actions}
+        />
+
+        {hasTabBar && (
+          <TabBar
+            tabs={tabs}
+            activeTab={activeTab}
+            onTabChange={onTabChange}
+            actions={tabActions}
+            className="px-4 py-3"
+          />
+        )}
+
+        {hasFilterBar && (
+          <FilterBar
+            filters={filters}
+            onFilterChange={onFilterChange}
+            sortOptions={sortOptions}
+            sortValue={sortValue}
+            onSortChange={onSortChange}
+            filterGroups={filterGroups}
+            filterPanelValue={filterPanelValue}
+            onFilterPanelChange={onFilterPanelChange}
+            filterPanelSingleSelect={filterPanelSingleSelect}
+            viewMode={viewMode}
+            onViewChange={onViewChange}
+            showFilter={showFilter}
+            showAddButton={showAddButton}
+            onAddClick={onAddClick}
+            addButtonLabel={addButtonLabel}
+          />
+        )}
+      </header>
+
       <main className="overflow-x-auto" style={{ width: '100%', minWidth: 0 }}>
         {loading ? (
           <SpinnerContainer message={loadingMessage} />
