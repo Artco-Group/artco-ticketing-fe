@@ -4,6 +4,7 @@ import { authRoutes } from '@/features/auth/routes';
 import { userRoutes } from '@/features/users/routes';
 import { dashboardRoutes } from '@/features/dashboard/routes';
 import { ticketRoutes } from '@/features/tickets/routes';
+import { projectRoutes } from '@/features/projects/routes';
 import { sharedRoutes } from '@/shared/routes';
 import { inboxRoutes } from '@/features/inbox/routes';
 import { notesRoutes } from '@/features/notes/routes';
@@ -33,6 +34,7 @@ export const allRoutes = [
   ...authRoutes,
   ...dashboardRoutes,
   ...ticketRoutes,
+  ...projectRoutes,
   ...userRoutes,
   ...sharedRoutes,
   ...inboxRoutes,
@@ -60,6 +62,7 @@ export {
   authRoutes,
   dashboardRoutes,
   ticketRoutes,
+  projectRoutes,
   userRoutes,
   sharedRoutes,
   inboxRoutes,

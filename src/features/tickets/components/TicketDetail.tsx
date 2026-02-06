@@ -1,34 +1,67 @@
-import { useId } from 'react';
 import {
-  UserRole,
   asTicketId,
   asCommentId,
+  asUserId,
   type Ticket,
   type User,
   type TicketId,
   type UserId,
+  UserRole,
 } from '@/types';
-import { Loader2 } from 'lucide-react';
-import { Icon } from '@/shared/components/ui';
-import { Breadcrumbs } from '@/shared/components';
-import { PAGE_ROUTES } from '@/shared/constants';
+import {
+  TicketCategory,
+  TicketStatus,
+  TicketPriority,
+} from '@artco-group/artco-ticketing-sync';
+import {
+  Badge,
+  Avatar,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/shared/components/ui';
+import { CompanyLogo } from '@/shared/components/composite/CompanyLogo/CompanyLogo';
 import { CommentList } from './CommentList';
 import { CommentForm } from './CommentForm';
 import { useComments } from '../hooks/useComments';
-import TicketDetails from './TicketDetails';
-import { resolveAssigneeName } from '@/shared/utils/ticket-helpers';
-import { useTicketDetailActions } from '../hooks/useTicketDetailActions';
-import { cn } from '@/lib/utils';
+import { SubtaskSection } from './SubtaskSection';
 import {
-  useRoleFlags,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Select,
-  Label,
-} from '@/shared';
+  resolveAssigneeName,
+  categoryBadgeConfig,
+  getPriorityIcon,
+  getPriorityLabel,
+  getStatusIcon,
+  getStatusLabel,
+  statusBadgeConfig,
+  priorityBadgeConfig,
+} from '@/shared/utils/ticket-helpers';
+import {
+  useUpdateTicketStatus,
+  useUpdateTicketPriority,
+  useAssignTicket,
+  useUpdateTicket,
+} from '../api/tickets-api';
+import { cn } from '@/lib/utils';
+import { useRoleFlags, useToast } from '@/shared';
+
+// Status options for dropdown
+const STATUS_OPTIONS = Object.values(TicketStatus).map((status) => ({
+  label: statusBadgeConfig[status]?.label || status,
+  value: status,
+}));
+
+// Priority options for dropdown
+const PRIORITY_OPTIONS = Object.values(TicketPriority).map((priority) => ({
+  label: priorityBadgeConfig[priority]?.label || priority,
+  value: priority,
+}));
+
+// Category options for dropdown
+const CATEGORY_OPTIONS = Object.values(TicketCategory).map((category) => ({
+  label: categoryBadgeConfig[category]?.label || category,
+  value: category,
+}));
 
 interface TicketDetailProps {
   ticket: Ticket | null;
@@ -40,324 +73,491 @@ interface TicketDetailProps {
   onAssignTicket?: (ticketId: TicketId, developerId: UserId) => void;
 }
 
-function TicketDetail({
-  ticket,
-  currentUser,
-  users = [],
-  onBack,
-  onStatusUpdate,
-  onPriorityUpdate,
-  onAssignTicket,
-}: TicketDetailProps) {
-  // Add useComments hook
+function TicketDetail({ ticket, currentUser, users = [] }: TicketDetailProps) {
   const commentsHook = useComments({
     ticketId: ticket?._id ? asTicketId(ticket._id) : asTicketId(''),
     currentUserId: currentUser?._id || currentUser?.id || '',
   });
 
-  // Wrapper for onDelete to handle type conversion
+  const { isEngLead, isDeveloper, isClient } = useRoleFlags(currentUser?.role);
+  const toast = useToast();
+
+  // Inline edit mutations
+  const updateStatus = useUpdateTicketStatus();
+  const updatePriority = useUpdateTicketPriority();
+  const assignTicket = useAssignTicket();
+  const updateTicket = useUpdateTicket();
+
+  // Permission flags for inline editing
+  const canEditStatus = !isClient;
+  const canEditPriority = isEngLead;
+  const canEditAssignee = isEngLead;
+  const canEditCategory = isEngLead;
+
+  // Get developers for assignee picker
+  const developerUsers = users.filter(
+    (user) => user.role === UserRole.DEVELOPER
+  );
+
+  if (!ticket) return null;
+
+  // Helpers
   const handleDeleteComment = (commentId: string) => {
     commentsHook.onDelete(asCommentId(commentId));
   };
 
-  const {
-    selectedDeveloper,
-    setSelectedDeveloper,
-    isUpdating,
-    showSuccess,
-    handleAssign,
-    handleStatusAction,
-    handleDownloadAttachment,
-    handleDownloadScreenRecording,
-  } = useTicketDetailActions({ ticket, onStatusUpdate, onAssignTicket });
+  // Inline edit handlers
+  const handleStatusChange = async (newStatus: string) => {
+    if (!ticket._id) return;
+    try {
+      await updateStatus.mutateAsync({
+        id: asTicketId(ticket._id),
+        status: newStatus,
+      });
+      toast.success('Status updated');
+    } catch {
+      toast.error('Failed to update status');
+    }
+  };
 
-  const { isEngLead, isDeveloper, isClient } = useRoleFlags(currentUser?.role);
+  const handlePriorityChange = async (newPriority: string) => {
+    if (!ticket._id) return;
+    try {
+      await updatePriority.mutateAsync({
+        id: asTicketId(ticket._id),
+        priority: newPriority,
+      });
+      toast.success('Priority updated');
+    } catch {
+      toast.error('Failed to update priority');
+    }
+  };
 
-  // Generate unique IDs for form controls
-  const assignedToId = useId();
-  const priorityId = useId();
+  const handleCategoryChange = async (newCategory: string) => {
+    if (!ticket._id) return;
+    try {
+      await updateTicket.mutateAsync({
+        id: asTicketId(ticket._id),
+        data: { category: newCategory as TicketCategory },
+      });
+      toast.success('Category updated');
+    } catch {
+      toast.error('Failed to update category');
+    }
+  };
 
-  if (!ticket) return null;
+  const handleAssigneeChange = (userId: string | string[]) => {
+    if (!ticket._id) return;
+    const developerId = Array.isArray(userId) ? userId[0] : userId;
+    if (!developerId) return;
 
-  const developers = users.filter((user) => user.role === UserRole.DEVELOPER);
-
-  // Client uses custom date format
-  const formatDateTime = isClient
-    ? (date: string | Date) => {
-        if (!date) return '';
-        const d = typeof date === 'string' ? new Date(date) : date;
-        return d.toLocaleString('en-GB', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        });
+    assignTicket.mutate(
+      {
+        id: asTicketId(ticket._id),
+        developerId: asUserId(developerId),
+      },
+      {
+        onSuccess: () => toast.success('Assignee updated'),
+        onError: () => toast.error('Failed to update assignee'),
       }
-    : undefined;
+    );
+  };
 
-  // Back button text varies by role
-  const backButtonText = isClient
-    ? 'Nazad na Moje Tikete'
-    : isDeveloper
-      ? 'Back to Assigned Tickets'
-      : 'All Tickets';
+  const formatDate = (date: string | Date) => {
+    if (!date) return '';
+    const d = typeof date === 'string' ? new Date(date) : date;
+    return d.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  // Get project name
+  const getProjectName = () => {
+    if (!ticket.project) return null;
+    if (typeof ticket.project === 'string') return ticket.project;
+    return (ticket.project as { name?: string })?.name || null;
+  };
+
+  const projectName = getProjectName();
 
   return (
-    <div className="p-6">
-      {/* Page Header */}
-      {isEngLead ? (
-        <div className="mb-6 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={onBack}>
-            <Icon name="arrow-left" size="md" />
-          </Button>
-          <div>
-            <Breadcrumbs
-              items={[
-                { label: 'All Tickets', href: PAGE_ROUTES.TICKETS.LIST },
-                { label: ticket.title, href: '#' },
-              ]}
-              className="mb-1"
-            />
-            <h1 className="text-foreground text-2xl font-bold">
-              {ticket.title}
-            </h1>
-          </div>
-        </div>
-      ) : (
-        <Button variant="ghost" onClick={onBack} className="mb-6">
-          <Icon name="arrow-left" size="md" className="mr-2" />
-          {backButtonText}
-        </Button>
-      )}
+    <div className="flex-1 overflow-auto">
+      {/* Header Section */}
+      <div className="border-b p-6">
+        {/* Ticket ID */}
+        <span className="text-muted-foreground text-sm">
+          #{ticket.ticketId || ticket.id}
+        </span>
 
-      <div className="space-y-6">
-        {/* Ticket Details */}
-        <TicketDetails
-          ticket={ticket}
-          showClient={!isClient}
-          showAssignedTo={isEngLead}
-          onDownloadAttachment={handleDownloadAttachment}
-          onDownloadScreenRecording={handleDownloadScreenRecording}
-          formatDateTime={formatDateTime}
-        />
+        {/* Title */}
+        <h1 className="mt-2 mb-6 text-2xl font-bold">{ticket.title}</h1>
 
-        {/* Lead Controls - Only for Eng Lead */}
-        {isEngLead && onAssignTicket && onPriorityUpdate && onStatusUpdate && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Lead Controls</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid-responsive">
-                {/* Assignment Section */}
-                <div className="space-y-2">
-                  <Label htmlFor={assignedToId}>Assigned To</Label>
-                  <div className="flex-start-gap-3">
-                    <Select
-                      options={developers.map((dev) => ({
-                        label: dev.name || '',
-                        value: dev._id || '',
-                      }))}
-                      placeholder="Select Developer"
-                      value={selectedDeveloper}
-                      onChange={setSelectedDeveloper}
-                      className="flex-1"
-                    />
-                    <Button
-                      onClick={handleAssign}
-                      disabled={
-                        !selectedDeveloper ||
-                        selectedDeveloper ===
-                          (typeof ticket.assignedTo === 'string'
-                            ? ticket.assignedTo
-                            : ticket.assignedTo?._id || '')
-                      }
-                    >
-                      Assign
-                    </Button>
-                  </div>
-                  {ticket.assignedTo &&
-                    typeof ticket.assignedTo !== 'string' && (
-                      <p className="text-muted-xs">
-                        Currently assigned to:{' '}
-                        {resolveAssigneeName(ticket.assignedTo, users)}
-                      </p>
-                    )}
-                </div>
-
-                {/* Priority Update Section */}
-                <div className="space-y-2">
-                  <Label htmlFor={priorityId}>Update Priority</Label>
-                  <Select
-                    options={[
-                      { label: 'Low', value: 'Low' },
-                      { label: 'Medium', value: 'Medium' },
-                      { label: 'High', value: 'High' },
-                      { label: 'Critical', value: 'Critical' },
-                    ]}
-                    value={ticket.priority}
-                    onChange={(value) =>
-                      onPriorityUpdate(asTicketId(ticket._id || ''), value)
-                    }
-                    disabled={
-                      ticket.status !== 'Open' &&
-                      ticket.status !== 'In Progress'
-                    }
-                  />
-                  {ticket.status !== 'Open' &&
-                    ticket.status !== 'In Progress' && (
-                      <p className="text-muted-xs">
-                        Priority can only be updated for Open or In Progress
-                        tickets
-                      </p>
-                    )}
-                </div>
-
-                {/* Close Ticket Section */}
-                <div className="space-y-2">
-                  <Label>Close Ticket</Label>
-                  <Button
-                    onClick={() => handleStatusAction('Closed')}
-                    disabled={ticket.status !== 'Resolved' || isUpdating}
-                    className="w-full"
+        {/* Metadata */}
+        <div className="flex flex-wrap gap-x-12 gap-y-4">
+          {/* Column 1: Status + Priority + Category */}
+          <div className="space-y-3">
+            <div className="flex h-8 items-center justify-start">
+              {canEditStatus ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    asChild
+                    disabled={updateStatus.isPending}
                   >
-                    {isUpdating ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Closing...
-                      </>
-                    ) : (
-                      'Close Ticket'
-                    )}
-                  </Button>
-                  {ticket.status !== 'Resolved' && (
-                    <p className="text-muted-xs">
-                      This button is only enabled when ticket status is
-                      "Resolved"
-                    </p>
-                  )}
-                  {showSuccess && (
-                    <div className="alert-success mt-2">
-                      <Icon
-                        name="check-circle"
+                    <button className="m-0 flex cursor-pointer items-center justify-start p-0 text-left transition-opacity hover:opacity-80">
+                      <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                        Status
+                      </span>
+                      <Badge
+                        icon={getStatusIcon(ticket.status as TicketStatus)}
+                      >
+                        {getStatusLabel(ticket.status as TicketStatus)}
+                      </Badge>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {STATUS_OPTIONS.map((option) => (
+                      <DropdownMenuItem
+                        key={option.value}
+                        onClick={() => handleStatusChange(option.value)}
+                        className="flex cursor-pointer items-center gap-2"
+                      >
+                        {getStatusIcon(option.value as TicketStatus)}
+                        <span>{option.label}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <>
+                  <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                    Status
+                  </span>
+                  <Badge icon={getStatusIcon(ticket.status as TicketStatus)}>
+                    {getStatusLabel(ticket.status as TicketStatus)}
+                  </Badge>
+                </>
+              )}
+            </div>
+
+            <div className="flex h-8 items-center justify-start">
+              {canEditPriority ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    asChild
+                    disabled={updatePriority.isPending}
+                  >
+                    <button className="m-0 flex cursor-pointer items-center justify-start p-0 text-left transition-opacity hover:opacity-80">
+                      <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                        Priority
+                      </span>
+                      <Badge
+                        icon={getPriorityIcon(
+                          ticket.priority as TicketPriority
+                        )}
+                      >
+                        {getPriorityLabel(ticket.priority as TicketPriority)}
+                      </Badge>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {PRIORITY_OPTIONS.map((option) => (
+                      <DropdownMenuItem
+                        key={option.value}
+                        onClick={() => handlePriorityChange(option.value)}
+                        className="flex cursor-pointer items-center gap-2"
+                      >
+                        {getPriorityIcon(option.value as TicketPriority)}
+                        <span>{option.label}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <>
+                  <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                    Priority
+                  </span>
+                  <Badge
+                    icon={getPriorityIcon(ticket.priority as TicketPriority)}
+                  >
+                    {getPriorityLabel(ticket.priority as TicketPriority)}
+                  </Badge>
+                </>
+              )}
+            </div>
+
+            <div className="flex h-8 items-center justify-start">
+              {canEditCategory ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    asChild
+                    disabled={updateTicket.isPending}
+                  >
+                    <button className="m-0 flex cursor-pointer items-center justify-start p-0 text-left transition-opacity hover:opacity-80">
+                      <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                        Category
+                      </span>
+                      <Badge icon={<span className="text-xs">🏷️</span>}>
+                        {categoryBadgeConfig[ticket.category as TicketCategory]
+                          ?.label || ticket.category}
+                      </Badge>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {CATEGORY_OPTIONS.map((option) => (
+                      <DropdownMenuItem
+                        key={option.value}
+                        onClick={() => handleCategoryChange(option.value)}
+                        className="flex cursor-pointer items-center gap-2"
+                      >
+                        <span className="text-xs">🏷️</span>
+                        <span>{option.label}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <>
+                  <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                    Category
+                  </span>
+                  <Badge icon={<span className="text-xs">🏷️</span>}>
+                    {categoryBadgeConfig[ticket.category as TicketCategory]
+                      ?.label || ticket.category}
+                  </Badge>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Column 2: Assignee + Eng Lead + Project */}
+          <div className="space-y-3">
+            <div className="flex h-8 items-center justify-start">
+              {canEditAssignee ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    asChild
+                    disabled={assignTicket.isPending}
+                  >
+                    <button className="m-0 flex cursor-pointer items-center justify-start p-0 text-left transition-opacity hover:opacity-80">
+                      <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                        Assignee
+                      </span>
+                      {ticket.assignedTo ? (
+                        <div className="flex items-center gap-2">
+                          <Avatar
+                            size="sm"
+                            fallback={resolveAssigneeName(
+                              ticket.assignedTo,
+                              users
+                            )}
+                          />
+                          <span className="text-sm">
+                            {resolveAssigneeName(ticket.assignedTo, users)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-orange-600">
+                          Unassigned
+                        </span>
+                      )}
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {developerUsers.map((dev) => (
+                      <DropdownMenuItem
+                        key={dev._id || dev.id}
+                        onClick={() =>
+                          handleAssigneeChange(dev._id || dev.id || '')
+                        }
+                        className="flex cursor-pointer items-center gap-2"
+                      >
+                        <Avatar
+                          size="sm"
+                          fallback={dev.name || dev.email || ''}
+                        />
+                        <span>{dev.name || dev.email}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <>
+                  <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                    Assignee
+                  </span>
+                  {ticket.assignedTo ? (
+                    <div className="flex items-center gap-2">
+                      <Avatar
                         size="sm"
-                        className="text-success-500"
+                        fallback={resolveAssigneeName(ticket.assignedTo, users)}
                       />
-                      <span className="text-success-500 text-xs font-medium">
-                        Ticket closed successfully
+                      <span className="text-sm">
+                        {resolveAssigneeName(ticket.assignedTo, users)}
                       </span>
                     </div>
+                  ) : (
+                    <span className="text-sm text-orange-600">Unassigned</span>
                   )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Developer Actions - Only for Developer */}
-        {isDeveloper && onStatusUpdate && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Ticket Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button
-                onClick={() => handleStatusAction('Resolved')}
-                disabled={ticket.status !== 'In Progress' || isUpdating}
-                className="w-full"
-              >
-                {isUpdating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  'Mark as Resolved'
-                )}
-              </Button>
-
-              {ticket.status !== 'In Progress' && (
-                <p className="text-muted-xs">
-                  This button is only enabled when ticket status is "In
-                  Progress"
-                </p>
+                </>
               )}
-
-              {showSuccess && (
-                <div className="alert-success-lg">
-                  <Icon
-                    name="check-circle"
-                    size="sm"
-                    className="text-success-500"
-                  />
-                  <span className="text-success-500 text-sm font-medium">
-                    Ticket marked as resolved successfully
-                  </span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Comments Section - All roles */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Diskusija</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Comment List */}
-            <CommentList
-              comments={commentsHook.comments}
-              groupedComments={commentsHook.groupedComments}
-              currentUserId={commentsHook.currentUserId}
-              onReply={commentsHook.onReply}
-              onEdit={commentsHook.onEdit}
-              onDelete={handleDeleteComment}
-              getCommentTimeDisplay={commentsHook.getCommentTimeDisplay}
-            />
-
-            {/* Comment Form - handles both add/reply and edit modes */}
-            <div className={cn(commentsHook.isEditing && 'border-t pt-4')}>
-              {commentsHook.isEditing && (
-                <p className="text-muted-foreground mb-2 text-sm">
-                  Editing comment
-                </p>
-              )}
-              <CommentForm
-                onSubmit={commentsHook.onSubmit}
-                onCancel={
-                  commentsHook.isEditing
-                    ? commentsHook.onCancelEdit
-                    : commentsHook.isReplying
-                      ? commentsHook.onCancelReply
-                      : undefined
-                }
-                placeholder={
-                  commentsHook.isEditing
-                    ? undefined
-                    : commentsHook.isReplying && commentsHook.replyingToComment
-                      ? `Reply to ${commentsHook.replyingToComment.authorId?.name || 'Unknown'}`
-                      : 'Add Comment...'
-                }
-                initialValue={
-                  commentsHook.isEditing
-                    ? commentsHook.editingComment.text
-                    : undefined
-                }
-                submitLabel={
-                  commentsHook.isEditing
-                    ? 'Save'
-                    : commentsHook.isReplying
-                      ? 'Reply'
-                      : 'Send'
-                }
-                disabled={commentsHook.isSubmitting}
-                isLoading={commentsHook.isSubmitting}
-              />
             </div>
-          </CardContent>
-        </Card>
+
+            <div className="flex h-8 items-center justify-start">
+              <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                Eng Lead
+              </span>
+              {(() => {
+                const engLead = users.find((u) => u.role === UserRole.ENG_LEAD);
+                return engLead ? (
+                  <div className="flex items-center gap-2">
+                    <Avatar
+                      size="sm"
+                      fallback={engLead.name || engLead.email || ''}
+                    />
+                    <span className="text-sm">{engLead.name || '-'}</span>
+                  </div>
+                ) : (
+                  <span className="text-sm">-</span>
+                );
+              })()}
+            </div>
+
+            <div className="flex h-8 items-center justify-start">
+              <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                Project
+              </span>
+              {projectName ? (
+                <div className="flex items-center gap-2">
+                  <CompanyLogo
+                    alt={projectName}
+                    fallback={projectName}
+                    size="xs"
+                    variant="rounded"
+                  />
+                  <span className="text-sm">{projectName}</span>
+                </div>
+              ) : (
+                <span className="text-sm">-</span>
+              )}
+            </div>
+          </div>
+
+          {/* Column 3: Dates */}
+          <div className="space-y-3">
+            <div className="flex h-8 items-center justify-start">
+              <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                Start Date
+              </span>
+              <span className="text-sm">
+                {ticket.startDate ? formatDate(ticket.startDate) : '-'}
+              </span>
+            </div>
+
+            <div className="flex h-8 items-center justify-start">
+              <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                Due Date
+              </span>
+              <span className="text-sm">
+                {ticket.dueDate ? formatDate(ticket.dueDate) : '-'}
+              </span>
+            </div>
+
+            <div className="flex h-8 items-center justify-start">
+              <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+                Created
+              </span>
+              <span className="text-sm">
+                {ticket.createdAt ? formatDate(ticket.createdAt) : '-'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Description + Actions Section */}
+      <div className="border-b p-6">
+        <div className="flex flex-col gap-6 lg:flex-row">
+          {/* Left: Description */}
+          <div className="flex-1">
+            {ticket.description ? (
+              <>
+                <h2 className="text-muted-foreground mb-3 text-sm font-medium uppercase">
+                  Description
+                </h2>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                  {ticket.description}
+                </p>
+              </>
+            ) : (
+              <p className="text-muted-foreground text-sm">No description</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Subtasks */}
+      <div className="border-b p-6">
+        <SubtaskSection
+          ticketId={asTicketId(ticket._id || '')}
+          canEdit={isEngLead || isDeveloper}
+        />
+      </div>
+
+      {/* Comments Section */}
+      <div className="p-6">
+        <h3 className="text-muted-foreground mb-4 text-sm font-medium uppercase">
+          Discussion
+        </h3>
+        <CommentList
+          comments={commentsHook.comments}
+          groupedComments={commentsHook.groupedComments}
+          currentUserId={commentsHook.currentUserId}
+          onReply={commentsHook.onReply}
+          onEdit={commentsHook.onEdit}
+          onDelete={handleDeleteComment}
+          getCommentTimeDisplay={commentsHook.getCommentTimeDisplay}
+        />
+        <div className={cn(commentsHook.isEditing && 'mt-4 border-t pt-4')}>
+          {commentsHook.isEditing && (
+            <p className="text-muted-foreground mb-2 text-sm">
+              Editing comment
+            </p>
+          )}
+          <CommentForm
+            onSubmit={commentsHook.onSubmit}
+            onCancel={
+              commentsHook.isEditing
+                ? commentsHook.onCancelEdit
+                : commentsHook.isReplying
+                  ? commentsHook.onCancelReply
+                  : undefined
+            }
+            placeholder={
+              commentsHook.isEditing
+                ? undefined
+                : commentsHook.isReplying && commentsHook.replyingToComment
+                  ? `Reply to ${commentsHook.replyingToComment.authorId?.name || 'Unknown'}`
+                  : 'Add Comment...'
+            }
+            initialValue={
+              commentsHook.isEditing
+                ? commentsHook.editingComment.text
+                : undefined
+            }
+            submitLabel={
+              commentsHook.isEditing
+                ? 'Save'
+                : commentsHook.isReplying
+                  ? 'Reply'
+                  : 'Send'
+            }
+            disabled={commentsHook.isSubmitting}
+            isLoading={commentsHook.isSubmitting}
+          />
+        </div>
       </div>
     </div>
   );

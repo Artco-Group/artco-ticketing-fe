@@ -32,3 +32,5 @@ export * from './filterButton';
 export * from './FilterPanel';
 export * from './input-otp';
 export * from './BulkActionsBar';
+export * from './SideDialog';
+export * from './Progress';

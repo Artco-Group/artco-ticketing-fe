@@ -1,17 +1,14 @@
-import { useState } from 'react';
-import type { ReactNode } from 'react';
-import { useAuth } from '@/features/auth/context';
+import { useState, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import {
-  NotificationBell,
-  Breadcrumbs,
-  UserMenu,
-} from '@/shared/components/composite';
-import type { NotificationItem } from '@/shared/components/composite/NotificationBell/NotificationBell';
+import { useAuth } from '@/features/auth/context';
+import { Breadcrumbs } from '@/shared/components/composite';
 import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
+import { UserMenu } from '@/shared/components/composite/UserMenu';
+import { NotificationBell } from '@/shared/components/composite/NotificationBell';
+import type { NotificationItem } from '@/shared/components/composite/NotificationBell';
 
 export interface PageHeaderProps {
-  title: string;
+  title?: string;
   count?: number;
   breadcrumbs?: BreadcrumbItem[];
   actions?: ReactNode;
@@ -45,22 +42,26 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        'border-border-default flex h-14 flex-1 items-center justify-between border-b px-4',
+        'border-border-default flex h-16 shrink-0 items-center justify-between border-b px-4',
         className
       )}
     >
       <div className="flex flex-col justify-center">
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <Breadcrumbs items={breadcrumbs} className="mb-0.5" />
+          <Breadcrumbs items={breadcrumbs} className={title ? 'mb-0.5' : ''} />
         )}
-        <div className="flex items-center gap-3">
-          <h1 className="text-foreground text-xl font-semibold">{title}</h1>
-          {count !== undefined && count > 0 && (
-            <span className="bg-background-light-secondary text-text-tertiary rounded-lg px-3 py-1 text-base font-medium">
-              {count}
-            </span>
-          )}
-        </div>
+        {(title || (count !== undefined && count > 0)) && (
+          <div className="flex items-center gap-3">
+            {title && (
+              <h1 className="text-foreground text-xl font-semibold">{title}</h1>
+            )}
+            {count !== undefined && count > 0 && (
+              <span className="bg-background-light-secondary text-text-tertiary rounded-lg px-3 py-1 text-base font-medium">
+                {count}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="ml-4 flex items-center gap-2 md:ml-6">

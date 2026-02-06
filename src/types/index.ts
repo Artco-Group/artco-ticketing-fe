@@ -4,6 +4,9 @@ export type {
   Ticket,
   User,
   Comment,
+  Project,
+  ProjectProgress,
+  ProjectWithUsers,
 } from '@artco-group/artco-ticketing-sync/types';
 
 export {
@@ -11,6 +14,7 @@ export {
   TicketPriority,
   TicketCategory,
   UserRole,
+  ProjectPriority,
 } from '@artco-group/artco-ticketing-sync/enums';
 
 export interface Filters {

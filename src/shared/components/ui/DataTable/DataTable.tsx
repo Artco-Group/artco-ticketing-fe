@@ -142,10 +142,11 @@ function DataTable<T extends TableRowData>({
         const getBadgeProps =
           'getBadgeProps' in col ? col.getBadgeProps : undefined;
         const badgeProps = getBadgeProps ? getBadgeProps(stringValue, row) : {};
+        const badgeContent = badgeProps.children ?? stringValue;
 
         return (
           <span className="whitespace-nowrap">
-            <Badge {...badgeProps}>{stringValue}</Badge>
+            <Badge {...badgeProps}>{badgeContent}</Badge>
           </span>
         );
       }
@@ -389,6 +390,7 @@ function DataTable<T extends TableRowData>({
               const meta = cell.column.columnDef.meta as
                 | {
                     className?: string;
+                    width?: string;
                     align?: ColumnAlign;
                   }
                 | undefined;
@@ -405,7 +407,8 @@ function DataTable<T extends TableRowData>({
                     alignClass,
                     cell.column.id === 'select' && 'w-12',
                     cell.column.id === 'actions' && 'w-12 text-right',
-                    meta?.className
+                    meta?.className,
+                    meta?.width
                   )}
                   onClick={
                     cell.column.id === 'select' || cell.column.id === 'actions'

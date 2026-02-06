@@ -67,13 +67,16 @@ export const PAGE_ROUTES = {
   // Projects
   PROJECTS: {
     ROOT: '/projects',
+    LIST: '/projects',
+    DETAIL: '/projects/:id',
+    CREATE: '/projects/new',
+    detail: (id: string) => `/projects/${id}` as const,
   },
 
   // Clients
   CLIENTS: {
     ROOT: '/clients',
   },
-
   // User account
   PROFILE: '/profile',
   SETTINGS: '/settings',
@@ -91,6 +94,7 @@ export const ROUTE_PATTERNS = {
   TICKET_DETAIL: '/tickets/:id',
   USER_DETAIL: '/users/:id',
   USER_EDIT: '/users/:id/edit',
+  PROJECT_DETAIL: '/projects/:id',
 } as const;
 
 // Type exports

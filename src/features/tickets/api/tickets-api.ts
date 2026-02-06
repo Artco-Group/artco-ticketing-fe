@@ -54,6 +54,11 @@ function useCreateTicket() {
         queryKey: QueryKeys.tickets.all(),
         exact: false,
       });
+      // Invalidate project queries to refresh progress
+      await queryClient.invalidateQueries({
+        queryKey: QueryKeys.projects.all(),
+        exact: false,
+      });
     },
   });
 }
@@ -73,6 +78,8 @@ function useUpdateTicketStatus() {
         queryKey: QueryKeys.tickets.detail(variables.id),
       });
       queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
+      // Invalidate project queries to refresh progress (Closed status affects completion count)
+      queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
     },
   });
 }
@@ -116,6 +123,26 @@ function useUpdateTicketPriority() {
 }
 
 /**
+ * Update ticket details
+ */
+function useUpdateTicket() {
+  return useApiMutation<
+    ApiResponse<{ ticket: Ticket }>,
+    { id: TicketId; data: Partial<Ticket> }
+  >({
+    url: (vars) => API_ROUTES.TICKETS.BY_ID(vars.id),
+    method: 'PUT',
+    getBody: (vars) => vars.data,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.tickets.detail(variables.id),
+      });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
+    },
+  });
+}
+
+/**
  * Delete a ticket
  */
 function useDeleteTicket() {
@@ -123,6 +150,74 @@ function useDeleteTicket() {
     url: (id) => API_ROUTES.TICKETS.BY_ID(id),
     method: 'DELETE',
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
+      // Invalidate project queries to refresh progress
+      queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
+    },
+  });
+}
+
+/**
+ * Upload screen recording to a bug ticket
+ */
+function useUploadScreenRecording() {
+  return useApiMutation<
+    ApiResponse<{ ticket: Ticket }>,
+    { ticketId: TicketId; formData: FormData }
+  >({
+    url: (vars) => API_ROUTES.TICKETS.SCREEN_RECORDING(vars.ticketId),
+    method: 'POST',
+    getBody: (vars) => vars.formData,
+    config: {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.tickets.detail(variables.ticketId),
+      });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
+    },
+  });
+}
+
+/**
+ * Upload attachments to an existing ticket
+ */
+function useUploadAttachments() {
+  return useApiMutation<
+    ApiResponse<{ ticket: Ticket }>,
+    { ticketId: TicketId; formData: FormData }
+  >({
+    url: (vars) => API_ROUTES.TICKETS.ATTACHMENTS(vars.ticketId),
+    method: 'POST',
+    getBody: (vars) => vars.formData,
+    config: {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.tickets.detail(variables.ticketId),
+      });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
+    },
+  });
+}
+
+/**
+ * Delete attachment from a ticket
+ */
+function useDeleteAttachment() {
+  return useApiMutation<
+    ApiResponse<{ ticket: Ticket }>,
+    { ticketId: TicketId; attachmentIndex: number }
+  >({
+    url: (vars) =>
+      API_ROUTES.TICKETS.ATTACHMENT(vars.ticketId, vars.attachmentIndex),
+    method: 'DELETE',
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.tickets.detail(variables.ticketId),
+      });
       queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
     },
   });
@@ -135,10 +230,14 @@ export const ticketsApi = {
   useTickets,
   useTicket,
   useCreateTicket,
+  useUpdateTicket,
   useUpdateTicketStatus,
   useAssignTicket,
   useUpdateTicketPriority,
   useDeleteTicket,
+  useUploadScreenRecording,
+  useUploadAttachments,
+  useDeleteAttachment,
   keys: QueryKeys.tickets,
 };
 
@@ -147,8 +246,12 @@ export {
   useTickets,
   useTicket,
   useCreateTicket,
+  useUpdateTicket,
   useUpdateTicketStatus,
   useAssignTicket,
   useUpdateTicketPriority,
   useDeleteTicket,
+  useUploadScreenRecording,
+  useUploadAttachments,
+  useDeleteAttachment,
 };

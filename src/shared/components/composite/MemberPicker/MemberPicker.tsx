@@ -25,6 +25,8 @@ export interface MemberPickerProps {
   disabled?: boolean;
   /** Additional CSS classes */
   className?: string;
+  /** Label displayed in the trigger (e.g., "Member", "Lead", "Client", "User") */
+  label?: string;
 }
 
 /**
@@ -55,6 +57,7 @@ export function MemberPicker({
   placeholder = 'Select member...',
   disabled = false,
   className,
+  label = 'Member',
 }: MemberPickerProps) {
   const validUsers = useMemo(
     () => options.filter((user) => user._id),
@@ -126,7 +129,7 @@ export function MemberPicker({
           </div>
           <div className="ml-2 flex shrink-0 items-center gap-1">
             <span className="text-muted-foreground text-sm font-medium">
-              Member
+              {label}
             </span>
             <Icon name="chevron-down" size="md" />
           </div>
@@ -134,7 +137,7 @@ export function MemberPicker({
         <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
           {validUsers.length === 0 ? (
             <div className="text-muted-foreground px-2 py-4 text-center text-sm">
-              No members available
+              No users available
             </div>
           ) : (
             validUsers.map((user) => (

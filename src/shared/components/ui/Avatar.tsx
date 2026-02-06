@@ -6,13 +6,13 @@ import { cn } from '@/lib/utils';
 import { Tooltip } from './Tooltip';
 
 const avatarColors = [
-  { bg: 'bg-teal-500', text: 'text-white' },
-  { bg: 'bg-pink-500', text: 'text-white' },
-  { bg: 'bg-violet-500', text: 'text-white' },
-  { bg: 'bg-purple-500', text: 'text-white' },
-  { bg: 'bg-green-500', text: 'text-white' },
-  { bg: 'bg-blue-500', text: 'text-white' },
-  { bg: 'bg-orange-500', text: 'text-white' },
+  { bg: 'bg-teal-400', text: 'text-white' },
+  { bg: 'bg-pink-400', text: 'text-white' },
+  { bg: 'bg-violet-400', text: 'text-white' },
+  { bg: 'bg-purple-400', text: 'text-white' },
+  { bg: 'bg-green-400', text: 'text-white' },
+  { bg: 'bg-blue-400', text: 'text-white' },
+  { bg: 'bg-orange-400', text: 'text-white' },
 ];
 
 function getColorFromName(name: string) {

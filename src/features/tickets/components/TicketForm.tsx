@@ -50,7 +50,7 @@ function TicketForm({
 
   return (
     <div
-      className="p-6 mx-auto"
+      className="mx-auto p-6"
       style={{
         width: '100%',
         maxWidth: '56rem',
@@ -84,7 +84,6 @@ function TicketForm({
                   </FormItem>
                 )}
               />
-      
 
               {/* Category */}
               <FormField
@@ -116,23 +115,6 @@ function TicketForm({
                         },
                       ]}
                       placeholder="Odaberite kategoriju"
-                      error={fieldState.error?.message}
-                      {...field}
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {/* Affected Module */}
-              <FormField
-                control={form.control}
-                name="affectedModule"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <Input
-                      label="Pogođeni proizvod/modul"
-                      placeholder="npr. Mobile App, Admin Panel"
-                      autoComplete="off"
                       error={fieldState.error?.message}
                       {...field}
                     />

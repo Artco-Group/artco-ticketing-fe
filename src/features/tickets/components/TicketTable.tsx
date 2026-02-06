@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TicketPriority, type Ticket, type User } from '@/types';
+import { TicketPriority, TicketStatus, type Ticket, type User } from '@/types';
 import {
   DataTable,
   EmptyState,
@@ -15,7 +15,10 @@ import {
   resolveAssigneeName,
   getPriorityIcon,
   getPriorityLabel,
+  getStatusIcon,
+  getStatusLabel,
   PRIORITY_ORDER,
+  STATUS_ORDER,
 } from '@/shared/utils/ticket-helpers';
 
 interface TicketTableProps {
@@ -69,6 +72,17 @@ function TicketTable({ tickets, users, onViewTicket }: TicketTableProps) {
           <span className="text-foreground font-medium">{ticket.title}</span>
         </div>
       ),
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'badge',
+      sortable: true,
+      sortValue: (ticket) => STATUS_ORDER[ticket.status] ?? 0,
+      getBadgeProps: (_value, ticket) => ({
+        icon: getStatusIcon(ticket.status as TicketStatus),
+        children: getStatusLabel(ticket.status as TicketStatus),
+      }),
     },
     {
       key: 'assignedTo',

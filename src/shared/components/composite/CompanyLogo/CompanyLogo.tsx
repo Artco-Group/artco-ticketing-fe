@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
+import { Tooltip } from '@/shared/components/ui/Tooltip';
 
 /** Size variants aligned with design system (Avatar / spacing scale) */
-export type CompanyLogoSize = 'sm' | 'md' | 'lg';
+export type CompanyLogoSize = 'xs' | 'sm' | 'md' | 'lg';
 
 /** Shape variants for the logo container */
 export type CompanyLogoVariant = 'circle' | 'rounded';
@@ -23,9 +24,12 @@ export interface CompanyLogoProps extends Omit<
   fallback: string;
   /** Optional index into design-system fallback colors (0–N). When set, overrides hash-based color. */
   colorIndex?: number;
+  /** Optional tooltip text shown on hover. */
+  tooltip?: string;
 }
 
 const sizeClasses: Record<CompanyLogoSize, { root: string; text: string }> = {
+  xs: { root: 'h-6 w-6', text: 'text-xs' },
   sm: { root: 'h-8 w-8', text: 'text-xs' },
   md: { root: 'h-10 w-10', text: 'text-sm' },
   lg: { root: 'h-12 w-12', text: 'text-base' },
@@ -48,9 +52,9 @@ const FALLBACK_BG_CLASSES = [
   'bg-blue-700',
   'bg-red-600',
   'bg-red-700',
-  'bg-success-600',
-  'bg-warning-500',
-  'bg-info-600',
+  'bg-emerald-600',
+  'bg-amber-500',
+  'bg-sky-600',
 ] as const;
 
 function getFallbackBg(fallback: string): (typeof FALLBACK_BG_CLASSES)[number] {
@@ -71,6 +75,7 @@ export const CompanyLogo = React.forwardRef<HTMLDivElement, CompanyLogoProps>(
       variant = 'circle',
       fallback,
       colorIndex,
+      tooltip,
       className,
       ...imgProps
     },
@@ -86,7 +91,7 @@ export const CompanyLogo = React.forwardRef<HTMLDivElement, CompanyLogoProps>(
     const initials = fallback.trim().slice(0, 2).toUpperCase() || '?';
     const borderRadius = variant === 'circle' ? 'rounded-full' : 'rounded-md';
 
-    return (
+    const logoElement = (
       <div
         ref={ref}
         className={cn(
@@ -120,6 +125,16 @@ export const CompanyLogo = React.forwardRef<HTMLDivElement, CompanyLogoProps>(
         )}
       </div>
     );
+
+    if (tooltip) {
+      return (
+        <Tooltip content={tooltip}>
+          <span>{logoElement}</span>
+        </Tooltip>
+      );
+    }
+
+    return logoElement;
   }
 );
 CompanyLogo.displayName = 'CompanyLogo';

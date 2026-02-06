@@ -4,16 +4,21 @@ import { useScreenRecorder } from '@/shared/hooks/useScreenRecorder';
 import { Icon } from '@/shared/components/ui';
 import { formatTime } from '@artco-group/artco-ticketing-sync';
 import { SCREEN_RECORDING } from '@/config';
+import { cn } from '@/lib/utils';
 
 interface ScreenRecorderProps {
   onRecordingComplete: (file: File | null, duration: number) => void;
   disabled?: boolean;
+  /** Use 'modal' when inside a Dialog to remove outer border styling */
+  variant?: 'standalone' | 'modal';
 }
 
 export default function ScreenRecorder({
   onRecordingComplete,
   disabled,
+  variant = 'standalone',
 }: ScreenRecorderProps) {
+  const isModal = variant === 'modal';
   const [recordedVideo, setRecordedVideo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
@@ -63,13 +68,15 @@ export default function ScreenRecorder({
   // State 3: Recording confirmed - show compact preview with remove button
   if (confirmed && previewUrl && recordedVideo) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-        <div className="flex-between mb-3">
+      <div
+        className={cn(
+          !isModal && 'border-border bg-muted/50 rounded-lg border p-4'
+        )}
+      >
+        <div className="mb-3 flex items-center justify-between">
           <div>
-            <p className="text-greyscale-900 text-sm font-medium">
-              🎥 Snimak Ekrana
-            </p>
-            <p className="text-greyscale-500 text-xs">
+            <p className="text-foreground text-sm font-medium">Snimak Ekrana</p>
+            <p className="text-muted-foreground text-xs">
               {(recordedVideo.size / (1024 * 1024)).toFixed(2)} MB •{' '}
               {formatTime(duration)}
             </p>
@@ -77,7 +84,7 @@ export default function ScreenRecorder({
           <button
             type="button"
             onClick={handleRemove}
-            className="text-error-500 hover:text-error-600 transition-colors"
+            className="text-destructive hover:text-destructive/80 transition-colors"
           >
             <Icon name="close" size="lg" />
           </button>
@@ -96,8 +103,12 @@ export default function ScreenRecorder({
   // State 2: Recording finished - show preview with confirm/discard buttons
   if (!confirmed && previewUrl && recordedVideo && !recording) {
     return (
-      <div className="border-brand-primary rounded-lg border-2 bg-blue-100 p-4">
-        <p className="text-greyscale-900 mb-3 text-sm font-medium">
+      <div
+        className={cn(
+          !isModal && 'border-primary bg-primary/5 rounded-lg border-2 p-4'
+        )}
+      >
+        <p className="text-foreground mb-3 text-sm font-medium">
           Pregled snimka ({(recordedVideo.size / (1024 * 1024)).toFixed(2)} MB)
         </p>
 
@@ -114,14 +125,14 @@ export default function ScreenRecorder({
             onClick={handleConfirm}
             className="btn-primary flex-1"
           >
-            ✓ Potvrdi
+            Potvrdi
           </button>
           <button
             type="button"
             onClick={handleDiscard}
             className="btn-secondary flex-1"
           >
-            ✗ Odbaci
+            Odbaci
           </button>
         </div>
       </div>
@@ -131,19 +142,24 @@ export default function ScreenRecorder({
   // State 1b: Recording in progress
   if (recording) {
     return (
-      <div className="border-error-500 bg-error-100 rounded-lg border-2 p-4">
-        <div className="flex-between mb-3">
+      <div
+        className={cn(
+          !isModal &&
+            'border-destructive bg-destructive/10 rounded-lg border-2 p-4'
+        )}
+      >
+        <div className="mb-3 flex items-center justify-between">
           <div>
-            <p className="text-error-700 flex items-center text-sm font-medium">
-              <span className="bg-error-500 mr-2 inline-block h-2 w-2 animate-pulse rounded-full"></span>
+            <p className="text-destructive flex items-center text-sm font-medium">
+              <span className="bg-destructive mr-2 inline-block h-2 w-2 animate-pulse rounded-full"></span>
               Snimanje u toku...
             </p>
-            <p className="text-greyscale-600 text-xs">
+            <p className="text-muted-foreground text-xs">
               {formatTime(recordingTime)} / {formatTime(maxDuration)}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-greyscale-900 text-sm font-medium">
+            <p className="text-foreground text-sm font-medium">
               ~{estimatedSize.toFixed(1)} MB
             </p>
           </div>
@@ -154,10 +170,10 @@ export default function ScreenRecorder({
           onClick={stopRecording}
           className="btn-destructive w-full"
         >
-          ⏹️ Zaustavi Snimanje
+          Zaustavi Snimanje
         </button>
 
-        <p className="text-greyscale-500 mt-2 text-xs">
+        <p className="text-muted-foreground mt-2 text-xs">
           Kliknite na dugme ili zatvorite dijeljenje ekrana za zaustavljanje
         </p>
       </div>
@@ -166,28 +182,32 @@ export default function ScreenRecorder({
 
   // State 1a: Ready to record
   return (
-    <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-4">
-      <div className="text-center">
-        <Video className="text-greyscale-400 mx-auto h-12 w-12" />
+    <div
+      className={cn(
+        'text-center',
+        !isModal &&
+          'rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-4'
+      )}
+    >
+      <Video className="text-muted-foreground mx-auto h-12 w-12" />
 
-        <p className="text-greyscale-900 mt-2 text-sm font-medium">
-          Snimite Problem
-        </p>
-        <p className="text-greyscale-500 mt-1 text-xs">
-          Maksimalno 3 minute • ~22 MB
-        </p>
+      <p className="text-foreground mt-2 text-sm font-medium">
+        Snimite Problem
+      </p>
+      <p className="text-muted-foreground mt-1 text-xs">
+        Maksimalno 3 minute • ~22 MB
+      </p>
 
-        <button
-          type="button"
-          onClick={startRecording}
-          disabled={disabled}
-          className="btn-primary mt-3"
-        >
-          Započni Snimanje
-        </button>
+      <button
+        type="button"
+        onClick={startRecording}
+        disabled={disabled}
+        className="btn-primary mt-3"
+      >
+        Započni Snimanje
+      </button>
 
-        {error && <p className="text-error-500 mt-2 text-xs">{error}</p>}
-      </div>
+      {error && <p className="text-destructive mt-2 text-xs">{error}</p>}
     </div>
   );
 }

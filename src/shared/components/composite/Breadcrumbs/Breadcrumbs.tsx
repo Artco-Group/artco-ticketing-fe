@@ -4,7 +4,7 @@ import { Icon } from '@/shared/components/ui';
 
 export interface BreadcrumbItem {
   label: string;
-  href: string;
+  href?: string;
 }
 
 export interface BreadcrumbsProps {
@@ -35,7 +35,7 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
               ) : (
                 <>
                   <Link
-                    to={item.href}
+                    to={item.href ?? ''}
                     className="text-text-placeholder hover:text-foreground text-sm transition-colors"
                   >
                     {item.label}

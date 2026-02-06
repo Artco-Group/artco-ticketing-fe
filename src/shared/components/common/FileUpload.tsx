@@ -13,9 +13,17 @@ interface FileUploadProps {
   files: File[];
   onFilesChange: (files: File[]) => void;
   id?: string;
+  /** Use 'modal' when inside a Dialog to remove outer border styling */
+  variant?: 'standalone' | 'modal';
 }
 
-function FileUpload({ files, onFilesChange, id }: FileUploadProps) {
+function FileUpload({
+  files,
+  onFilesChange,
+  id,
+  variant = 'standalone',
+}: FileUploadProps) {
+  const isModal = variant === 'modal';
   const toast = useToast();
   const [isDragging, setIsDragging] = useState(false);
   const generatedId = useId();
@@ -129,8 +137,13 @@ function FileUpload({ files, onFilesChange, id }: FileUploadProps) {
       {/* Drop zone */}
       <div
         className={cn(
-          'hover:border-primary cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors',
-          isDragging ? 'border-primary bg-primary/5' : 'border-border'
+          'cursor-pointer text-center transition-colors',
+          isModal
+            ? cn('py-4', isDragging && 'bg-primary/5')
+            : cn(
+                'hover:border-primary rounded-lg border-2 border-dashed p-8',
+                isDragging ? 'border-primary bg-primary/5' : 'border-border'
+              )
         )}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
