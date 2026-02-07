@@ -126,25 +126,22 @@ export default function ProjectListPage() {
     | undefined => {
     if (!editingProject) return undefined;
 
-    const getIdFromUser = (user: User | string | undefined): string => {
+    const getUserId = (user: User | undefined): string => {
       if (!user) return '';
-      if (typeof user === 'string') return user;
       return (user._id || user.id || '') as string;
     };
 
-    const getIdsFromUsers = (
-      users: (User | string)[] | undefined
-    ): string[] => {
+    const getUserIds = (users: User[] | undefined): string[] => {
       if (!users) return [];
-      return users.map((u) => getIdFromUser(u)).filter(Boolean);
+      return users.map((u) => getUserId(u)).filter(Boolean);
     };
 
     return {
       name: editingProject.name || '',
       description: editingProject.description || '',
-      client: getIdFromUser(editingProject.client as User | string | undefined),
-      leads: getIdsFromUsers(editingProject.leads as (User | string)[]),
-      members: getIdsFromUsers(editingProject.members as (User | string)[]),
+      client: getUserId(editingProject.client),
+      leads: getUserIds(editingProject.leads),
+      members: getUserIds(editingProject.members),
       startDate: editingProject.startDate || '',
       dueDate: editingProject.dueDate || '',
       priority:

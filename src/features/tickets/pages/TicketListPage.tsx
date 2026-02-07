@@ -1,7 +1,11 @@
 import { useMemo, useState } from 'react';
 import { UserRole } from '@/types';
 
-import { TicketCard, TicketTable } from '@/features/tickets/components';
+import {
+  TicketCard,
+  TicketTable,
+  TicketDialog,
+} from '@/features/tickets/components';
 import {
   EmptyState,
   Button,
@@ -38,11 +42,11 @@ export default function TicketListPage() {
     userRole,
     onViewTicket,
     onFilterChange,
-    onCreateTicket,
     onTabChange,
   } = useTicketList();
 
   const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const { isClient } = useRoleFlags(userRole as UserRole);
 
@@ -54,14 +58,14 @@ export default function TicketListPage() {
         </Button>
         <Button
           leftIcon="plus"
-          onClick={onCreateTicket}
+          onClick={() => setIsCreateDialogOpen(true)}
           className="bg-greyscale-900 hover:bg-greyscale-800 text-white"
         >
           Create Task
         </Button>
       </>
     ),
-    [onCreateTicket]
+    []
   );
 
   // Initialize filterPanelValue from URL params so selected filters are displayed
@@ -239,29 +243,37 @@ export default function TicketListPage() {
   };
 
   return (
-    <ListPageLayout
-      title="Tasks"
-      count={tickets.length}
-      tabs={TICKET_TABS}
-      activeTab={activeTab}
-      onTabChange={onTabChange ?? (() => {})}
-      tabActions={tabBarActions}
-      filters={filterBarFilters}
-      onFilterChange={handleFilterBarChange}
-      sortOptions={sortOptions}
-      sortValue={sortValue}
-      onSortChange={handleSortChange}
-      filterGroups={filterGroups}
-      filterPanelValue={filterPanelValue}
-      onFilterPanelChange={handleFilterPanelChange}
-      filterPanelSingleSelect
-      viewMode={viewMode}
-      onViewChange={setViewMode}
-      showFilter
-      loading={isLoading}
-      loadingMessage="Loading tickets..."
-    >
-      {renderContent()}
-    </ListPageLayout>
+    <>
+      <ListPageLayout
+        title="Tasks"
+        count={tickets.length}
+        tabs={TICKET_TABS}
+        activeTab={activeTab}
+        onTabChange={onTabChange ?? (() => {})}
+        tabActions={tabBarActions}
+        filters={filterBarFilters}
+        onFilterChange={handleFilterBarChange}
+        sortOptions={sortOptions}
+        sortValue={sortValue}
+        onSortChange={handleSortChange}
+        filterGroups={filterGroups}
+        filterPanelValue={filterPanelValue}
+        onFilterPanelChange={handleFilterPanelChange}
+        filterPanelSingleSelect
+        viewMode={viewMode}
+        onViewChange={setViewMode}
+        showFilter
+        loading={isLoading}
+        loadingMessage="Loading tickets..."
+      >
+        {renderContent()}
+      </ListPageLayout>
+
+      <TicketDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        onSuccess={refetch}
+      />
+    </>
   );
 }

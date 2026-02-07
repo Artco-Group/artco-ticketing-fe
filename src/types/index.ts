@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 export type {
   Ticket,
+  AssignedTo,
   User,
   Comment,
   Project,

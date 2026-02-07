@@ -32,20 +32,13 @@ export function useTicketDetailActions({
   // Sync selectedDeveloper when ticket.assignedTo changes
   useEffect(() => {
     if (ticket) {
-      const assignedId =
-        typeof ticket.assignedTo === 'string'
-          ? ticket.assignedTo
-          : ticket.assignedTo?._id || '';
-      setSelectedDeveloper(assignedId);
+      setSelectedDeveloper(ticket.assignedTo?._id || '');
     }
   }, [ticket, ticket?.assignedTo]);
 
   const handleAssign = () => {
     if (!onAssignTicket || !ticket) return;
-    const currentAssignedId =
-      typeof ticket.assignedTo === 'string'
-        ? ticket.assignedTo
-        : ticket.assignedTo?._id || '';
+    const currentAssignedId = ticket.assignedTo?._id || '';
     if (selectedDeveloper && selectedDeveloper !== currentAssignedId) {
       onAssignTicket(asTicketId(ticket._id || ''), asUserId(selectedDeveloper));
     }

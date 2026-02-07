@@ -91,6 +91,12 @@ export function useTicketDetail() {
     }
   };
 
+  // Modal state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleOpenEditModal = () => setIsEditModalOpen(true);
+  const handleCloseEditModal = () => setIsEditModalOpen(false);
+
   return {
     // Data
     ticket,
@@ -102,6 +108,11 @@ export function useTicketDetail() {
     ticketError,
     refetchTicket,
     ticketRefetching,
+
+    // Modal state
+    isEditModalOpen,
+    onOpenEditModal: handleOpenEditModal,
+    onCloseEditModal: handleCloseEditModal,
 
     // Handlers
     onBack: handleBack,

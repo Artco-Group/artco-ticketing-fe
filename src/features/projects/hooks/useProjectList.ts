@@ -1,13 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   type Project,
   type CreateProjectFormData,
   type UpdateProjectFormData,
-  ProjectPriority,
-  ProjectPriorityDisplay,
 } from '@artco-group/artco-ticketing-sync';
-import { type User } from '@/types';
+import { type User, asProjectId } from '@/types';
 import { getErrorMessage } from '@/shared';
 import {
   useProjects,
@@ -18,8 +16,10 @@ import {
 import { useUsers } from '@/features/users/api';
 import { useToast } from '@/shared/components/ui';
 import { PAGE_ROUTES } from '@/shared/constants';
+import { useProjectFilters } from './useProjectFilters';
+import { useProjectModal } from './useProjectModal';
 
-interface ProjectWithProgress extends Project {
+export interface ProjectWithProgress extends Project {
   progress?: {
     totalTickets: number;
     completedTickets: number;
@@ -27,33 +27,20 @@ interface ProjectWithProgress extends Project {
   };
 }
 
-type ProjectId = string;
-
-function asProjectId(id: string | undefined): ProjectId {
-  return id as ProjectId;
-}
+const getProjectId = (project: ProjectWithProgress) =>
+  project._id || project.id;
 
 export function useProjectList() {
   const navigate = useNavigate();
-  const { data, isLoading, error, refetch, isRefetching } = useProjects();
-  const { data: usersData } = useUsers();
-  const createProjectMutation = useCreateProject();
-  const updateProjectMutation = useUpdateProject();
-  const deleteProjectMutation = useDeleteProject();
   const toast = useToast();
 
-  // UI state
-  const [priorityFilter, setPriorityFilter] = useState<string>('All');
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [leadFilter, setLeadFilter] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<string | null>(null);
-  const [showFormModal, setShowFormModal] = useState(false);
-  const [editingProject, setEditingProject] =
-    useState<ProjectWithProgress | null>(null);
-  const [projectToDelete, setProjectToDelete] =
-    useState<ProjectWithProgress | null>(null);
+  const { data, isLoading, error, refetch, isRefetching } = useProjects();
+  const { data: usersData } = useUsers();
 
-  // Handle wrapped API response: { status, data: { projects } }
+  const createMutation = useCreateProject();
+  const updateMutation = useUpdateProject();
+  const deleteMutation = useDeleteProject();
+
   const projects = useMemo<ProjectWithProgress[]>(
     () => data?.data?.projects || [],
     [data]
@@ -64,79 +51,17 @@ export function useProjectList() {
     [usersData]
   );
 
+  const filters = useProjectFilters(projects);
+  const modal = useProjectModal<ProjectWithProgress>();
+
   const isSubmitting =
-    createProjectMutation.isPending ||
-    updateProjectMutation.isPending ||
-    deleteProjectMutation.isPending;
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    deleteMutation.isPending;
 
-  // Filter and sort projects
-  const filteredProjects = useMemo(() => {
-    let result = projects.filter((project) => {
-      const matchesPriority =
-        !priorityFilter ||
-        priorityFilter === 'All' ||
-        ProjectPriorityDisplay[project.priority as ProjectPriority] ===
-          priorityFilter;
-
-      const matchesStatus =
-        !statusFilter ||
-        (statusFilter === 'Active' && !project.isArchived) ||
-        (statusFilter === 'Archived' && project.isArchived);
-
-      const matchesLead =
-        !leadFilter ||
-        (project.leads as User[] | undefined)?.some(
-          (lead) => (lead._id || lead.id) === leadFilter
-        );
-
-      return matchesPriority && matchesStatus && matchesLead;
-    });
-
-    if (sortBy) {
-      result = [...result].sort((a, b) => {
-        switch (sortBy) {
-          case 'Name':
-            return (a.name || '').localeCompare(b.name || '');
-          case 'Priority': {
-            const priorityOrder: Record<string, number> = {
-              [ProjectPriority.CRITICAL]: 4,
-              [ProjectPriority.HIGH]: 3,
-              [ProjectPriority.MEDIUM]: 2,
-              [ProjectPriority.LOW]: 1,
-            };
-            return (
-              (priorityOrder[b.priority as string] || 0) -
-              (priorityOrder[a.priority as string] || 0)
-            );
-          }
-          case 'Due Date': {
-            const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0;
-            const dateB = b.dueDate ? new Date(b.dueDate).getTime() : 0;
-            return dateA - dateB;
-          }
-          case 'Progress': {
-            return (
-              (b.progress?.percentage || 0) - (a.progress?.percentage || 0)
-            );
-          }
-          case 'Updated': {
-            const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-            const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
-            return dateB - dateA;
-          }
-          default:
-            return 0;
-        }
-      });
-    }
-
-    return result;
-  }, [projects, priorityFilter, statusFilter, leadFilter, sortBy]);
-
-  // CRUD handlers
-  const handleCreateProject = async (formData: CreateProjectFormData) => {
+  const handleCreate = async (formData: CreateProjectFormData) => {
     try {
-      await createProjectMutation.mutateAsync(formData);
+      await createMutation.mutateAsync(formData);
       toast.success('Project created successfully');
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -144,12 +69,15 @@ export function useProjectList() {
     }
   };
 
-  const handleUpdateProject = async (
-    id: ProjectId,
+  const handleUpdate = async (
+    project: ProjectWithProgress,
     formData: UpdateProjectFormData
   ) => {
+    const id = getProjectId(project);
+    if (!id) return;
+
     try {
-      await updateProjectMutation.mutateAsync({ id, data: formData });
+      await updateMutation.mutateAsync({ id: asProjectId(id), data: formData });
       toast.success('Project updated successfully');
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -157,9 +85,12 @@ export function useProjectList() {
     }
   };
 
-  const handleDeleteProject = async (id: ProjectId) => {
+  const handleDelete = async (project: ProjectWithProgress) => {
+    const id = getProjectId(project);
+    if (!id) return;
+
     try {
-      await deleteProjectMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync(asProjectId(id));
       toast.success('Project deleted successfully');
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -167,108 +98,63 @@ export function useProjectList() {
     }
   };
 
-  // Navigation handlers
-  const handleViewProject = (project: ProjectWithProgress) => {
-    const projectId = project._id || project.id;
-    if (projectId) {
-      navigate(PAGE_ROUTES.PROJECTS.detail(projectId as string));
+  const handleView = (project: ProjectWithProgress) => {
+    const id = getProjectId(project);
+    if (id) {
+      navigate(PAGE_ROUTES.PROJECTS.detail(asProjectId(id)));
     }
-  };
-
-  // Modal handlers
-  const handleAddProject = () => {
-    setEditingProject(null);
-    setShowFormModal(true);
-  };
-
-  const handleEditProject = (project: ProjectWithProgress) => {
-    setEditingProject(project);
-    setShowFormModal(true);
-  };
-
-  const handleCloseFormModal = () => {
-    setShowFormModal(false);
-    setEditingProject(null);
   };
 
   const handleFormSubmit = async (
     formData: CreateProjectFormData | UpdateProjectFormData
   ) => {
-    if (editingProject) {
-      const projectId = editingProject._id || editingProject.id;
-      if (projectId) {
-        await handleUpdateProject(
-          asProjectId(projectId as string),
-          formData as UpdateProjectFormData
-        );
-      }
+    if (modal.editingProject) {
+      await handleUpdate(
+        modal.editingProject,
+        formData as UpdateProjectFormData
+      );
     } else {
-      await handleCreateProject(formData as CreateProjectFormData);
+      await handleCreate(formData as CreateProjectFormData);
     }
-    handleCloseFormModal();
+    modal.closeFormModal();
   };
 
   const handleConfirmDelete = async () => {
-    if (projectToDelete) {
-      const projectId = projectToDelete._id || projectToDelete.id;
-      if (projectId) {
-        await handleDeleteProject(asProjectId(projectId as string));
-      }
-      setProjectToDelete(null);
-    }
-  };
-
-  // Generic filter change handler for FilterBar integration
-  const handleFilterChange = (filterId: string, value: string | null) => {
-    switch (filterId) {
-      case 'priority':
-        setPriorityFilter(!value || value === 'All' ? 'All' : value);
-        break;
-      case 'status':
-        setStatusFilter(!value || value === 'All' ? null : value);
-        break;
-      case 'lead':
-        setLeadFilter(!value || value === 'All' ? null : value);
-        break;
-      case 'sortBy':
-        setSortBy(value);
-        break;
+    if (modal.projectToDelete) {
+      await handleDelete(modal.projectToDelete);
+      modal.closeDeleteConfirm();
     }
   };
 
   return {
-    // Data
     projects,
-    filteredProjects,
+    filteredProjects: filters.filteredProjects,
     users,
     data,
-    editingProject,
-    projectToDelete,
 
-    // State
     isLoading,
     error,
     refetch,
     isRefetching,
     isSubmitting,
-    priorityFilter,
-    statusFilter,
-    leadFilter,
-    sortBy,
-    showFormModal,
 
-    // State setters
-    setPriorityFilter,
-    setProjectToDelete,
+    priorityFilter: filters.priorityFilter,
+    statusFilter: filters.statusFilter,
+    leadFilter: filters.leadFilter,
+    sortBy: filters.sortBy,
+    setPriorityFilter: filters.setPriorityFilter,
+    onFilterChange: filters.onFilterChange,
 
-    // Handlers
-    onAddProject: handleAddProject,
-    onEditProject: handleEditProject,
-    onViewProject: handleViewProject,
-    onDeleteProject: setProjectToDelete,
-    onCloseFormModal: handleCloseFormModal,
+    showFormModal: modal.showFormModal,
+    editingProject: modal.editingProject,
+    projectToDelete: modal.projectToDelete,
+
+    onAddProject: modal.openCreateModal,
+    onEditProject: modal.openEditModal,
+    onViewProject: handleView,
+    onDeleteProject: modal.openDeleteConfirm,
+    onCloseFormModal: modal.closeFormModal,
     onFormSubmit: handleFormSubmit,
     onConfirmDelete: handleConfirmDelete,
-    onFilterChange: handleFilterChange,
   };
 }

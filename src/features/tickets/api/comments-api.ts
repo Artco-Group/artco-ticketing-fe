@@ -71,16 +71,4 @@ function useDeleteComment() {
   });
 }
 
-/**
- * Namespaced API export (FMROI pattern)
- */
-export const commentsApi = {
-  useComments,
-  useAddComment,
-  useUpdateComment,
-  useDeleteComment,
-  keys: QueryKeys.comments,
-};
-
-// Individual exports for backwards compatibility
 export { useComments, useAddComment, useUpdateComment, useDeleteComment };

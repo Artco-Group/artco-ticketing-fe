@@ -31,7 +31,7 @@ import {
 } from '../utils/project-helpers';
 import { useAuth } from '@/features/auth/context';
 import { useRoleFlags } from '@/shared/hooks/useRoleFlags';
-import { TicketCreateDialog, TicketTable } from '@/features/tickets/components';
+import { TicketDialog, TicketTable } from '@/features/tickets/components';
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -345,8 +345,8 @@ export default function ProjectDetailPage() {
         </div>
       </Modal>
 
-      {/* Ticket Create Dialog */}
-      <TicketCreateDialog
+      {/* Ticket Dialog */}
+      <TicketDialog
         isOpen={showTicketDialog}
         onClose={() => setShowTicketDialog(false)}
         projectId={id}

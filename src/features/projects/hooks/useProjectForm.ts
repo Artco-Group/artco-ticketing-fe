@@ -36,19 +36,7 @@ export function useProjectForm({
   });
 
   const handleFormSubmit = (data: CreateProjectFormData) => {
-    // Convert empty strings to undefined for optional fields
-    const cleanData = {
-      ...data,
-      description: data.description || undefined,
-      startDate: data.startDate || undefined,
-      members: data.members || [],
-    };
-
-    if (isEditing) {
-      onSubmit(cleanData as UpdateProjectFormData);
-    } else {
-      onSubmit(cleanData);
-    }
+    onSubmit(data as CreateProjectFormData | UpdateProjectFormData);
   };
 
   return {

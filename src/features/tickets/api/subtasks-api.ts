@@ -88,16 +88,6 @@ function useDeleteSubtask() {
   });
 }
 
-export const subtasksApi = {
-  useSubtasks,
-  useCreateSubtask,
-  useUpdateSubtask,
-  useToggleSubtask,
-  useDeleteSubtask,
-  keys: QueryKeys.subtasks,
-};
-
-// Individual exports
 export {
   useSubtasks,
   useCreateSubtask,

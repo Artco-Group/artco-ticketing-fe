@@ -14,7 +14,8 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@artco-group/artco-ticketing-sync": "^1.0.0-beta.14",    "@artco-group/component-library": "^0.0.10",
+    "@artco-group/artco-ticketing-sync": "^1.0.0-beta.15",
+    "@artco-group/component-library": "^0.0.10",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-avatar": "^1.1.11",

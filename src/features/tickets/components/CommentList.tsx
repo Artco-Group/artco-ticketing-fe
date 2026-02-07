@@ -1,5 +1,5 @@
 import { memo, useRef, useEffect } from 'react';
-import type { Comment } from '@/types';
+import { asCommentId, type Comment, type CommentId } from '@/types';
 import { Avatar } from '@/shared/components/ui/Avatar';
 import { EmptyState } from '@/shared/components/ui/EmptyState';
 import { Separator } from '@/shared/components/ui/separator';
@@ -19,17 +19,17 @@ interface CommentListProps {
   currentUserId: string;
   onReply: (commentId: string) => void;
   onEdit: (commentId: string, text: string) => void;
-  onDelete: (commentId: string) => void;
+  onDelete: (commentId: CommentId) => void;
   getCommentTimeDisplay: (comment: Comment) => string;
 }
 
 interface CommentItemProps {
   comment: Comment;
-  commentId: string;
+  commentId: CommentId;
   isCurrentUser: boolean;
   onReply: (commentId: string) => void;
   onEdit: (commentId: string, text: string) => void;
-  onDelete: (commentId: string) => void;
+  onDelete: (commentId: CommentId) => void;
   getCommentTimeDisplay: (comment: Comment) => string;
 }
 
@@ -180,7 +180,6 @@ export function CommentList({
 }: CommentListProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when new comments are added
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -218,7 +217,7 @@ export function CommentList({
           {/* Comments for this date */}
           <div className="space-y-1">
             {groupedComments[dateKey].map((comment) => {
-              const commentId = comment._id || comment.id || '';
+              const commentId = asCommentId(comment._id || comment.id || '');
               const authorId = comment.authorId?._id || '';
               const isCurrentUser = authorId === currentUserId;
 

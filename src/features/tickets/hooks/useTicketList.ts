@@ -121,10 +121,6 @@ export function useTicketList() {
     setSearchParams(params);
   };
 
-  const handleCreateTicket = () => {
-    navigate(PAGE_ROUTES.TICKETS.CREATE);
-  };
-
   return {
     tickets: filteredTickets,
     allTickets: isEngLead ? allTickets : undefined,
@@ -142,7 +138,6 @@ export function useTicketList() {
     isClient,
     onViewTicket: handleViewTicket,
     onFilterChange: !isClient ? handleFilterChange : undefined,
-    onCreateTicket: handleCreateTicket,
     onTabChange: handleTabChange,
   };
 }

@@ -11,11 +11,7 @@ import type {
 import { apiClient } from './api-client';
 import type { AxiosRequestConfig } from 'axios';
 import { CACHE } from '@artco-group/artco-ticketing-sync';
-import {
-  type ClassifiedError,
-  ErrorType,
-  calculateRetryDelay,
-} from './api-utils';
+import { calculateRetryDelay } from './api-utils';
 
 /**
  * API Query options extending React Query options
@@ -59,15 +55,13 @@ export function useApiQuery<TData>(
     staleTime: CACHE.STALE_TIME,
     gcTime: CACHE.GC_TIME,
     retry: (failureCount, error) => {
-      const classifiedError = error as ClassifiedError;
-      // Don't retry client errors (4xx except 429)
-      if (classifiedError.errorType === ErrorType.CLIENT_ERROR) {
+      const axiosError = error as { response?: { status?: number } };
+      const status = axiosError?.response?.status;
+
+      if (status && status >= 400 && status < 500 && status !== 429) {
         return false;
       }
-      // Don't retry auth errors
-      if (classifiedError.errorType === ErrorType.AUTH_ERROR) {
-        return false;
-      }
+
       return failureCount < 3;
     },
     retryDelay: (attemptIndex) => calculateRetryDelay(attemptIndex),

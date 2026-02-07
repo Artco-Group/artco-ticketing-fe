@@ -66,14 +66,6 @@ export const routeConfigs: Record<string, RouteConfig> = {
     pageConfigKey: 'tickets',
     group: 'tickets',
   },
-  [PAGE_ROUTES.TICKETS.CREATE]: {
-    path: PAGE_ROUTES.TICKETS.CREATE,
-    requiresAuth: true,
-    layout: 'main',
-    pageConfigKey: 'tickets',
-    group: 'tickets',
-    roles: [UserRole.CLIENT],
-  },
   [ROUTE_PATTERNS.TICKET_DETAIL]: {
     path: ROUTE_PATTERNS.TICKET_DETAIL,
     requiresAuth: true,

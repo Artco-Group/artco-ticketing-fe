@@ -36,55 +36,32 @@ export const STATUS_ORDER: Record<string, number> = {
 };
 
 /**
- * Type for assignedTo field which can be string, User-like object, or null/undefined
- * Uses Nullable pattern to match sync package types
+ * Type for assignedTo field (always populated object from API)
  */
 export type AssignedToValue =
-  | string
   | { _id?: string | null; email?: string | null; name?: string | null }
   | null
   | undefined;
 
 /**
- * Type guard to check if assignedTo is a User-like object (not a string)
- */
-export function isAssignedToObject(assignedTo: AssignedToValue): assignedTo is {
-  _id?: string | null;
-  email?: string | null;
-  name?: string | null;
-} {
-  return (
-    assignedTo !== null &&
-    assignedTo !== undefined &&
-    typeof assignedTo === 'object'
-  );
-}
-
-/**
- * Extract assignee ID from ticket.assignedTo which can be string or User object
+ * Extract assignee ID from ticket.assignedTo
  */
 export function getAssigneeId(assignedTo: AssignedToValue): string {
-  if (!assignedTo) return '';
-  if (typeof assignedTo === 'string') return assignedTo;
-  return assignedTo._id || '';
+  return assignedTo?._id || '';
 }
 
 /**
  * Extract assignee email from ticket.assignedTo
  */
 export function getAssigneeEmail(assignedTo: AssignedToValue): string {
-  if (!assignedTo) return '';
-  if (typeof assignedTo === 'string') return assignedTo;
-  return assignedTo.email || '';
+  return assignedTo?.email || '';
 }
 
 /**
  * Extract assignee name from ticket.assignedTo
  */
 export function getAssigneeName(assignedTo: AssignedToValue): string {
-  if (!assignedTo) return 'Unassigned';
-  if (typeof assignedTo === 'string') return assignedTo;
-  return assignedTo.name || 'Unassigned';
+  return assignedTo?.name || 'Unassigned';
 }
 
 /**
@@ -97,15 +74,7 @@ export function resolveAssigneeName(
 ): string {
   if (!assignedTo) return 'Unassigned';
 
-  if (typeof assignedTo === 'string') {
-    // Try to find user by ID or email
-    const user = users.find(
-      (u) => u._id === assignedTo || u.email === assignedTo
-    );
-    return user?.name || assignedTo;
-  }
-
-  // assignedTo is an object - try to find matching user
+  // Try to find matching user for fresh data
   const user = users.find(
     (u) => u._id === assignedTo._id || u.email === assignedTo.email
   );

@@ -4,6 +4,7 @@ import {
   API_ROUTES,
   CACHE,
   type Ticket,
+  type TicketInput,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
 import type { TicketId, UserId, ApiResponse } from '@/types';
@@ -128,7 +129,7 @@ function useUpdateTicketPriority() {
 function useUpdateTicket() {
   return useApiMutation<
     ApiResponse<{ ticket: Ticket }>,
-    { id: TicketId; data: Partial<Ticket> }
+    { id: TicketId; data: Partial<TicketInput> }
   >({
     url: (vars) => API_ROUTES.TICKETS.BY_ID(vars.id),
     method: 'PUT',
@@ -223,25 +224,6 @@ function useDeleteAttachment() {
   });
 }
 
-/**
- * Namespaced API export (FMROI pattern)
- */
-export const ticketsApi = {
-  useTickets,
-  useTicket,
-  useCreateTicket,
-  useUpdateTicket,
-  useUpdateTicketStatus,
-  useAssignTicket,
-  useUpdateTicketPriority,
-  useDeleteTicket,
-  useUploadScreenRecording,
-  useUploadAttachments,
-  useDeleteAttachment,
-  keys: QueryKeys.tickets,
-};
-
-// Individual exports for backwards compatibility
 export {
   useTickets,
   useTicket,

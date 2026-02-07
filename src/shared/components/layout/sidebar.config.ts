@@ -60,12 +60,7 @@ export const NAVIGATION: NavItemConfig[] = [
     id: 'clients',
     label: 'Clients',
     icon: 'user',
-    roles: [
-      UserRole.CLIENT,
-      UserRole.DEVELOPER,
-      UserRole.ENG_LEAD,
-      UserRole.ADMIN,
-    ],
+    roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
   },
   {
     id: 'reports',

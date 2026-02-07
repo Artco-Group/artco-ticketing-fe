@@ -1,15 +1,8 @@
 import { type TicketId } from '@/types';
 import { SubtaskList } from './SubtaskList';
 import { SubtaskForm } from './SubtaskForm';
-import {
-  useSubtasks,
-  useCreateSubtask,
-  useToggleSubtask,
-  useUpdateSubtask,
-  useDeleteSubtask,
-} from '../api/subtasks-api';
-import { useToast, Progress } from '@/shared/components/ui';
-import { getErrorMessage } from '@/shared';
+import { Progress } from '@/shared/components/ui';
+import { useSubtasksHook } from '../hooks';
 
 interface SubtaskSectionProps {
   ticketId: TicketId;
@@ -17,69 +10,18 @@ interface SubtaskSectionProps {
 }
 
 export function SubtaskSection({ ticketId, canEdit }: SubtaskSectionProps) {
-  const toast = useToast();
-  const { data, isLoading, isError } = useSubtasks(ticketId);
-  const createSubtask = useCreateSubtask();
-  const toggleSubtask = useToggleSubtask();
-  const updateSubtask = useUpdateSubtask();
-  const deleteSubtask = useDeleteSubtask();
-
-  const subtasks = data?.data?.subtasks || [];
-  const progress = data?.data?.progress || {
-    total: 0,
-    completed: 0,
-    percentage: 0,
-  };
-
-  const handleCreate = (title: string) => {
-    createSubtask.mutate(
-      { ticketId, title },
-      {
-        onError: (error) => {
-          toast.error(getErrorMessage(error));
-        },
-      }
-    );
-  };
-
-  const handleToggle = (subtaskId: string) => {
-    toggleSubtask.mutate(
-      { subtaskId, ticketId },
-      {
-        onError: (error) => {
-          toast.error(getErrorMessage(error));
-        },
-      }
-    );
-  };
-
-  const handleUpdate = (subtaskId: string, title: string) => {
-    updateSubtask.mutate(
-      { subtaskId, ticketId, title },
-      {
-        onError: (error) => {
-          toast.error(getErrorMessage(error));
-        },
-      }
-    );
-  };
-
-  const handleDelete = (subtaskId: string) => {
-    deleteSubtask.mutate(
-      { subtaskId, ticketId },
-      {
-        onError: (error) => {
-          toast.error(getErrorMessage(error));
-        },
-      }
-    );
-  };
-
-  const isMutating =
-    createSubtask.isPending ||
-    toggleSubtask.isPending ||
-    updateSubtask.isPending ||
-    deleteSubtask.isPending;
+  const {
+    subtasks,
+    progress,
+    isLoading,
+    isError,
+    isMutating,
+    isCreating,
+    onCreate,
+    onToggle,
+    onUpdate,
+    onDelete,
+  } = useSubtasksHook({ ticketId });
 
   if (isError) {
     return null;
@@ -107,17 +49,14 @@ export function SubtaskSection({ ticketId, canEdit }: SubtaskSectionProps) {
           <>
             <SubtaskList
               subtasks={subtasks}
-              onToggle={handleToggle}
-              onUpdate={canEdit ? handleUpdate : undefined}
-              onDelete={canEdit ? handleDelete : undefined}
+              onToggle={onToggle}
+              onUpdate={canEdit ? onUpdate : undefined}
+              onDelete={canEdit ? onDelete : undefined}
               isLoading={isMutating}
               canEdit={canEdit}
             />
             {canEdit && (
-              <SubtaskForm
-                onSubmit={handleCreate}
-                isLoading={createSubtask.isPending}
-              />
+              <SubtaskForm onSubmit={onCreate} isLoading={isCreating} />
             )}
           </>
         )}

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   QueryStateWrapper,
   EmptyState,
@@ -8,8 +7,7 @@ import {
 import { PageHeader } from '@/shared/components';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { useRoleFlags } from '@/shared';
-import { TicketDetail } from '../components';
-import { EditTicketModal } from '../components/EditTicketModal';
+import { TicketDetail, TicketDialog } from '../components';
 import { useTicketDetail } from '../hooks';
 
 export default function TicketDetailPage() {
@@ -21,6 +19,9 @@ export default function TicketDetailPage() {
     ticketError,
     refetchTicket,
     ticketRefetching,
+    isEditModalOpen,
+    onOpenEditModal,
+    onCloseEditModal,
     onBack,
     onStatusUpdate,
     onPriorityUpdate,
@@ -28,7 +29,6 @@ export default function TicketDetailPage() {
   } = useTicketDetail();
 
   const { isEngLead } = useRoleFlags(currentUser?.role);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const canEditTicket = isEngLead;
 
@@ -55,7 +55,7 @@ export default function TicketDetailPage() {
         }
         actions={
           canEditTicket ? (
-            <Button variant="outline" onClick={() => setIsEditModalOpen(true)}>
+            <Button variant="outline" onClick={onOpenEditModal}>
               <Icon name="edit" size="sm" className="mr-2" />
               Edit
             </Button>
@@ -89,12 +89,13 @@ export default function TicketDetailPage() {
         )}
       </QueryStateWrapper>
 
-      {/* Edit Ticket Modal */}
+      {/* Edit Ticket Dialog */}
       {canEditTicket && ticket && (
-        <EditTicketModal
+        <TicketDialog
           isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
+          onClose={onCloseEditModal}
           ticket={ticket}
+          onSuccess={refetchTicket}
         />
       )}
     </div>

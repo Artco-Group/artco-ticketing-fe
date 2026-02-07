@@ -13,7 +13,6 @@ import type { ApiResponse } from '@/types';
 
 type ProjectId = string;
 
-// Project with computed progress
 interface ProjectWithProgress extends Project {
   progress: {
     totalTickets: number;
@@ -22,10 +21,6 @@ interface ProjectWithProgress extends Project {
   };
 }
 
-/**
- * Get all projects
- * Uses SHORT_STALE_TIME for frequently changing list data
- */
 function useProjects(params?: Record<string, unknown>) {
   return useApiQuery<ApiResponse<{ projects: ProjectWithProgress[] }>>(
     QueryKeys.projects.list(params),
@@ -37,10 +32,6 @@ function useProjects(params?: Record<string, unknown>) {
   );
 }
 
-/**
- * Get single project by ID
- * Uses STALE_TIME for individual records
- */
 function useProject(id: ProjectId) {
   return useApiQuery<ApiResponse<{ project: ProjectWithProgress }>>(
     QueryKeys.projects.detail(id),
@@ -52,9 +43,6 @@ function useProject(id: ProjectId) {
   );
 }
 
-/**
- * Create a new project
- */
 function useCreateProject() {
   return useApiMutation<
     ApiResponse<{ project: Project }>,
@@ -71,9 +59,6 @@ function useCreateProject() {
   });
 }
 
-/**
- * Update a project
- */
 function useUpdateProject() {
   return useApiMutation<
     ApiResponse<{ project: Project }>,
@@ -91,9 +76,6 @@ function useUpdateProject() {
   });
 }
 
-/**
- * Delete a project
- */
 function useDeleteProject() {
   return useApiMutation<void, ProjectId>({
     url: (id) => API_ROUTES.PROJECTS.BY_ID(id),
@@ -104,9 +86,6 @@ function useDeleteProject() {
   });
 }
 
-/**
- * Add members to a project
- */
 function useAddProjectMembers() {
   return useApiMutation<
     ApiResponse<{ project: Project }>,
@@ -120,15 +99,11 @@ function useAddProjectMembers() {
         queryKey: QueryKeys.projects.detail(variables.id),
       });
       queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
-      // Invalidate tickets since they embed project members for assignment filtering
       queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
     },
   });
 }
 
-/**
- * Remove a member from a project
- */
 function useRemoveProjectMember() {
   return useApiMutation<
     ApiResponse<{ project: Project }>,
@@ -142,15 +117,11 @@ function useRemoveProjectMember() {
         queryKey: QueryKeys.projects.detail(variables.projectId),
       });
       queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
-      // Invalidate tickets since they embed project members for assignment filtering
       queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
     },
   });
 }
 
-/**
- * Get tickets for a project
- */
 function useProjectTickets(projectId: ProjectId) {
   return useApiQuery<ApiResponse<{ tickets: unknown[] }>>(
     QueryKeys.projects.tickets(projectId),
@@ -162,9 +133,6 @@ function useProjectTickets(projectId: ProjectId) {
   );
 }
 
-/**
- * Archive/unarchive a project
- */
 function useArchiveProject() {
   return useApiMutation<
     ApiResponse<{ project: Project }>,
@@ -182,23 +150,6 @@ function useArchiveProject() {
   });
 }
 
-/**
- * Namespaced API export
- */
-export const projectsApi = {
-  useProjects,
-  useProject,
-  useCreateProject,
-  useUpdateProject,
-  useDeleteProject,
-  useAddProjectMembers,
-  useRemoveProjectMember,
-  useProjectTickets,
-  useArchiveProject,
-  keys: QueryKeys.projects,
-};
-
-// Individual exports for backwards compatibility
 export {
   useProjects,
   useProject,

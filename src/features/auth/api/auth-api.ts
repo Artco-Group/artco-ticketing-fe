@@ -107,20 +107,6 @@ function useResetPassword() {
   });
 }
 
-/**
- * Namespaced API export (FMROI pattern)
- */
-export const authApi = {
-  useCurrentUser,
-  useLogin,
-  useLogout,
-  useForgotPassword,
-  useVerifyResetToken,
-  useResetPassword,
-  keys: QueryKeys.auth,
-};
-
-// Individual exports for backwards compatibility
 export {
   useCurrentUser,
   useLogin,

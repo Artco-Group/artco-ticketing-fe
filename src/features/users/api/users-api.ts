@@ -95,20 +95,6 @@ function useDeleteUser() {
   });
 }
 
-/**
- * Namespaced API export (FMROI pattern)
- */
-export const usersApi = {
-  useUsers,
-  useUser,
-  useDevelopers,
-  useCreateUser,
-  useUpdateUser,
-  useDeleteUser,
-  keys: QueryKeys.users,
-};
-
-// Individual exports for backwards compatibility
 export {
   useUsers,
   useUser,
