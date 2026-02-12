@@ -1,9 +1,4 @@
-import {
-  QueryStateWrapper,
-  EmptyState,
-  Button,
-  Icon,
-} from '@/shared/components/ui';
+import { QueryStateWrapper, EmptyState, Button } from '@/shared/components/ui';
 import { PageHeader } from '@/shared/components';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { useRoleFlags } from '@/shared';
@@ -15,6 +10,7 @@ export default function TicketDetailPage() {
     ticket,
     currentUser,
     users,
+    projects,
     ticketLoading,
     ticketError,
     refetchTicket,
@@ -28,9 +24,9 @@ export default function TicketDetailPage() {
     onAssignTicket,
   } = useTicketDetail();
 
-  const { isEngLead } = useRoleFlags(currentUser?.role);
+  const { isEngLead, isAdmin } = useRoleFlags(currentUser?.role);
 
-  const canEditTicket = isEngLead;
+  const canEditTicket = isEngLead || isAdmin;
 
   if (!currentUser?.role) {
     return (
@@ -48,18 +44,10 @@ export default function TicketDetailPage() {
         breadcrumbs={
           canEditTicket && ticket
             ? [
-                { label: 'All Tasks', href: PAGE_ROUTES.TICKETS.LIST },
+                { label: 'All Tickets', href: PAGE_ROUTES.TICKETS.LIST },
                 { label: ticket.title || `#${ticket.ticketId}`, href: '#' },
               ]
             : undefined
-        }
-        actions={
-          canEditTicket ? (
-            <Button variant="outline" onClick={onOpenEditModal}>
-              <Icon name="edit" size="sm" className="mr-2" />
-              Edit
-            </Button>
-          ) : undefined
         }
       />
 
@@ -81,15 +69,16 @@ export default function TicketDetailPage() {
             ticket={ticketData}
             currentUser={currentUser}
             users={users}
+            projects={projects}
             onBack={onBack}
             onStatusUpdate={onStatusUpdate}
             onPriorityUpdate={onPriorityUpdate}
             onAssignTicket={onAssignTicket}
+            onEdit={onOpenEditModal}
           />
         )}
       </QueryStateWrapper>
 
-      {/* Edit Ticket Dialog */}
       {canEditTicket && ticket && (
         <TicketDialog
           isOpen={isEditModalOpen}

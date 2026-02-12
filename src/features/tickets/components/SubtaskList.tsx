@@ -12,6 +12,7 @@ interface SubtaskListProps {
   onDelete?: (subtaskId: string) => void;
   isLoading?: boolean;
   canEdit?: boolean;
+  canToggle?: boolean;
 }
 
 interface SubtaskItemProps {
@@ -21,6 +22,7 @@ interface SubtaskItemProps {
   onDelete?: (subtaskId: string) => void;
   isLoading?: boolean;
   canEdit?: boolean;
+  canToggle?: boolean;
 }
 
 function SubtaskItem({
@@ -30,11 +32,12 @@ function SubtaskItem({
   onDelete,
   isLoading,
   canEdit = false,
+  canToggle = false,
 }: SubtaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(subtask.title);
 
-  const subtaskId = subtask._id || subtask.id || '';
+  const subtaskId = subtask.id || '';
 
   const handleToggle = () => {
     onToggle(subtaskId);
@@ -72,7 +75,7 @@ function SubtaskItem({
       <Checkbox
         checked={subtask.completed}
         onCheckedChange={() => handleToggle()}
-        disabled={isLoading || !canEdit}
+        disabled={isLoading || !canToggle}
       />
 
       {/* Title */}
@@ -90,7 +93,7 @@ function SubtaskItem({
             <Icon name="check" size="sm" />
           </Button>
           <Button size="icon" variant="ghost" onClick={handleCancelEdit}>
-            <Icon name="x" size="sm" />
+            <Icon name="close" size="sm" />
           </Button>
         </div>
       ) : (
@@ -112,7 +115,7 @@ function SubtaskItem({
               onClick={() => setIsEditing(true)}
               className="h-7 w-7"
             >
-              <Icon name="pencil" size="xs" />
+              <Icon name="edit" size="xs" />
             </Button>
           )}
           {onDelete && (
@@ -138,6 +141,7 @@ export function SubtaskList({
   onDelete,
   isLoading = false,
   canEdit = false,
+  canToggle = false,
 }: SubtaskListProps) {
   if (subtasks.length === 0) {
     return (
@@ -151,13 +155,14 @@ export function SubtaskList({
     <div className="space-y-1">
       {subtasks.map((subtask) => (
         <SubtaskItem
-          key={subtask._id || subtask.id}
+          key={subtask.id}
           subtask={subtask}
           onToggle={onToggle}
           onUpdate={onUpdate}
           onDelete={onDelete}
           isLoading={isLoading}
           canEdit={canEdit}
+          canToggle={canToggle}
         />
       ))}
     </div>

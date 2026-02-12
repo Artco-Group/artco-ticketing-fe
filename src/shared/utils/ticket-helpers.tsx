@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import {
   TicketPriorityDisplay,
+  TicketStatusSortOrder,
+  TicketPrioritySortOrder,
   getStatusBadgeClasses,
   getCategoryBadgeClasses,
 } from '@artco-group/artco-ticketing-sync';
@@ -13,33 +15,13 @@ import {
   type Filters,
 } from '@/types';
 import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
-
-/**
- * Priority order for sorting (highest first)
- */
-export const PRIORITY_ORDER: Record<string, number> = {
-  Critical: 4,
-  High: 3,
-  Medium: 2,
-  Low: 1,
-};
-
-/**
- * Status order for sorting
- */
-export const STATUS_ORDER: Record<string, number> = {
-  New: 1,
-  Open: 2,
-  'In Progress': 3,
-  Resolved: 4,
-  Closed: 5,
-};
+import { Icon } from '@/shared/components/ui/Icon';
 
 /**
  * Type for assignedTo field (always populated object from API)
  */
 export type AssignedToValue =
-  | { _id?: string | null; email?: string | null; name?: string | null }
+  | { id?: string | null; email?: string | null; name?: string | null }
   | null
   | undefined;
 
@@ -47,7 +29,7 @@ export type AssignedToValue =
  * Extract assignee ID from ticket.assignedTo
  */
 export function getAssigneeId(assignedTo: AssignedToValue): string {
-  return assignedTo?._id || '';
+  return assignedTo?.id || '';
 }
 
 /**
@@ -76,7 +58,7 @@ export function resolveAssigneeName(
 
   // Try to find matching user for fresh data
   const user = users.find(
-    (u) => u._id === assignedTo._id || u.email === assignedTo.email
+    (u) => u.id === assignedTo.id || u.email === assignedTo.email
   );
   return user?.name || assignedTo.name || assignedTo.email || 'Unassigned';
 }
@@ -144,11 +126,15 @@ export function sortTickets(tickets: Ticket[], sortBy: string): Ticket[] {
         return (a.category || '').localeCompare(b.category || '');
 
       case 'Status':
-        return (STATUS_ORDER[a.status] ?? 0) - (STATUS_ORDER[b.status] ?? 0);
+        return (
+          (TicketStatusSortOrder[a.status as TicketStatus] ?? 0) -
+          (TicketStatusSortOrder[b.status as TicketStatus] ?? 0)
+        );
 
       case 'Priority':
         return (
-          (PRIORITY_ORDER[b.priority] ?? 0) - (PRIORITY_ORDER[a.priority] ?? 0)
+          (TicketPrioritySortOrder[b.priority as TicketPriority] ?? 0) -
+          (TicketPrioritySortOrder[a.priority as TicketPriority] ?? 0)
         );
 
       case 'Client':
@@ -273,20 +259,26 @@ export const priorityBadgeConfig: Record<TicketPriority, BadgeConfig> = {
 };
 
 /**
- * Category badge configuration with variants
+ * Category badge configuration with variants and icons
  */
 export const categoryBadgeConfig: Record<TicketCategory, BadgeConfig> = {
   [TicketCategory.BUG]: {
     label: 'Bug',
+    getIcon: () => <Icon name="bug" size="sm" className="text-red-500" />,
   },
   [TicketCategory.FEATURE_REQUEST]: {
     label: 'Feature Request',
+    getIcon: () => (
+      <Icon name="feature" size="sm" className="text-purple-500" />
+    ),
   },
   [TicketCategory.QUESTION]: {
     label: 'Question',
+    getIcon: () => <Icon name="question" size="sm" className="text-blue-500" />,
   },
   [TicketCategory.OTHER]: {
     label: 'Other',
+    getIcon: () => <Icon name="tag" size="sm" className="text-gray-500" />,
   },
 };
 
@@ -316,4 +308,18 @@ export function getPriorityLabel(priority: TicketPriority): string {
  */
 export function getStatusLabel(status: TicketStatus): string {
   return statusBadgeConfig[status]?.label ?? '';
+}
+
+/**
+ * Get the icon for a given category
+ */
+export function getCategoryIcon(category: TicketCategory): ReactNode {
+  return categoryBadgeConfig[category]?.getIcon?.() ?? null;
+}
+
+/**
+ * Get the label for a given category
+ */
+export function getCategoryLabel(category: TicketCategory): string {
+  return categoryBadgeConfig[category]?.label ?? '';
 }

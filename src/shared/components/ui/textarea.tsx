@@ -5,20 +5,22 @@ export interface TextareaProps extends React.ComponentProps<'textarea'> {
   label?: string;
   error?: string;
   helperText?: string;
+  required?: boolean;
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, label, error, helperText, ...props }, ref) => {
+  ({ className, label, error, helperText, required, ...props }, ref) => {
     return (
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-2.5">
         {label && (
           <label
             className={cn(
-              'text-text-tertiary font-[Inter] text-xs leading-4 font-normal',
+              'text-muted-foreground text-sm leading-none font-medium',
               error && 'text-destructive'
             )}
           >
             {label}
+            {required && <span className="text-destructive ml-0.5">*</span>}
           </label>
         )}
         <textarea

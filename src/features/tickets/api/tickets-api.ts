@@ -32,7 +32,7 @@ function useTicket(id: TicketId) {
   return useApiQuery<ApiResponse<{ ticket: Ticket }>>(
     QueryKeys.tickets.detail(id),
     {
-      url: API_ROUTES.TICKETS.BY_ID(id),
+      url: API_ROUTES.TICKETS.BY_TICKET_ID(id),
       enabled: !!id,
       staleTime: CACHE.STALE_TIME,
     }
@@ -131,7 +131,7 @@ function useUpdateTicket() {
     ApiResponse<{ ticket: Ticket }>,
     { id: TicketId; data: Partial<TicketInput> }
   >({
-    url: (vars) => API_ROUTES.TICKETS.BY_ID(vars.id),
+    url: (vars) => API_ROUTES.TICKETS.BY_TICKET_ID(vars.id),
     method: 'PUT',
     getBody: (vars) => vars.data,
     onSuccess: (_, variables) => {
@@ -148,11 +148,49 @@ function useUpdateTicket() {
  */
 function useDeleteTicket() {
   return useApiMutation<void, TicketId>({
-    url: (id) => API_ROUTES.TICKETS.BY_ID(id),
+    url: (id) => API_ROUTES.TICKETS.BY_TICKET_ID(id),
     method: 'DELETE',
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
       // Invalidate project queries to refresh progress
+      queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
+    },
+  });
+}
+
+interface BulkDeleteResult {
+  deletedCount: number;
+  failedIds: string[];
+}
+
+interface BulkUpdatePriorityResult {
+  updatedCount: number;
+  failedIds: string[];
+}
+
+function useBulkDeleteTickets() {
+  return useApiMutation<ApiResponse<BulkDeleteResult>, { ids: string[] }>({
+    url: API_ROUTES.TICKETS.BASE,
+    method: 'DELETE',
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
+    },
+  });
+}
+
+/**
+ * Bulk update ticket priority
+ */
+function useBulkUpdatePriority() {
+  return useApiMutation<
+    ApiResponse<BulkUpdatePriorityResult>,
+    { ids: string[]; priority: string }
+  >({
+    url: API_ROUTES.TICKETS.BULK_PRIORITY,
+    method: 'PATCH',
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
       queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
     },
   });
@@ -224,6 +262,25 @@ function useDeleteAttachment() {
   });
 }
 
+/**
+ * Delete screen recording from a ticket
+ */
+function useDeleteScreenRecording() {
+  return useApiMutation<
+    ApiResponse<{ ticket: Ticket }>,
+    { ticketId: TicketId }
+  >({
+    url: (vars) => API_ROUTES.TICKETS.SCREEN_RECORDING(vars.ticketId),
+    method: 'DELETE',
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.tickets.detail(variables.ticketId),
+      });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
+    },
+  });
+}
+
 export {
   useTickets,
   useTicket,
@@ -232,8 +289,11 @@ export {
   useUpdateTicketStatus,
   useAssignTicket,
   useUpdateTicketPriority,
+  useBulkUpdatePriority,
   useDeleteTicket,
+  useBulkDeleteTickets,
   useUploadScreenRecording,
   useUploadAttachments,
   useDeleteAttachment,
+  useDeleteScreenRecording,
 };

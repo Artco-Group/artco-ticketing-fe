@@ -11,6 +11,7 @@ export interface InputProps extends Omit<
   error?: string;
   helperText?: string;
   size?: 'sm' | 'md' | 'lg';
+  required?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -24,6 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       error,
       helperText,
       size = 'md',
+      required,
       ...props
     },
     ref
@@ -59,15 +61,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     };
 
     return (
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-2.5">
         {label && (
           <label
             className={cn(
-              'text-text-tertiary font-[Inter] text-xs leading-4 font-normal',
+              'text-muted-foreground text-sm leading-none font-medium',
               error && 'text-destructive'
             )}
           >
             {label}
+            {required && <span className="text-destructive ml-0.5">*</span>}
           </label>
         )}
         <div className="relative">

@@ -6,3 +6,6 @@ export { useTicketDetailActions } from './useTicketDetailActions';
 export { useComments } from './useComments';
 export { useSubtasksHook } from './useSubtasksHook';
 export { useTicketInlineEdit } from './useTicketInlineEdit';
+export { useTicketFileUpload } from './useTicketFileUpload';
+export { useTicketFilters } from './useTicketFilters';
+export { useTicketTableState } from './useTicketTableState';

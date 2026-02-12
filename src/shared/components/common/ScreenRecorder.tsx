@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Video } from 'lucide-react';
 import { useScreenRecorder } from '@/shared/hooks/useScreenRecorder';
-import { Icon } from '@/shared/components/ui';
+import { Button, Icon } from '@/shared/components/ui';
 import { formatTime } from '@artco-group/artco-ticketing-sync';
 import { SCREEN_RECORDING } from '@/config';
 import { cn } from '@/lib/utils';
@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils';
 interface ScreenRecorderProps {
   onRecordingComplete: (file: File | null, duration: number) => void;
   disabled?: boolean;
-  /** Use 'modal' when inside a Dialog to remove outer border styling */
   variant?: 'standalone' | 'modal';
 }
 
@@ -39,7 +38,7 @@ export default function ScreenRecorder({
       setRecordedVideo(file);
       setDuration(actualDuration);
       setPreviewUrl(URL.createObjectURL(file));
-      setConfirmed(false); // Reset confirmation state
+      setConfirmed(false);
     },
   });
 
@@ -75,32 +74,36 @@ export default function ScreenRecorder({
       >
         <div className="mb-3 flex items-center justify-between">
           <div>
-            <p className="text-foreground text-sm font-medium">Snimak Ekrana</p>
+            <p className="text-foreground text-sm font-medium">
+              {disabled ? 'Uploading...' : 'Screen Recording'}
+            </p>
             <p className="text-muted-foreground text-xs">
               {(recordedVideo.size / (1024 * 1024)).toFixed(2)} MB •{' '}
               {formatTime(duration)}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={handleRemove}
-            className="text-destructive hover:text-destructive/80 transition-colors"
-          >
-            <Icon name="close" size="lg" />
-          </button>
+          {!disabled && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={handleRemove}
+              className="text-destructive hover:text-destructive/80"
+            >
+              <Icon name="close" size="lg" />
+            </Button>
+          )}
         </div>
 
         <video
           src={previewUrl}
           controls
-          className="w-full rounded-lg"
-          style={{ maxHeight: '300px' }}
+          className="max-h-[300px] w-full rounded-lg"
         />
       </div>
     );
   }
 
-  // State 2: Recording finished - show preview with confirm/discard buttons
   if (!confirmed && previewUrl && recordedVideo && !recording) {
     return (
       <div
@@ -109,37 +112,39 @@ export default function ScreenRecorder({
         )}
       >
         <p className="text-foreground mb-3 text-sm font-medium">
-          Pregled snimka ({(recordedVideo.size / (1024 * 1024)).toFixed(2)} MB)
+          Recording preview ({(recordedVideo.size / (1024 * 1024)).toFixed(2)}{' '}
+          MB)
         </p>
 
         <video
           src={previewUrl}
           controls
-          className="mb-3 w-full rounded-lg"
-          style={{ maxHeight: '300px' }}
+          className="mb-3 max-h-[300px] w-full rounded-lg"
         />
 
         <div className="flex gap-2">
-          <button
+          <Button
             type="button"
             onClick={handleConfirm}
-            className="btn-primary flex-1"
+            disabled={disabled}
+            className="flex-1"
           >
-            Potvrdi
-          </button>
-          <button
+            {disabled ? 'Uploading...' : 'Confirm'}
+          </Button>
+          <Button
             type="button"
+            variant="secondary"
             onClick={handleDiscard}
-            className="btn-secondary flex-1"
+            disabled={disabled}
+            className="flex-1"
           >
-            Odbaci
-          </button>
+            Discard
+          </Button>
         </div>
       </div>
     );
   }
 
-  // State 1b: Recording in progress
   if (recording) {
     return (
       <div
@@ -152,7 +157,7 @@ export default function ScreenRecorder({
           <div>
             <p className="text-destructive flex items-center text-sm font-medium">
               <span className="bg-destructive mr-2 inline-block h-2 w-2 animate-pulse rounded-full"></span>
-              Snimanje u toku...
+              Recording in progress...
             </p>
             <p className="text-muted-foreground text-xs">
               {formatTime(recordingTime)} / {formatTime(maxDuration)}
@@ -165,16 +170,17 @@ export default function ScreenRecorder({
           </div>
         </div>
 
-        <button
+        <Button
           type="button"
+          variant="destructive"
           onClick={stopRecording}
-          className="btn-destructive w-full"
+          className="w-full"
         >
-          Zaustavi Snimanje
-        </button>
+          Stop Recording
+        </Button>
 
         <p className="text-muted-foreground mt-2 text-xs">
-          Kliknite na dugme ili zatvorite dijeljenje ekrana za zaustavljanje
+          Click the button or stop screen sharing to finish
         </p>
       </div>
     );
@@ -192,20 +198,20 @@ export default function ScreenRecorder({
       <Video className="text-muted-foreground mx-auto h-12 w-12" />
 
       <p className="text-foreground mt-2 text-sm font-medium">
-        Snimite Problem
+        Record the Issue
       </p>
       <p className="text-muted-foreground mt-1 text-xs">
-        Maksimalno 3 minute • ~22 MB
+        Maximum 3 minutes • ~22 MB
       </p>
 
-      <button
+      <Button
         type="button"
         onClick={startRecording}
         disabled={disabled}
-        className="btn-primary mt-3"
+        className="mt-3"
       >
-        Započni Snimanje
-      </button>
+        Start Recording
+      </Button>
 
       {error && <p className="text-destructive mt-2 text-xs">{error}</p>}
     </div>

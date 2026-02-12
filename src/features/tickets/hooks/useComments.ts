@@ -55,8 +55,8 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
   const deleteCommentMutation = useDeleteComment();
 
   const comments = useMemo(
-    () => commentsData?.data?.comments || [],
-    [commentsData?.data?.comments]
+    () => commentsData?.comments || [],
+    [commentsData?.comments]
   );
 
   /**
@@ -181,9 +181,7 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
    */
   const getReplyingToComment = () => {
     if (!replyingToCommentId) return null;
-    return (
-      comments.find((c) => (c._id || c.id) === replyingToCommentId) || null
-    );
+    return comments.find((c) => c.id === replyingToCommentId) || null;
   };
 
   /**

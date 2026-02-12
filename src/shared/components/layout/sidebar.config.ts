@@ -12,13 +12,13 @@ export const SIDEBAR_WIDTH = {
 // ── Route map: item ID → path ─────────────────────────
 
 export const ROUTE_MAP: Record<string, string> = {
-  tasks: PAGE_ROUTES.TICKETS.LIST,
+  tickets: PAGE_ROUTES.TICKETS.LIST,
   users: PAGE_ROUTES.USERS.LIST,
   projects: PAGE_ROUTES.PROJECTS.ROOT,
   clients: PAGE_ROUTES.CLIENTS.ROOT,
   reports: PAGE_ROUTES.REPORTS.ROOT,
-  profile: PAGE_ROUTES.PROFILE,
-  settings: PAGE_ROUTES.SETTINGS,
+  profile: PAGE_ROUTES.SETTINGS.PROFILE,
+  settings: PAGE_ROUTES.SETTINGS.ROOT,
 };
 
 // ── Navigation config ──────────────────────────────────
@@ -29,8 +29,8 @@ export interface NavItemConfig extends SidebarItem {
 
 export const NAVIGATION: NavItemConfig[] = [
   {
-    id: 'tasks',
-    label: 'Tasks',
+    id: 'tickets',
+    label: 'Tickets',
     icon: 'tasks',
     roles: [
       UserRole.CLIENT,
@@ -41,7 +41,7 @@ export const NAVIGATION: NavItemConfig[] = [
   },
   {
     id: 'users',
-    label: 'Users',
+    label: 'Members',
     icon: 'user',
     roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
   },

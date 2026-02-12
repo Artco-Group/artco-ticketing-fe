@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react';
 import {
   type Attachment,
   formatFileSize,
@@ -14,6 +15,8 @@ interface TicketAttachmentsProps {
     index: number,
     filename: string
   ) => Promise<void>;
+  onDelete?: (index: number) => void;
+  canDelete?: boolean;
 }
 
 function getFileIcon(mimetype?: string) {
@@ -30,6 +33,8 @@ function TicketAttachments({
   attachments,
   ticketId,
   onDownload,
+  onDelete,
+  canDelete = false,
 }: TicketAttachmentsProps) {
   if (!attachments || attachments.length === 0) {
     return null;
@@ -45,37 +50,47 @@ function TicketAttachments({
     }
   };
 
+  const handleDelete = (e: MouseEvent, index: number) => {
+    e.stopPropagation();
+    onDelete?.(index);
+  };
+
   return (
-    <div className="mt-4">
-      <h4 className="text-muted-foreground mb-2 text-xs font-medium uppercase">
-        Attachments ({attachments.length})
-      </h4>
-      <div className="flex flex-wrap gap-2">
-        {attachments.map((attachment, index) => (
-          <button
-            key={index}
-            onClick={() => handleDownload(attachment, index)}
-            className="flex items-center gap-1.5 rounded border border-gray-200 bg-gray-50 px-2 py-1 text-xs transition-colors hover:bg-gray-100"
-          >
+    <div className="flex flex-wrap gap-2">
+      {attachments.map((attachment, index) => (
+        <div
+          key={index}
+          className="flex items-center gap-1.5 rounded border border-gray-200 bg-gray-50 px-2 py-1 text-xs"
+        >
+          <span className="text-muted-foreground">
+            {getFileIcon(attachment.mimetype)}
+          </span>
+          <span className="max-w-[120px] truncate font-medium">
+            {attachment.filename || attachment.originalName}
+          </span>
+          {attachment.size && (
             <span className="text-muted-foreground">
-              {getFileIcon(attachment.mimetype)}
+              ({formatFileSize(attachment.size)})
             </span>
-            <span className="max-w-[120px] truncate font-medium">
-              {attachment.filename || attachment.originalName}
-            </span>
-            {attachment.size && (
-              <span className="text-muted-foreground">
-                ({formatFileSize(attachment.size)})
-              </span>
-            )}
-            <Icon
-              name="download"
-              size="xs"
-              className="text-muted-foreground ml-0.5"
-            />
+          )}
+          <button
+            type="button"
+            onClick={() => handleDownload(attachment, index)}
+            className="text-muted-foreground hover:text-foreground ml-0.5 transition-colors"
+          >
+            <Icon name="download" size="xs" />
           </button>
-        ))}
-      </div>
+          {canDelete && (
+            <button
+              type="button"
+              onClick={(e) => handleDelete(e, index)}
+              className="text-muted-foreground hover:text-destructive transition-colors"
+            >
+              <Icon name="close" size="xs" />
+            </button>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

@@ -19,7 +19,7 @@ const badgeVariants = cva('inline-flex items-center gap-1.5 text-xs', {
     },
     size: {
       sm: 'px-2 py-0.5 text-[11px]',
-      md: 'px-2.5 py-1 text-xs',
+      md: 'px-1 py-1 text-xs',
       lg: 'px-3 py-1.5 text-sm',
       compact: 'px-0 py-0 text-xs',
     },

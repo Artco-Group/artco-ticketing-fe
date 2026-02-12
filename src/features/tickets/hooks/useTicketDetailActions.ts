@@ -32,15 +32,18 @@ export function useTicketDetailActions({
   // Sync selectedDeveloper when ticket.assignedTo changes
   useEffect(() => {
     if (ticket) {
-      setSelectedDeveloper(ticket.assignedTo?._id || '');
+      setSelectedDeveloper(ticket.assignedTo?.id || '');
     }
   }, [ticket, ticket?.assignedTo]);
 
   const handleAssign = () => {
     if (!onAssignTicket || !ticket) return;
-    const currentAssignedId = ticket.assignedTo?._id || '';
+    const currentAssignedId = ticket.assignedTo?.id || '';
     if (selectedDeveloper && selectedDeveloper !== currentAssignedId) {
-      onAssignTicket(asTicketId(ticket._id || ''), asUserId(selectedDeveloper));
+      onAssignTicket(
+        asTicketId(ticket.ticketId || ''),
+        asUserId(selectedDeveloper)
+      );
     }
   };
 
@@ -49,10 +52,7 @@ export function useTicketDetailActions({
 
     setIsUpdating(true);
     try {
-      await onStatusUpdate(
-        asTicketId(ticket.ticketId || ticket._id || ''),
-        newStatus
-      );
+      await onStatusUpdate(asTicketId(ticket.ticketId || ticket.id), newStatus);
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {

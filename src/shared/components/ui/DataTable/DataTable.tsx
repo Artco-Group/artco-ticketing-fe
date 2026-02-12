@@ -30,7 +30,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../dropdown-menu';
-import { getRowId } from './utils';
 import type {
   TableRowData,
   DataTableProps,
@@ -58,6 +57,7 @@ function DataTable<T extends TableRowData>({
   sortDirection = null,
   onSort,
   actions,
+  hideHeader = false,
 }: DataTableProps<T>) {
   const sorting: SortingState = useMemo(() => {
     if (!sortColumn || !sortDirection) return [];
@@ -273,7 +273,7 @@ function DataTable<T extends TableRowData>({
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getRowId: (row) => getRowId(row) || String(data.indexOf(row)),
+    getRowId: (row) => row.id || String(data.indexOf(row)),
   });
 
   useEffect(() => {
@@ -444,7 +444,7 @@ function DataTable<T extends TableRowData>({
   return (
     <div className={cn('overflow-hidden bg-white', className)}>
       <ShadcnTable>
-        {renderHeader()}
+        {!hideHeader && renderHeader()}
         {renderRows()}
       </ShadcnTable>
     </div>

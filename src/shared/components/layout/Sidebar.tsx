@@ -3,7 +3,6 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/shared/components/ui';
 import type { IconName } from '@/shared/components/ui/Icon/Icon';
-import { Button } from '@/shared/components/ui';
 import { SearchBar } from '@/shared/components/composite';
 import { MenuItem } from '@/shared/components/composite/MenuItem';
 import { SIDEBAR_WIDTH } from './sidebar.config';
@@ -202,30 +201,6 @@ export function Sidebar({
             );
           })}
         </nav>
-
-        {/* Promo card */}
-        {!collapsed && (
-          <div className="px-0 pt-2 pb-3">
-            <div className="bg-sidebar-accent rounded-2xl p-4 text-center">
-              <div className="bg-greyscale-900 mx-auto mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl text-white">
-                <span className="text-lg font-semibold">★</span>
-              </div>
-              <p className="text-sidebar-foreground mb-1 text-sm font-semibold">
-                Get Asset save up to 25%
-              </p>
-              <p className="text-sidebar-foreground/80 mb-3 text-xs">
-                Become a member and get your first download for free.
-              </p>
-              <Button
-                type="button"
-                size="sm"
-                className="bg-greyscale-900 hover:bg-greyscale-800 h-8 w-full rounded-lg text-xs font-medium text-white"
-              >
-                Upgrade Now
-              </Button>
-            </div>
-          </div>
-        )}
 
         {/* Footer */}
         {footerSections.length > 0 && (

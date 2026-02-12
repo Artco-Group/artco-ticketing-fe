@@ -1,8 +1,5 @@
-import { useState, useMemo } from 'react';
-import {
-  type Project,
-  ProjectPriority,
-} from '@artco-group/artco-ticketing-sync';
+import { useMemo } from 'react';
+import { ProjectPriority } from '@artco-group/artco-ticketing-sync';
 import { type User } from '@/types';
 import {
   DataTable,
@@ -11,8 +8,9 @@ import {
   Avatar,
   AvatarGroup,
   Progress,
+  BulkActionsBar,
+  ConfirmationDialog,
   type Column,
-  type SortDirection,
   type RowAction,
 } from '@/shared/components/ui';
 import { CompanyLogo } from '@/shared/components/composite/CompanyLogo/CompanyLogo';
@@ -21,14 +19,8 @@ import {
   getProjectPriorityIcon,
   getProjectPriorityLabel,
 } from '../utils/project-helpers';
-
-interface ProjectWithProgress extends Project {
-  progress?: {
-    totalTickets: number;
-    completedTickets: number;
-    percentage: number;
-  };
-}
+import { type ProjectWithProgress } from '@/types';
+import { useProjectTableState } from '../hooks/useProjectTableState';
 
 interface ProjectTableProps {
   projects: ProjectWithProgress[];
@@ -43,9 +35,19 @@ function ProjectTable({
   onEditProject,
   onDeleteProject,
 }: ProjectTableProps) {
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const {
+    selectedRows,
+    setSelectedRows,
+    clearSelection,
+    sortColumn,
+    sortDirection,
+    handleSort,
+    showDeleteConfirm,
+    setShowDeleteConfirm,
+    handleBulkDelete,
+    isDeleting,
+    bulkActions,
+  } = useProjectTableState();
 
   const rowActions: RowAction<ProjectWithProgress>[] = useMemo(
     () => [
@@ -67,19 +69,6 @@ function ProjectTable({
 
   const columns: Column<ProjectWithProgress>[] = useMemo(
     () => [
-      {
-        key: 'id',
-        label: 'ID',
-        sortable: true,
-        render: (project) => (
-          <span className="text-muted-foreground font-mono text-xs">
-            {(project._id || project.id || '')
-              .toString()
-              .slice(-6)
-              .toUpperCase()}
-          </span>
-        ),
-      },
       {
         key: 'name',
         label: 'Title',
@@ -158,8 +147,8 @@ function ProjectTable({
         },
       },
       {
-        key: 'members',
-        label: 'Members',
+        key: 'developers',
+        label: 'Developers',
         align: 'center',
         render: (project) => {
           const members = project.members as User[] | undefined;
@@ -226,22 +215,37 @@ function ProjectTable({
   );
 
   return (
-    <DataTable
-      columns={columns}
-      data={projects}
-      onRowClick={onViewProject}
-      emptyState={emptyState}
-      selectable
-      selectedRows={selectedRows}
-      onSelect={setSelectedRows}
-      sortColumn={sortColumn}
-      sortDirection={sortDirection}
-      onSort={(col, dir) => {
-        setSortColumn(col);
-        setSortDirection(dir);
-      }}
-      actions={rowActions}
-    />
+    <>
+      <DataTable
+        columns={columns}
+        data={projects}
+        onRowClick={onViewProject}
+        emptyState={emptyState}
+        selectable
+        selectedRows={selectedRows}
+        onSelect={setSelectedRows}
+        sortColumn={sortColumn}
+        sortDirection={sortDirection}
+        onSort={handleSort}
+        actions={rowActions}
+      />
+      <BulkActionsBar
+        selectedCount={selectedRows.length}
+        actions={bulkActions}
+        onClear={clearSelection}
+      />
+      <ConfirmationDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleBulkDelete}
+        title="Delete projects"
+        description={`Are you sure you want to delete ${selectedRows.length} project${selectedRows.length > 1 ? 's' : ''}? This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={isDeleting}
+        icon="trash"
+      />
+    </>
   );
 }
 

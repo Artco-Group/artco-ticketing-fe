@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -11,37 +12,47 @@ import { UserRole } from '@/types';
 interface UseUserFormOptions {
   defaultValues?: Partial<CreateUserFormData>;
   isEditing?: boolean;
-  onSubmit: (data: CreateUserFormData | UpdateUserFormData) => void;
+  onSubmit: (
+    data: CreateUserFormData | UpdateUserFormData,
+    projectIds?: string[],
+    avatarFile?: File
+  ) => void;
+  initialProjectIds?: string[];
+  isClient?: boolean;
 }
 
 export function useUserForm({
   defaultValues,
   isEditing = false,
   onSubmit,
+  initialProjectIds = [],
+  isClient = false,
 }: UseUserFormOptions) {
   const schema = isEditing ? updateUserSchema : createUserSchema;
+  const [selectedProjectIds, setSelectedProjectIds] =
+    useState<string[]>(initialProjectIds);
 
   const form = useForm<CreateUserFormData>({
     resolver: zodResolver(schema) as Resolver<CreateUserFormData>,
     defaultValues: {
       name: defaultValues?.name || '',
       email: defaultValues?.email || '',
-      role: defaultValues?.role || UserRole.CLIENT,
-      password: '',
+      role: isClient
+        ? UserRole.CLIENT
+        : defaultValues?.role || UserRole.DEVELOPER,
     },
   });
 
-  const handleFormSubmit = (data: CreateUserFormData) => {
-    if (isEditing) {
-      const { password: _, ...updateData } = data;
-      onSubmit(updateData as UpdateUserFormData);
-    } else {
-      onSubmit(data);
-    }
+  const createSubmitHandler = (avatarFile?: File | null) => {
+    return form.handleSubmit((data: CreateUserFormData) => {
+      onSubmit(data, selectedProjectIds, avatarFile || undefined);
+    });
   };
 
   return {
     form,
-    onSubmit: form.handleSubmit(handleFormSubmit),
+    selectedProjectIds,
+    setSelectedProjectIds,
+    createSubmitHandler,
   };
 }

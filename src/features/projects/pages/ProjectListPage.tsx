@@ -10,8 +10,9 @@ import {
   RetryableError,
   EmptyState,
   SideDialog,
-  ConfirmModal,
+  ConfirmationDialog,
   Icon,
+  Button,
 } from '@/shared/components/ui';
 import { ListPageLayout } from '@/shared/components/layout/ListPageLayout';
 import type {
@@ -45,7 +46,7 @@ export default function ProjectListPage() {
     leadFilter,
     sortBy,
     showFormModal,
-    setProjectToDelete,
+    onCloseDeleteConfirm,
     onAddProject,
     onEditProject,
     onViewProject,
@@ -87,7 +88,7 @@ export default function ProjectListPage() {
         label: 'Lead',
         icon: <Icon name="user" size="sm" />,
         options: engLeads.map((lead) => ({
-          value: (lead._id || lead.id) as string,
+          value: lead.id as string,
           label: lead.name || lead.email || 'Unknown',
         })),
         searchable: true,
@@ -128,7 +129,7 @@ export default function ProjectListPage() {
 
     const getUserId = (user: User | undefined): string => {
       if (!user) return '';
-      return (user._id || user.id || '') as string;
+      return (user.id || '') as string;
     };
 
     const getUserIds = (users: User[] | undefined): string[] => {
@@ -205,28 +206,47 @@ export default function ProjectListPage() {
             : 'Fill in the details to create a new project.'
         }
         width="lg"
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCloseFormModal}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" form="project-form" disabled={isSubmitting}>
+              {isSubmitting
+                ? 'Saving...'
+                : editingProject
+                  ? 'Save Changes'
+                  : 'Create Project'}
+            </Button>
+          </div>
+        }
       >
         <ProjectForm
-          key={editingProject?._id?.toString() || editingProject?.id || 'new'}
+          key={editingProject?.id || 'new'}
+          formId="project-form"
           onSubmit={onFormSubmit}
-          onCancel={onCloseFormModal}
           defaultValues={getEditDefaultValues()}
           isEditing={!!editingProject}
-          isSubmitting={isSubmitting}
           users={users}
         />
       </SideDialog>
 
       {/* Delete Confirmation Modal */}
-      <ConfirmModal
+      <ConfirmationDialog
         isOpen={!!projectToDelete}
-        onClose={() => setProjectToDelete(null)}
+        onClose={onCloseDeleteConfirm}
         onConfirm={onConfirmDelete}
         title="Delete Project"
-        message={`Are you sure you want to delete "${projectToDelete?.name}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        confirmVariant="danger"
+        description={`Are you sure you want to delete "${projectToDelete?.name}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={isSubmitting}
+        icon="trash"
       />
     </ListPageLayout>
   );

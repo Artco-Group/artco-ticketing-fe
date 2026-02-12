@@ -9,6 +9,7 @@ export interface SideDialogProps {
   title: string;
   description?: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
   width?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
@@ -19,16 +20,13 @@ const widthClasses = {
   xl: 'w-[640px]',
 };
 
-/**
- * Side dialog component that slides in from the right
- * Uses Radix Dialog primitive for accessibility
- */
 export function SideDialog({
   isOpen,
   onClose,
   title,
   description,
   children,
+  footer,
   width = 'md',
 }: SideDialogProps) {
   return (
@@ -61,16 +59,21 @@ export function SideDialog({
                 )}
               </div>
               <DialogPrimitive.Close
-                className="text-muted-foreground hover:text-foreground hover:bg-muted shrink-0 rounded-md p-1 transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                className="text-muted-foreground hover:text-foreground shrink-0 transition-colors focus:outline-none"
                 aria-label="Close"
               >
-                <Icon name="x" size="md" />
+                <Icon name="close" size="sm" />
               </DialogPrimitive.Close>
             </div>
           </div>
 
-          {/* Content */}
           <div className="flex-1 overflow-y-auto px-6 py-4">{children}</div>
+
+          {footer && (
+            <div className="bg-background shrink-0 border-t px-6 py-4">
+              {footer}
+            </div>
+          )}
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>

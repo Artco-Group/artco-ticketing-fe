@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { UserRole, type Ticket, type Filters } from '@/types';
+import { UserRole, asTicketId, type Ticket, type Filters } from '@/types';
 
 import { PAGE_ROUTES } from '@/shared/constants';
 import { useAuth } from '@/features/auth/context';
 import { useUsers } from '@/features/users/api';
+import { useRoleFlags } from '@/shared/hooks';
 import { useTickets } from '../api/tickets-api';
 import {
   filterTickets,
@@ -19,9 +20,7 @@ export function useTicketList() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const isEngLead = userRole === UserRole.ENG_LEAD;
-  const isDeveloper = userRole === UserRole.DEVELOPER;
-  const isClient = userRole === UserRole.CLIENT;
+  const { isEngLead, isDeveloper, isClient } = useRoleFlags(userRole);
 
   const activeTab = searchParams.get('tab') || 'active';
 
@@ -52,7 +51,7 @@ export function useTicketList() {
   }, [ticketsData]);
 
   const { data: usersData } = useUsers();
-  const users = usersData?.data?.users || [];
+  const users = usersData?.users || [];
 
   const roleFilteredTickets = useMemo(() => {
     if (isDeveloper) {
@@ -91,7 +90,10 @@ export function useTicketList() {
   }, [tabFilteredTickets, filters, isEngLead]);
 
   const handleViewTicket = (ticket: Ticket) => {
-    navigate(PAGE_ROUTES.TICKETS.detail(ticket._id || ''));
+    // Use human-readable ticketId (e.g., ART-123) for URL
+    navigate(
+      PAGE_ROUTES.TICKETS.detail(asTicketId(ticket.ticketId || ticket.id))
+    );
   };
 
   const handleFilterChange = (filterType: string, value: string) => {
@@ -123,7 +125,6 @@ export function useTicketList() {
 
   return {
     tickets: filteredTickets,
-    allTickets: isEngLead ? allTickets : undefined,
     users: isEngLead ? users : undefined,
     filters: !isClient ? filters : undefined,
     isLoading: ticketsLoading,

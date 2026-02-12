@@ -77,8 +77,7 @@ export type Column<T> =
   | CustomColumn<T>;
 
 export interface TableRowData {
-  id?: string;
-  _id?: string;
+  id: string;
   className?: string;
 }
 
@@ -95,6 +94,7 @@ export interface DataTableProps<T extends TableRowData> {
   sortDirection?: SortDirection;
   onSort?: (column: string, direction: SortDirection) => void;
   actions?: RowAction<T>[];
+  hideHeader?: boolean;
 }
 
 // TanStack Table re-exports for advanced usage

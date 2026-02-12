@@ -3,7 +3,7 @@ import {
   ProjectPriority,
   ProjectPriorityDisplay,
 } from '@artco-group/artco-ticketing-sync';
-import { type User } from '@/types';
+import { type ProjectWithProgress } from '@/types';
 
 const PRIORITY_ORDER: Record<string, number> = {
   [ProjectPriority.CRITICAL]: 4,
@@ -11,20 +11,6 @@ const PRIORITY_ORDER: Record<string, number> = {
   [ProjectPriority.MEDIUM]: 2,
   [ProjectPriority.LOW]: 1,
 };
-
-interface ProjectWithProgress {
-  _id?: string;
-  id?: string;
-  name?: string;
-  priority?: string;
-  isArchived?: boolean;
-  dueDate?: string | null;
-  updatedAt?: string;
-  leads?: User[];
-  progress?: {
-    percentage: number;
-  };
-}
 
 type SortOption =
   | 'Name'
@@ -55,8 +41,7 @@ export function useProjectFilters<T extends ProjectWithProgress>(
         (statusFilter === 'Archived' && project.isArchived);
 
       const matchesLead =
-        !leadFilter ||
-        project.leads?.some((lead) => (lead._id || lead.id) === leadFilter);
+        !leadFilter || project.leads?.some((lead) => lead.id === leadFilter);
 
       return matchesPriority && matchesStatus && matchesLead;
     });

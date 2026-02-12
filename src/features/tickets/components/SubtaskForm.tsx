@@ -33,12 +33,13 @@ export function SubtaskForm({
         disabled={isLoading}
         className="flex-1"
       />
-      <Button type="submit" size="sm" disabled={!title.trim() || isLoading}>
-        {isLoading ? (
-          <Icon name="loader" size="sm" className="animate-spin" />
-        ) : (
-          <Icon name="plus" size="sm" />
-        )}
+      <Button
+        type="submit"
+        size="sm"
+        disabled={!title.trim() || isLoading}
+        loading={isLoading}
+      >
+        <Icon name="plus" size="sm" />
       </Button>
     </form>
   );

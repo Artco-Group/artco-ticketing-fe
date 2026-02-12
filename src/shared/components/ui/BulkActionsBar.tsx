@@ -8,6 +8,7 @@ export interface BulkAction {
   icon?: ReactNode;
   onClick: () => void;
   variant?: 'default' | 'destructive';
+  disabled?: boolean;
 }
 
 export interface BulkActionsBarProps {
@@ -49,6 +50,7 @@ export function BulkActionsBar({
             }
             size="sm"
             onClick={action.onClick}
+            disabled={action.disabled}
             className="gap-2"
           >
             {action.icon}

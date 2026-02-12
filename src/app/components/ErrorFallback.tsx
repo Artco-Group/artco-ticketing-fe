@@ -30,26 +30,8 @@ export function ErrorFallback({
   };
 
   return (
-    <div
-      className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12"
-      style={{
-        display: 'flex',
-        minHeight: '100vh',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '3rem 1rem',
-      }}
-    >
-      <div
-        className="w-full max-w-3xl rounded-lg bg-white p-8 shadow-lg"
-        style={{
-          width: '100%',
-          maxWidth: '768px',
-          padding: '2rem',
-          backgroundColor: 'white',
-          borderRadius: '0.5rem',
-        }}
-      >
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+      <div className="w-full max-w-3xl rounded-lg bg-white p-8 shadow-lg">
         {/* Error Icon */}
         <div className="mb-6 flex justify-center">
           <div className="bg-error-100 flex h-16 w-16 items-center justify-center rounded-full">
@@ -74,10 +56,7 @@ export function ErrorFallback({
             <h2 className="text-error-700 mb-2 text-sm font-semibold">
               Error Details (Development Only):
             </h2>
-            <p
-              className="text-error-600 mb-2 font-mono text-xs"
-              style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
-            >
+            <p className="text-error-600 mb-2 font-mono text-xs break-words">
               {error.toString()}
             </p>
             {error.stack && (
@@ -85,14 +64,7 @@ export function ErrorFallback({
                 <summary className="text-error-700 cursor-pointer text-xs font-semibold">
                   Stack Trace
                 </summary>
-                <pre
-                  className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs"
-                  style={{
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                    overflowWrap: 'anywhere',
-                  }}
-                >
+                <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs break-words whitespace-pre-wrap">
                   {error.stack}
                 </pre>
               </details>
@@ -102,14 +74,7 @@ export function ErrorFallback({
                 <summary className="text-error-700 cursor-pointer text-xs font-semibold">
                   Component Stack
                 </summary>
-                <pre
-                  className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs"
-                  style={{
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                    overflowWrap: 'anywhere',
-                  }}
-                >
+                <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs break-words whitespace-pre-wrap">
                   {errorInfo.componentStack}
                 </pre>
               </details>

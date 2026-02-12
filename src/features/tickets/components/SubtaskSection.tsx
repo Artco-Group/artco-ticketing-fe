@@ -7,9 +7,14 @@ import { useSubtasksHook } from '../hooks';
 interface SubtaskSectionProps {
   ticketId: TicketId;
   canEdit: boolean;
+  canToggle?: boolean;
 }
 
-export function SubtaskSection({ ticketId, canEdit }: SubtaskSectionProps) {
+export function SubtaskSection({
+  ticketId,
+  canEdit,
+  canToggle = false,
+}: SubtaskSectionProps) {
   const {
     subtasks,
     progress,
@@ -54,6 +59,7 @@ export function SubtaskSection({ ticketId, canEdit }: SubtaskSectionProps) {
               onDelete={canEdit ? onDelete : undefined}
               isLoading={isMutating}
               canEdit={canEdit}
+              canToggle={canToggle}
             />
             {canEdit && (
               <SubtaskForm onSubmit={onCreate} isLoading={isCreating} />

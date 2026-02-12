@@ -4,11 +4,11 @@ import {
   QueryKeys,
   API_ROUTES,
   CACHE,
-  type ApiResponse,
   type LoginFormData,
   type LoginResponse,
   type ForgotPasswordFormData,
   type ResetPasswordFormData,
+  type ChangePasswordFormData,
   type MessageResponse,
   type CurrentUserResponse,
 } from '@artco-group/artco-ticketing-sync';
@@ -35,19 +35,13 @@ function useCurrentUser() {
  * Login with email and password
  */
 function useLogin() {
-  return useApiMutation<
-    { status: string; data: { user: LoginResponse['user'] }; message: string },
-    LoginFormData
-  >({
+  return useApiMutation<{ user: LoginResponse['user'] }, LoginFormData>({
     url: API_ROUTES.AUTH.LOGIN,
     method: 'POST',
     onSuccess: async (response) => {
-      const user = response?.data?.user;
+      const user = response?.user;
       if (user) {
-        queryClient.setQueryData(QueryKeys.auth.currentUser(), {
-          status: 'success',
-          data: { user },
-        });
+        queryClient.setQueryData(QueryKeys.auth.currentUser(), { user });
       }
       queryClient.invalidateQueries({
         queryKey: QueryKeys.tickets.lists(),
@@ -87,10 +81,10 @@ function useVerifyResetToken(token: string | undefined) {
     queryKey: QueryKeys.auth.verifyResetToken(token || ''),
     queryFn: async () => {
       if (!token) throw new Error('Token is required');
-      const response = await apiClient.get<ApiResponse<{ valid: boolean }>>(
+      const response = await apiClient.get<{ valid: boolean }>(
         API_ROUTES.AUTH.VERIFY_RESET_TOKEN(token)
       );
-      return response.data.data as { valid: boolean };
+      return response.data;
     },
     enabled: !!token,
     retry: false,
@@ -107,6 +101,19 @@ function useResetPassword() {
   });
 }
 
+/**
+ * Change password for authenticated user
+ */
+function useChangePassword() {
+  return useApiMutation<MessageResponse, ChangePasswordFormData>({
+    url: API_ROUTES.AUTH.CHANGE_PASSWORD,
+    method: 'POST',
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
+    },
+  });
+}
+
 export {
   useCurrentUser,
   useLogin,
@@ -114,4 +121,5 @@ export {
   useForgotPassword,
   useVerifyResetToken,
   useResetPassword,
+  useChangePassword,
 };

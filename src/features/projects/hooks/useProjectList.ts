@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  type Project,
   type CreateProjectFormData,
   type UpdateProjectFormData,
 } from '@artco-group/artco-ticketing-sync';
-import { type User, asProjectId } from '@/types';
+import { type User, type ProjectWithProgress, asProjectId } from '@/types';
 import { getErrorMessage } from '@/shared';
 import {
   useProjects,
@@ -19,17 +18,6 @@ import { PAGE_ROUTES } from '@/shared/constants';
 import { useProjectFilters } from './useProjectFilters';
 import { useProjectModal } from './useProjectModal';
 
-export interface ProjectWithProgress extends Project {
-  progress?: {
-    totalTickets: number;
-    completedTickets: number;
-    percentage: number;
-  };
-}
-
-const getProjectId = (project: ProjectWithProgress) =>
-  project._id || project.id;
-
 export function useProjectList() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -42,16 +30,13 @@ export function useProjectList() {
   const deleteMutation = useDeleteProject();
 
   const projects = useMemo<ProjectWithProgress[]>(
-    () => data?.data?.projects || [],
+    () => data?.projects || [],
     [data]
   );
 
-  const users = useMemo<User[]>(
-    () => usersData?.data?.users || [],
-    [usersData]
-  );
+  const users = useMemo<User[]>(() => usersData?.users || [], [usersData]);
 
-  const filters = useProjectFilters(projects);
+  const filters = useProjectFilters<ProjectWithProgress>(projects);
   const modal = useProjectModal<ProjectWithProgress>();
 
   const isSubmitting =
@@ -73,11 +58,13 @@ export function useProjectList() {
     project: ProjectWithProgress,
     formData: UpdateProjectFormData
   ) => {
-    const id = getProjectId(project);
-    if (!id) return;
+    if (!project.slug) return;
 
     try {
-      await updateMutation.mutateAsync({ id: asProjectId(id), data: formData });
+      await updateMutation.mutateAsync({
+        slug: asProjectId(project.slug),
+        data: formData,
+      });
       toast.success('Project updated successfully');
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -86,11 +73,10 @@ export function useProjectList() {
   };
 
   const handleDelete = async (project: ProjectWithProgress) => {
-    const id = getProjectId(project);
-    if (!id) return;
+    if (!project.slug) return;
 
     try {
-      await deleteMutation.mutateAsync(asProjectId(id));
+      await deleteMutation.mutateAsync(asProjectId(project.slug));
       toast.success('Project deleted successfully');
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -99,9 +85,9 @@ export function useProjectList() {
   };
 
   const handleView = (project: ProjectWithProgress) => {
-    const id = getProjectId(project);
-    if (id) {
-      navigate(PAGE_ROUTES.PROJECTS.detail(asProjectId(id)));
+    // Use human-readable slug for URL (e.g., artco-website)
+    if (project.slug) {
+      navigate(PAGE_ROUTES.PROJECTS.detail(asProjectId(project.slug)));
     }
   };
 
@@ -148,6 +134,7 @@ export function useProjectList() {
     showFormModal: modal.showFormModal,
     editingProject: modal.editingProject,
     projectToDelete: modal.projectToDelete,
+    onCloseDeleteConfirm: modal.closeDeleteConfirm,
 
     onAddProject: modal.openCreateModal,
     onEditProject: modal.openEditModal,

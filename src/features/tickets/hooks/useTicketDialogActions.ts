@@ -34,6 +34,9 @@ function buildCreateFormData(
   if (data.expectedResult)
     formData.append('expectedResult', data.expectedResult);
   if (data.actualResult) formData.append('actualResult', data.actualResult);
+  if (data.assignedTo) formData.append('assignedTo', data.assignedTo);
+  if (data.startDate) formData.append('startDate', data.startDate);
+  if (data.dueDate) formData.append('dueDate', data.dueDate);
 
   return formData;
 }
@@ -54,9 +57,8 @@ export function useTicketDialogActions({
   const handleSubmit = async (data: TicketFormData) => {
     try {
       if (isEditing && ticket) {
-        const ticketId = (ticket._id || ticket.id) as string;
         await updateMutation.mutateAsync({
-          id: asTicketId(ticketId),
+          id: asTicketId(ticket.ticketId || ''),
           data,
         });
         toast.success('Ticket updated successfully');

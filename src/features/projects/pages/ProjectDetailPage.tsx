@@ -1,17 +1,12 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMemo, useState } from 'react';
-import { ProjectPriority } from '@artco-group/artco-ticketing-sync';
-import { type User, type Ticket } from '@/types';
-import {
-  useProject,
-  useProjectTickets,
-  useAddProjectMembers,
-} from '../api/projects-api';
+import { ProjectPriority, UserRole } from '@artco-group/artco-ticketing-sync';
+import { type User, type Ticket, asProjectId, asTicketId } from '@/types';
+import { useProject, useProjectTickets } from '../api/projects-api';
 import { useUsers } from '@/features/users/api';
 import {
   Button,
   EmptyState,
-  Icon,
   AvatarGroup,
   Modal,
   RetryableError,
@@ -23,8 +18,6 @@ import { MemberPicker } from '@/shared/components/composite/MemberPicker';
 import { CompanyLogo } from '@/shared/components/composite/CompanyLogo/CompanyLogo';
 import { PageHeader } from '@/shared/components/patterns/PageHeader/PageHeader';
 import { PAGE_ROUTES } from '@/shared/constants';
-import { useToast } from '@/shared/components/ui';
-import { getErrorMessage } from '@/shared';
 import {
   getProjectPriorityIcon,
   getProjectPriorityLabel,
@@ -32,61 +25,44 @@ import {
 import { useAuth } from '@/features/auth/context';
 import { useRoleFlags } from '@/shared/hooks/useRoleFlags';
 import { TicketDialog, TicketTable } from '@/features/tickets/components';
+import { useProjectInlineEdit, useInviteMembers } from '../hooks';
+import { InlineDateEdit } from '@/shared/components/ui/InlineDateEdit';
 
 export default function ProjectDetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const toast = useToast();
   const { user } = useAuth();
-  const { isDeveloper } = useRoleFlags(user?.role);
+  const { isDeveloper, isEngLead } = useRoleFlags(user?.role);
 
-  const { data, isLoading, error, refetch } = useProject(id || '');
+  // slug is the human-readable project identifier (e.g., "artco-website")
+  const projectSlug = slug ? asProjectId(slug) : undefined;
+
+  const { data, isLoading, error, refetch } = useProject(projectSlug);
   const {
     data: ticketsData,
     isLoading: ticketsLoading,
     refetch: refetchTickets,
-  } = useProjectTickets(id || '');
+  } = useProjectTickets(projectSlug);
   const { data: usersData } = useUsers();
-  const addMembersMutation = useAddProjectMembers();
 
-  const [showInviteModal, setShowInviteModal] = useState(false);
+  const projectInlineEdit = useProjectInlineEdit({
+    projectId: projectSlug,
+    canEdit: isEngLead,
+  });
+
   const [showTicketDialog, setShowTicketDialog] = useState(false);
-  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
   const canCreateTicket = !isDeveloper;
 
-  const project = data?.data?.project;
-  const tickets = ticketsData?.data?.tickets || [];
-  const users = useMemo(
-    () => usersData?.data?.users || [],
-    [usersData?.data?.users]
-  );
+  const project = data?.project;
+  const tickets = ticketsData?.tickets || [];
+  const users = useMemo(() => usersData?.users || [], [usersData?.users]);
 
-  const availableDevelopers = useMemo(() => {
-    const currentMemberIds = new Set(
-      (project?.members as User[] | undefined)?.map((m) => m._id || m.id) || []
-    );
-    return users.filter(
-      (user) =>
-        user.role === 'developer' && !currentMemberIds.has(user._id || user.id)
-    );
-  }, [users, project?.members]);
-
-  const handleInviteMembers = async () => {
-    if (!id || selectedMembers.length === 0) return;
-
-    try {
-      await addMembersMutation.mutateAsync({
-        id,
-        data: { memberIds: selectedMembers },
-      });
-      toast.success('Members added successfully');
-      setShowInviteModal(false);
-      setSelectedMembers([]);
-    } catch (err) {
-      toast.error(getErrorMessage(err));
-    }
-  };
+  const inviteMembers = useInviteMembers({
+    projectId: projectSlug,
+    currentMembers: project?.members as User[] | undefined,
+    allUsers: users,
+  });
 
   if (isLoading) {
     return <SpinnerContainer message="Loading project..." />;
@@ -116,174 +92,158 @@ export default function ProjectDetailPage() {
           ]}
         />
 
-        <div className="flex flex-col border-b lg:flex-row">
-          <div className="flex-1 lg:border-r">
-            <div className="p-6">
-              <div className="flex items-start gap-4">
-                <CompanyLogo
-                  alt={client?.name || project.name}
-                  fallback={client?.name || project.name}
-                  tooltip={client?.name}
-                  size="lg"
-                  variant="rounded"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-xl font-semibold">{project.name}</h2>
-                    <Badge
-                      icon={getProjectPriorityIcon(
-                        project.priority as ProjectPriority
-                      )}
-                    >
-                      {getProjectPriorityLabel(
-                        project.priority as ProjectPriority
-                      )}
-                    </Badge>
-                  </div>
-                  {project.description && (
-                    <p className="text-muted-foreground mt-2">
-                      {project.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t">
-              <div className="p-6">
-                <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-muted-foreground text-xs font-medium uppercase">
-                    Team
-                  </h3>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowInviteModal(true)}
+        <div className="grid grid-cols-1 border-b lg:grid-cols-[1fr_18rem]">
+          <div className="p-6 lg:border-r">
+            <div className="flex items-start gap-4">
+              <CompanyLogo
+                alt={client?.name || project.name}
+                fallback={client?.name || project.name}
+                tooltip={client?.name}
+                size="lg"
+                variant="rounded"
+              />
+              <div className="flex-1">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-xl font-semibold">{project.name}</h2>
+                  <Badge
+                    icon={getProjectPriorityIcon(
+                      project.priority as ProjectPriority
+                    )}
                   >
-                    <Icon name="plus" size="sm" className="mr-1" />
-                    Invite Members
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <div>
-                    <p className="text-muted-foreground mb-2 text-xs">
-                      Engineering Leads
-                    </p>
-                    {leads && leads.length > 0 ? (
-                      <AvatarGroup
-                        size="md"
-                        max={4}
-                        avatars={leads.map((lead) => ({
-                          fallback: lead.name || lead.email || '?',
-                          tooltip: lead.name || lead.email,
-                        }))}
-                      />
-                    ) : (
-                      <p className="text-muted-foreground text-sm">
-                        No leads assigned
-                      </p>
+                    {getProjectPriorityLabel(
+                      project.priority as ProjectPriority
                     )}
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground mb-2 text-xs">
-                      Members
-                    </p>
-                    {members && members.length > 0 ? (
-                      <AvatarGroup
-                        size="md"
-                        max={6}
-                        avatars={members.map((member) => ({
-                          fallback: member.name || member.email || '?',
-                          tooltip: member.name || member.email,
-                        }))}
-                      />
-                    ) : (
-                      <p className="text-muted-foreground text-sm">
-                        No members yet
-                      </p>
-                    )}
-                  </div>
+                  </Badge>
                 </div>
+                {project.description && (
+                  <p className="text-muted-foreground mt-2">
+                    {project.description}
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="shrink-0 border-t lg:w-72 lg:border-t-0">
-            <div className="border-b">
-              <div className="p-4">
-                <h3 className="text-muted-foreground mb-3 text-xs font-medium uppercase">
-                  Progress
-                </h3>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-2xl font-bold">
-                      {project.progress?.completedTickets ?? 0}
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      of {project.progress?.totalTickets ?? 0} tasks
-                    </p>
-                  </div>
-                  <ProgressCircle
-                    value={project.progress?.percentage ?? 0}
+          <div className="flex flex-col justify-center border-t p-4 lg:border-t-0">
+            <h3 className="text-muted-foreground mb-3 text-xs font-medium uppercase">
+              Progress
+            </h3>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-2xl font-bold">
+                  {project.progress?.completedTickets ?? 0}
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  of {project.progress?.totalTickets ?? 0} tickets
+                </p>
+              </div>
+              <ProgressCircle
+                value={project.progress?.percentage ?? 0}
+                size="md"
+              />
+            </div>
+          </div>
+
+          <div className="border-t p-6 lg:border-r">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-muted-foreground text-md font-medium uppercase">
+                Team
+              </h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={inviteMembers.openModal}
+                leftIcon="plus"
+              >
+                Invite Members
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <p className="text-muted-foreground mb-2 text-xs">
+                  Engineering Leads
+                </p>
+                {leads && leads.length > 0 ? (
+                  <AvatarGroup
                     size="md"
+                    max={4}
+                    avatars={leads.map((lead) => ({
+                      fallback: lead.name || lead.email || '?',
+                      tooltip: lead.name || lead.email,
+                    }))}
                   />
-                </div>
+                ) : (
+                  <p className="text-muted-foreground text-sm">
+                    No leads assigned
+                  </p>
+                )}
+              </div>
+              <div>
+                <p className="text-muted-foreground mb-2 text-xs">Developers</p>
+                {members && members.length > 0 ? (
+                  <AvatarGroup
+                    size="md"
+                    max={6}
+                    avatars={members.map((member) => ({
+                      fallback: member.name || member.email || '?',
+                      tooltip: member.name || member.email,
+                    }))}
+                  />
+                ) : (
+                  <p className="text-muted-foreground text-sm">
+                    No members yet
+                  </p>
+                )}
               </div>
             </div>
+          </div>
 
-            <div className="p-4">
-              <h3 className="text-muted-foreground mb-3 text-xs font-medium uppercase">
-                Timeline
-              </h3>
-              <div className="space-y-2 text-sm">
-                {project.startDate && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Start Date</span>
-                    <span>
-                      {new Date(project.startDate).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
-                    </span>
-                  </div>
-                )}
-                {project.dueDate && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Due Date</span>
-                    <span>
-                      {new Date(project.dueDate).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
-                    </span>
-                  </div>
-                )}
-              </div>
+          <div className="flex flex-col justify-center border-t p-4">
+            <h3 className="text-muted-foreground mb-3 text-xs font-medium uppercase">
+              Timeline
+            </h3>
+            <div className="space-y-2 text-sm">
+              <InlineDateEdit
+                label="Start Date"
+                value={project.startDate}
+                canEdit={projectInlineEdit.canEditDates}
+                isLoading={projectInlineEdit.isDatesUpdating}
+                onChange={projectInlineEdit.onStartDateChange}
+              />
+              <InlineDateEdit
+                label="Due Date"
+                value={project.dueDate}
+                canEdit={projectInlineEdit.canEditDates}
+                isLoading={projectInlineEdit.isDatesUpdating}
+                onChange={projectInlineEdit.onDueDateChange}
+              />
             </div>
           </div>
         </div>
 
         <div className="p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Tasks</h3>
+            <h3 className="text-lg font-semibold">Tickets</h3>
             {canCreateTicket && (
-              <Button size="sm" onClick={() => setShowTicketDialog(true)}>
-                <Icon name="plus" size="sm" className="mr-1" />
-                Add Task
+              <Button
+                size="sm"
+                onClick={() => setShowTicketDialog(true)}
+                leftIcon="plus"
+                className="bg-greyscale-900 hover:bg-greyscale-800 text-white"
+              >
+                Create Ticket
               </Button>
             )}
           </div>
           {ticketsLoading ? (
             <div className="py-8 text-center">
-              <p className="text-muted-foreground">Loading tasks...</p>
+              <p className="text-muted-foreground">Loading tickets...</p>
             </div>
           ) : tickets.length === 0 ? (
             <EmptyState
               variant="no-data"
-              title="No tasks yet"
-              message="Create tasks to track work for this project."
+              title="No tickets yet"
+              message="Create tickets to track work for this project."
               className="py-8"
             />
           ) : (
@@ -291,8 +251,8 @@ export default function ProjectDetailPage() {
               tickets={tickets as Ticket[]}
               users={users}
               onViewTicket={(ticket) => {
-                const ticketId = ticket._id || ticket.id;
-                navigate(PAGE_ROUTES.TICKETS.detail(ticketId as string));
+                const ticketId = asTicketId(ticket.ticketId || ticket.id);
+                navigate(PAGE_ROUTES.TICKETS.detail(ticketId));
               }}
             />
           )}
@@ -300,56 +260,54 @@ export default function ProjectDetailPage() {
       </div>
 
       <Modal
-        isOpen={showInviteModal}
-        onClose={() => {
-          setShowInviteModal(false);
-          setSelectedMembers([]);
-        }}
+        isOpen={inviteMembers.isOpen}
+        onClose={inviteMembers.closeModal}
         title="Invite Team Members"
-        maxWidth="md"
+        size="md"
         actions={
           <>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowInviteModal(false);
-                setSelectedMembers([]);
-              }}
-            >
+            <Button variant="outline" onClick={inviteMembers.closeModal}>
               Cancel
             </Button>
             <Button
-              onClick={handleInviteMembers}
+              onClick={inviteMembers.handleInvite}
               disabled={
-                selectedMembers.length === 0 || addMembersMutation.isPending
+                inviteMembers.selectedMembers.length === 0 ||
+                inviteMembers.isSubmitting
               }
             >
-              {addMembersMutation.isPending ? 'Adding...' : 'Add Members'}
+              {inviteMembers.isSubmitting ? 'Adding...' : 'Add Members'}
             </Button>
           </>
         }
       >
         <div className="space-y-4">
           <p className="text-muted-foreground text-sm">
-            Select developers to add to this project.
+            Select developers or engineering leads to add to this project.
           </p>
           <MemberPicker
-            value={selectedMembers}
-            options={availableDevelopers}
+            value={inviteMembers.selectedMembers}
+            options={inviteMembers.availableMembers}
             multiple
             onChange={(value) =>
-              setSelectedMembers(Array.isArray(value) ? value : [value])
+              inviteMembers.setSelectedMembers(
+                Array.isArray(value) ? value : [value]
+              )
             }
-            placeholder="Select developers..."
+            placeholder="Select team members..."
+            groupBy="role"
+            groups={[
+              { key: UserRole.ENG_LEAD, label: 'Engineering Leads' },
+              { key: UserRole.DEVELOPER, label: 'Developers' },
+            ]}
           />
         </div>
       </Modal>
 
-      {/* Ticket Dialog */}
       <TicketDialog
         isOpen={showTicketDialog}
         onClose={() => setShowTicketDialog(false)}
-        projectId={id}
+        projectId={project?.id}
         onSuccess={refetchTickets}
       />
     </>

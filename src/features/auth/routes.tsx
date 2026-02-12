@@ -1,18 +1,22 @@
 import { lazy } from 'react';
 import { PAGE_ROUTES, ROUTE_PATTERNS } from '@/shared/constants';
-import { mapToPublicRoutes } from '@/shared/utils/route-helpers';
+import {
+  mapToPublicRoutes,
+  createAuthOnlyRoute,
+} from '@/shared/utils/route-helpers';
 
 // Lazy load auth pages for better performance
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const PasswordResetPage = lazy(() => import('./pages/PasswordResetPage'));
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
 const CheckEmailPage = lazy(() => import('./pages/CheckEmailPage'));
+const ChangePasswordPage = lazy(() => import('./pages/ChangePasswordPage'));
 
 /**
  * Public authentication routes
  * Routes accessible without authentication (login, password reset, etc.)
  */
-export const authRoutes = mapToPublicRoutes([
+const publicAuthRoutes = mapToPublicRoutes([
   { key: 'login', path: PAGE_ROUTES.AUTH.LOGIN, component: LoginPage },
   {
     key: 'forgot-password',
@@ -30,3 +34,13 @@ export const authRoutes = mapToPublicRoutes([
     component: PasswordResetPage,
   },
 ]);
+
+const authOnlyRoutes = [
+  createAuthOnlyRoute(
+    'change-password',
+    PAGE_ROUTES.AUTH.CHANGE_PASSWORD,
+    ChangePasswordPage
+  ),
+];
+
+export const authRoutes = [...publicAuthRoutes, ...authOnlyRoutes];

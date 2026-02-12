@@ -12,10 +12,6 @@ import { PAGE_ROUTES } from '@/shared/constants';
 import { extractAuthError } from '../utils/extract-auth-error';
 import { useToast } from '@/shared/components/ui';
 
-/**
- * Custom hook for login form logic.
- * Separates business logic from UI for better testability and maintainability.
- */
 export function useLoginForm() {
   const loginMutation = useLogin();
   const navigate = useNavigate();

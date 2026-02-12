@@ -13,7 +13,6 @@ interface FileUploadProps {
   files: File[];
   onFilesChange: (files: File[]) => void;
   id?: string;
-  /** Use 'modal' when inside a Dialog to remove outer border styling */
   variant?: 'standalone' | 'modal';
 }
 
@@ -29,17 +28,14 @@ function FileUpload({
   const generatedId = useId();
   const inputId = id || generatedId;
 
-  // Validate file type
   const isValidFileType = (file: File): boolean => {
     return ALLOWED_FILE_TYPES.ATTACHMENTS.includes(file.type);
   };
 
-  // Validate file size
   const isValidFileSize = (file: File): boolean => {
     return file.size <= VALIDATION_RULES.FRONTEND_MAX_FILE_SIZE;
   };
 
-  // Handle file drop
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
@@ -48,30 +44,25 @@ function FileUpload({
     addFiles(droppedFiles);
   };
 
-  // Handle drag over
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
-  // Handle drag leave
   const handleDragLeave = () => {
     setIsDragging(false);
   };
 
-  // Handle file selection
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files ?? []);
     addFiles(selectedFiles);
   };
 
-  // Add files with validation
   const addFiles = (newFiles: File[]) => {
     const validFiles: File[] = [];
     const errors: string[] = [];
 
     for (const file of newFiles) {
-      // Validate file type
       if (!isValidFileType(file)) {
         errors.push(
           `${file.name}: Invalid file type. Only images, PDF, and documents allowed.`
@@ -79,7 +70,6 @@ function FileUpload({
         continue;
       }
 
-      // Validate file size
       if (!isValidFileSize(file)) {
         errors.push(`${file.name}: File too large. Maximum 5MB per file.`);
         continue;
@@ -88,7 +78,6 @@ function FileUpload({
       validFiles.push(file);
     }
 
-    // Calculate total size of existing + new files
     const currentTotalSize = files.reduce((sum, f) => sum + f.size, 0);
     const newTotalSize = validFiles.reduce((sum, f) => sum + f.size, 0);
 
@@ -102,31 +91,26 @@ function FileUpload({
         `Total file size would exceed 15MB limit. Current: ${currentMB}MB, Adding: ${newMB}MB`
       );
     } else {
-      // Show errors if any
       if (errors.length > 0) {
         errors.forEach((error) => toast.error(error));
       }
 
-      // Update files if valid
       if (validFiles.length > 0) {
         onFilesChange([...files, ...validFiles]);
       }
       return;
     }
 
-    // Show errors
     if (errors.length > 0) {
       errors.forEach((error) => toast.error(error));
     }
   };
 
-  // Remove file
   const removeFile = (index: number) => {
     const newFiles = files.filter((_, i) => i !== index);
     onFilesChange(newFiles);
   };
 
-  // Get total file size
   const getTotalSize = (): string => {
     const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
     return formatFileSize(totalBytes);
@@ -134,7 +118,6 @@ function FileUpload({
 
   return (
     <div>
-      {/* Drop zone */}
       <div
         className={cn(
           'cursor-pointer text-center transition-colors',
@@ -157,11 +140,11 @@ function FileUpload({
         />
         <p className="text-muted-sm mb-1">
           {files.length === 0
-            ? 'Prevucite datoteke ovdje ili kliknite za odabir'
-            : 'Dodajte još datoteka'}
+            ? 'Drag files here or click to select'
+            : 'Add more files'}
         </p>
         <p className="text-muted-xs">
-          Podržano: slike, PDF, dokumenti (max 5MB po fajlu, 15MB ukupno)
+          Supported: images, PDF, documents (max 5MB per file, 15MB total)
         </p>
         <input
           type="file"
@@ -173,16 +156,14 @@ function FileUpload({
         />
       </div>
 
-      {/* Selected files list */}
       {files.length > 0 && (
         <div className="mt-4 space-y-2">
           <p className="text-foreground-sm">
-            Odabrane datoteke ({files.length}) - Ukupno: {getTotalSize()} / 15MB
+            Selected files ({files.length}) - Total: {getTotalSize()} / 15MB
           </p>
           {files.map((file, index) => (
             <Card key={index} className="flex-between p-3">
               <div className="flex-start-gap-3">
-                {/* File icon based on type */}
                 <div className="bg-primary/10 icon-container-sm">
                   {file.type.startsWith('image/') ? (
                     <Image className="text-primary h-5 w-5" />

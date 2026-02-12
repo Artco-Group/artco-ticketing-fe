@@ -1,25 +1,24 @@
-import type { ReactNode } from 'react';
 import type { User } from '@/types';
 import {
   TicketStatus,
   TicketPriority,
   TicketCategory,
 } from '@artco-group/artco-ticketing-sync';
+import { Badge, Avatar } from '@/shared/components/ui';
+import { CompanyLogo } from '@/shared/components/composite';
 import {
-  Badge,
-  Avatar,
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '@/shared/components/ui';
+  InlineEdit,
+  type InlineEditOption,
+} from '@/shared/components/ui/InlineEdit';
+import { InlineDateEdit } from '@/shared/components/ui/InlineDateEdit';
 import {
   resolveAssigneeName,
-  categoryBadgeConfig,
   getPriorityIcon,
   getPriorityLabel,
   getStatusIcon,
   getStatusLabel,
+  getCategoryIcon,
+  getCategoryLabel,
   type AssignedToValue,
 } from '@/shared/utils/ticket-helpers';
 import {
@@ -28,54 +27,32 @@ import {
   CATEGORY_OPTIONS,
 } from '../utils/ticket-options';
 
-interface InlineEditWrapperProps {
-  label: string;
-  canEdit: boolean;
-  isLoading: boolean;
-  children: ReactNode;
-  displayContent: ReactNode;
-}
+const statusOptions: InlineEditOption<string>[] = STATUS_OPTIONS.map((opt) => ({
+  value: opt.value,
+  label: opt.label,
+  icon: getStatusIcon(opt.value as TicketStatus),
+}));
 
-function InlineEditWrapper({
-  label,
-  canEdit,
-  isLoading,
-  children,
-  displayContent,
-}: InlineEditWrapperProps) {
-  if (!canEdit) {
-    return (
-      <div className="flex h-8 items-center justify-start">
-        <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
-          {label}
-        </span>
-        {displayContent}
-      </div>
-    );
-  }
+const priorityOptions: InlineEditOption<string>[] = PRIORITY_OPTIONS.map(
+  (opt) => ({
+    value: opt.value,
+    label: opt.label,
+    icon: getPriorityIcon(opt.value as TicketPriority),
+  })
+);
 
-  return (
-    <div className="flex h-8 items-center justify-start">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild disabled={isLoading}>
-          <button className="m-0 flex cursor-pointer items-center justify-start p-0 text-left transition-opacity hover:opacity-80">
-            <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
-              {label}
-            </span>
-            {displayContent}
-          </button>
-        </DropdownMenuTrigger>
-        {children}
-      </DropdownMenu>
-    </div>
-  );
-}
+const categoryOptions: InlineEditOption<string>[] = CATEGORY_OPTIONS.map(
+  (opt) => ({
+    value: opt.value,
+    label: opt.label,
+    icon: getCategoryIcon(opt.value as TicketCategory),
+  })
+);
 
-// Status Edit Component
 interface StatusEditProps {
   value: string;
-  canEdit: boolean;
-  isLoading: boolean;
+  canEdit?: boolean;
+  isLoading?: boolean;
   onChange: (status: string) => void;
 }
 
@@ -85,40 +62,27 @@ export function StatusEdit({
   isLoading,
   onChange,
 }: StatusEditProps) {
-  const displayContent = (
-    <Badge icon={getStatusIcon(value as TicketStatus)}>
-      {getStatusLabel(value as TicketStatus)}
-    </Badge>
-  );
-
   return (
-    <InlineEditWrapper
+    <InlineEdit
       label="Status"
+      value={value}
+      options={statusOptions}
       canEdit={canEdit}
       isLoading={isLoading}
-      displayContent={displayContent}
-    >
-      <DropdownMenuContent align="start">
-        {STATUS_OPTIONS.map((option) => (
-          <DropdownMenuItem
-            key={option.value}
-            onClick={() => onChange(option.value)}
-            className="flex cursor-pointer items-center gap-2"
-          >
-            {getStatusIcon(option.value as TicketStatus)}
-            <span>{option.label}</span>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </InlineEditWrapper>
+      onChange={onChange}
+      renderValue={(v) => (
+        <Badge icon={getStatusIcon(v as TicketStatus)}>
+          {getStatusLabel(v as TicketStatus)}
+        </Badge>
+      )}
+    />
   );
 }
 
-// Priority Edit Component
 interface PriorityEditProps {
   value: string;
-  canEdit: boolean;
-  isLoading: boolean;
+  canEdit?: boolean;
+  isLoading?: boolean;
   onChange: (priority: string) => void;
 }
 
@@ -128,40 +92,27 @@ export function PriorityEdit({
   isLoading,
   onChange,
 }: PriorityEditProps) {
-  const displayContent = (
-    <Badge icon={getPriorityIcon(value as TicketPriority)}>
-      {getPriorityLabel(value as TicketPriority)}
-    </Badge>
-  );
-
   return (
-    <InlineEditWrapper
+    <InlineEdit
       label="Priority"
+      value={value}
+      options={priorityOptions}
       canEdit={canEdit}
       isLoading={isLoading}
-      displayContent={displayContent}
-    >
-      <DropdownMenuContent align="start">
-        {PRIORITY_OPTIONS.map((option) => (
-          <DropdownMenuItem
-            key={option.value}
-            onClick={() => onChange(option.value)}
-            className="flex cursor-pointer items-center gap-2"
-          >
-            {getPriorityIcon(option.value as TicketPriority)}
-            <span>{option.label}</span>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </InlineEditWrapper>
+      onChange={onChange}
+      renderValue={(v) => (
+        <Badge icon={getPriorityIcon(v as TicketPriority)}>
+          {getPriorityLabel(v as TicketPriority)}
+        </Badge>
+      )}
+    />
   );
 }
 
-// Category Edit Component
 interface CategoryEditProps {
   value: string;
-  canEdit: boolean;
-  isLoading: boolean;
+  canEdit?: boolean;
+  isLoading?: boolean;
   onChange: (category: string) => void;
 }
 
@@ -171,42 +122,29 @@ export function CategoryEdit({
   isLoading,
   onChange,
 }: CategoryEditProps) {
-  const displayContent = (
-    <Badge icon={<span className="text-xs">🏷️</span>}>
-      {categoryBadgeConfig[value as TicketCategory]?.label || value}
-    </Badge>
-  );
-
   return (
-    <InlineEditWrapper
+    <InlineEdit
       label="Category"
+      value={value}
+      options={categoryOptions}
       canEdit={canEdit}
       isLoading={isLoading}
-      displayContent={displayContent}
-    >
-      <DropdownMenuContent align="start">
-        {CATEGORY_OPTIONS.map((option) => (
-          <DropdownMenuItem
-            key={option.value}
-            onClick={() => onChange(option.value)}
-            className="flex cursor-pointer items-center gap-2"
-          >
-            <span className="text-xs">🏷️</span>
-            <span>{option.label}</span>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </InlineEditWrapper>
+      onChange={onChange}
+      renderValue={(v) => (
+        <Badge icon={getCategoryIcon(v as TicketCategory)}>
+          {getCategoryLabel(v as TicketCategory) || v}
+        </Badge>
+      )}
+    />
   );
 }
 
-// Assignee Edit Component
 interface AssigneeEditProps {
   value: AssignedToValue;
   users: User[];
   developerUsers: User[];
-  canEdit: boolean;
-  isLoading: boolean;
+  canEdit?: boolean;
+  isLoading?: boolean;
   onChange: (userId: string) => void;
 }
 
@@ -218,34 +156,223 @@ export function AssigneeEdit({
   isLoading,
   onChange,
 }: AssigneeEditProps) {
-  const displayContent = value ? (
-    <div className="flex items-center gap-2">
-      <Avatar size="sm" fallback={resolveAssigneeName(value, users)} />
-      <span className="text-sm">{resolveAssigneeName(value, users)}</span>
-    </div>
-  ) : (
-    <span className="text-sm text-orange-600">Unassigned</span>
+  const userMap = new Map(users.map((u) => [u.id, u]));
+
+  const assigneeOptions: InlineEditOption<string>[] = developerUsers.map(
+    (dev) => ({
+      value: dev.id || '',
+      label: dev.name || dev.email || '',
+    })
+  );
+
+  const currentUser = value?.id ? userMap.get(value.id) : null;
+
+  return (
+    <InlineEdit
+      label="Assignee"
+      value={value?.id || ''}
+      options={assigneeOptions}
+      canEdit={canEdit}
+      isLoading={isLoading}
+      onChange={onChange}
+      renderValue={() =>
+        value ? (
+          <div className="flex items-center gap-2">
+            <Avatar
+              size="sm"
+              src={currentUser?.profilePic}
+              fallback={resolveAssigneeName(value, users)}
+            />
+            <span className="text-sm">{resolveAssigneeName(value, users)}</span>
+          </div>
+        ) : (
+          <span className="text-sm text-orange-600">Unassigned</span>
+        )
+      }
+      renderOption={(option) => {
+        const user = userMap.get(option.value);
+        return (
+          <>
+            <Avatar size="sm" src={user?.profilePic} fallback={option.label} />
+            <span>{option.label}</span>
+          </>
+        );
+      }}
+    />
+  );
+}
+
+interface DateEditProps {
+  value: string | Date | null | undefined;
+  canEdit?: boolean;
+  isLoading?: boolean;
+  onChange: (date: string | null) => void;
+}
+
+export function StartDateEdit({
+  value,
+  canEdit,
+  isLoading,
+  onChange,
+}: DateEditProps) {
+  return (
+    <InlineDateEdit
+      label="Start Date"
+      value={value}
+      canEdit={canEdit}
+      isLoading={isLoading}
+      onChange={onChange}
+    />
+  );
+}
+
+export function DueDateEdit({
+  value,
+  canEdit,
+  isLoading,
+  onChange,
+}: DateEditProps) {
+  return (
+    <InlineDateEdit
+      label="Due Date"
+      value={value}
+      canEdit={canEdit}
+      isLoading={isLoading}
+      onChange={onChange}
+    />
+  );
+}
+
+interface EngLeadEditProps {
+  value: AssignedToValue;
+  users: User[];
+  engLeadUsers: User[];
+  canEdit?: boolean;
+  isLoading?: boolean;
+  onChange: (userId: string) => void;
+}
+
+export function EngLeadEdit({
+  value,
+  users,
+  engLeadUsers,
+  canEdit,
+  isLoading,
+  onChange,
+}: EngLeadEditProps) {
+  const userMap = new Map(users.map((u) => [u.id, u]));
+
+  const engLeadOptions: InlineEditOption<string>[] = engLeadUsers.map(
+    (lead) => ({
+      value: lead.id || '',
+      label: lead.name || lead.email || '',
+    })
+  );
+
+  const currentUser = value?.id ? userMap.get(value.id) : null;
+
+  return (
+    <InlineEdit
+      label="Eng Lead"
+      value={value?.id || ''}
+      options={engLeadOptions}
+      canEdit={canEdit}
+      isLoading={isLoading}
+      onChange={onChange}
+      renderValue={() =>
+        value ? (
+          <div className="flex items-center gap-2">
+            <Avatar
+              size="sm"
+              src={currentUser?.profilePic}
+              fallback={resolveAssigneeName(value, users)}
+            />
+            <span className="text-sm">{resolveAssigneeName(value, users)}</span>
+          </div>
+        ) : (
+          <span className="text-sm">-</span>
+        )
+      }
+      renderOption={(option) => {
+        const user = userMap.get(option.value);
+        return (
+          <>
+            <Avatar size="sm" src={user?.profilePic} fallback={option.label} />
+            <span>{option.label}</span>
+          </>
+        );
+      }}
+    />
+  );
+}
+
+export interface ProjectOption {
+  id: string;
+  name: string;
+  clientProfilePic?: string;
+}
+
+interface ProjectEditProps {
+  value: ProjectOption | null | undefined;
+  projects: ProjectOption[];
+  canEdit?: boolean;
+  isLoading?: boolean;
+  onChange: (projectId: string) => void;
+}
+
+export function ProjectEdit({
+  value,
+  projects,
+  canEdit,
+  isLoading,
+  onChange,
+}: ProjectEditProps) {
+  const projectMap = new Map(projects.map((p) => [p.id, p]));
+
+  const projectOptions: InlineEditOption<string>[] = projects.map(
+    (project) => ({
+      value: project.id,
+      label: project.name,
+    })
   );
 
   return (
-    <InlineEditWrapper
-      label="Assignee"
+    <InlineEdit
+      label="Project"
+      value={value?.id || ''}
+      options={projectOptions}
       canEdit={canEdit}
       isLoading={isLoading}
-      displayContent={displayContent}
-    >
-      <DropdownMenuContent align="start">
-        {developerUsers.map((dev) => (
-          <DropdownMenuItem
-            key={dev._id || dev.id}
-            onClick={() => onChange(dev._id || dev.id || '')}
-            className="flex cursor-pointer items-center gap-2"
-          >
-            <Avatar size="sm" fallback={dev.name || dev.email || ''} />
-            <span>{dev.name || dev.email}</span>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </InlineEditWrapper>
+      onChange={onChange}
+      renderValue={() =>
+        value ? (
+          <div className="flex items-center gap-2">
+            <CompanyLogo
+              size="xs"
+              src={value.clientProfilePic}
+              alt={value.name}
+              fallback={value.name}
+            />
+            <span className="text-sm">{value.name}</span>
+          </div>
+        ) : (
+          <span className="text-sm">-</span>
+        )
+      }
+      renderOption={(option) => {
+        const project = projectMap.get(option.value);
+        return (
+          <>
+            <CompanyLogo
+              size="xs"
+              src={project?.clientProfilePic}
+              alt={option.label}
+              fallback={option.label}
+            />
+            <span>{option.label}</span>
+          </>
+        );
+      }}
+    />
   );
 }

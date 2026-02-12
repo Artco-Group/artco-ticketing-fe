@@ -11,10 +11,6 @@ import { PAGE_ROUTES } from '@/shared/constants';
 import { extractAuthError } from '../utils/extract-auth-error';
 import { useToast } from '@/shared/components/ui';
 
-/**
- * Custom hook for forgot password form logic.
- * Separates business logic from UI for better testability and maintainability.
- */
 export function useForgotPasswordForm() {
   const forgotPasswordMutation = useForgotPassword();
   const navigate = useNavigate();

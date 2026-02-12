@@ -10,7 +10,7 @@ import type {
 } from '@tanstack/react-query';
 import { apiClient } from './api-client';
 import type { AxiosRequestConfig } from 'axios';
-import { CACHE } from '@artco-group/artco-ticketing-sync';
+import { CACHE, type ApiResponse } from '@artco-group/artco-ticketing-sync';
 import { calculateRetryDelay } from './api-utils';
 
 /**
@@ -41,8 +41,11 @@ export function useApiQuery<TData>(
     queryKey: params ? [...queryKey, params] : queryKey,
     queryFn: async (): Promise<TData> => {
       try {
-        const response = await apiClient.get<TData>(url, { params, ...config });
-        return response.data;
+        const response = await apiClient.get<ApiResponse<TData>>(url, {
+          params,
+          ...config,
+        });
+        return response.data.data!;
       } catch (error: unknown) {
         // For /auth/me endpoint, 401 is expected when not logged in
         const axiosError = error as { response?: { status?: number } };
@@ -102,13 +105,13 @@ export function useApiMutation<TData, TVariables = void, TContext = unknown>(
     mutationFn: async (variables: TVariables): Promise<TData> => {
       const resolvedUrl = typeof url === 'function' ? url(variables) : url;
       const body = getBody ? getBody(variables) : variables;
-      const response = await apiClient.request<TData>({
+      const response = await apiClient.request<ApiResponse<TData>>({
         url: resolvedUrl,
         method,
         data: body,
         ...config,
       });
-      return response.data;
+      return response.data.data!;
     },
     onError: (error: Error) => {
       if (import.meta.env.DEV) {

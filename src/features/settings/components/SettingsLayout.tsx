@@ -79,7 +79,7 @@ function SettingsLayoutContent({
         <main className="p-8" style={{ width: '100%', minWidth: 0 }}>
           <nav className="mb-6 flex items-center gap-2 text-sm">
             <NavLink
-              to={PAGE_ROUTES.SETTINGS}
+              to={PAGE_ROUTES.SETTINGS.PROFILE}
               className="text-primary font-medium hover:underline"
             >
               Settings

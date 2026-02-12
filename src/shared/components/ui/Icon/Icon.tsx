@@ -75,6 +75,11 @@ import trendUpSvg from '@/assets/icons/arrows/trend-up.svg?raw';
 import trendDownSvg from '@/assets/icons/arrows/trend-down.svg?raw';
 import commandKSvg from '@/assets/icons/system/command-k.svg?raw';
 
+import bugSvg from '@/assets/icons/category/bug.svg?raw';
+import featureSvg from '@/assets/icons/category/feature.svg?raw';
+import questionSvg from '@/assets/icons/category/question.svg?raw';
+import tagSvg from '@/assets/icons/category/tag.svg?raw';
+
 export type IconName =
   | 'dashboard'
   | 'tickets'
@@ -141,8 +146,12 @@ export type IconName =
   | 'preference'
   | 'application'
   | 'import-export'
-  | 'api';
-  
+  | 'api'
+  | 'bug'
+  | 'feature'
+  | 'question'
+  | 'tag';
+
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 const iconMap: Record<IconName, string> = {
@@ -211,7 +220,11 @@ const iconMap: Record<IconName, string> = {
   preference: preferenceSvg,
   application: applicationSvg,
   'import-export': importExportSvg,
-  api: apiSvg
+  api: apiSvg,
+  bug: bugSvg,
+  feature: featureSvg,
+  question: questionSvg,
+  tag: tagSvg,
 };
 
 const sizeMap: Record<IconSize, string> = {
@@ -252,11 +265,10 @@ export function Icon({
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center justify-center',
+        'inline-flex shrink-0 items-center justify-center leading-none',
         sizeMap[size],
         className
       )}
-      style={{ lineHeight: 0 }}
       aria-hidden={!ariaLabel}
       aria-label={ariaLabel}
       dangerouslySetInnerHTML={{ __html: svgWithClass }}

@@ -1,6 +1,7 @@
 import { useParams, Navigate } from 'react-router-dom';
 import { SettingsLayout } from '../components';
 import { EmptyState } from '@/shared/components/ui';
+import { PAGE_ROUTES } from '@/shared/constants/routes.constants';
 import type { SettingsSideBarGroup } from '../components/SettingsSidebar';
 
 const validSections = [
@@ -24,31 +25,31 @@ const settingsGroups: SettingsSideBarGroup[] = [
         id: 'profile',
         label: 'Profile',
         icon: 'profile',
-        href: '/settings/profile',
+        href: PAGE_ROUTES.SETTINGS.PROFILE,
       },
       {
         id: 'notification',
         label: 'Notification',
         icon: 'notification',
-        href: '/settings/notification',
+        href: PAGE_ROUTES.SETTINGS.NOTIFICATION,
       },
       {
         id: 'security',
         label: 'Security & Access',
         icon: 'security',
-        href: '/settings/security',
+        href: PAGE_ROUTES.SETTINGS.SECURITY,
       },
       {
         id: 'connected-account',
         label: 'Connected Account',
         icon: 'connected-account',
-        href: '/settings/connected-account',
+        href: PAGE_ROUTES.SETTINGS.CONNECTED_ACCOUNT,
       },
       {
         id: 'integrations',
         label: 'Integrations',
         icon: 'integrations',
-        href: '/settings/integrations',
+        href: PAGE_ROUTES.SETTINGS.INTEGRATIONS,
       },
     ],
   },
@@ -59,27 +60,27 @@ const settingsGroups: SettingsSideBarGroup[] = [
         id: 'preference',
         label: 'Preference',
         icon: 'preference',
-        href: '/settings/preference',
+        href: PAGE_ROUTES.SETTINGS.PREFERENCE,
       },
       {
         id: 'billing',
         label: 'Billing',
         icon: 'billing',
-        href: '/settings/billing',
+        href: PAGE_ROUTES.SETTINGS.BILLING,
       },
       {
         id: 'application',
         label: 'Application',
         icon: 'application',
-        href: '/settings/application',
+        href: PAGE_ROUTES.SETTINGS.APPLICATION,
       },
       {
         id: 'import-export',
         label: 'Import / Export',
         icon: 'import-export',
-        href: '/settings/import-export',
+        href: PAGE_ROUTES.SETTINGS.IMPORT_EXPORT,
       },
-      { id: 'api', label: 'API', icon: 'api', href: '/settings/api' },
+      { id: 'api', label: 'API', icon: 'api', href: PAGE_ROUTES.SETTINGS.API },
     ],
   },
 ];
@@ -87,9 +88,8 @@ const settingsGroups: SettingsSideBarGroup[] = [
 export default function SettingsPage() {
   const { section = 'profile' } = useParams<{ section?: string }>();
 
-  // Redirect to profile if section is invalid
   if (!validSections.includes(section)) {
-    return <Navigate to="/settings/profile" replace />;
+    return <Navigate to={PAGE_ROUTES.SETTINGS.PROFILE} replace />;
   }
 
   return (

@@ -11,10 +11,6 @@ import { PAGE_ROUTES } from '@/shared/constants';
 import { extractAuthError } from '../utils/extract-auth-error';
 import { useToast } from '@/shared/components/ui';
 
-/**
- * Custom hook for password reset form logic.
- * Separates business logic from UI for better testability and maintainability.
- */
 export function usePasswordResetForm() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
@@ -38,7 +34,6 @@ export function usePasswordResetForm() {
 
   // Calculate token verification error from query
   const tokenError = useMemo(() => {
-    // No token provided in URL
     if (!token) {
       return 'No reset token provided. Please use the link from your email.';
     }
@@ -59,10 +54,8 @@ export function usePasswordResetForm() {
     verifyTokenQuery.error,
   ]);
 
-  // Determine if we're still verifying (only if we have a token)
   const verifyingToken = !!token && verifyTokenQuery.isLoading;
 
-  // Token is valid only if query succeeded and returned valid: true
   const tokenValid = !!token && verifyTokenQuery.data?.valid === true;
 
   const onSubmit = async (data: PasswordResetFormInput) => {

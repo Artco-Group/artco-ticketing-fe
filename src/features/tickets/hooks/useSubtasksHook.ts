@@ -31,19 +31,16 @@ export function useSubtasksHook({ ticketId }: UseSubtasksHookProps) {
   const updateMutation = useUpdateSubtask();
   const deleteMutation = useDeleteSubtask();
 
-  const subtasks = useMemo(
-    () => data?.data?.subtasks || [],
-    [data?.data?.subtasks]
-  );
+  const subtasks = useMemo(() => data?.subtasks || [], [data?.subtasks]);
 
   const progress = useMemo(
     () =>
-      data?.data?.progress || {
+      data?.progress || {
         total: 0,
         completed: 0,
         percentage: 0,
       },
-    [data?.data?.progress]
+    [data?.progress]
   );
 
   /**

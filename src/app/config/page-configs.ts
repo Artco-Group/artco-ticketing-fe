@@ -12,28 +12,28 @@ export interface PageConfig {
 export const pageConfigs: Record<string, PageConfig> = {
   dashboard: {
     title: 'Dashboard',
-    description: 'Overview of your tickets and tasks',
+    description: 'Overview of your tickets',
     breadcrumbs: [{ label: 'Dashboard' }],
   },
   tickets: {
-    title: 'Tasks',
-    description: 'Manage support tasks',
-    breadcrumbs: [{ label: 'Tasks' }],
+    title: 'Tickets',
+    description: 'Manage support tickets',
+    breadcrumbs: [{ label: 'Tickets' }],
   },
   'ticket-detail': {
-    title: 'Task Details',
-    description: 'View and manage task',
-    breadcrumbs: [{ label: 'Tasks', href: '/tickets' }, { label: 'Details' }],
+    title: 'Ticket Details',
+    description: 'View and manage ticket',
+    breadcrumbs: [{ label: 'Tickets', href: '/tickets' }, { label: 'Details' }],
   },
   users: {
-    title: 'Users',
-    description: 'Manage system users',
-    breadcrumbs: [{ label: 'Users' }],
+    title: 'Members',
+    description: 'Manage team members',
+    breadcrumbs: [{ label: 'Members' }],
   },
   'user-detail': {
-    title: 'User Details',
-    description: 'View user information',
-    breadcrumbs: [{ label: 'Users', href: '/users' }, { label: 'Details' }],
+    title: 'Member Details',
+    description: 'View member information',
+    breadcrumbs: [{ label: 'Members', href: '/users' }, { label: 'Details' }],
   },
   inbox: {
     title: 'Inbox',

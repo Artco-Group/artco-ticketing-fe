@@ -2,29 +2,20 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/shared/components/ui/Tooltip';
 
-/** Size variants aligned with design system (Avatar / spacing scale) */
 export type CompanyLogoSize = 'xs' | 'sm' | 'md' | 'lg';
 
-/** Shape variants for the logo container */
 export type CompanyLogoVariant = 'circle' | 'rounded';
 
 export interface CompanyLogoProps extends Omit<
   React.ImgHTMLAttributes<HTMLImageElement>,
   'src' | 'alt'
 > {
-  /** Logo image URL. When missing or on error, fallback is shown. */
   src?: string | null;
-  /** Alt text for the image. */
   alt: string;
-  /** Size: sm (32px), md (40px), lg (48px). */
   size?: CompanyLogoSize;
-  /** Shape variant: 'circle' (default) or 'rounded' (rounded square). */
   variant?: CompanyLogoVariant;
-  /** Fallback initials shown in a colored circle when no image (e.g. "AB" for Acme Corp). */
   fallback: string;
-  /** Optional index into design-system fallback colors (0–N). When set, overrides hash-based color. */
   colorIndex?: number;
-  /** Optional tooltip text shown on hover. */
   tooltip?: string;
 }
 

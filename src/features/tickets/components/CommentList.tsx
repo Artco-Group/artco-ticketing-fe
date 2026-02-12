@@ -217,8 +217,8 @@ export function CommentList({
           {/* Comments for this date */}
           <div className="space-y-1">
             {groupedComments[dateKey].map((comment) => {
-              const commentId = asCommentId(comment._id || comment.id || '');
-              const authorId = comment.authorId?._id || '';
+              const commentId = asCommentId(comment.id);
+              const authorId = comment.authorId?.id || '';
               const isCurrentUser = authorId === currentUserId;
 
               return (

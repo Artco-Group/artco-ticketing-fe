@@ -2,6 +2,7 @@ import { Route, Navigate } from 'react-router-dom';
 import { lazy } from 'react';
 import { authRoutes } from '@/features/auth/routes';
 import { userRoutes } from '@/features/users/routes';
+import { clientRoutes } from '@/features/clients/routes';
 import { dashboardRoutes } from '@/features/dashboard/routes';
 import { ticketRoutes } from '@/features/tickets/routes';
 import { projectRoutes } from '@/features/projects/routes';
@@ -36,6 +37,7 @@ export const allRoutes = [
   ...ticketRoutes,
   ...projectRoutes,
   ...userRoutes,
+  ...clientRoutes,
   ...sharedRoutes,
   ...inboxRoutes,
   ...notesRoutes,
@@ -64,6 +66,7 @@ export {
   ticketRoutes,
   projectRoutes,
   userRoutes,
+  clientRoutes,
   sharedRoutes,
   inboxRoutes,
   notesRoutes,

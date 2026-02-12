@@ -19,6 +19,7 @@ interface UseTicketInlineEditProps {
   users?: User[];
   isClient: boolean;
   isEngLead: boolean;
+  isAdmin?: boolean;
 }
 
 /**
@@ -30,6 +31,7 @@ export function useTicketInlineEdit({
   users = [],
   isClient,
   isEngLead,
+  isAdmin = false,
 }: UseTicketInlineEditProps) {
   const toast = useToast();
 
@@ -38,20 +40,26 @@ export function useTicketInlineEdit({
   const assignTicket = useAssignTicket();
   const updateTicket = useUpdateTicket();
 
+  const canManage = isEngLead || isAdmin;
   const canEditStatus = !isClient;
-  const canEditPriority = isEngLead;
-  const canEditAssignee = isEngLead;
-  const canEditCategory = isEngLead;
+  const canEditPriority = canManage;
+  const canEditAssignee = canManage;
+  const canEditCategory = canManage;
+  const canEditDates = canManage;
+  const canEditProject = canManage;
+  const canEditEngLead = isAdmin;
 
   const developerUsers = users.filter(
     (user) => user.role === UserRole.DEVELOPER
   );
 
+  const engLeadUsers = users.filter((user) => user.role === UserRole.ENG_LEAD);
+
   const handleStatusChange = async (newStatus: string) => {
-    if (!ticket?._id) return;
+    if (!ticket?.id) return;
     try {
       await updateStatus.mutateAsync({
-        id: asTicketId(ticket._id),
+        id: asTicketId(ticket.ticketId),
         status: newStatus,
       });
       toast.success('Status updated');
@@ -61,10 +69,10 @@ export function useTicketInlineEdit({
   };
 
   const handlePriorityChange = async (newPriority: string) => {
-    if (!ticket?._id) return;
+    if (!ticket?.id) return;
     try {
       await updatePriority.mutateAsync({
-        id: asTicketId(ticket._id),
+        id: asTicketId(ticket.ticketId),
         priority: newPriority,
       });
       toast.success('Priority updated');
@@ -74,10 +82,10 @@ export function useTicketInlineEdit({
   };
 
   const handleCategoryChange = async (newCategory: string) => {
-    if (!ticket?._id) return;
+    if (!ticket?.id) return;
     try {
       await updateTicket.mutateAsync({
-        id: asTicketId(ticket._id),
+        id: asTicketId(ticket.ticketId),
         data: { category: newCategory as TicketCategory },
       });
       toast.success('Category updated');
@@ -87,13 +95,13 @@ export function useTicketInlineEdit({
   };
 
   const handleAssigneeChange = (userId: string | string[]) => {
-    if (!ticket?._id) return;
+    if (!ticket?.id) return;
     const developerId = Array.isArray(userId) ? userId[0] : userId;
     if (!developerId) return;
 
     assignTicket.mutate(
       {
-        id: asTicketId(ticket._id),
+        id: asTicketId(ticket.ticketId),
         developerId: asUserId(developerId),
       },
       {
@@ -103,22 +111,75 @@ export function useTicketInlineEdit({
     );
   };
 
+  const handleStartDateChange = async (date: string | null) => {
+    if (!ticket?.id) return;
+    try {
+      await updateTicket.mutateAsync({
+        id: asTicketId(ticket.ticketId),
+        data: { startDate: date || undefined },
+      });
+      toast.success('Start date updated');
+    } catch {
+      toast.error('Failed to update start date');
+    }
+  };
+
+  const handleDueDateChange = async (date: string | null) => {
+    if (!ticket?.id) return;
+    try {
+      await updateTicket.mutateAsync({
+        id: asTicketId(ticket.ticketId),
+        data: { dueDate: date || undefined },
+      });
+      toast.success('Due date updated');
+    } catch {
+      toast.error('Failed to update due date');
+    }
+  };
+
+  const handleProjectChange = async (projectId: string) => {
+    if (!ticket?.id) return;
+    try {
+      await updateTicket.mutateAsync({
+        id: asTicketId(ticket.ticketId),
+        data: { project: projectId || null },
+      });
+      toast.success('Project updated');
+    } catch {
+      toast.error('Failed to update project');
+    }
+  };
+
+  const handleEngLeadChange = async (_userId: string) => {
+    toast.info('Eng Lead is managed through the project settings');
+  };
+
   return {
     canEditStatus,
     canEditPriority,
     canEditAssignee,
     canEditCategory,
+    canEditDates,
+    canEditProject,
+    canEditEngLead,
 
     isStatusUpdating: updateStatus.isPending,
     isPriorityUpdating: updatePriority.isPending,
     isCategoryUpdating: updateTicket.isPending,
     isAssigneeUpdating: assignTicket.isPending,
+    isDatesUpdating: updateTicket.isPending,
+    isProjectUpdating: updateTicket.isPending,
 
     developerUsers,
+    engLeadUsers,
 
     onStatusChange: handleStatusChange,
     onPriorityChange: handlePriorityChange,
     onCategoryChange: handleCategoryChange,
     onAssigneeChange: handleAssigneeChange,
+    onStartDateChange: handleStartDateChange,
+    onDueDateChange: handleDueDateChange,
+    onProjectChange: handleProjectChange,
+    onEngLeadChange: handleEngLeadChange,
   };
 }

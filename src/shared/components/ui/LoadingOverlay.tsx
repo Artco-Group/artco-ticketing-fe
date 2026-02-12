@@ -18,8 +18,6 @@ export function LoadingOverlay({
   zIndex = 9999,
   children,
 }: LoadingOverlayProps = {}) {
-  // Always render when used as Suspense fallback (isLoading defaults to true)
-  // Only hide if explicitly set to false
   if (!isLoading) {
     return null;
   }

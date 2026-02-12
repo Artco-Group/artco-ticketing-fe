@@ -7,8 +7,25 @@ export type {
   Comment,
   Project,
   ProjectProgress,
-  ProjectWithUsers,
 } from '@artco-group/artco-ticketing-sync/types';
+
+import type { User, Project } from '@artco-group/artco-ticketing-sync/types';
+
+export interface ProjectWithProgress extends Project {
+  progress?: {
+    totalTickets: number;
+    completedTickets: number;
+    percentage: number;
+  };
+}
+
+export interface UserWithProjects extends User {
+  projects: { id: string; name: string }[];
+}
+
+export interface UserWithStats extends UserWithProjects {
+  assignedTicketsCount: number;
+}
 
 export {
   TicketStatus,
@@ -36,10 +53,10 @@ export interface MetaItem {
   value: ReactNode;
 }
 
-/** API response wrapper type */
-export interface ApiResponse<T> {
-  status: string;
-  data: T;
-}
+/**
+ * @deprecated Backend now returns data directly. Use the data type directly.
+ * This type alias is kept for backwards compatibility during migration.
+ */
+export type ApiResponse<T> = T;
 
 export * from './branded';

@@ -12,21 +12,17 @@ import {
   useUpdateTicketPriority,
 } from '../api/tickets-api';
 import { useUsers } from '@/features/users/api';
+import { useProjects } from '@/features/projects/api/projects-api';
 
-/**
- * Custom hook for ticket detail page logic.
- * Separates business logic from UI for better testability and maintainability.
- */
 export function useTicketDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { ticketId: ticketIdParam } = useParams<{ ticketId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const toast = useToast();
 
   const [localTicket, setLocalTicket] = useState<Ticket | null>(null);
 
-  // Fetch ticket data
-  const ticketId = id ? asTicketId(id) : asTicketId('');
+  const ticketId = ticketIdParam ? asTicketId(ticketIdParam) : asTicketId('');
   const {
     data: ticketData,
     isLoading: ticketLoading,
@@ -35,17 +31,17 @@ export function useTicketDetail() {
     isRefetching: ticketRefetching,
   } = useTicket(ticketId);
 
-  // Fetch users (for eng lead assignment)
   const { data: usersData } = useUsers();
-  const users = usersData?.data?.users || [];
+  const users = usersData?.users || [];
 
-  // Mutations
+  const { data: projectsData } = useProjects();
+  const projects = projectsData?.projects || [];
+
   const updateStatusMutation = useUpdateTicketStatus();
   const assignTicketMutation = useAssignTicket();
   const updatePriorityMutation = useUpdateTicketPriority();
 
-  // Use local state if available, otherwise use fetched data
-  const ticket = localTicket ?? ticketData?.data?.ticket ?? null;
+  const ticket = localTicket ?? ticketData?.ticket ?? null;
 
   const handleBack = () => {
     navigate(PAGE_ROUTES.DASHBOARD.ROOT);
@@ -57,7 +53,7 @@ export function useTicketDetail() {
         id,
         status: newStatus,
       });
-      setLocalTicket(response.data.ticket);
+      setLocalTicket(response.ticket);
       toast.success('Ticket status updated successfully');
     } catch (error) {
       toast.error(getErrorMessage(error));
@@ -71,7 +67,7 @@ export function useTicketDetail() {
         id,
         developerId,
       });
-      setLocalTicket(response.data.ticket);
+      setLocalTicket(response.ticket);
       toast.success('Ticket assigned successfully');
     } catch (error) {
       toast.error(getErrorMessage(error));
@@ -84,37 +80,33 @@ export function useTicketDetail() {
         id,
         priority: newPriority,
       });
-      setLocalTicket(response.data.ticket);
+      setLocalTicket(response.ticket);
       toast.success('Ticket priority updated successfully');
     } catch (error) {
       toast.error(getErrorMessage(error));
     }
   };
 
-  // Modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleOpenEditModal = () => setIsEditModalOpen(true);
   const handleCloseEditModal = () => setIsEditModalOpen(false);
 
   return {
-    // Data
     ticket,
     currentUser: user,
     users,
+    projects,
 
-    // State
     ticketLoading,
     ticketError,
     refetchTicket,
     ticketRefetching,
 
-    // Modal state
     isEditModalOpen,
     onOpenEditModal: handleOpenEditModal,
     onCloseEditModal: handleCloseEditModal,
 
-    // Handlers
     onBack: handleBack,
     onStatusUpdate: handleStatusUpdate,
     onPriorityUpdate: handlePriorityUpdate,

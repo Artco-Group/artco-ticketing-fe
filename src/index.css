@@ -543,16 +543,16 @@
 
   /* Modal size classes */
   .modal-sm {
-    max-width: 24rem !important;
+    max-width: 26rem !important;
   }
   .modal-md {
-    max-width: 28rem !important;
+    max-width: 30rem !important;
   }
   .modal-lg {
-    max-width: 32rem !important;
+    max-width: 36rem !important;
   }
   .modal-xl {
-    max-width: 36rem !important;
+    max-width: 44rem !important;
   }
 
 /* Layout utility classes */

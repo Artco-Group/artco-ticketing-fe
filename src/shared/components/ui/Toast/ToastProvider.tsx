@@ -57,7 +57,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
       {children}
       <div
-        className="pointer-events-none fixed top-4 right-4 z-50 flex flex-col items-end gap-3"
+        className="pointer-events-none fixed top-4 right-4 z-[100] flex flex-col items-end gap-3"
         aria-label="Notifications"
       >
         {toasts.map((toast) => (

@@ -68,7 +68,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-50" style={{ minWidth: 0 }}>
+    <div className="h-screen w-full bg-gray-50" style={{ minWidth: 0 }}>
       <Sidebar
         items={items}
         activeItem={activeItem}
@@ -79,7 +79,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         onToggle={handleToggle}
       />
       <div
-        className="transition-[padding] duration-300"
+        className="flex h-full flex-col transition-[padding] duration-300"
         style={{
           paddingLeft: collapsed
             ? SIDEBAR_WIDTH.COLLAPSED
