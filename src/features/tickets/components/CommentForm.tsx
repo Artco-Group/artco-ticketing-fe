@@ -72,7 +72,7 @@ export function CommentForm({
             disabled={disabled}
             loading={isLoading}
           >
-            Odustani
+            Cancel
           </Button>
         )}
 

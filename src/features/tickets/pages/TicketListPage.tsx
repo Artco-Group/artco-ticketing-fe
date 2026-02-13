@@ -67,14 +67,10 @@ export default function TicketListPage() {
         onTabChange={onTabChange}
         tabActions={
           canCreateTicket ? (
-            <Button
-              leftIcon="plus"
-              onClick={() => setIsCreateDialogOpen(true)}
-              className="bg-greyscale-900 hover:bg-greyscale-800 text-white"
-            >
+            <Button leftIcon="plus" onClick={() => setIsCreateDialogOpen(true)}>
               Create Ticket
             </Button>
-          ) : undefined
+          ) : null
         }
         filters={filterBarFilters}
         onFilterChange={handleFilterBarChange}

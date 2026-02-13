@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,8 +17,6 @@ export function useLoginForm() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const toast = useToast();
-
-  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -48,7 +46,5 @@ export function useLoginForm() {
     form,
     onSubmit: form.handleSubmit(onSubmit),
     isPending: loginMutation.isPending,
-    showPassword,
-    togglePassword: () => setShowPassword((prev) => !prev),
   };
 }

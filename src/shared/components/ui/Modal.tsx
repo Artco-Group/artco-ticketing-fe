@@ -16,6 +16,7 @@ interface ModalProps {
   children: ReactNode;
   actions?: ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  preventClose?: boolean;
 }
 
 const sizesClasses = {
@@ -33,10 +34,11 @@ export function Modal({
   children,
   actions,
   size = 'md',
+  preventClose,
 }: ModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={sizesClasses[size]}>
+      <DialogContent className={sizesClasses[size]} preventClose={preventClose}>
         <div
           className={`flex justify-between ${description ? 'items-start' : 'items-center'}`}
         >

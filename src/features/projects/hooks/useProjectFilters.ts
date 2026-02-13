@@ -4,13 +4,7 @@ import {
   ProjectPriorityDisplay,
 } from '@artco-group/artco-ticketing-sync';
 import { type ProjectWithProgress } from '@/types';
-
-const PRIORITY_ORDER: Record<string, number> = {
-  [ProjectPriority.CRITICAL]: 4,
-  [ProjectPriority.HIGH]: 3,
-  [ProjectPriority.MEDIUM]: 2,
-  [ProjectPriority.LOW]: 1,
-};
+import { PROJECT_PRIORITY_ORDER } from '../utils/project-helpers';
 
 type SortOption =
   | 'Name'
@@ -53,8 +47,8 @@ export function useProjectFilters<T extends ProjectWithProgress>(
             return (a.name || '').localeCompare(b.name || '');
           case 'Priority':
             return (
-              (PRIORITY_ORDER[b.priority || ''] || 0) -
-              (PRIORITY_ORDER[a.priority || ''] || 0)
+              (PROJECT_PRIORITY_ORDER[b.priority || ''] || 0) -
+              (PROJECT_PRIORITY_ORDER[a.priority || ''] || 0)
             );
           case 'Due Date': {
             const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0;

@@ -67,6 +67,19 @@ export function MemberPicker({
     [options]
   );
 
+  const selectedIds = useMemo(() => {
+    if (multiple) {
+      return Array.isArray(value) ? value : value ? [value] : [];
+    }
+    const v = Array.isArray(value) ? value[0] : value;
+    return v ? [v] : [];
+  }, [value, multiple]);
+
+  const selectedUsers = useMemo(
+    () => validUsers.filter((user) => selectedIds.includes(user.id!)),
+    [validUsers, selectedIds]
+  );
+
   const groupedUsers = useMemo(() => {
     if (!groupBy || !groups) return null;
 
@@ -87,19 +100,6 @@ export function MemberPicker({
       }))
       .filter((g) => g.users.length > 0);
   }, [validUsers, groupBy, groups]);
-
-  const selectedIds = useMemo(() => {
-    if (multiple) {
-      return Array.isArray(value) ? value : value ? [value] : [];
-    }
-    const v = Array.isArray(value) ? value[0] : value;
-    return v ? [v] : [];
-  }, [value, multiple]);
-
-  const selectedUsers = useMemo(
-    () => validUsers.filter((user) => selectedIds.includes(user.id!)),
-    [validUsers, selectedIds]
-  );
 
   const handleOptionSelect = (userId: string) => {
     if (multiple) {
@@ -159,9 +159,10 @@ export function MemberPicker({
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-[var(--radix-dropdown-menu-trigger-width)]"
+          className="max-h-[240px] w-[var(--radix-dropdown-menu-trigger-width)] overflow-y-auto"
           side="bottom"
           align="start"
+          sideOffset={4}
         >
           {validUsers.length === 0 ? (
             <div className="text-muted-foreground px-2 py-4 text-center text-sm">

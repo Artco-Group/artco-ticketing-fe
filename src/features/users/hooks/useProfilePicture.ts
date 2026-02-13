@@ -5,7 +5,7 @@ import {
 } from '@artco-group/artco-ticketing-sync';
 import { asUserId } from '@/types';
 import { useToast } from '@/shared/components/ui';
-import { useUploadAvatar, useRemoveAvatar, getAvatarUrl } from '../api';
+import { useUploadAvatar, useRemoveAvatar } from '../api';
 
 interface UseProfilePictureOptions {
   userId?: string;
@@ -32,8 +32,7 @@ export function useProfilePicture({
   const getAvatarSrc = () => {
     if (avatarPreview) return avatarPreview;
     if (isRemoved) return undefined;
-    if (currentAvatar && userId) return getAvatarUrl(asUserId(userId));
-    return undefined;
+    return currentAvatar;
   };
 
   const hasAvatar = isEditing
@@ -59,6 +58,9 @@ export function useProfilePicture({
     const reader = new FileReader();
     reader.onload = (e) => {
       setAvatarPreview(e.target?.result as string);
+    };
+    reader.onerror = () => {
+      toast.error('Failed to read the selected file');
     };
     reader.readAsDataURL(file);
 

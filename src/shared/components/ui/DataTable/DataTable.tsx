@@ -58,6 +58,7 @@ function DataTable<T extends TableRowData>({
   onSort,
   actions,
   hideHeader = false,
+  getRowId: getRowIdProp,
 }: DataTableProps<T>) {
   const sorting: SortingState = useMemo(() => {
     if (!sortColumn || !sortDirection) return [];
@@ -273,7 +274,7 @@ function DataTable<T extends TableRowData>({
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getRowId: (row) => row.id || String(data.indexOf(row)),
+    getRowId: getRowIdProp ?? ((row) => row.id || String(data.indexOf(row))),
   });
 
   useEffect(() => {

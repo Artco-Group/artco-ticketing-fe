@@ -3,8 +3,7 @@ import {
   formatDateLocalized,
   UserRoleDisplay,
 } from '@artco-group/artco-ticketing-sync';
-import { UserRole, asUserId, type UserWithStats } from '@/types';
-import { getAvatarUrl } from '../api';
+import { UserRole, type UserWithStats } from '@/types';
 import {
   DataTable,
   EmptyState,
@@ -79,9 +78,7 @@ function UserTable({ users, onEdit, onDelete, groupByValue }: UserTableProps) {
         render: (user) => (
           <div className="flex items-center gap-3">
             <Avatar
-              src={
-                user.profilePic ? getAvatarUrl(asUserId(user.id)) : undefined
-              }
+              src={user.profilePic}
               fallback={user.name || user.email || ''}
               size="md"
             />
@@ -163,6 +160,7 @@ function UserTable({ users, onEdit, onDelete, groupByValue }: UserTableProps) {
     sortDirection,
     onSort: handleSort,
     actions: rowActions,
+    getRowId: (user: UserWithStats) => user.email ?? '',
   };
 
   const renderDialogs = () => (
@@ -170,7 +168,7 @@ function UserTable({ users, onEdit, onDelete, groupByValue }: UserTableProps) {
       <AddToProjectModal
         isOpen={showAddToProjectModal}
         onClose={() => setShowAddToProjectModal(false)}
-        userIds={selectedRows}
+        userEmails={selectedRows}
         onSuccess={clearSelection}
       />
       <ConfirmationDialog

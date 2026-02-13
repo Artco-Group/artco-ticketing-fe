@@ -79,8 +79,10 @@ function TicketTable({
         label: 'Delete',
         icon: <Icon name="trash" size="sm" />,
         onClick: (ticket) => {
-          setSelectedRows([ticket.id]);
-          setShowDeleteConfirm(true);
+          if (ticket.ticketId) {
+            setSelectedRows([ticket.ticketId]);
+            setShowDeleteConfirm(true);
+          }
         },
       },
     ],
@@ -92,7 +94,7 @@ function TicketTable({
       {
         key: 'name',
         label: 'Name',
-        width: 'w-[40%]',
+        width: 'w-[45%]',
         sortable: true,
         render: (ticket) => (
           <div className="flex items-center gap-3">
@@ -120,7 +122,7 @@ function TicketTable({
         key: 'category',
         label: 'Category',
         type: 'badge',
-        width: 'w-[15%]',
+        width: 'w-[10%]',
         sortable: true,
         sortValue: (ticket) =>
           TicketCategorySortOrder[ticket.category as TicketCategory] ?? 0,
@@ -206,6 +208,7 @@ function TicketTable({
     sortDirection,
     onSort: handleSort,
     actions: rowActions,
+    getRowId: (ticket: Ticket) => ticket.ticketId ?? '',
   };
 
   const renderDialogs = () => (

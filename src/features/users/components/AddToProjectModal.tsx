@@ -10,14 +10,14 @@ import { type ProjectId, asProjectId } from '@/types';
 interface AddToProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  userIds: string[];
+  userEmails: string[];
   onSuccess?: () => void;
 }
 
 export function AddToProjectModal({
   isOpen,
   onClose,
-  userIds,
+  userEmails,
   onSuccess,
 }: AddToProjectModalProps) {
   const [selectedProjectId, setSelectedProjectId] = useState<ProjectId>();
@@ -42,10 +42,10 @@ export function AddToProjectModal({
     try {
       await addMembersMutation.mutateAsync({
         slug: selectedProjectId,
-        data: { memberIds: userIds },
+        data: { memberEmails: userEmails },
       });
       toast.success(
-        `${userIds.length} user${userIds.length > 1 ? 's' : ''} added to project`
+        `${userEmails.length} user${userEmails.length > 1 ? 's' : ''} added to project`
       );
       onSuccess?.();
       handleClose();
@@ -65,7 +65,7 @@ export function AddToProjectModal({
       onClose={handleClose}
       title="Add to Project"
       size="md"
-      description={`Add ${userIds.length} selected user${userIds.length > 1 ? 's' : ''} to a project`}
+      description={`Add ${userEmails.length} selected user${userEmails.length > 1 ? 's' : ''} to a project`}
       actions={
         <>
           <Button variant="outline" onClick={handleClose}>

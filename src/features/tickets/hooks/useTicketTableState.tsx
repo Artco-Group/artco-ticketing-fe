@@ -39,16 +39,29 @@ export function useTicketTableState({ users }: UseTicketTableStateProps) {
   const clearSelection = useCallback(() => setSelectedRows([]), []);
 
   const handleBulkDelete = useCallback(() => {
+    const ticketIds = selectedRows.filter((id) => id.length > 0);
+
+    if (ticketIds.length === 0) {
+      toast.error('No valid tickets selected for deletion');
+      return;
+    }
+
     bulkDelete(
-      { ids: selectedRows },
+      { ticketIds },
       {
         onSuccess: () => {
           clearSelection();
           setShowDeleteConfirm(false);
+          toast.success(
+            `Deleted ${ticketIds.length} ticket${ticketIds.length > 1 ? 's' : ''}`
+          );
+        },
+        onError: (error) => {
+          toast.error(error?.message || 'Failed to delete tickets');
         },
       }
     );
-  }, [bulkDelete, selectedRows, clearSelection]);
+  }, [bulkDelete, selectedRows, clearSelection, toast]);
 
   const handleBulkPriorityChange = useCallback(
     (priority: TicketPriority) => {
@@ -121,8 +134,8 @@ export function useTicketTableState({ users }: UseTicketTableStateProps) {
       {
         key: 'dueDate',
         getGroupKey: (ticket) => {
-          if (ticket.createdAt) {
-            const date = new Date(ticket.createdAt);
+          if (ticket.dueDate) {
+            const date = new Date(ticket.dueDate);
             return date.toLocaleDateString('en-US', {
               month: 'long',
               year: 'numeric',

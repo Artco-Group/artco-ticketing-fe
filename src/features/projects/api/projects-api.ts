@@ -4,12 +4,14 @@ import {
   API_ROUTES,
   CACHE,
   type Project,
+  type Ticket,
   type CreateProjectFormData,
   type UpdateProjectFormData,
   type AddProjectMembersFormData,
+  type ApiResponse,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
-import type { ApiResponse, ProjectId } from '@/types';
+import type { ProjectId } from '@/types';
 
 interface ProjectWithProgress extends Project {
   progress: {
@@ -20,7 +22,7 @@ interface ProjectWithProgress extends Project {
 }
 
 function useProjects(params?: Record<string, unknown>) {
-  return useApiQuery<ApiResponse<{ projects: ProjectWithProgress[] }>>(
+  return useApiQuery<{ projects: ProjectWithProgress[] }>(
     QueryKeys.projects.list(params),
     {
       url: API_ROUTES.PROJECTS.BASE,
@@ -31,7 +33,7 @@ function useProjects(params?: Record<string, unknown>) {
 }
 
 function useProject(slug: ProjectId | undefined) {
-  return useApiQuery<ApiResponse<{ project: ProjectWithProgress }>>(
+  return useApiQuery<{ project: ProjectWithProgress }>(
     QueryKeys.projects.detail(slug!),
     {
       url: API_ROUTES.PROJECTS.BY_SLUG(slug!),
@@ -90,11 +92,8 @@ interface BulkDeleteResult {
   failedIds: string[];
 }
 
-/**
- * Bulk delete projects
- */
 function useBulkDeleteProjects() {
-  return useApiMutation<ApiResponse<BulkDeleteResult>, { ids: string[] }>({
+  return useApiMutation<ApiResponse<BulkDeleteResult>, { slugs: string[] }>({
     url: API_ROUTES.PROJECTS.BASE,
     method: 'DELETE',
     onSuccess: () => {
@@ -140,7 +139,7 @@ function useRemoveProjectMember() {
 }
 
 function useProjectTickets(projectId: ProjectId | undefined) {
-  return useApiQuery<ApiResponse<{ tickets: unknown[] }>>(
+  return useApiQuery<{ tickets: Ticket[] }>(
     QueryKeys.projects.tickets(projectId!),
     {
       url: API_ROUTES.PROJECTS.TICKETS(projectId!),

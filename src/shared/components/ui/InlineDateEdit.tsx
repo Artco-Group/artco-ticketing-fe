@@ -6,6 +6,7 @@ import {
   type ChangeEvent,
 } from 'react';
 import { cn } from '@/lib/utils';
+import { Icon } from './Icon';
 
 export interface InlineDateEditProps {
   label: string;
@@ -79,43 +80,48 @@ export function InlineDateEdit({
         <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
           {label}
         </span>
-        {displayContent}
+        <span className="select-none">{displayContent}</span>
       </div>
     );
   }
 
   return (
-    <div className="relative">
-      <div className="flex h-8 items-center justify-start">
+    <div className="flex h-8 items-center justify-start">
+      <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+        {label}
+      </span>
+      <div className="relative">
         <button
           type="button"
           onClick={handleClick}
           disabled={isLoading}
-          className="m-0 flex cursor-pointer items-center justify-start p-0 text-left transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+          className={cn(
+            'group -mx-1.5 -my-0.5 flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 text-left transition-all',
+            'hover:bg-muted/60',
+            isLoading && 'cursor-not-allowed opacity-50'
+          )}
         >
-          <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
-            {label}
-          </span>
           {displayContent}
+          <Icon
+            name="chevron-selector"
+            size="xs"
+            className="text-muted-foreground shrink-0 opacity-0 transition-opacity group-hover:opacity-60"
+          />
         </button>
+        {/* Hidden date input - only used to trigger the native picker */}
+        <input
+          ref={inputRef}
+          type="date"
+          value={formatDateInput(displayValue)}
+          onChange={handleDateChange}
+          className={cn(
+            'pointer-events-none absolute inset-0 h-full w-full opacity-0',
+            '[&::-webkit-calendar-picker-indicator]:pointer-events-none',
+            '[&::-webkit-calendar-picker-indicator]:opacity-0'
+          )}
+          tabIndex={-1}
+        />
       </div>
-      {/* Hidden date input - only used to trigger the native picker */}
-      <input
-        ref={inputRef}
-        type="date"
-        value={formatDateInput(displayValue)}
-        onChange={handleDateChange}
-        className={cn(
-          'absolute inset-0 h-full w-full cursor-pointer opacity-0',
-          '[&::-webkit-calendar-picker-indicator]:absolute',
-          '[&::-webkit-calendar-picker-indicator]:inset-0',
-          '[&::-webkit-calendar-picker-indicator]:h-full',
-          '[&::-webkit-calendar-picker-indicator]:w-full',
-          '[&::-webkit-calendar-picker-indicator]:cursor-pointer',
-          '[&::-webkit-calendar-picker-indicator]:opacity-0'
-        )}
-        tabIndex={-1}
-      />
     </div>
   );
 }

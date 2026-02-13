@@ -19,7 +19,6 @@ export * from './Tooltip';
 
 // Custom components
 export * from './DataTable';
-export * from './tableColumns';
 export * from './LoadingOverlay';
 export * from './Spinner';
 export * from './Modal';

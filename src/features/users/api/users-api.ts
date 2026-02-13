@@ -8,12 +8,8 @@ import {
   type UpdateUserFormData,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
-import { API_URL } from '@/shared/lib/api-client';
 import type { UserId, ApiResponse } from '@/types';
 
-/**
- * Get all users
- */
 function useUsers(params?: Record<string, unknown>) {
   return useApiQuery<ApiResponse<{ users: User[] }>>(
     QueryKeys.users.list(params),
@@ -25,9 +21,6 @@ function useUsers(params?: Record<string, unknown>) {
   );
 }
 
-/**
- * Get a single user by ID
- */
 function useUser(id: UserId) {
   return useApiQuery<{ user: User }>(QueryKeys.users.detail(id), {
     url: API_ROUTES.USERS.BY_ID(id),
@@ -36,9 +29,6 @@ function useUser(id: UserId) {
   });
 }
 
-/**
- * Get all developers
- */
 function useDevelopers() {
   return useApiQuery<ApiResponse<{ users: User[] }>>(
     QueryKeys.users.developers(),
@@ -49,9 +39,6 @@ function useDevelopers() {
   );
 }
 
-/**
- * Create a new user
- */
 function useCreateUser() {
   return useApiMutation<ApiResponse<{ user: User }>, CreateUserFormData>({
     url: API_ROUTES.USERS.BASE,
@@ -62,9 +49,6 @@ function useCreateUser() {
   });
 }
 
-/**
- * Update an existing user
- */
 function useUpdateUser() {
   return useApiMutation<
     { user: User },
@@ -78,13 +62,11 @@ function useUpdateUser() {
         queryKey: QueryKeys.users.detail(variables.id),
       });
       queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
     },
   });
 }
 
-/**
- * Delete a user
- */
 function useDeleteUser() {
   return useApiMutation<void, UserId>({
     url: (id) => API_ROUTES.USERS.BY_ID(id),
@@ -98,15 +80,12 @@ function useDeleteUser() {
 
 interface BulkDeleteResult {
   deletedCount: number;
-  failedIds: string[];
+  failedEmails: string[];
   errors: Record<string, string>;
 }
 
-/**
- * Bulk delete users
- */
 function useBulkDeleteUsers() {
-  return useApiMutation<ApiResponse<BulkDeleteResult>, { ids: string[] }>({
+  return useApiMutation<ApiResponse<BulkDeleteResult>, { emails: string[] }>({
     url: API_ROUTES.USERS.BASE,
     method: 'DELETE',
     onSuccess: () => {
@@ -115,9 +94,6 @@ function useBulkDeleteUsers() {
   });
 }
 
-/**
- * Upload user avatar
- */
 function useUploadAvatar() {
   return useApiMutation<
     ApiResponse<{ user: User }>,
@@ -138,13 +114,11 @@ function useUploadAvatar() {
         queryKey: QueryKeys.users.detail(variables.userId),
       });
       queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
     },
   });
 }
 
-/**
- * Remove user avatar
- */
 function useRemoveAvatar() {
   return useApiMutation<ApiResponse<{ user: User }>, UserId>({
     url: (userId) => `${API_ROUTES.USERS.BY_ID(userId)}/avatar`,
@@ -155,15 +129,9 @@ function useRemoveAvatar() {
         queryKey: QueryKeys.users.detail(userId),
       });
       queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
     },
   });
-}
-
-/**
- * Get avatar URL for a user
- */
-function getAvatarUrl(userId: UserId): string {
-  return `${API_URL}${API_ROUTES.USERS.BY_ID(userId)}/avatar`;
 }
 
 export {
@@ -176,5 +144,4 @@ export {
   useBulkDeleteUsers,
   useUploadAvatar,
   useRemoveAvatar,
-  getAvatarUrl,
 };

@@ -30,8 +30,14 @@ export function ErrorFallback({
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-3xl rounded-lg bg-white p-8 shadow-lg">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-gray-50 px-4 py-12"
+      style={{ width: '100vw', height: '100vh' }}
+    >
+      <div
+        className="rounded-lg bg-white p-8 shadow-lg"
+        style={{ width: '100%', maxWidth: '672px', minWidth: '320px' }}
+      >
         {/* Error Icon */}
         <div className="mb-6 flex justify-center">
           <div className="bg-error-100 flex h-16 w-16 items-center justify-center rounded-full">

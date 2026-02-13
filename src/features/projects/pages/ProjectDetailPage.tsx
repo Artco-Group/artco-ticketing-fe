@@ -58,9 +58,16 @@ export default function ProjectDetailPage() {
   const tickets = ticketsData?.tickets || [];
   const users = useMemo(() => usersData?.users || [], [usersData?.users]);
 
+  // Combine leads and members for the invite modal
+  const currentTeamMembers = useMemo(() => {
+    const leads = (project?.leads as User[] | undefined) || [];
+    const members = (project?.members as User[] | undefined) || [];
+    return [...leads, ...members];
+  }, [project?.leads, project?.members]);
+
   const inviteMembers = useInviteMembers({
     projectId: projectSlug,
-    currentMembers: project?.members as User[] | undefined,
+    currentMembers: currentTeamMembers,
     allUsers: users,
   });
 
@@ -96,6 +103,7 @@ export default function ProjectDetailPage() {
           <div className="p-6 lg:border-r">
             <div className="flex items-start gap-4">
               <CompanyLogo
+                src={client?.profilePic}
                 alt={client?.name || project.name}
                 fallback={client?.name || project.name}
                 tooltip={client?.name}
@@ -168,6 +176,7 @@ export default function ProjectDetailPage() {
                     size="md"
                     max={4}
                     avatars={leads.map((lead) => ({
+                      src: lead.profilePic,
                       fallback: lead.name || lead.email || '?',
                       tooltip: lead.name || lead.email,
                     }))}
@@ -185,6 +194,7 @@ export default function ProjectDetailPage() {
                     size="md"
                     max={6}
                     avatars={members.map((member) => ({
+                      src: member.profilePic,
                       fallback: member.name || member.email || '?',
                       tooltip: member.name || member.email,
                     }))}
@@ -229,7 +239,6 @@ export default function ProjectDetailPage() {
                 size="sm"
                 onClick={() => setShowTicketDialog(true)}
                 leftIcon="plus"
-                className="bg-greyscale-900 hover:bg-greyscale-800 text-white"
               >
                 Create Ticket
               </Button>

@@ -196,34 +196,113 @@ export function useUserList() {
     setEditingUser(null);
   };
 
+  const handleProjectAssignments = async (
+    userId: string,
+    userEmail: string,
+    projectIds: string[],
+    currentProjectIds: string[]
+  ) => {
+    const projectsToAdd = projectIds.filter(
+      (id) => !currentProjectIds.includes(id)
+    );
+    const projectsToRemove = currentProjectIds.filter(
+      (id) => !projectIds.includes(id)
+    );
+
+    if (projectsToAdd.length > 0) {
+      try {
+        await Promise.all(
+          projectsToAdd.map((projectId) =>
+            addProjectMembersMutation.mutateAsync({
+              slug: asProjectId(projectId),
+              data: { memberEmails: [userEmail] },
+            })
+          )
+        );
+      } catch (_err) {
+        toast.error('Failed to assign to some projects');
+      }
+    }
+
+    if (projectsToRemove.length > 0) {
+      try {
+        await Promise.all(
+          projectsToRemove.map((projectId) =>
+            removeProjectMemberMutation.mutateAsync({
+              projectId: asProjectId(projectId),
+              memberId: userId,
+            })
+          )
+        );
+      } catch (_err) {
+        toast.error('Failed to remove from some projects');
+      }
+    }
+  };
+
   const handleFormSubmit = async (
     formData: CreateUserFormData | UpdateUserFormData,
     projectIds?: string[],
     avatarFile?: File
   ) => {
-    let userId: string | undefined;
-
+    // Edit existing user
     if (editingUser) {
-      userId = editingUser.id;
-      if (userId) {
-        await handleUpdateUser(
-          asUserId(userId),
-          formData as UpdateUserFormData
+      const { id: userId, email: userEmail } = editingUser;
+      if (!userId || !userEmail) {
+        toast.error('Invalid user data');
+        return;
+      }
+
+      await handleUpdateUser(asUserId(userId), formData as UpdateUserFormData);
+
+      // Handle avatar upload for edit (create mode uploads after user creation)
+      if (avatarFile) {
+        try {
+          await uploadAvatarMutation.mutateAsync({
+            userId: asUserId(userId),
+            file: avatarFile,
+          });
+        } catch (_err) {
+          toast.error('Failed to upload avatar');
+        }
+      }
+
+      // Handle project assignments for edit
+      if (projectIds) {
+        const currentProjectIds =
+          'projects' in editingUser
+            ? (editingUser as UserWithStats).projects.map((p) => p.id)
+            : [];
+        await handleProjectAssignments(
+          userId,
+          userEmail,
+          projectIds,
+          currentProjectIds
         );
       }
-    } else {
-      const result = await createUserMutation.mutateAsync(
-        formData as CreateUserFormData
-      );
-      userId = result?.user?.id;
-      toast.success('Member created successfully');
+
+      handleCloseFormModal();
+      return;
     }
 
-    // Upload avatar if provided (for create mode - edit mode uploads immediately)
-    if (userId && avatarFile) {
+    // Create new user
+    const result = await createUserMutation.mutateAsync(
+      formData as CreateUserFormData
+    );
+    const newUser = result?.user;
+
+    if (!newUser?.id || !newUser?.email) {
+      toast.error('Failed to create user');
+      return;
+    }
+
+    toast.success('Member created successfully');
+
+    // Handle avatar upload for new user
+    if (avatarFile) {
       try {
         await uploadAvatarMutation.mutateAsync({
-          userId: asUserId(userId),
+          userId: asUserId(newUser.id),
           file: avatarFile,
         });
       } catch (_err) {
@@ -231,68 +310,26 @@ export function useUserList() {
       }
     }
 
-    // Handle project assignments
-    if (userId && projectIds) {
-      // Get current project IDs (for edit mode)
-      const currentProjectIds =
-        editingUser && 'projects' in editingUser
-          ? (editingUser as UserWithStats).projects.map((p) => p.id)
-          : [];
-
-      // Calculate projects to add (new selections)
-      const projectsToAdd = projectIds.filter(
-        (id) => !currentProjectIds.includes(id)
-      );
-
-      // Calculate projects to remove (deselected)
-      const projectsToRemove = currentProjectIds.filter(
-        (id) => !projectIds.includes(id)
-      );
-
-      // Add user to new projects
-      if (projectsToAdd.length > 0) {
-        try {
-          await Promise.all(
-            projectsToAdd.map((projectId) =>
-              addProjectMembersMutation.mutateAsync({
-                slug: asProjectId(projectId),
-                data: { memberIds: [userId!] },
-              })
-            )
-          );
-        } catch (_err) {
-          toast.error('Failed to assign to some projects');
-        }
-      }
-
-      // Remove user from deselected projects
-      if (projectsToRemove.length > 0) {
-        try {
-          await Promise.all(
-            projectsToRemove.map((projectId) =>
-              removeProjectMemberMutation.mutateAsync({
-                projectId: asProjectId(projectId),
-                memberId: userId!,
-              })
-            )
-          );
-        } catch (_err) {
-          toast.error('Failed to remove from some projects');
-        }
-      }
+    // Handle project assignments for new user
+    if (projectIds && projectIds.length > 0) {
+      await handleProjectAssignments(newUser.id, newUser.email, projectIds, []);
     }
 
     handleCloseFormModal();
   };
 
   const handleConfirmDelete = async () => {
-    if (userToDelete) {
-      const userId = userToDelete.id;
-      if (userId) {
-        await handleDeleteUser(asUserId(userId));
-      }
+    if (!userToDelete) return;
+
+    const { id: userId } = userToDelete;
+    if (!userId) {
+      toast.error('Invalid user data');
       setUserToDelete(null);
+      return;
     }
+
+    await handleDeleteUser(asUserId(userId));
+    setUserToDelete(null);
   };
 
   // Generic filter change handler for FilterBar integration

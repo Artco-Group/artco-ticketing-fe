@@ -24,7 +24,6 @@ export function useCheckEmail() {
 
   const [isResending, setIsResending] = useState(false);
   const [cooldown, setCooldown] = useState(0);
-  const [serverError, setServerError] = useState('');
 
   // Cooldown timer
   useEffect(() => {
@@ -46,16 +45,13 @@ export function useCheckEmail() {
     if (cooldown > 0) return;
 
     setIsResending(true);
-    setServerError('');
 
     try {
       await forgotPasswordMutation.mutateAsync({ email });
       setCooldown(COOLDOWN_SECONDS);
       toast.success('Email resent successfully');
     } catch (err) {
-      const errorMessage = extractAuthError(err);
-      setServerError(errorMessage);
-      toast.error(errorMessage);
+      toast.error(extractAuthError(err));
     } finally {
       setIsResending(false);
     }
@@ -65,7 +61,6 @@ export function useCheckEmail() {
     email,
     isResending,
     cooldown,
-    serverError,
     handleResend,
     canResend: cooldown === 0 && !!email,
   };

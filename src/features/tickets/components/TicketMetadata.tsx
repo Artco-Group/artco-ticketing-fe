@@ -37,9 +37,8 @@ function TicketMetadata({
     isAdmin,
   });
 
-  // Get eng lead from project's leads or fall back to first eng lead user
+  // Get project leads as eng lead options
   const projectLeads = ticket.project?.leads || [];
-  const engLead = projectLeads[0] || inlineEdit.engLeadUsers[0];
 
   const projectOptions = projects.map((p) => ({
     id: p.id || '',
@@ -70,7 +69,7 @@ function TicketMetadata({
         />
       </div>
 
-      <div className="space-y-3">
+      <div className="border-border/40 space-y-3 border-l pl-8">
         <AssigneeEdit
           value={ticket.assignedTo}
           users={users}
@@ -81,11 +80,11 @@ function TicketMetadata({
         />
 
         <EngLeadEdit
-          value={engLead}
+          value={ticket.engLead}
           users={users}
-          engLeadUsers={projectLeads as User[]}
-          canEdit={inlineEdit.canEditEngLead}
-          isLoading={false}
+          engLeadUsers={projectLeads as typeof users}
+          canEdit={inlineEdit.canEditEngLead && projectLeads.length > 0}
+          isLoading={inlineEdit.isEngLeadUpdating}
           onChange={inlineEdit.onEngLeadChange}
         />
 
@@ -106,7 +105,7 @@ function TicketMetadata({
         />
       </div>
 
-      <div className="space-y-3">
+      <div className="border-border/40 space-y-3 border-l pl-8">
         <StartDateEdit
           value={ticket.startDate}
           canEdit={inlineEdit.canEditDates}

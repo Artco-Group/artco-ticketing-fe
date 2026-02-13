@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
-import { type Ticket, UserRole } from '@artco-group/artco-ticketing-sync';
+import {
+  type Ticket,
+  type User,
+  UserRole,
+} from '@artco-group/artco-ticketing-sync';
 import { SideDialog, Button } from '@/shared/components/ui';
 import { useAuth } from '@/features/auth/context';
 import { useProjects } from '@/features/projects/api/projects-api';
-import { useUsers } from '@/features/users/api';
 import { useRoleFlags } from '@/shared';
 import { useTicketDialogForm, useTicketDialogActions } from '../hooks';
 import { TicketForm } from './TicketForm';
@@ -48,7 +51,6 @@ export function TicketDialog({
   };
 
   const { data: projectsData } = useProjects();
-  const { data: usersData } = useUsers();
 
   const projectOptions = useMemo(
     () =>
@@ -59,13 +61,19 @@ export function TicketDialog({
     [projectsData?.projects]
   );
 
-  const developerUsers = useMemo(
-    () =>
-      (usersData?.users || []).filter(
-        (u) => u.role === UserRole.DEVELOPER || u.role === UserRole.ENG_LEAD
-      ),
-    [usersData?.users]
-  );
+  const selectedProjectId = projectId || form.watch('project');
+
+  const developerUsers = useMemo(() => {
+    if (!selectedProjectId || !projectsData?.projects) return [];
+
+    const selectedProject = projectsData.projects.find(
+      (p) => p.id === selectedProjectId
+    );
+    if (!selectedProject) return [];
+
+    const members = (selectedProject.members as User[]) || [];
+    return members.filter((u) => u.role === UserRole.DEVELOPER);
+  }, [selectedProjectId, projectsData]);
 
   const formId = 'ticket-dialog-form';
 

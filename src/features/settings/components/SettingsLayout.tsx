@@ -53,7 +53,7 @@ function SettingsLayoutContent({
       : SIDEBAR_WIDTH.EXPANDED;
 
   return (
-    <div className="min-h-screen w-full bg-gray-50" style={{ minWidth: 0 }}>
+    <div className="h-screen w-full bg-gray-50">
       {showMainSidebar && (
         <Sidebar
           items={mainSidebarItems}
@@ -73,10 +73,10 @@ function SettingsLayoutContent({
         />
       )}
       <div
-        className="transition-[padding] duration-300"
-        style={{ paddingLeft: sidebarWidth, minWidth: 0 }}
+        className="flex h-full flex-col transition-[padding] duration-300"
+        style={{ paddingLeft: sidebarWidth }}
       >
-        <main className="p-8" style={{ width: '100%', minWidth: 0 }}>
+        <main className="flex-1 overflow-auto p-8">
           <nav className="mb-6 flex items-center gap-2 text-sm">
             <NavLink
               to={PAGE_ROUTES.SETTINGS.PROFILE}

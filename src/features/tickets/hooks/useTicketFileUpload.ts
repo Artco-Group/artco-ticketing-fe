@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import {
+  VALIDATION_RULES,
+  ALLOWED_FILE_TYPES,
+} from '@artco-group/artco-ticketing-sync';
 import { asTicketId } from '@/types';
 import { useToast } from '@/shared/components/ui';
 import {
@@ -38,6 +42,21 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
 
   const handleUploadFiles = async () => {
     if (!pendingFiles.length || !ticketId) return;
+
+    for (const file of pendingFiles) {
+      if (file.size > VALIDATION_RULES.FRONTEND_MAX_FILE_SIZE) {
+        toast.error(
+          `File "${file.name}" is too large. Maximum size is ${VALIDATION_RULES.FRONTEND_MAX_FILE_SIZE / (1024 * 1024)}MB.`
+        );
+        return;
+      }
+      if (!ALLOWED_FILE_TYPES.ATTACHMENTS.includes(file.type)) {
+        toast.error(
+          `File "${file.name}" has an unsupported type. Allowed types: images, PDFs, and documents.`
+        );
+        return;
+      }
+    }
 
     const formData = new FormData();
     pendingFiles.forEach((file) => {

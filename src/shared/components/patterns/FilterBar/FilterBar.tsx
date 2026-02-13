@@ -204,12 +204,7 @@ export function FilterBar({
 
         {/* Add button */}
         {showAddButton && (
-          <Button
-            leftIcon="plus"
-            onClick={onAddClick}
-            className="bg-greyscale-900 hover:bg-greyscale-800 text-white"
-            size="sm"
-          >
+          <Button leftIcon="plus" onClick={onAddClick} size="sm">
             {addButtonLabel}
           </Button>
         )}

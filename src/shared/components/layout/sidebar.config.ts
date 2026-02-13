@@ -1,3 +1,4 @@
+import { ALL_ROLES, ADMIN_ROLES } from '@artco-group/artco-ticketing-sync';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { UserRole } from '@/types';
 import type { SidebarItem, SidebarFooterSection } from './Sidebar';
@@ -32,46 +33,31 @@ export const NAVIGATION: NavItemConfig[] = [
     id: 'tickets',
     label: 'Tickets',
     icon: 'tasks',
-    roles: [
-      UserRole.CLIENT,
-      UserRole.DEVELOPER,
-      UserRole.ENG_LEAD,
-      UserRole.ADMIN,
-    ],
+    roles: ALL_ROLES,
   },
   {
     id: 'users',
     label: 'Members',
     icon: 'user',
-    roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
+    roles: ADMIN_ROLES,
   },
   {
     id: 'projects',
     label: 'Projects',
     icon: 'notes',
-    roles: [
-      UserRole.CLIENT,
-      UserRole.DEVELOPER,
-      UserRole.ENG_LEAD,
-      UserRole.ADMIN,
-    ],
+    roles: ALL_ROLES,
   },
   {
     id: 'clients',
     label: 'Clients',
     icon: 'user',
-    roles: [UserRole.ENG_LEAD, UserRole.ADMIN],
+    roles: ADMIN_ROLES,
   },
   {
     id: 'reports',
     label: 'Reports',
     icon: 'reports',
-    roles: [
-      UserRole.CLIENT,
-      UserRole.DEVELOPER,
-      UserRole.ENG_LEAD,
-      UserRole.ADMIN,
-    ],
+    roles: ALL_ROLES,
   },
 ];
 

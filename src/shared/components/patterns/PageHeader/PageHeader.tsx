@@ -70,6 +70,7 @@ export function PageHeader({
           user={{
             name: user?.name ?? '',
             email: user?.email,
+            avatarUrl: user?.profilePic,
           }}
           onLogout={logout}
         />

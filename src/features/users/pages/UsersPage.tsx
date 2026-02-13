@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import {
   UserRoleDisplay,
   type CreateUserFormData,
+  INTERNAL_ROLES,
 } from '@artco-group/artco-ticketing-sync';
 import { UserRole, type UserWithStats } from '@/types';
 import { UserTable, UserForm } from '../components';
@@ -14,8 +15,6 @@ import {
 } from '@/shared/components/ui';
 import { ListPageLayout } from '@/shared/components/layout/ListPageLayout';
 import { useUserList } from '../hooks';
-
-const AVAILABLE_ROLES = [UserRole.DEVELOPER, UserRole.ENG_LEAD, UserRole.ADMIN];
 
 export default function UsersPage() {
   const {
@@ -53,7 +52,7 @@ export default function UsersPage() {
         id: 'role',
         label: 'Role',
         icon: 'user' as const,
-        options: AVAILABLE_ROLES.map((role) => UserRoleDisplay[role]),
+        options: INTERNAL_ROLES.map((role) => UserRoleDisplay[role]),
         value: roleFilter === 'All' ? null : roleFilter,
       },
     ],

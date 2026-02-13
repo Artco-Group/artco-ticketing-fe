@@ -11,6 +11,7 @@ import {
   useUpdateTicketStatus,
   useUpdateTicketPriority,
   useAssignTicket,
+  useAssignEngLead,
   useUpdateTicket,
 } from '../api/tickets-api';
 
@@ -38,6 +39,7 @@ export function useTicketInlineEdit({
   const updateStatus = useUpdateTicketStatus();
   const updatePriority = useUpdateTicketPriority();
   const assignTicket = useAssignTicket();
+  const assignEngLead = useAssignEngLead();
   const updateTicket = useUpdateTicket();
 
   const canManage = isEngLead || isAdmin;
@@ -47,7 +49,7 @@ export function useTicketInlineEdit({
   const canEditCategory = canManage;
   const canEditDates = canManage;
   const canEditProject = canManage;
-  const canEditEngLead = isAdmin;
+  const canEditEngLead = canManage;
 
   const developerUsers = users.filter(
     (user) => user.role === UserRole.DEVELOPER
@@ -150,8 +152,21 @@ export function useTicketInlineEdit({
     }
   };
 
-  const handleEngLeadChange = async (_userId: string) => {
-    toast.info('Eng Lead is managed through the project settings');
+  const handleEngLeadChange = (userId: string | string[]) => {
+    if (!ticket?.id) return;
+    const engLeadId = Array.isArray(userId) ? userId[0] : userId;
+    if (!engLeadId) return;
+
+    assignEngLead.mutate(
+      {
+        id: asTicketId(ticket.ticketId),
+        engLeadId: asUserId(engLeadId),
+      },
+      {
+        onSuccess: () => toast.success('Eng Lead updated'),
+        onError: () => toast.error('Failed to update Eng Lead'),
+      }
+    );
   };
 
   return {
@@ -167,6 +182,7 @@ export function useTicketInlineEdit({
     isPriorityUpdating: updatePriority.isPending,
     isCategoryUpdating: updateTicket.isPending,
     isAssigneeUpdating: assignTicket.isPending,
+    isEngLeadUpdating: assignEngLead.isPending,
     isDatesUpdating: updateTicket.isPending,
     isProjectUpdating: updateTicket.isPending,
 

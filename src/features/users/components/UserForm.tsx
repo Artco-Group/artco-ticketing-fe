@@ -3,6 +3,7 @@ import {
   type UpdateUserFormData,
   UserRoleDisplay,
   type Project,
+  INTERNAL_ROLES,
 } from '@artco-group/artco-ticketing-sync';
 import { UserRole } from '@/types';
 import {
@@ -16,12 +17,6 @@ import {
 } from '@/shared/components/ui';
 import { ProjectPicker } from '@/shared/components/composite';
 import { useUserForm, useProfilePicture } from '../hooks';
-
-const AVAILABLE_ROLES: UserRole[] = [
-  UserRole.DEVELOPER,
-  UserRole.ENG_LEAD,
-  UserRole.ADMIN,
-];
 
 interface UserFormProps {
   formId: string;
@@ -124,6 +119,7 @@ function UserForm({
                 accept="image/jpeg,image/jpg,image/png,image/gif"
                 className="hidden"
                 onChange={handleFileSelect}
+                aria-label="Upload profile picture"
               />
             </div>
             <p className="text-muted-foreground mt-1 text-xs">
@@ -178,7 +174,7 @@ function UserForm({
               <FormItem className="space-y-0">
                 <Select
                   label="Role"
-                  options={AVAILABLE_ROLES.map((role) => ({
+                  options={INTERNAL_ROLES.map((role) => ({
                     label: UserRoleDisplay[role],
                     value: role,
                   }))}

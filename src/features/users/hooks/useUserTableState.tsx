@@ -1,22 +1,21 @@
 import { useMemo, useState, useCallback } from 'react';
-import { UserRoleDisplay } from '@artco-group/artco-ticketing-sync';
+import { UserRoleDisplay, ROLE_ORDER } from '@artco-group/artco-ticketing-sync';
 import { UserRole, type UserWithStats } from '@/types';
-import { type SortDirection, type BulkAction } from '@/shared/components/ui';
+import {
+  type SortDirection,
+  type BulkAction,
+  useToast,
+} from '@/shared/components/ui';
 import { type GroupConfig } from '@/shared/hooks/useGroupedData';
 import { Icon } from '@/shared/components/ui';
 import { useBulkDeleteUsers } from '../api';
-
-const ROLE_ORDER: Record<string, number> = {
-  [UserRole.ADMIN]: 1,
-  [UserRole.ENG_LEAD]: 2,
-  [UserRole.DEVELOPER]: 3,
-};
 
 interface UseUserTableStateProps {
   users: UserWithStats[];
 }
 
 export function useUserTableState({ users }: UseUserTableStateProps) {
+  const toast = useToast();
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
@@ -28,16 +27,29 @@ export function useUserTableState({ users }: UseUserTableStateProps) {
   const clearSelection = useCallback(() => setSelectedRows([]), []);
 
   const handleBulkDelete = useCallback(() => {
+    const emails = selectedRows.filter((email) => email.length > 0);
+
+    if (emails.length === 0) {
+      toast.error('No valid users selected for deletion');
+      return;
+    }
+
     bulkDelete(
-      { ids: selectedRows },
+      { emails },
       {
         onSuccess: () => {
           clearSelection();
           setShowDeleteConfirm(false);
+          toast.success(
+            `Deleted ${emails.length} user${emails.length > 1 ? 's' : ''}`
+          );
+        },
+        onError: (error) => {
+          toast.error(error?.message || 'Failed to delete users');
         },
       }
     );
-  }, [bulkDelete, selectedRows, clearSelection]);
+  }, [bulkDelete, selectedRows, clearSelection, toast]);
 
   const handleSort = useCallback((col: string | null, dir: SortDirection) => {
     setSortColumn(col);
@@ -46,8 +58,8 @@ export function useUserTableState({ users }: UseUserTableStateProps) {
 
   const allSelectedAreDevelopers = useMemo(() => {
     if (selectedRows.length === 0) return false;
-    return selectedRows.every((id) => {
-      const user = users.find((u) => u.id === id);
+    return selectedRows.every((email) => {
+      const user = users.find((u) => u.email === email);
       return (
         user?.role === UserRole.DEVELOPER || user?.role === UserRole.ENG_LEAD
       );

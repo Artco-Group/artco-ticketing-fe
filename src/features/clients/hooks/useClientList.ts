@@ -60,7 +60,6 @@ export function useClientList() {
     updateMutation.isPending ||
     deleteMutation.isPending;
 
-  // Sorted clients
   const sortedClients = useMemo(() => {
     if (!sortBy) return clients;
 
@@ -103,19 +102,26 @@ export function useClientList() {
     _avatarFile?: File
   ) => {
     try {
+      // Edit existing client
       if (editingClient) {
-        const clientId = editingClient.id;
-        if (clientId) {
-          await updateMutation.mutateAsync({
-            id: asUserId(clientId),
-            data: formData as UpdateUserFormData,
-          });
-          toast.success('Client updated successfully');
+        const { id: clientId } = editingClient;
+        if (!clientId) {
+          toast.error('Invalid client data');
+          return;
         }
-      } else {
-        await createMutation.mutateAsync(formData as CreateUserFormData);
-        toast.success('Client created successfully');
+
+        await updateMutation.mutateAsync({
+          id: asUserId(clientId),
+          data: formData as UpdateUserFormData,
+        });
+        toast.success('Client updated successfully');
+        handleCloseFormModal();
+        return;
       }
+
+      // Create new client
+      await createMutation.mutateAsync(formData as CreateUserFormData);
+      toast.success('Client created successfully');
       handleCloseFormModal();
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -123,17 +129,20 @@ export function useClientList() {
   };
 
   const handleConfirmDelete = async () => {
-    if (clientToDelete) {
-      const clientId = clientToDelete.id;
-      if (clientId) {
-        try {
-          await deleteMutation.mutateAsync(asUserId(clientId));
-          toast.success('Client deleted successfully');
-          setClientToDelete(null);
-        } catch (err) {
-          toast.error(getErrorMessage(err));
-        }
-      }
+    if (!clientToDelete) return;
+
+    const { id: clientId } = clientToDelete;
+    if (!clientId) {
+      toast.error('Invalid client data');
+      return;
+    }
+
+    try {
+      await deleteMutation.mutateAsync(asUserId(clientId));
+      toast.success('Client deleted successfully');
+      setClientToDelete(null);
+    } catch (err) {
+      toast.error(getErrorMessage(err));
     }
   };
 

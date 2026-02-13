@@ -40,7 +40,6 @@ export function SettingsSidebar({
   const [searchValue, setSearchValue] = useState('');
 
   const isActive = (href: string) => {
-    if (activeItem) return false;
     return (
       location.pathname === href || location.pathname.startsWith(href + '/')
     );

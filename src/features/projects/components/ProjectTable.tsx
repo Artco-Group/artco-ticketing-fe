@@ -5,7 +5,6 @@ import {
   DataTable,
   EmptyState,
   Icon,
-  Avatar,
   AvatarGroup,
   Progress,
   BulkActionsBar,
@@ -79,6 +78,7 @@ function ProjectTable({
           return (
             <div className="flex items-center gap-3">
               <CompanyLogo
+                src={client?.profilePic}
                 alt={client?.name || project.name}
                 fallback={client?.name || project.name}
                 size="xs"
@@ -134,13 +134,16 @@ function ProjectTable({
           if (!leads || leads.length === 0) {
             return <span className="text-muted-foreground">-</span>;
           }
-          const firstLead = leads[0];
           return (
             <div className="flex justify-center">
-              <Avatar
+              <AvatarGroup
                 size="sm"
-                fallback={firstLead.name || firstLead.email || '?'}
-                tooltip={firstLead.name || firstLead.email}
+                max={3}
+                avatars={leads.map((lead) => ({
+                  src: lead.profilePic,
+                  fallback: lead.name || lead.email || '?',
+                  tooltip: lead.name || lead.email,
+                }))}
               />
             </div>
           );
@@ -161,6 +164,7 @@ function ProjectTable({
                 size="sm"
                 max={3}
                 avatars={members.map((member) => ({
+                  src: member.profilePic,
                   fallback: member.name || member.email || '?',
                   tooltip: member.name || member.email,
                 }))}
@@ -228,6 +232,7 @@ function ProjectTable({
         sortDirection={sortDirection}
         onSort={handleSort}
         actions={rowActions}
+        getRowId={(project) => project.slug ?? ''}
       />
       <BulkActionsBar
         selectedCount={selectedRows.length}

@@ -14,7 +14,12 @@ export function MemberBadge({
 }: MemberBadgeProps) {
   return (
     <Badge variant="secondary" className="gap-1 pr-1">
-      <Avatar fallback={user.name || ''} size="sm" className="h-4 w-4" />
+      <Avatar
+        src={user.profilePic}
+        fallback={user.name || ''}
+        size="sm"
+        className="h-4 w-4"
+      />
       <span className="text-xs">{user.name}</span>
       <Button
         type="button"

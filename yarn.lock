@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
   integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
 
-"@artco-group/artco-ticketing-sync@^1.0.0-beta.17":
-  version "1.0.0-beta.17"
-  resolved "https://npm.pkg.github.com/download/@artco-group/artco-ticketing-sync/1.0.0-beta.17/28e3d8d5fc09af151ffa861072fc7246da55a444#28e3d8d5fc09af151ffa861072fc7246da55a444"
-  integrity sha512-H06k4sCzxSHKcurCoDmR3PH+lR8OtVDmEAVxuMjvmFngpdg5X8c7z98N4Nwgnij2H4aqV5wwAADbxTaxglEkyQ==
+"@artco-group/artco-ticketing-sync@^1.0.0-beta.19":
+  version "1.0.0-beta.19"
+  resolved "https://npm.pkg.github.com/download/@artco-group/artco-ticketing-sync/1.0.0-beta.19/3d55fab4e373d7ce850d41a54d3040b946a13957#3d55fab4e373d7ce850d41a54d3040b946a13957"
+  integrity sha512-0TL9bM7Ln3X6e+GNteAOOnJmMSEm9JiBIDGHMeG0ibp1DIQb+aqg0ZlxaHizD6odgnY5TZyerVkEL1Bvvu4Kcw==
   dependencies:
     zod "^4.3.5"
 

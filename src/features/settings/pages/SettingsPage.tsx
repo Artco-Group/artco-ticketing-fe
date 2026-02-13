@@ -1,5 +1,9 @@
 import { useParams, Navigate } from 'react-router-dom';
-import { SettingsLayout } from '../components';
+import {
+  SettingsLayout,
+  ProfileSettings,
+  SecuritySettings,
+} from '../components';
 import { EmptyState } from '@/shared/components/ui';
 import { PAGE_ROUTES } from '@/shared/constants/routes.constants';
 import type { SettingsSideBarGroup } from '../components/SettingsSidebar';
@@ -92,8 +96,16 @@ export default function SettingsPage() {
     return <Navigate to={PAGE_ROUTES.SETTINGS.PROFILE} replace />;
   }
 
-  return (
-    <SettingsLayout activeSection={section} groups={settingsGroups}>
+  const renderContent = () => {
+    if (section === 'profile') {
+      return <ProfileSettings />;
+    }
+
+    if (section === 'security') {
+      return <SecuritySettings />;
+    }
+
+    return (
       <div className="flex justify-center py-12">
         <EmptyState
           variant="no-data"
@@ -101,6 +113,12 @@ export default function SettingsPage() {
           message={`${section.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())} settings will be available here.`}
         />
       </div>
+    );
+  };
+
+  return (
+    <SettingsLayout activeSection={section} groups={settingsGroups}>
+      {renderContent()}
     </SettingsLayout>
   );
 }

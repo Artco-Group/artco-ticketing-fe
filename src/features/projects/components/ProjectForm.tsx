@@ -47,6 +47,9 @@ function ProjectForm({
 
   const clientUsers = users.filter((user) => user.role === UserRole.CLIENT);
   const leadUsers = users.filter((user) => user.role === UserRole.ENG_LEAD);
+  const developerUsers = users.filter(
+    (user) => user.role === UserRole.DEVELOPER
+  );
 
   return (
     <Form {...form}>
@@ -127,6 +130,32 @@ function ProjectForm({
                     field.onChange(Array.isArray(value) ? value : [value])
                   }
                   placeholder="Select lead(s)..."
+                />
+              </FormControl>
+              {fieldState.error?.message && (
+                <p className="text-destructive text-xs font-medium">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="members"
+          render={({ field, fieldState }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Team Members</FormLabel>
+              <FormControl>
+                <MemberPicker
+                  value={field.value}
+                  options={developerUsers}
+                  multiple
+                  onChange={(value) =>
+                    field.onChange(Array.isArray(value) ? value : [value])
+                  }
+                  placeholder="Select developers..."
                 />
               </FormControl>
               {fieldState.error?.message && (

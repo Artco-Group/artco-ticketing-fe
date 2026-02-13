@@ -73,7 +73,7 @@ export default function ProjectListPage() {
       {
         id: 'priority',
         label: 'Priority',
-        icon: 'plus' as const,
+        icon: 'priority' as const,
         options: PRIORITY_OPTIONS,
         value: priorityFilter === 'All' ? null : priorityFilter,
       },

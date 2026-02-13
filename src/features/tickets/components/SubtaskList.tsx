@@ -63,24 +63,42 @@ function SubtaskItem({
     }
   };
 
+  const handleRowClick = () => {
+    if (canToggle && !isLoading && !isEditing) {
+      handleToggle();
+    }
+  };
+
   return (
     <div
       className={cn(
         'group flex items-center gap-3 rounded-md px-2 py-2 transition-colors',
         'hover:bg-muted/50',
-        subtask.completed && 'opacity-60'
+        subtask.completed && 'opacity-60',
+        canToggle && !isEditing && 'cursor-pointer'
       )}
+      onClick={handleRowClick}
+      role={canToggle ? 'button' : undefined}
+      tabIndex={canToggle && !isEditing ? 0 : undefined}
+      onKeyDown={(e) => {
+        if (canToggle && !isEditing && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          handleToggle();
+        }
+      }}
     >
-      {/* Checkbox */}
       <Checkbox
         checked={subtask.completed}
         onCheckedChange={() => handleToggle()}
         disabled={isLoading || !canToggle}
+        onClick={(e) => e.stopPropagation()}
       />
 
-      {/* Title */}
       {isEditing && canEdit ? (
-        <div className="flex flex-1 items-center gap-2">
+        <div
+          className="flex flex-1 items-center gap-2"
+          onClick={(e) => e.stopPropagation()}
+        >
           <Input
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
@@ -89,31 +107,49 @@ function SubtaskItem({
             autoFocus
             className="h-8 flex-1"
           />
-          <Button size="icon" variant="ghost" onClick={handleSaveEdit}>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={handleSaveEdit}
+            aria-label="Save"
+          >
             <Icon name="check" size="sm" />
           </Button>
-          <Button size="icon" variant="ghost" onClick={handleCancelEdit}>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={handleCancelEdit}
+            aria-label="Cancel"
+          >
             <Icon name="close" size="sm" />
           </Button>
         </div>
       ) : (
         <span
           className={cn('flex-1 text-sm', subtask.completed && 'line-through')}
-          onDoubleClick={() => canEdit && setIsEditing(true)}
+          onDoubleClick={(e) => {
+            if (canEdit) {
+              e.stopPropagation();
+              setIsEditing(true);
+            }
+          }}
         >
           {subtask.title}
         </span>
       )}
 
-      {/* Actions */}
       {canEdit && !isEditing && (
-        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+        <div
+          className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+        >
           {onUpdate && (
             <Button
               size="icon"
               variant="ghost"
               onClick={() => setIsEditing(true)}
               className="h-7 w-7"
+              aria-label="Edit subtask"
             >
               <Icon name="edit" size="xs" />
             </Button>
@@ -124,6 +160,7 @@ function SubtaskItem({
               variant="ghost"
               onClick={() => onDelete(subtaskId)}
               className="text-destructive h-7 w-7"
+              aria-label="Delete subtask"
             >
               <Icon name="trash" size="xs" />
             </Button>

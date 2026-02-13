@@ -1,14 +1,17 @@
 import { useAuth } from '@/features/auth/context';
+import { PageHeader } from '@/shared/components/patterns/PageHeader';
 
 export default function DashboardPage() {
   const { user } = useAuth();
 
   return (
-    <div className="p-6">
-      <h1 className="text-greyscale-900 mb-4 text-2xl font-bold">Dashboard</h1>
-      <p className="text-greyscale-600">
-        Welcome back{user?.name ? `, ${user.name}` : ''}!
-      </p>
+    <div className="flex h-full flex-col">
+      <PageHeader title="Dashboard" />
+      <div className="flex-1 p-6">
+        <p className="text-greyscale-600">
+          Welcome back{user?.name ? `, ${user.name}` : ''}!
+        </p>
+      </div>
     </div>
   );
 }

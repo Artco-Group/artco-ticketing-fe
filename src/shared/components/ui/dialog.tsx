@@ -25,11 +25,18 @@ function DialogOverlay({
   );
 }
 
+interface DialogContentProps extends ComponentProps<
+  typeof DialogPrimitive.Content
+> {
+  preventClose?: boolean;
+}
+
 function DialogContent({
   className,
   children,
+  preventClose,
   ...props
-}: ComponentProps<typeof DialogPrimitive.Content>) {
+}: DialogContentProps) {
   return (
     <DialogPortal>
       <DialogOverlay />
@@ -39,6 +46,11 @@ function DialogContent({
           'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed top-1/2 left-1/2 z-50 max-w-lg min-w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-lg border p-6 shadow-xl',
           className
         )}
+        onInteractOutside={preventClose ? (e) => e.preventDefault() : undefined}
+        onPointerDownOutside={
+          preventClose ? (e) => e.preventDefault() : undefined
+        }
+        onEscapeKeyDown={preventClose ? (e) => e.preventDefault() : undefined}
         {...props}
       >
         {children}

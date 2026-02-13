@@ -1,44 +1,50 @@
 import { useMemo, useState, useCallback } from 'react';
+import type { UserWithProjects } from '@/types';
 import {
   type SortDirection,
   type BulkAction,
   useToast,
+  Icon,
 } from '@/shared/components/ui';
-import { Icon } from '@/shared/components/ui';
-import { useBulkDeleteProjects } from '../api/projects-api';
+import { useBulkDeleteUsers } from '@/features/users/api';
 
-export function useProjectTableState() {
+interface UseClientTableStateProps {
+  clients: UserWithProjects[];
+}
+
+export function useClientTableState({
+  clients: _clients,
+}: UseClientTableStateProps) {
   const toast = useToast();
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const { mutate: bulkDelete, isPending: isDeleting } = useBulkDeleteProjects();
+  const { mutate: bulkDelete, isPending: isDeleting } = useBulkDeleteUsers();
 
   const clearSelection = useCallback(() => setSelectedRows([]), []);
 
   const handleBulkDelete = useCallback(() => {
-    // selectedRows now contains slugs directly
-    const slugs = selectedRows.filter((slug) => slug.length > 0);
+    const emails = selectedRows.filter((email) => email.length > 0);
 
-    if (slugs.length === 0) {
-      toast.error('No valid projects selected for deletion');
+    if (emails.length === 0) {
+      toast.error('No valid clients selected for deletion');
       return;
     }
 
     bulkDelete(
-      { slugs },
+      { emails },
       {
         onSuccess: () => {
           clearSelection();
           setShowDeleteConfirm(false);
           toast.success(
-            `Deleted ${slugs.length} project${slugs.length > 1 ? 's' : ''}`
+            `Deleted ${emails.length} client${emails.length > 1 ? 's' : ''}`
           );
         },
         onError: (error) => {
-          toast.error(error?.message || 'Failed to delete projects');
+          toast.error(error?.message || 'Failed to delete clients');
         },
       }
     );
@@ -62,23 +68,19 @@ export function useProjectTableState() {
   );
 
   return {
-    // Selection
     selectedRows,
     setSelectedRows,
     clearSelection,
 
-    // Sorting
     sortColumn,
     sortDirection,
     handleSort,
 
-    // Delete dialog
     showDeleteConfirm,
     setShowDeleteConfirm,
     handleBulkDelete,
     isDeleting,
 
-    // Actions
     bulkActions,
   };
 }

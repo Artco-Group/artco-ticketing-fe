@@ -21,6 +21,7 @@ export function useInviteMembers({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
+  // Only show users NOT already on the project
   const availableMembers = useMemo(() => {
     const currentMemberIds = new Set(currentMembers?.map((m) => m.id) || []);
     return allUsers.filter(
@@ -40,10 +41,17 @@ export function useInviteMembers({
   const handleInvite = async () => {
     if (!projectId || selectedMembers.length === 0) return;
 
+    // Map selected user IDs to emails for the API
+    const memberEmails = selectedMembers
+      .map((id) => allUsers.find((u) => u.id === id)?.email)
+      .filter((email): email is string => !!email);
+
+    if (memberEmails.length === 0) return;
+
     try {
       await addMembersMutation.mutateAsync({
         slug: projectId,
-        data: { memberIds: selectedMembers },
+        data: { memberEmails },
       });
       toast.success('Members added successfully');
       closeModal();

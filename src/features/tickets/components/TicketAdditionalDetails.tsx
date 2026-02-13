@@ -19,7 +19,6 @@ import {
   AlertCircle,
   Paperclip,
   MonitorPlay,
-  Video,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -95,9 +94,9 @@ function TicketAdditionalDetails({
             {isBug && <Separator className="my-2" />}
 
             {/* Attachments & Screen Recording */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid gap-4 md:grid-cols-2">
               {/* Attachments */}
-              <div className="space-y-3">
+              <div className="bg-muted/30 rounded-lg border p-4">
                 <SectionHeader
                   icon={<Paperclip className="h-4 w-4" />}
                   label="Attachments"
@@ -116,7 +115,7 @@ function TicketAdditionalDetails({
                   }
                 />
                 {ticket.attachments && ticket.attachments.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="mt-3 flex flex-wrap gap-2">
                     {ticket.attachments.map((attachment, index) => (
                       <FileItem
                         key={index}
@@ -143,17 +142,14 @@ function TicketAdditionalDetails({
                     ))}
                   </div>
                 ) : (
-                  <div className="border-border flex items-center justify-center gap-2 rounded-lg border-2 border-dashed px-4 py-6">
-                    <Paperclip className="text-muted-foreground h-4 w-4" />
-                    <span className="text-muted-foreground text-sm">
-                      No attachments
-                    </span>
-                  </div>
+                  <p className="text-muted-foreground mt-3 text-sm">
+                    No attachments added
+                  </p>
                 )}
               </div>
 
               {/* Screen Recording */}
-              <div className="space-y-3">
+              <div className="bg-muted/30 rounded-lg border p-4">
                 <SectionHeader
                   icon={<MonitorPlay className="h-4 w-4" />}
                   label="Screen Recording"
@@ -176,30 +172,30 @@ function TicketAdditionalDetails({
                   }
                 />
                 {ticket.screenRecording?.gcsUrl ? (
-                  <FileItem
-                    name={
-                      ticket.screenRecording.originalName || 'Screen Recording'
-                    }
-                    duration={ticket.screenRecording.duration ?? undefined}
-                    isVideo
-                    onDownload={() =>
-                      fileAPI.downloadScreenRecording(
-                        asTicketId(ticket.ticketId || ''),
-                        ticket.screenRecording?.originalName ||
-                          'screen-recording'
-                      )
-                    }
-                    onDelete={fileUpload.handleDeleteScreenRecording}
-                    canDelete={canUploadFiles}
-                    isDeleting={fileUpload.isDeletingScreenRecording}
-                  />
-                ) : (
-                  <div className="border-border flex items-center justify-center gap-2 rounded-lg border-2 border-dashed px-4 py-6">
-                    <Video className="text-muted-foreground h-4 w-4" />
-                    <span className="text-muted-foreground text-sm">
-                      No screen recording
-                    </span>
+                  <div className="mt-3">
+                    <FileItem
+                      name={
+                        ticket.screenRecording.originalName ||
+                        'Screen Recording'
+                      }
+                      duration={ticket.screenRecording.duration ?? undefined}
+                      isVideo
+                      onDownload={() =>
+                        fileAPI.downloadScreenRecording(
+                          asTicketId(ticket.ticketId || ''),
+                          ticket.screenRecording?.originalName ||
+                            'screen-recording'
+                        )
+                      }
+                      onDelete={fileUpload.handleDeleteScreenRecording}
+                      canDelete={canUploadFiles}
+                      isDeleting={fileUpload.isDeletingScreenRecording}
+                    />
                   </div>
+                ) : (
+                  <p className="text-muted-foreground mt-3 text-sm">
+                    No recording added
+                  </p>
                 )}
               </div>
             </div>
@@ -242,6 +238,7 @@ function TicketAdditionalDetails({
         onClose={fileUpload.closeScreenRecordingModal}
         title="Record Screen"
         size="lg"
+        preventClose
       >
         <ScreenRecorder
           onRecordingComplete={fileUpload.handleScreenRecordingComplete}

@@ -80,9 +80,9 @@ export function ProjectPicker({
   );
 
   return (
-    <div className={cn('flex w-full flex-col gap-2', className)}>
+    <div className={cn('flex w-full flex-col gap-2.5', className)}>
       {label && (
-        <label className="text-text-tertiary font-[Inter] text-xs leading-4 font-normal">
+        <label className="text-muted-foreground text-sm leading-none font-medium">
           {label}
         </label>
       )}

@@ -19,8 +19,6 @@ export function usePasswordResetForm() {
   const verifyTokenQuery = useVerifyResetToken(token);
   const resetPasswordMutation = useResetPassword();
 
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formError, setFormError] = useState('');
   const [success, setSuccess] = useState(false);
 
@@ -87,10 +85,6 @@ export function usePasswordResetForm() {
     tokenError,
     formError,
     success,
-    showNewPassword,
-    showConfirmPassword,
-    toggleNewPassword: () => setShowNewPassword((prev) => !prev),
-    toggleConfirmPassword: () => setShowConfirmPassword((prev) => !prev),
     navigateToLogin: () => navigate(PAGE_ROUTES.AUTH.LOGIN),
   };
 }
