@@ -42,7 +42,7 @@ export default function TicketDetailPage() {
     <div className="bg-background flex min-h-full flex-col">
       <PageHeader
         breadcrumbs={
-          canEditTicket && ticket
+          ticket
             ? [
                 { label: 'All Tickets', href: PAGE_ROUTES.TICKETS.LIST },
                 { label: ticket.title || `#${ticket.ticketId}`, href: '#' },

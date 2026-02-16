@@ -15,10 +15,6 @@ interface UseTicketDetailActionsOptions {
   onAssignTicket?: (ticketId: TicketId, developerId: UserId) => void;
 }
 
-/**
- * Custom hook for ticket detail actions.
- * Manages assignment, status updates, and file downloads.
- */
 export function useTicketDetailActions({
   ticket,
   onStatusUpdate,
@@ -29,7 +25,6 @@ export function useTicketDetailActions({
   const [isUpdating, setIsUpdating] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Sync selectedDeveloper when ticket.assignedTo changes
   useEffect(() => {
     if (ticket) {
       setSelectedDeveloper(ticket.assignedTo?.id || '');

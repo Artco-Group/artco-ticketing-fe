@@ -3,3 +3,4 @@ export * from './TabBar';
 export * from './FilterBar';
 export * from '../layout/Sidebar';
 export * from './StatusHeader';
+export * from './ActivityFeed';

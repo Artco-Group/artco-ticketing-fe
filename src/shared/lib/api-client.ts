@@ -74,5 +74,4 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Default export for backward compatibility
 export default apiClient;

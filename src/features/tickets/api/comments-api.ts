@@ -7,13 +7,13 @@ import {
   type CreateCommentFormData,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
-import type { TicketId, CommentId, ApiResponse } from '@/types';
+import type { TicketId, CommentId } from '@/types';
 
 /**
  * Get comments for a ticket
  */
 function useComments(ticketId: TicketId) {
-  return useApiQuery<ApiResponse<{ comments: Comment[] }>>(
+  return useApiQuery<{ comments: Comment[] }>(
     QueryKeys.comments.byTicket(ticketId),
     {
       url: API_ROUTES.COMMENTS.BY_TICKET(ticketId),
@@ -28,7 +28,7 @@ function useComments(ticketId: TicketId) {
  */
 function useAddComment() {
   return useApiMutation<
-    ApiResponse<{ comment: Comment }>,
+    { comment: Comment },
     { ticketId: TicketId; replyId?: string } & CreateCommentFormData
   >({
     url: (vars) => API_ROUTES.COMMENTS.BY_TICKET(vars.ticketId),
@@ -46,7 +46,7 @@ function useAddComment() {
  */
 function useUpdateComment() {
   return useApiMutation<
-    ApiResponse<{ comment: Comment }>,
+    { comment: Comment },
     { commentId: CommentId } & CreateCommentFormData
   >({
     url: (vars) => API_ROUTES.COMMENTS.BY_ID(vars.commentId),

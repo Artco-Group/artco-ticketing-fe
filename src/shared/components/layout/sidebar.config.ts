@@ -13,6 +13,7 @@ export const SIDEBAR_WIDTH = {
 // ── Route map: item ID → path ─────────────────────────
 
 export const ROUTE_MAP: Record<string, string> = {
+  dashboard: PAGE_ROUTES.DASHBOARD.ROOT,
   tickets: PAGE_ROUTES.TICKETS.LIST,
   users: PAGE_ROUTES.USERS.LIST,
   projects: PAGE_ROUTES.PROJECTS.ROOT,
@@ -29,6 +30,12 @@ export interface NavItemConfig extends SidebarItem {
 }
 
 export const NAVIGATION: NavItemConfig[] = [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: 'dashboard',
+    roles: ALL_ROLES,
+  },
   {
     id: 'tickets',
     label: 'Tickets',

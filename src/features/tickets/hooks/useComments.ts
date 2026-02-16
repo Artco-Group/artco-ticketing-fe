@@ -64,12 +64,17 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
    */
   const handleAddComment = async (text: string) => {
     try {
-      await addCommentMutation.mutateAsync({
+      const payload: any = {
         ticketId,
         text,
-        ...(replyingToCommentId && { replyId: String(replyingToCommentId) }),
-      });
-      toast.success('Comment added successfully');
+      };
+
+      if (replyingToCommentId) {
+        payload.replyId = String(replyingToCommentId);
+      }
+
+      await addCommentMutation.mutateAsync(payload);
+      toast.success('Komentar uspješno dodan');
       // Clear reply state after successful add
       setReplyingToCommentId(null);
     } catch (error) {
@@ -89,7 +94,7 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
         commentId: editingComment.commentId,
         text,
       });
-      toast.success('Comment updated successfully');
+      toast.success('Komentar uspješno ažuriran');
       // Clear editing state
       setEditingComment({ commentId: null, text: '' });
     } catch (error) {
@@ -104,7 +109,7 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
   const handleDeleteComment = async (commentId: CommentId) => {
     try {
       await deleteCommentMutation.mutateAsync(commentId);
-      toast.success('Comment deleted successfully');
+      toast.success('Komentar uspješno obrisan');
     } catch (error) {
       toast.error(getErrorMessage(error));
       throw error;

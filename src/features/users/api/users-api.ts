@@ -8,17 +8,14 @@ import {
   type UpdateUserFormData,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
-import type { UserId, ApiResponse } from '@/types';
+import type { UserId } from '@/types';
 
 function useUsers(params?: Record<string, unknown>) {
-  return useApiQuery<ApiResponse<{ users: User[] }>>(
-    QueryKeys.users.list(params),
-    {
-      url: API_ROUTES.USERS.BASE,
-      params,
-      staleTime: CACHE.SHORT_STALE_TIME,
-    }
-  );
+  return useApiQuery<{ users: User[] }>(QueryKeys.users.list(params), {
+    url: API_ROUTES.USERS.BASE,
+    params,
+    staleTime: CACHE.SHORT_STALE_TIME,
+  });
 }
 
 function useUser(id: UserId) {
@@ -30,17 +27,14 @@ function useUser(id: UserId) {
 }
 
 function useDevelopers() {
-  return useApiQuery<ApiResponse<{ users: User[] }>>(
-    QueryKeys.users.developers(),
-    {
-      url: API_ROUTES.USERS.DEVELOPERS,
-      staleTime: CACHE.STALE_TIME,
-    }
-  );
+  return useApiQuery<{ users: User[] }>(QueryKeys.users.developers(), {
+    url: API_ROUTES.USERS.DEVELOPERS,
+    staleTime: CACHE.STALE_TIME,
+  });
 }
 
 function useCreateUser() {
-  return useApiMutation<ApiResponse<{ user: User }>, CreateUserFormData>({
+  return useApiMutation<{ user: User }, CreateUserFormData>({
     url: API_ROUTES.USERS.BASE,
     method: 'POST',
     onSuccess: () => {
@@ -85,7 +79,7 @@ interface BulkDeleteResult {
 }
 
 function useBulkDeleteUsers() {
-  return useApiMutation<ApiResponse<BulkDeleteResult>, { emails: string[] }>({
+  return useApiMutation<BulkDeleteResult, { emails: string[] }>({
     url: API_ROUTES.USERS.BASE,
     method: 'DELETE',
     onSuccess: () => {
@@ -95,10 +89,7 @@ function useBulkDeleteUsers() {
 }
 
 function useUploadAvatar() {
-  return useApiMutation<
-    ApiResponse<{ user: User }>,
-    { userId: UserId; file: File }
-  >({
+  return useApiMutation<{ user: User }, { userId: UserId; file: File }>({
     url: (vars) => `${API_ROUTES.USERS.BY_ID(vars.userId)}/avatar`,
     method: 'POST',
     getBody: (vars) => {
@@ -120,7 +111,7 @@ function useUploadAvatar() {
 }
 
 function useRemoveAvatar() {
-  return useApiMutation<ApiResponse<{ user: User }>, UserId>({
+  return useApiMutation<{ user: User }, UserId>({
     url: (userId) => `${API_ROUTES.USERS.BY_ID(userId)}/avatar`,
     method: 'DELETE',
     getBody: () => undefined,

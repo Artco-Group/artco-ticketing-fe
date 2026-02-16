@@ -22,14 +22,11 @@ function useTickets(params?: Record<string, unknown>) {
 }
 
 function useTicket(id: TicketId) {
-  return useApiQuery<ApiResponse<{ ticket: Ticket }>>(
-    QueryKeys.tickets.detail(id),
-    {
-      url: API_ROUTES.TICKETS.BY_TICKET_ID(id),
-      enabled: !!id,
-      staleTime: CACHE.STALE_TIME,
-    }
-  );
+  return useApiQuery<{ ticket: Ticket }>(QueryKeys.tickets.detail(id), {
+    url: API_ROUTES.TICKETS.BY_TICKET_ID(id),
+    enabled: !!id,
+    staleTime: CACHE.STALE_TIME,
+  });
 }
 
 function useCreateTicket() {
@@ -58,7 +55,7 @@ interface OptimisticContext {
 
 function useUpdateTicketStatus() {
   return useApiMutation<
-    ApiResponse<{ ticket: Ticket }>,
+    { ticket: Ticket },
     { id: TicketId; status: string },
     OptimisticContext
   >({
@@ -98,7 +95,7 @@ function useUpdateTicketStatus() {
 
 function useAssignTicket() {
   return useApiMutation<
-    ApiResponse<{ ticket: Ticket }>,
+    { ticket: Ticket },
     { id: TicketId; developerId: UserId },
     OptimisticContext
   >({
@@ -182,7 +179,7 @@ function useAssignEngLead() {
 
 function useUpdateTicketPriority() {
   return useApiMutation<
-    ApiResponse<{ ticket: Ticket }>,
+    { ticket: Ticket },
     { id: TicketId; priority: string },
     OptimisticContext
   >({

@@ -53,10 +53,4 @@ export interface MetaItem {
   value: ReactNode;
 }
 
-/**
- * @deprecated Backend now returns data directly. Use the data type directly.
- * This type alias is kept for backwards compatibility during migration.
- */
-export type ApiResponse<T> = T;
-
 export * from './branded';
