@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppTranslation } from '@/shared/hooks';
 import type { DragEndEvent } from '@dnd-kit/core';
@@ -69,22 +69,24 @@ export function useStatusConfigEditor() {
     name: 'statuses',
   });
 
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [selectedProjectIds, setSelectedProjectIds] = useState<Set<string>>(
-    new Set()
-  );
-  const [projectIdsInitialized, setProjectIdsInitialized] = useState(false);
+  const isInitializedRef = useRef(false);
 
-  // Get all projects
+  // Track user modifications to project assignments (derived state pattern)
+  const [projectModifications, setProjectModifications] = useState<{
+    added: Set<string>;
+    removed: Set<string>;
+  }>({ added: new Set(), removed: new Set() });
+
   const allProjects = useMemo(
     () => projectsData?.projects || [],
     [projectsData]
   );
 
-  // Watch groups for reactive validation state
-  const watchedGroups = form.watch('groups');
+  const watchedGroups = useWatch({
+    control: form.control,
+    name: 'groups',
+  });
 
-  // Computed validation state for group requirements (real-time feedback)
   const groupValidation = useMemo<GroupValidationState>(
     () => ({
       hasBacklog: watchedGroups.backlog.length > 0,
@@ -101,6 +103,14 @@ export function useStatusConfigEditor() {
       allProjects.filter((p) => p.statusConfig?.id === id).map((p) => p.id)
     );
   }, [allProjects, id]);
+
+  // Derive selected projects from initial + user modifications
+  const selectedProjectIds = useMemo(() => {
+    const result = new Set(initialAssignedProjectIds);
+    projectModifications.added.forEach((pid) => result.add(pid));
+    projectModifications.removed.forEach((pid) => result.delete(pid));
+    return result;
+  }, [initialAssignedProjectIds, projectModifications]);
 
   // Map react-hook-form errors to our error format for backwards compatibility
   const errors = useMemo(() => {
@@ -139,27 +149,9 @@ export function useStatusConfigEditor() {
     return result;
   }, [form.formState.errors, translate]);
 
-  // Initialize selected projects when data loads
-  useEffect(() => {
-    if (
-      isEditMode &&
-      allProjects.length > 0 &&
-      !projectIdsInitialized &&
-      initialAssignedProjectIds.size > 0
-    ) {
-      setProjectIdsInitialized(true);
-      setSelectedProjectIds(initialAssignedProjectIds);
-    }
-  }, [
-    isEditMode,
-    allProjects.length,
-    initialAssignedProjectIds,
-    projectIdsInitialized,
-  ]);
-
   // Initialize form data from existing config or defaults
   useEffect(() => {
-    if (isInitialized) return;
+    if (isInitializedRef.current) return;
 
     if (isEditMode && existingConfig?.statusConfig) {
       const config = existingConfig.statusConfig;
@@ -169,12 +161,12 @@ export function useStatusConfigEditor() {
         statuses: [...config.statuses],
         groups: { ...config.groups },
       });
-      setIsInitialized(true);
+      isInitializedRef.current = true;
     } else if (!isEditMode) {
       form.reset(DEFAULT_FORM_VALUES);
-      setIsInitialized(true);
+      isInitializedRef.current = true;
     }
-  }, [isEditMode, existingConfig, isInitialized, form]);
+  }, [isEditMode, existingConfig, form]);
 
   // Handlers
   const handleDragEnd = useCallback(
@@ -277,17 +269,34 @@ export function useStatusConfigEditor() {
     [form, remove]
   );
 
-  const handleToggleProject = useCallback((projectId: string) => {
-    setSelectedProjectIds((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(projectId)) {
-        newSet.delete(projectId);
-      } else {
-        newSet.add(projectId);
-      }
-      return newSet;
-    });
-  }, []);
+  const handleToggleProject = useCallback(
+    (projectId: string) => {
+      const isInitiallyAssigned = initialAssignedProjectIds.has(projectId);
+
+      setProjectModifications((prev) => {
+        if (isInitiallyAssigned) {
+          // Toggle removal of initially assigned project
+          const newRemoved = new Set(prev.removed);
+          if (newRemoved.has(projectId)) {
+            newRemoved.delete(projectId);
+          } else {
+            newRemoved.add(projectId);
+          }
+          return { ...prev, removed: newRemoved };
+        } else {
+          // Toggle addition of new project
+          const newAdded = new Set(prev.added);
+          if (newAdded.has(projectId)) {
+            newAdded.delete(projectId);
+          } else {
+            newAdded.add(projectId);
+          }
+          return { ...prev, added: newAdded };
+        }
+      });
+    },
+    [initialAssignedProjectIds]
+  );
 
   const handleSave = useCallback(async () => {
     const isValid = await form.trigger();
@@ -329,15 +338,13 @@ export function useStatusConfigEditor() {
         savedConfigId = result.statusConfig?.id;
       }
 
-      // Update project assignments if we have a config ID
+      // Update project assignments using tracked modifications
       if (savedConfigId) {
-        const projectsToAssign = allProjects.filter(
-          (p) =>
-            selectedProjectIds.has(p.id) && !initialAssignedProjectIds.has(p.id)
+        const projectsToAssign = allProjects.filter((p) =>
+          projectModifications.added.has(p.id)
         );
-        const projectsToUnassign = allProjects.filter(
-          (p) =>
-            !selectedProjectIds.has(p.id) && initialAssignedProjectIds.has(p.id)
+        const projectsToUnassign = allProjects.filter((p) =>
+          projectModifications.removed.has(p.id)
         );
 
         await Promise.all([
@@ -368,8 +375,7 @@ export function useStatusConfigEditor() {
     updateMutation,
     navigate,
     allProjects,
-    selectedProjectIds,
-    initialAssignedProjectIds,
+    projectModifications,
     updateProjectMutation,
   ]);
 

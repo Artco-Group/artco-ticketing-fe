@@ -14,7 +14,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@artco-group/artco-ticketing-sync": "^1.0.0-beta.21",
+    "@artco-group/artco-ticketing-sync": "^1.0.0-beta.22",
     "@artco-group/component-library": "^0.0.10",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
