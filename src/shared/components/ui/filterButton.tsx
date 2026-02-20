@@ -23,6 +23,8 @@ const filterButtonVariants = cva(
   }
 );
 
+export type FilterOption = string | { value: string; label: string };
+
 export interface FilterButtonProps
   extends
     Omit<
@@ -32,11 +34,19 @@ export interface FilterButtonProps
     VariantProps<typeof filterButtonVariants> {
   label: string;
   icon?: ReactNode;
-  options?: string[];
+  options?: FilterOption[];
   value?: string | null;
   onChange?: (value: string | null) => void;
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   onRemove?: () => void;
+}
+
+function getOptionValue(option: FilterOption): string {
+  return typeof option === 'string' ? option : option.value;
+}
+
+function getOptionLabel(option: FilterOption): string {
+  return typeof option === 'string' ? option : option.label;
 }
 
 export const FilterButton = ({
@@ -59,18 +69,23 @@ export const FilterButton = ({
     if (!hasOptions || !options) return -1;
     if (value !== undefined) {
       if (value === null) return -1;
-      const foundIndex = options.findIndex((opt) => opt === value);
+      const foundIndex = options.findIndex(
+        (opt) => getOptionValue(opt) === value
+      );
       return foundIndex >= 0 ? foundIndex : -1;
     }
     return internalIndex;
   };
 
   const currentIndex = getCurrentIndex();
-  const currentValue = hasOptions
-    ? currentIndex >= 0 && options
-      ? options[currentIndex]
-      : null
-    : value;
+  const currentOption =
+    hasOptions && options && currentIndex >= 0 ? options[currentIndex] : null;
+  // Show label from matched option, or fall back to value prop directly (for FilterPanel tags)
+  const currentDisplayLabel = currentOption
+    ? getOptionLabel(currentOption)
+    : !hasOptions && value
+      ? value
+      : null;
   const isActive =
     active !== undefined ? active : hasOptions ? currentIndex >= 0 : !!value;
 
@@ -87,7 +102,8 @@ export const FilterButton = ({
         setInternalIndex(nextIndex);
       }
 
-      const newValue = nextIndex === -1 ? null : options[nextIndex];
+      const newValue =
+        nextIndex === -1 ? null : getOptionValue(options[nextIndex]);
       onChange?.(newValue);
     }
 
@@ -106,10 +122,10 @@ export const FilterButton = ({
         <span className="inline-flex shrink-0 items-center">{icon}</span>
       )}
       <span>{label}</span>
-      {currentValue && (
+      {currentDisplayLabel && (
         <>
           <span className="bg-greyscale-200 h-3 w-px" />
-          <span>{currentValue}</span>
+          <span>{currentDisplayLabel}</span>
         </>
       )}
       {onRemove && (

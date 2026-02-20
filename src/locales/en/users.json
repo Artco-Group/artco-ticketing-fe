@@ -1,0 +1,107 @@
+{
+  "title": "Users",
+  "singular": "User",
+  "plural": "Users",
+  "members": "Members",
+  "invite": "Invite User",
+  "inviteMember": "Invite Member",
+  "editMember": "Edit Member",
+  "edit": "Edit User",
+  "delete": "Delete User",
+  "deleteMember": "Delete Member",
+  "view": "View User",
+  "list": {
+    "title": "All Users",
+    "empty": "No users found",
+    "emptyDescription": "Invite your first team member to get started",
+    "searchPlaceholder": "Search users...",
+    "loading": "Loading members...",
+    "failedToLoad": "Failed to load members",
+    "failedToLoadMessage": "Failed to load members. Please try again later.",
+    "noMembers": "No members found",
+    "noMembersMatch": "No members match your current filters."
+  },
+  "form": {
+    "name": "Name",
+    "namePlaceholder": "Enter member name",
+    "clientNamePlaceholder": "Enter client name",
+    "email": "Email Address",
+    "emailPlaceholder": "Enter email address",
+    "role": "Role",
+    "rolePlaceholder": "Select a role",
+    "assignToProject": "Assign to project",
+    "selectProjects": "Select projects...",
+    "profilePicture": "Profile Picture",
+    "uploadImage": "Upload Image",
+    "uploading": "Uploading...",
+    "remove": "Remove",
+    "avatarHint": "We support PNGs, JPEGs and GIFs under 10MB",
+    "passwordInfo": "A temporary password will be generated and sent to the user via email. They will be required to change it on first login.",
+    "clientPasswordInfo": "A temporary password will be generated and sent to the client via email. They will be required to change it on first login.",
+    "saveChanges": "Save Changes",
+    "saving": "Saving..."
+  },
+  "roles": {
+    "admin": "Admin",
+    "engLead": "Engineering Lead",
+    "developer": "Engineer",
+    "client": "Client"
+  },
+  "rolesDescription": {
+    "admin": "Full access to all features and settings",
+    "engLead": "Manage projects, tickets, and team members",
+    "developer": "Work on assigned tickets and projects",
+    "client": "View and create tickets for their projects"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending"
+  },
+  "actions": {
+    "changeRole": "Change Role",
+    "resetPassword": "Reset Password",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "resendInvite": "Resend Invite"
+  },
+  "messages": {
+    "invited": "User invited successfully",
+    "updated": "User updated successfully",
+    "deleted": "User deleted successfully",
+    "roleChanged": "Role changed successfully",
+    "passwordReset": "Password reset email sent",
+    "confirmDelete": "Are you sure you want to delete this user?",
+    "confirmDeleteMember": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "cannotDeleteSelf": "You cannot delete your own account"
+  },
+  "profile": {
+    "title": "Profile",
+    "avatar": "Profile Picture",
+    "changeAvatar": "Change Picture",
+    "removeAvatar": "Remove Picture",
+    "uploadAvatar": "Upload Picture"
+  },
+  "table": {
+    "columns": {
+      "name": "Name",
+      "role": "Role",
+      "joined": "Joined",
+      "projects": "Projects",
+      "issues": "Issues"
+    },
+    "unnamedUser": "Unnamed User",
+    "issuesCount": "{{count}} issues",
+    "rowActions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "deleteTitle": "Delete members",
+    "deleteConfirm": "Are you sure you want to delete {{count}} member(s)? This action cannot be undone.",
+    "deleteButton": "Delete"
+  },
+  "bulkActions": {
+    "addToProject": "Add to project",
+    "deleteMember": "Delete member"
+  }
+}

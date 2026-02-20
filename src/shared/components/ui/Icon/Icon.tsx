@@ -29,6 +29,7 @@ import MoreHorizontal from '@/assets/icons/actions/more-horizontal.svg?raw';
 import sortSvg from '@/assets/icons/actions/sort.svg?raw';
 import groupBySvg from '@/assets/icons/actions/group-by.svg?raw';
 import starSvg from '@/assets/icons/actions/star.svg?raw';
+import gripSvg from '@/assets/icons/actions/grip.svg?raw';
 
 import chevronDownSvg from '@/assets/icons/arrows/chevron-down.svg?raw';
 import chevronUpSvg from '@/assets/icons/arrows/chevron-up.svg?raw';
@@ -55,6 +56,7 @@ import doubleCheckSvg from '@/assets/icons/system/double-check.svg?raw';
 import filterSvg from '@/assets/icons/system/filter.svg?raw';
 import gridSvg from '@/assets/icons/system/grid.svg?raw';
 import listSvg from '@/assets/icons/system/list.svg?raw';
+import folderSvg from '@/assets/icons/system/folder.svg?raw';
 
 import pinSvg from '@/assets/icons/navigation/pin.svg?raw';
 import automationsSvg from '@/assets/icons/navigation/automations.svg?raw';
@@ -136,6 +138,7 @@ export type IconName =
   | 'sort'
   | 'group-by'
   | 'star'
+  | 'grip'
   | 'grid'
   | 'list'
   | 'profile'
@@ -150,7 +153,8 @@ export type IconName =
   | 'bug'
   | 'feature'
   | 'question'
-  | 'tag';
+  | 'tag'
+  | 'folder';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -210,6 +214,7 @@ const iconMap: Record<IconName, string> = {
   sort: sortSvg,
   'group-by': groupBySvg,
   star: starSvg,
+  grip: gripSvg,
   grid: gridSvg,
   list: listSvg,
   profile: profileSvg,
@@ -225,6 +230,7 @@ const iconMap: Record<IconName, string> = {
   feature: featureSvg,
   question: questionSvg,
   tag: tagSvg,
+  folder: folderSvg,
 };
 
 const sizeMap: Record<IconSize, string> = {

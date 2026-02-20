@@ -2,6 +2,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { Button, Input } from '@/shared/components/ui';
 import { Icon } from '@/shared/components/ui';
+import { useAppTranslation } from '@/shared/hooks';
 
 interface SubtaskFormProps {
   onSubmit: (title: string) => void;
@@ -12,9 +13,12 @@ interface SubtaskFormProps {
 export function SubtaskForm({
   onSubmit,
   isLoading = false,
-  placeholder = 'Add a subtask...',
+  placeholder,
 }: SubtaskFormProps) {
+  const { translate } = useAppTranslation('tickets');
   const [title, setTitle] = useState('');
+
+  const resolvedPlaceholder = placeholder ?? translate('subtasks.placeholder');
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -29,7 +33,7 @@ export function SubtaskForm({
       <Input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         disabled={isLoading}
         className="flex-1"
       />

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Icon } from '@/shared/components/ui';
 import { useBrandingModal } from '../hooks/useBrandingModal';
+import { useAppTranslation } from '@/shared/hooks';
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -9,102 +10,118 @@ interface AuthLayoutProps {
   floatingCards?: ReactNode;
 }
 
-const DefaultFloatingCards = () => (
-  <>
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-smx:py-lg max-smx:px-4 max-smx:gap-lg max-smx:min-h-0 shadow-card-glass hover:shadow-card-glass-hover mx-auto flex min-h-[120px] w-full items-center justify-center gap-4 rounded-2xl border border-white/12 bg-[rgba(255,255,255,0.08)] p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
-      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-blue card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-blue-400 to-blue-800 text-white">
-        <Icon name="priority" size="lg" className="shrink-0" />
-      </div>
-      <div className="flex flex-1 flex-col justify-center gap-1.5">
-        <div className="flex-between gap-2.5">
-          <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
-            Quick Access
-          </span>
-          <span className="text-caption py-xxs rounded-3xl bg-linear-to-br from-blue-400 to-blue-800 px-2 font-semibold tracking-[0.5px] text-white uppercase">
-            New
-          </span>
-        </div>
-        <span className="text-body-sm text-white/70">
-          Report a problem in a few clicks
-        </span>
-      </div>
-    </div>
+function DefaultFloatingCards() {
+  const { translate } = useAppTranslation('auth');
 
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-smx:py-lg max-smx:px-4 max-smx:gap-lg max-smx:min-h-0 shadow-card-glass hover:shadow-card-glass-hover mx-auto flex min-h-[120px] w-full items-center justify-center gap-4 rounded-2xl border border-white/12 bg-[rgba(255,255,255,0.08)] p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
-      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-warm card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-orange-500 to-orange-600 text-white">
-        <Icon name="tasks" size="lg" className="shrink-0" />
-      </div>
-      <div className="flex flex-1 flex-col justify-center gap-1.5">
-        <div className="flex-between gap-2.5">
-          <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
-            Status Tracking
-          </span>
-          <span className="border-success-500/40 bg-success-500/30 text-caption gap-xs py-xxs flex items-center rounded-3xl border border-solid px-2 font-semibold text-white uppercase">
-            <span className="animate-live-dot mr-1 h-1.5 w-1.5 rounded-full bg-white"></span>
-            Live
-          </span>
+  return (
+    <>
+      <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-smx:py-lg max-smx:px-4 max-smx:gap-lg max-smx:min-h-0 shadow-card-glass hover:shadow-card-glass-hover mx-auto flex min-h-[120px] w-full items-center justify-center gap-4 rounded-2xl border border-white/12 bg-[rgba(255,255,255,0.08)] p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
+        <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-blue card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-blue-400 to-blue-800 text-white">
+          <Icon name="priority" size="lg" className="shrink-0" />
         </div>
-        <span className="text-body-sm text-white/70">Real-time updates</span>
-        <div className="mt-1.5">
-          <div className="mb-1.5 h-1 overflow-hidden rounded-xs bg-white/15">
-            <div className="animate-soft-pulse h-full w-[65%] rounded-xs bg-linear-to-b from-orange-500 to-orange-400"></div>
-          </div>
-          <span className="text-caption text-white/60">3 active requests</span>
-        </div>
-      </div>
-    </div>
-
-    <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-smx:py-lg max-smx:px-4 max-smx:gap-lg max-smx:min-h-0 shadow-card-glass hover:shadow-card-glass-hover mx-auto flex min-h-[120px] w-full items-center justify-center gap-4 rounded-2xl border border-white/12 bg-[rgba(255,255,255,0.08)] p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
-      <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-warm card-icon from-success-500 flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br to-green-600 text-white">
-        <Icon name="shield-check" size="lg" className="shrink-0" />
-      </div>
-      <div className="flex flex-1 flex-col justify-center gap-1.5">
-        <div className="flex-between gap-2.5">
-          <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
-            Secure Communication
-          </span>
-          <Icon name="check" size="md" className="shrink-0 text-white" />
-        </div>
-        <span className="text-body-sm text-white/70">Protected data</span>
-        <div className="flex-start-gap-3 mt-2 border-t border-white/10 pt-2.5">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-body-sm font-bold text-white">256-bit</span>
-            <span className="text-caption tracking-[0.5px] text-white/50 uppercase">
-              Encryption
+        <div className="flex flex-1 flex-col justify-center gap-1.5">
+          <div className="flex-between gap-2.5">
+            <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
+              {translate('branding.quickAccess')}
+            </span>
+            <span className="text-caption py-xxs rounded-3xl bg-linear-to-br from-blue-400 to-blue-800 px-2 font-semibold tracking-[0.5px] text-white uppercase">
+              {translate('branding.new')}
             </span>
           </div>
-          <div className="h-7 w-px bg-white/10"></div>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-body-sm font-bold text-white">99.9%</span>
-            <span className="text-caption tracking-[0.5px] text-white/50 uppercase">
-              Uptime
+          <span className="text-body-sm text-white/70">
+            {translate('branding.quickAccessDesc')}
+          </span>
+        </div>
+      </div>
+
+      <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-smx:py-lg max-smx:px-4 max-smx:gap-lg max-smx:min-h-0 shadow-card-glass hover:shadow-card-glass-hover mx-auto flex min-h-[120px] w-full items-center justify-center gap-4 rounded-2xl border border-white/12 bg-[rgba(255,255,255,0.08)] p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
+        <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-warm card-icon flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-orange-500 to-orange-600 text-white">
+          <Icon name="tasks" size="lg" className="shrink-0" />
+        </div>
+        <div className="flex flex-1 flex-col justify-center gap-1.5">
+          <div className="flex-between gap-2.5">
+            <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
+              {translate('branding.statusTracking')}
+            </span>
+            <span className="border-success-500/40 bg-success-500/30 text-caption gap-xs py-xxs flex items-center rounded-3xl border border-solid px-2 font-semibold text-white uppercase">
+              <span className="animate-live-dot mr-1 h-1.5 w-1.5 rounded-full bg-white"></span>
+              {translate('branding.live')}
+            </span>
+          </div>
+          <span className="text-body-sm text-white/70">
+            {translate('branding.realTimeUpdates')}
+          </span>
+          <div className="mt-1.5">
+            <div className="mb-1.5 h-1 overflow-hidden rounded-xs bg-white/15">
+              <div className="animate-soft-pulse h-full w-[65%] rounded-xs bg-linear-to-b from-orange-500 to-orange-400"></div>
+            </div>
+            <span className="text-caption text-white/60">
+              {translate('branding.activeRequests', { count: 3 })}
             </span>
           </div>
         </div>
       </div>
-    </div>
-  </>
-);
 
-const defaultHeadline = (
-  <>
-    Ticket and Support
-    <br />
-    System
-  </>
-);
-
-const defaultDescription =
-  'Report technical issues, request support, or track the status of your requests in one place.';
+      <div className="floating-card max-lgx:py-lg max-lgx:px-4.5 max-smx:py-lg max-smx:px-4 max-smx:gap-lg max-smx:min-h-0 shadow-card-glass hover:shadow-card-glass-hover mx-auto flex min-h-[120px] w-full items-center justify-center gap-4 rounded-2xl border border-white/12 bg-[rgba(255,255,255,0.08)] p-5 backdrop-blur-[20px] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/15">
+        <div className="max-lgx:w-5xl max-lgx:h-5xl max-smx:w-10 max-smx:h-10 shadow-card-icon-warm card-icon from-success-500 flex aspect-square h-12 w-12 shrink-0 grow-0 basis-12 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br to-green-600 text-white">
+          <Icon name="shield-check" size="lg" className="shrink-0" />
+        </div>
+        <div className="flex flex-1 flex-col justify-center gap-1.5">
+          <div className="flex-between gap-2.5">
+            <span className="text-body-md font-semibold tracking-[-0.2px] text-white">
+              {translate('branding.secureCommunication')}
+            </span>
+            <Icon name="check" size="md" className="shrink-0 text-white" />
+          </div>
+          <span className="text-body-sm text-white/70">
+            {translate('branding.protectedData')}
+          </span>
+          <div className="flex-start-gap-3 mt-2 border-t border-white/10 pt-2.5">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-body-sm font-bold text-white">256-bit</span>
+              <span className="text-caption tracking-[0.5px] text-white/50 uppercase">
+                {translate('branding.encryption')}
+              </span>
+            </div>
+            <div className="h-7 w-px bg-white/10"></div>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-body-sm font-bold text-white">99.9%</span>
+              <span className="text-caption tracking-[0.5px] text-white/50 uppercase">
+                {translate('branding.uptime')}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
 
 export function AuthLayout({
   children,
-  headline = defaultHeadline,
-  description = defaultDescription,
+  headline,
+  description,
   floatingCards,
 }: AuthLayoutProps) {
+  const { translate } = useAppTranslation('auth');
   const { showBrandingModal, isNarrowViewport, isClosing, closeBrandingModal } =
     useBrandingModal();
+
+  const headlineText = headline ?? translate('branding.headline');
+  const descriptionText = description ?? translate('branding.description');
+
+  const renderHeadline = () => {
+    if (typeof headlineText === 'string') {
+      const parts = headlineText.split('\n');
+      return parts.map((part, index) => (
+        <span key={index}>
+          {part}
+          {index < parts.length - 1 && <br />}
+        </span>
+      ));
+    }
+    return headlineText;
+  };
 
   return (
     <div className="max-mdx:flex-col login-container flex min-h-screen w-full">
@@ -145,17 +162,17 @@ export function AuthLayout({
             {/* Headline and subtext below cards */}
             <div className="z-15 mt-auto text-left">
               <h1 className="text-h2 mb-5 leading-[1.15] font-bold tracking-[-1.5px] text-white">
-                {headline}
+                {renderHeadline()}
               </h1>
               <p className="max-mdx:text-body-md max-smx:text-body-sm leading-1.7 text-body-lg m-0 max-w-[400px] text-white/80">
-                {description}
+                {descriptionText}
               </p>
             </div>
             <button
               className="max-mdx:flex max-mdx:items-center max-mdx:justify-center max-mdx:mt-5 max-mdx:gap-2 max-mdx:w-full max-mdx:h-14 max-mdx:py-4.5 max-mdx:px-6 max-mdx:bg-linear-135 max-mdx:text-white max-mdx:font-semibold max-mdx:text-body-md max-mdx:border-none max-mdx:rounded-lg max-mdx:cursor-pointer max-mdx:shadow-card-button-md max-mdx:transition-all max-mdx:duration-300 max-mdx:ease-in-out max-mdx:tracking[0.3px] max-mdx:hover:bg-linear-135 max-mdx:hover:transform max-mdx:hover:-translate-y-0.5 max-mdx:hover:shadow-button-hover max-mdx:active:translate-y-0 from-primary-500 to-primary-600 text-body-md z-10 hidden cursor-pointer border-none bg-linear-to-br text-white"
               onClick={closeBrandingModal}
             >
-              <span>Continue</span>
+              <span>{translate('branding.continue')}</span>
               <Icon
                 name="chevron-down"
                 size="md"
@@ -174,26 +191,6 @@ export function AuthLayout({
           <span className="text-body-sm text-greyscale-400">
             © 2026 Artco Group d.o.o.
           </span>
-          {/* <div className="max-smx:gap-4 flex gap-6">
-            <a
-              href="#privacy"
-              className="decoration-none text-body-sm text-greyscale-400 hover:text-greyscale-700 transition-colors duration-200 ease-in-out"
-            >
-              Privacy
-            </a>
-            <a
-              href="#terms"
-              className="decoration-none text-body-sm text-greyscale-400 hover:text-greyscale-700 transition-colors duration-200 ease-in-out"
-            >
-              Terms of Service
-            </a>
-            <a
-              href="#help"
-              className="decoration-none text-body-sm text-greyscale-400 hover:text-greyscale-700 transition-colors duration-200 ease-in-out"
-            >
-              Help
-            </a>
-          </div> */}
         </footer>
       </div>
     </div>

@@ -406,8 +406,8 @@ function DataTable<T extends TableRowData>({
                   className={cn(
                     'px-6 py-3',
                     alignClass,
-                    cell.column.id === 'select' && 'w-12',
-                    cell.column.id === 'actions' && 'w-12 text-right',
+                    cell.column.id === 'select' && 'w-[48px]',
+                    cell.column.id === 'actions' && 'w-[48px] text-right',
                     meta?.className,
                     meta?.width
                   )}

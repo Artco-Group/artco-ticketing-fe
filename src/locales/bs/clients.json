@@ -1,0 +1,53 @@
+{
+  "title": "Klijenti",
+  "singular": "Klijent",
+  "plural": "Klijenti",
+  "invite": "Pozovi klijenta",
+  "edit": "Uredi klijenta",
+  "delete": "Obriši klijenta",
+  "view": "Prikaži klijenta",
+  "addClient": "Dodaj klijenta",
+  "addNewClient": "Dodaj novog klijenta",
+  "list": {
+    "title": "Svi klijenti",
+    "empty": "Nema pronađenih klijenata",
+    "emptyDescription": "Još nema dodanih klijenata.",
+    "searchPlaceholder": "Pretraži klijente...",
+    "loading": "Učitavanje klijenata...",
+    "failedToLoad": "Neuspješno učitavanje klijenata",
+    "failedToLoadMessage": "Neuspješno učitavanje klijenata. Pokušajte ponovo kasnije."
+  },
+  "table": {
+    "columns": {
+      "name": "Ime",
+      "email": "Email",
+      "joined": "Pridružen",
+      "projects": "Projekti"
+    },
+    "unnamedClient": "Neimenovani klijent",
+    "rowActions": {
+      "edit": "Uredi",
+      "delete": "Obriši"
+    },
+    "deleteTitle": "Obriši klijente",
+    "deleteConfirm": "Da li ste sigurni da želite obrisati {{count}} klijenta/klijenata? Ova akcija se ne može poništiti.",
+    "deleteButton": "Obriši",
+    "bulkDelete": "Obriši"
+  },
+  "form": {
+    "editTitle": "Uredi klijenta",
+    "addTitle": "Dodaj novog klijenta",
+    "saveChanges": "Sačuvaj promjene"
+  },
+  "confirmDelete": {
+    "title": "Obriši klijenta",
+    "description": "Da li ste sigurni da želite obrisati {{name}}? Ova akcija se ne može poništiti.",
+    "confirmLabel": "Obriši"
+  },
+  "messages": {
+    "created": "Klijent uspješno kreiran",
+    "updated": "Klijent uspješno ažuriran",
+    "deleted": "Klijent uspješno obrisan",
+    "failedToDelete": "Neuspješno brisanje klijenata"
+  }
+}

@@ -1,6 +1,6 @@
+import type { ReactNode } from 'react';
 import type { User } from '@/types';
 import {
-  TicketStatus,
   TicketPriority,
   TicketCategory,
 } from '@artco-group/artco-ticketing-sync';
@@ -14,46 +14,27 @@ import { InlineDateEdit } from '@/shared/components/ui/InlineDateEdit';
 import {
   resolveAssigneeName,
   getPriorityIcon,
-  getPriorityLabel,
-  getStatusIcon,
-  getStatusLabel,
+  getDynamicStatusIcon,
   getCategoryIcon,
-  getCategoryLabel,
   type AssignedToValue,
 } from '@/shared/utils/ticket-helpers';
-import {
-  STATUS_OPTIONS,
-  PRIORITY_OPTIONS,
-  CATEGORY_OPTIONS,
-} from '../utils/ticket-options';
+import { useAppTranslation } from '@/shared/hooks';
+import { useTranslatedOptions } from '../hooks';
 
-const statusOptions: InlineEditOption<string>[] = STATUS_OPTIONS.map((opt) => ({
-  value: opt.value,
-  label: opt.label,
-  icon: getStatusIcon(opt.value as TicketStatus),
-}));
-
-const priorityOptions: InlineEditOption<string>[] = PRIORITY_OPTIONS.map(
-  (opt) => ({
-    value: opt.value,
-    label: opt.label,
-    icon: getPriorityIcon(opt.value as TicketPriority),
-  })
-);
-
-const categoryOptions: InlineEditOption<string>[] = CATEGORY_OPTIONS.map(
-  (opt) => ({
-    value: opt.value,
-    label: opt.label,
-    icon: getCategoryIcon(opt.value as TicketCategory),
-  })
-);
+interface WorkflowStatusOption {
+  value: string;
+  label: string;
+  icon: ReactNode;
+}
 
 interface StatusEditProps {
   value: string;
   canEdit?: boolean;
   isLoading?: boolean;
   onChange: (status: string) => void;
+  workflowOptions?: WorkflowStatusOption[];
+  getWorkflowStatusIcon?: (statusId: string) => ReactNode;
+  getWorkflowStatusLabel?: (statusId: string) => string;
 }
 
 export function StatusEdit({
@@ -61,19 +42,52 @@ export function StatusEdit({
   canEdit,
   isLoading,
   onChange,
+  workflowOptions,
+  getWorkflowStatusIcon,
+  getWorkflowStatusLabel,
 }: StatusEditProps) {
+  const { translate } = useAppTranslation('tickets');
+  const {
+    statusOptions: defaultStatusOptions,
+    getStatusLabel: getDefaultLabel,
+  } = useTranslatedOptions();
+
+  const options: InlineEditOption<string>[] = workflowOptions
+    ? workflowOptions.map((opt) => ({
+        value: opt.value,
+        label: opt.label,
+        icon: opt.icon,
+      }))
+    : defaultStatusOptions.map((opt) => ({
+        value: opt.value,
+        label: opt.label,
+        icon: getDynamicStatusIcon(opt.value),
+      }));
+
+  const getCurrentIcon = (v: string): ReactNode => {
+    if (getWorkflowStatusIcon) {
+      return getWorkflowStatusIcon(v);
+    }
+    return getDynamicStatusIcon(v);
+  };
+
+  const getCurrentLabel = (v: string): string => {
+    if (getWorkflowStatusLabel) {
+      return getWorkflowStatusLabel(v);
+    }
+    return getDefaultLabel(v);
+  };
+
   return (
     <InlineEdit
-      label="Status"
+      label={translate('form.status')}
       value={value}
-      options={statusOptions}
+      options={options}
       canEdit={canEdit}
       isLoading={isLoading}
       onChange={onChange}
       renderValue={(v) => (
-        <Badge icon={getStatusIcon(v as TicketStatus)}>
-          {getStatusLabel(v as TicketStatus)}
-        </Badge>
+        <Badge icon={getCurrentIcon(v)}>{getCurrentLabel(v)}</Badge>
       )}
     />
   );
@@ -92,11 +106,20 @@ export function PriorityEdit({
   isLoading,
   onChange,
 }: PriorityEditProps) {
+  const { translate } = useAppTranslation('tickets');
+  const { priorityOptions, getPriorityLabel } = useTranslatedOptions();
+
+  const options: InlineEditOption<string>[] = priorityOptions.map((opt) => ({
+    value: opt.value,
+    label: opt.label,
+    icon: getPriorityIcon(opt.value as TicketPriority),
+  }));
+
   return (
     <InlineEdit
-      label="Priority"
+      label={translate('form.priority')}
       value={value}
-      options={priorityOptions}
+      options={options}
       canEdit={canEdit}
       isLoading={isLoading}
       onChange={onChange}
@@ -122,11 +145,20 @@ export function CategoryEdit({
   isLoading,
   onChange,
 }: CategoryEditProps) {
+  const { translate } = useAppTranslation('tickets');
+  const { categoryOptions, getCategoryLabel } = useTranslatedOptions();
+
+  const options: InlineEditOption<string>[] = categoryOptions.map((opt) => ({
+    value: opt.value,
+    label: opt.label,
+    icon: getCategoryIcon(opt.value as TicketCategory),
+  }));
+
   return (
     <InlineEdit
-      label="Category"
+      label={translate('form.category')}
       value={value}
-      options={categoryOptions}
+      options={options}
       canEdit={canEdit}
       isLoading={isLoading}
       onChange={onChange}
@@ -156,20 +188,25 @@ export function AssigneeEdit({
   isLoading,
   onChange,
 }: AssigneeEditProps) {
+  const { translate } = useAppTranslation('tickets');
   const userMap = new Map(users.map((u) => [u.id, u]));
 
-  const assigneeOptions: InlineEditOption<string>[] = developerUsers.map(
-    (dev) => ({
+  const assigneeOptions: InlineEditOption<string>[] = [
+    // Add clear option if there's a current assignee
+    ...(value?.id
+      ? [{ value: '', label: translate('form.clearAssignee') }]
+      : []),
+    ...developerUsers.map((dev) => ({
       value: dev.id || '',
       label: dev.name || dev.email || '',
-    })
-  );
+    })),
+  ];
 
   const currentUser = value?.id ? userMap.get(value.id) : null;
 
   return (
     <InlineEdit
-      label="Assignee"
+      label={translate('form.assignee')}
       value={value?.id || ''}
       options={assigneeOptions}
       canEdit={canEdit}
@@ -186,7 +223,9 @@ export function AssigneeEdit({
             <span className="text-sm">{resolveAssigneeName(value, users)}</span>
           </div>
         ) : (
-          <span className="text-sm text-orange-600">Unassigned</span>
+          <span className="text-sm text-orange-600">
+            {translate('form.unassigned')}
+          </span>
         )
       }
       renderOption={(option) => {
@@ -215,13 +254,16 @@ export function StartDateEdit({
   isLoading,
   onChange,
 }: DateEditProps) {
+  const { translate, language } = useAppTranslation('tickets');
+
   return (
     <InlineDateEdit
-      label="Start Date"
+      label={translate('form.startDate')}
       value={value}
       canEdit={canEdit}
       isLoading={isLoading}
       onChange={onChange}
+      locale={language}
     />
   );
 }
@@ -232,13 +274,16 @@ export function DueDateEdit({
   isLoading,
   onChange,
 }: DateEditProps) {
+  const { translate, language } = useAppTranslation('tickets');
+
   return (
     <InlineDateEdit
-      label="Due Date"
+      label={translate('form.dueDate')}
       value={value}
       canEdit={canEdit}
       isLoading={isLoading}
       onChange={onChange}
+      locale={language}
     />
   );
 }
@@ -260,20 +305,25 @@ export function EngLeadEdit({
   isLoading,
   onChange,
 }: EngLeadEditProps) {
+  const { translate } = useAppTranslation('tickets');
   const userMap = new Map(users.map((u) => [u.id, u]));
 
-  const engLeadOptions: InlineEditOption<string>[] = engLeadUsers.map(
-    (lead) => ({
+  const engLeadOptions: InlineEditOption<string>[] = [
+    // Add clear option if there's a current eng lead
+    ...(value?.id
+      ? [{ value: '', label: translate('form.clearEngLead') }]
+      : []),
+    ...engLeadUsers.map((lead) => ({
       value: lead.id || '',
       label: lead.name || lead.email || '',
-    })
-  );
+    })),
+  ];
 
   const currentUser = value?.id ? userMap.get(value.id) : null;
 
   return (
     <InlineEdit
-      label="Eng Lead"
+      label={translate('form.engLead')}
       value={value?.id || ''}
       options={engLeadOptions}
       canEdit={canEdit}
@@ -327,6 +377,7 @@ export function ProjectEdit({
   isLoading,
   onChange,
 }: ProjectEditProps) {
+  const { translate } = useAppTranslation('tickets');
   const projectMap = new Map(projects.map((p) => [p.id, p]));
 
   const projectOptions: InlineEditOption<string>[] = projects.map(
@@ -338,7 +389,7 @@ export function ProjectEdit({
 
   return (
     <InlineEdit
-      label="Project"
+      label={translate('form.project')}
       value={value?.id || ''}
       options={projectOptions}
       canEdit={canEdit}

@@ -18,7 +18,7 @@ export function StatusHeader({
   return (
     <div
       className={cn(
-        'sticky top-0 z-10 flex items-center justify-between border-b border-[#E6E6E6] bg-[#F5F5F5] px-4 py-3',
+        'border-greyscale-200 bg-greyscale-100 sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3',
         className
       )}
     >

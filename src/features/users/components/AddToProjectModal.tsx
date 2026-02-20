@@ -4,6 +4,7 @@ import {
   useProjects,
   useAddProjectMembers,
 } from '@/features/projects/api/projects-api';
+import { useTranslatedToast } from '@/shared/hooks';
 import { getErrorMessage } from '@/shared';
 import { type ProjectId, asProjectId } from '@/types';
 
@@ -21,6 +22,7 @@ export function AddToProjectModal({
   onSuccess,
 }: AddToProjectModalProps) {
   const [selectedProjectId, setSelectedProjectId] = useState<ProjectId>();
+  const translatedToast = useTranslatedToast();
   const toast = useToast();
 
   const { data: projectsData, isLoading: isLoadingProjects } = useProjects();
@@ -35,7 +37,7 @@ export function AddToProjectModal({
 
   const handleSubmit = async () => {
     if (!selectedProjectId) {
-      toast.error('Please select a project');
+      translatedToast.error('toast.error.pleaseSelect', { item: 'project' });
       return;
     }
 
@@ -44,9 +46,7 @@ export function AddToProjectModal({
         slug: selectedProjectId,
         data: { memberEmails: userEmails },
       });
-      toast.success(
-        `${userEmails.length} user${userEmails.length > 1 ? 's' : ''} added to project`
-      );
+      translatedToast.success('toast.success.membersAdded');
       onSuccess?.();
       handleClose();
     } catch (err) {

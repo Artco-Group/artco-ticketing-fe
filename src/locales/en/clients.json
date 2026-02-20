@@ -1,0 +1,53 @@
+{
+  "title": "Clients",
+  "singular": "Client",
+  "plural": "Clients",
+  "invite": "Invite Client",
+  "edit": "Edit Client",
+  "delete": "Delete Client",
+  "view": "View Client",
+  "addClient": "Add Client",
+  "addNewClient": "Add New Client",
+  "list": {
+    "title": "All Clients",
+    "empty": "No clients found",
+    "emptyDescription": "No clients have been added yet.",
+    "searchPlaceholder": "Search clients...",
+    "loading": "Loading clients...",
+    "failedToLoad": "Failed to load clients",
+    "failedToLoadMessage": "Failed to load clients. Please try again later."
+  },
+  "table": {
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "joined": "Joined",
+      "projects": "Projects"
+    },
+    "unnamedClient": "Unnamed Client",
+    "rowActions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "deleteTitle": "Delete clients",
+    "deleteConfirm": "Are you sure you want to delete {{count}} client(s)? This action cannot be undone.",
+    "deleteButton": "Delete",
+    "bulkDelete": "Delete"
+  },
+  "form": {
+    "editTitle": "Edit Client",
+    "addTitle": "Add New Client",
+    "saveChanges": "Save Changes"
+  },
+  "confirmDelete": {
+    "title": "Delete Client",
+    "description": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "confirmLabel": "Delete"
+  },
+  "messages": {
+    "created": "Client created successfully",
+    "updated": "Client updated successfully",
+    "deleted": "Client deleted successfully",
+    "failedToDelete": "Failed to delete clients"
+  }
+}

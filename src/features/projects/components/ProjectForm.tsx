@@ -1,8 +1,8 @@
+import { useMemo } from 'react';
 import {
   type CreateProjectFormData,
   type UpdateProjectFormData,
   ProjectPriority,
-  ProjectPriorityDisplay,
 } from '@artco-group/artco-ticketing-sync';
 import { type User, UserRole } from '@/types';
 import {
@@ -18,11 +18,7 @@ import {
 } from '@/shared/components/ui';
 import { MemberPicker } from '@/shared/components/composite/MemberPicker';
 import { useProjectForm } from '../hooks/useProjectForm';
-
-const PRIORITY_OPTIONS = Object.values(ProjectPriority).map((priority) => ({
-  label: ProjectPriorityDisplay[priority],
-  value: priority,
-}));
+import { useAppTranslation } from '@/shared/hooks';
 
 interface ProjectFormProps {
   formId: string;
@@ -39,11 +35,21 @@ function ProjectForm({
   isEditing = false,
   users,
 }: ProjectFormProps) {
+  const { translate, language } = useAppTranslation('projects');
   const { form, onSubmit: handleSubmit } = useProjectForm({
     defaultValues,
     isEditing,
     onSubmit,
   });
+
+  const priorityOptions = useMemo(
+    () =>
+      Object.values(ProjectPriority).map((priority) => ({
+        label: translate(`priority.${priority}`),
+        value: priority,
+      })),
+    [translate]
+  );
 
   const clientUsers = users.filter((user) => user.role === UserRole.CLIENT);
   const leadUsers = users.filter((user) => user.role === UserRole.ENG_LEAD);
@@ -60,8 +66,8 @@ function ProjectForm({
           render={({ field, fieldState }) => (
             <FormItem className="space-y-0">
               <Input
-                label="Project Name"
-                placeholder="Enter project name"
+                label={translate('form.name')}
+                placeholder={translate('form.namePlaceholder')}
                 error={fieldState.error?.message}
                 required
                 {...field}
@@ -76,8 +82,8 @@ function ProjectForm({
           render={({ field, fieldState }) => (
             <FormItem className="space-y-0">
               <Textarea
-                label="Description"
-                placeholder="Enter project description"
+                label={translate('form.description')}
+                placeholder={translate('form.descriptionPlaceholder')}
                 error={fieldState.error?.message}
                 {...field}
               />
@@ -91,7 +97,8 @@ function ProjectForm({
           render={({ field, fieldState }) => (
             <FormItem className="space-y-2">
               <FormLabel>
-                Client<span className="text-destructive ml-0.5">*</span>
+                {translate('form.client')}
+                <span className="text-destructive ml-0.5">*</span>
               </FormLabel>
               <FormControl>
                 <MemberPicker
@@ -100,7 +107,8 @@ function ProjectForm({
                   onChange={(value) =>
                     field.onChange(Array.isArray(value) ? value[0] : value)
                   }
-                  placeholder="Select client..."
+                  placeholder={translate('form.clientPlaceholder')}
+                  label={translate('form.client')}
                 />
               </FormControl>
               {fieldState.error?.message && (
@@ -118,7 +126,7 @@ function ProjectForm({
           render={({ field, fieldState }) => (
             <FormItem className="space-y-2">
               <FormLabel>
-                Project Lead(s)
+                {translate('form.leads')}
                 <span className="text-destructive ml-0.5">*</span>
               </FormLabel>
               <FormControl>
@@ -129,7 +137,7 @@ function ProjectForm({
                   onChange={(value) =>
                     field.onChange(Array.isArray(value) ? value : [value])
                   }
-                  placeholder="Select lead(s)..."
+                  placeholder={translate('form.leadsPlaceholder')}
                 />
               </FormControl>
               {fieldState.error?.message && (
@@ -146,7 +154,7 @@ function ProjectForm({
           name="members"
           render={({ field, fieldState }) => (
             <FormItem className="space-y-2">
-              <FormLabel>Team Members</FormLabel>
+              <FormLabel>{translate('form.members')}</FormLabel>
               <FormControl>
                 <MemberPicker
                   value={field.value}
@@ -155,7 +163,7 @@ function ProjectForm({
                   onChange={(value) =>
                     field.onChange(Array.isArray(value) ? value : [value])
                   }
-                  placeholder="Select developers..."
+                  placeholder={translate('form.membersPlaceholder')}
                 />
               </FormControl>
               {fieldState.error?.message && (
@@ -173,9 +181,9 @@ function ProjectForm({
           render={({ field, fieldState }) => (
             <FormItem className="space-y-0">
               <Select
-                label="Priority"
-                options={PRIORITY_OPTIONS}
-                placeholder="Select priority"
+                label={translate('form.priority')}
+                options={priorityOptions}
+                placeholder={translate('form.priorityPlaceholder')}
                 error={fieldState.error?.message}
                 {...field}
               />
@@ -190,10 +198,12 @@ function ProjectForm({
             render={({ field, fieldState }) => (
               <FormItem className="space-y-0">
                 <DatePicker
-                  label="Start Date"
-                  value={field.value}
+                  label={translate('form.startDate')}
+                  placeholder={translate('form.startDatePlaceholder')}
+                  value={field.value || undefined}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
+                  locale={language}
                 />
               </FormItem>
             )}
@@ -205,10 +215,12 @@ function ProjectForm({
             render={({ field, fieldState }) => (
               <FormItem className="space-y-0">
                 <DatePicker
-                  label="Due Date"
-                  value={field.value}
+                  label={translate('form.dueDate')}
+                  placeholder={translate('form.dueDatePlaceholder')}
+                  value={field.value || undefined}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
+                  locale={language}
                   required
                 />
               </FormItem>

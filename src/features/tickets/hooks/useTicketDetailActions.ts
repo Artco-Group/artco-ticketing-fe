@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   asTicketId,
   asUserId,
@@ -7,7 +7,7 @@ import {
   type UserId,
 } from '@/types';
 import { fileAPI } from '../api/file-api';
-import { useToast } from '@/shared/components/ui';
+import { useTranslatedToast } from '@/shared/hooks';
 
 interface UseTicketDetailActionsOptions {
   ticket: Ticket | null;
@@ -20,16 +20,25 @@ export function useTicketDetailActions({
   onStatusUpdate,
   onAssignTicket,
 }: UseTicketDetailActionsOptions) {
-  const toast = useToast();
-  const [selectedDeveloper, setSelectedDeveloper] = useState<string>('');
+  const translatedToast = useTranslatedToast();
+  const [selectedDeveloper, setSelectedDeveloper] = useState<string>(
+    () => ticket?.assignedTo?.id || ''
+  );
   const [isUpdating, setIsUpdating] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (ticket) {
-      setSelectedDeveloper(ticket.assignedTo?.id || '');
-    }
-  }, [ticket, ticket?.assignedTo]);
+    return () => {
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    setSelectedDeveloper(ticket?.assignedTo?.id || '');
+  }, [ticket?.assignedTo?.id]);
 
   const handleAssign = () => {
     if (!onAssignTicket || !ticket) return;
@@ -49,7 +58,7 @@ export function useTicketDetailActions({
     try {
       await onStatusUpdate(asTicketId(ticket.ticketId || ticket.id), newStatus);
       setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
+      successTimeoutRef.current = setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
       console.error('Failed to update ticket status:', error);
     } finally {
@@ -65,18 +74,19 @@ export function useTicketDetailActions({
     try {
       await fileAPI.downloadAttachment(ticketId, index, filename);
     } catch {
-      toast.error('Failed to download file');
+      translatedToast.error('toast.error.failedToDownload', { item: 'file' });
     }
   };
 
   const handleDownloadScreenRecording = async (
     ticketId: TicketId,
+    recordingIndex: number,
     filename: string
   ) => {
     try {
-      await fileAPI.downloadScreenRecording(ticketId, filename);
+      await fileAPI.downloadScreenRecording(ticketId, recordingIndex, filename);
     } catch {
-      toast.error('Failed to download video');
+      translatedToast.error('toast.error.failedToDownload', { item: 'video' });
     }
   };
 

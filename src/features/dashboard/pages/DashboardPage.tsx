@@ -1,47 +1,77 @@
+import { useState, useCallback } from 'react';
 import { useAuth } from '@/features/auth/context';
 import { PageHeader, ActivityFeed } from '@/shared/components/patterns';
-import { useActivities } from '../api/activities-api';
+import { useActivities, useDashboardStats } from '../api/activities-api';
+import { DashboardStats } from '../components';
 import { QueryStateWrapper } from '@/shared/components/ui/QueryStateWrapper';
+import { useAppTranslation } from '@/shared/hooks';
+
+const INITIAL_VISIBLE_COUNT = 10;
+const LOAD_MORE_COUNT = 10;
 
 export default function DashboardPage() {
+  const { translate } = useAppTranslation('dashboard');
+  const { translate: translateCommon } = useAppTranslation('common');
   const { user } = useAuth();
-  const { data, isLoading, error, refetch, isRefetching } = useActivities(20);
+  const { data, isLoading, error, refetch, isRefetching } = useActivities(50);
+  const { data: statsData, isLoading: statsLoading } = useDashboardStats();
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
 
-  const firstName = user?.name?.split(' ')[0] || 'there';
+  const firstName = user?.name?.trim().split(' ')[0];
+
+  const handleLoadMore = useCallback(() => {
+    setVisibleCount((prev) => prev + LOAD_MORE_COUNT);
+  }, []);
+
+  const welcomeMessage = firstName
+    ? translate('welcome', { name: firstName })
+    : translate('welcomeNoName');
 
   return (
     <div className="flex h-full flex-col">
-      <PageHeader title={`Welcome back, ${firstName}!`} />
+      <PageHeader title={welcomeMessage} />
 
-      <div className="flex-1 overflow-auto">
-        <div className="px-6 py-4">
-          <h2 className="mb-2 text-lg font-semibold text-gray-900">
-            Recent Activity
-          </h2>
-          <p className="mb-4 text-sm text-gray-500">
-            Here's what's been happening recently
-          </p>
+      <div className="flex h-[calc(100vh-140px)] flex-col">
+        <DashboardStats stats={statsData?.stats} isLoading={statsLoading} />
 
-          <QueryStateWrapper
-            isLoading={isLoading}
-            error={error}
-            data={data}
-            allowEmpty
-            loadingMessage="Loading activities..."
-            errorMessage="Failed to load activities"
-            onRetry={refetch}
-            isRefetching={isRefetching}
-          >
-            {(activityData) => (
-              <ActivityFeed
-                activities={activityData.activities}
-                maxItems={15}
-                emptyMessage="No recent activity. Activities will appear here as you work on tickets and projects."
-                currentUserId={user?.id}
-                variant="timeline"
-              />
-            )}
-          </QueryStateWrapper>
+        <div className="border-greyscale-200 flex min-h-0 flex-1 flex-col border-t">
+          <div className="border-greyscale-200 shrink-0 border-b px-6 py-4">
+            <h2 className="text-greyscale-900 text-base font-semibold">
+              {translate('recentActivity.title')}
+            </h2>
+            <p className="text-greyscale-500 text-xs">
+              {translate('recentActivity.description')}
+            </p>
+          </div>
+          <div className="flex-1 overflow-y-auto px-6 py-4">
+            <QueryStateWrapper
+              isLoading={isLoading}
+              error={error}
+              data={data}
+              allowEmpty
+              loadingMessage={translateCommon('messages.loadingActivities')}
+              errorMessage={translateCommon('messages.failedToLoadActivities')}
+              onRetry={refetch}
+              isRefetching={isRefetching}
+            >
+              {(activityData) => {
+                const totalActivities = activityData.activities.length;
+                const hasMore = visibleCount < totalActivities;
+
+                return (
+                  <ActivityFeed
+                    activities={activityData.activities}
+                    maxItems={visibleCount}
+                    emptyMessage={`${translate('recentActivity.empty')}. ${translate('recentActivity.emptyDescription')}`}
+                    currentUserId={user?.id}
+                    variant="list"
+                    onLoadMore={hasMore ? handleLoadMore : undefined}
+                    hasMore={hasMore}
+                  />
+                );
+              }}
+            </QueryStateWrapper>
+          </div>
         </div>
       </div>
     </div>

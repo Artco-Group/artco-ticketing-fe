@@ -1,37 +1,47 @@
 import * as React from 'react';
+import { format, parseISO } from 'date-fns';
+import { enUS, bs } from 'date-fns/locale';
+import type { Locale } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Icon } from './Icon';
+import { Button } from './Button';
+import { Calendar } from './Calendar';
+import { Popover, PopoverContent, PopoverTrigger } from './Popover';
 
-export interface DatePickerProps extends Omit<
-  React.ComponentProps<'input'>,
-  'type' | 'size' | 'value' | 'onChange'
-> {
+const localeMap: Record<string, Locale> = {
+  en: enUS,
+  bs: bs,
+};
+
+export interface DatePickerProps {
   label?: string;
   error?: string;
   helperText?: string;
   size?: 'sm' | 'md' | 'lg';
   required?: boolean;
-  value?: string;
-  onChange?: (value: string) => void;
+  value?: string | null;
+  onChange?: (value: string | null) => void;
+  clearable?: boolean;
+  disabled?: boolean;
+  placeholder?: string;
+  className?: string;
+  locale?: string;
 }
 
-function toInputFormat(value: string | undefined): string {
-  if (!value) return '';
-  if (value.includes('T')) {
-    return value.split('T')[0];
+function parseValue(value: string | null | undefined): Date | undefined {
+  if (!value) return undefined;
+  try {
+    return parseISO(value);
+  } catch {
+    return undefined;
   }
-  return value;
 }
 
-/**
- * Converts YYYY-MM-DD to ISO string
- */
-function toISOFormat(value: string): string {
-  if (!value) return '';
-  return new Date(value).toISOString();
+function toISOFormat(date: Date): string {
+  return date.toISOString();
 }
 
-const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
+const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
   (
     {
       className,
@@ -42,37 +52,39 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
       required,
       value,
       onChange,
-      ...props
+      clearable = false,
+      disabled,
+      placeholder = 'Pick a date',
+      locale = 'en',
     },
     ref
   ) => {
-    const inputRef = React.useRef<HTMLInputElement>(null);
-
-    // Merge refs
-    React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+    const [open, setOpen] = React.useState(false);
+    const selectedDate = parseValue(value);
+    const dateFnsLocale = localeMap[locale] || enUS;
 
     const sizeClasses = {
-      sm: 'h-8 text-sm px-2.5 pl-8',
-      md: 'h-10 text-sm px-3 pl-10',
-      lg: 'h-12 text-base px-4 pl-12',
+      sm: 'h-8 text-sm px-3',
+      md: 'h-10 text-sm px-3',
+      lg: 'h-12 text-base px-4',
     };
 
-    const iconSizeClasses = {
-      sm: 'left-2',
-      md: 'left-3',
-      lg: 'left-4',
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const inputValue = e.target.value;
+    const handleSelect = (date: Date | undefined) => {
       if (onChange) {
-        onChange(inputValue ? toISOFormat(inputValue) : '');
+        onChange(date ? toISOFormat(date) : null);
+      }
+      setOpen(false);
+    };
+
+    const handleClear = (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (onChange && !disabled) {
+        onChange(null);
       }
     };
 
-    const handleIconClick = () => {
-      inputRef.current?.showPicker();
-    };
+    const showClearButton = clearable && value && !disabled;
 
     return (
       <div className="flex w-full flex-col gap-2.5">
@@ -87,45 +99,58 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
             {required && <span className="text-destructive ml-0.5">*</span>}
           </label>
         )}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={handleIconClick}
-            className={cn(
-              'text-icon-tertiary hover:text-text-secondary absolute top-1/2 flex -translate-y-1/2 items-center transition-colors',
-              iconSizeClasses[size]
+        <Popover open={open} onOpenChange={setOpen}>
+          <div className="group relative">
+            <PopoverTrigger asChild>
+              <Button
+                ref={ref}
+                variant="outline"
+                disabled={disabled}
+                aria-invalid={!!error}
+                className={cn(
+                  'w-full justify-start text-left font-normal',
+                  !selectedDate && 'text-muted-foreground',
+                  sizeClasses[size],
+                  showClearButton && 'pr-9',
+                  error &&
+                    'border-destructive focus-visible:ring-destructive/20',
+                  className
+                )}
+              >
+                <Icon name="clock" size="sm" className="mr-2" />
+                {selectedDate ? (
+                  format(selectedDate, 'PPP', { locale: dateFnsLocale })
+                ) : (
+                  <span>{placeholder}</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            {showClearButton && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="text-muted-foreground hover:text-destructive absolute top-1/2 right-3 flex -translate-y-1/2 items-center rounded p-0.5 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50"
+                title="Clear date"
+              >
+                <Icon name="close" size="xs" />
+              </button>
             )}
-          >
-            <Icon name="clock" size={size === 'lg' ? 'md' : 'sm'} />
-          </button>
-          <input
-            type="date"
-            className={cn(
-              'bg-component-input outline-border-default flex w-full cursor-pointer items-center justify-start overflow-hidden rounded-lg shadow-[inset_0px_0px_0px_1px_rgba(238,239,241,1.00)] outline-1 -outline-offset-1',
-              'text-text-secondary font-[Inter] leading-5 font-medium',
-              'placeholder:text-text-placeholder placeholder:font-[Inter] placeholder:leading-5 placeholder:font-medium',
-              'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:-outline-offset-2',
-              'disabled:cursor-not-allowed disabled:opacity-50',
-              'transition-colors',
-              // Hide native calendar picker indicator
-              '[&::-webkit-calendar-picker-indicator]:hidden',
-              '[&::-webkit-calendar-picker-indicator]:appearance-none',
-              sizeClasses[size],
-              error && 'outline-destructive focus-visible:outline-destructive',
-              className
-            )}
-            ref={inputRef}
-            value={toInputFormat(value)}
-            onChange={handleChange}
-            aria-invalid={!!error}
-            {...props}
-          />
-        </div>
+          </div>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={handleSelect}
+              locale={locale}
+              autoFocus
+            />
+          </PopoverContent>
+        </Popover>
         {(error || helperText) && (
           <p
             className={cn(
-              'font-[Inter] text-xs leading-4 font-normal',
-              error ? 'text-destructive font-medium' : 'text-text-tertiary'
+              'text-xs leading-4',
+              error ? 'text-destructive font-medium' : 'text-muted-foreground'
             )}
           >
             {error || helperText}

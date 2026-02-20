@@ -1,108 +1,76 @@
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, useLocation, Navigate } from 'react-router-dom';
+import { useAppTranslation } from '@/shared/hooks';
 import {
   SettingsLayout,
   ProfileSettings,
   SecuritySettings,
+  PreferenceSettings,
+  NotificationSettings,
 } from '../components';
+import { StatusConfigsSettings } from '@/features/status-configs/components';
+import { StatusConfigEditorPage } from '@/features/status-configs/pages';
 import { EmptyState } from '@/shared/components/ui';
 import { PAGE_ROUTES } from '@/shared/constants/routes.constants';
 import type { SettingsSideBarGroup } from '../components/SettingsSidebar';
-
-const validSections = [
-  'profile',
-  'notification',
-  'security',
-  'connected-account',
-  'integrations',
-  'preference',
-  'billing',
-  'application',
-  'import-export',
-  'api',
-];
-
-const settingsGroups: SettingsSideBarGroup[] = [
-  {
-    title: 'Account',
-    items: [
-      {
-        id: 'profile',
-        label: 'Profile',
-        icon: 'profile',
-        href: PAGE_ROUTES.SETTINGS.PROFILE,
-      },
-      {
-        id: 'notification',
-        label: 'Notification',
-        icon: 'notification',
-        href: PAGE_ROUTES.SETTINGS.NOTIFICATION,
-      },
-      {
-        id: 'security',
-        label: 'Security & Access',
-        icon: 'security',
-        href: PAGE_ROUTES.SETTINGS.SECURITY,
-      },
-      {
-        id: 'connected-account',
-        label: 'Connected Account',
-        icon: 'connected-account',
-        href: PAGE_ROUTES.SETTINGS.CONNECTED_ACCOUNT,
-      },
-      {
-        id: 'integrations',
-        label: 'Integrations',
-        icon: 'integrations',
-        href: PAGE_ROUTES.SETTINGS.INTEGRATIONS,
-      },
-    ],
-  },
-  {
-    title: 'Administration',
-    items: [
-      {
-        id: 'preference',
-        label: 'Preference',
-        icon: 'preference',
-        href: PAGE_ROUTES.SETTINGS.PREFERENCE,
-      },
-      {
-        id: 'billing',
-        label: 'Billing',
-        icon: 'billing',
-        href: PAGE_ROUTES.SETTINGS.BILLING,
-      },
-      {
-        id: 'application',
-        label: 'Application',
-        icon: 'application',
-        href: PAGE_ROUTES.SETTINGS.APPLICATION,
-      },
-      {
-        id: 'import-export',
-        label: 'Import / Export',
-        icon: 'import-export',
-        href: PAGE_ROUTES.SETTINGS.IMPORT_EXPORT,
-      },
-      { id: 'api', label: 'API', icon: 'api', href: PAGE_ROUTES.SETTINGS.API },
-    ],
-  },
-];
+import {
+  SETTINGS_GROUPS_CONFIG,
+  VALID_SETTINGS_SECTIONS,
+} from '../utils/settings-config';
 
 export default function SettingsPage() {
   const { section = 'profile' } = useParams<{ section?: string }>();
+  const location = useLocation();
+  const { translate } = useAppTranslation('settings');
 
-  if (!validSections.includes(section)) {
+  const isWorkflowNew =
+    location.pathname === PAGE_ROUTES.SETTINGS.WORKFLOWS_NEW;
+  const isWorkflowEdit =
+    location.pathname.includes('/workflows/') &&
+    location.pathname.endsWith('/edit');
+  const isWorkflowEditor = isWorkflowNew || isWorkflowEdit;
+
+  const settingsGroups: SettingsSideBarGroup[] = SETTINGS_GROUPS_CONFIG.map(
+    (group) => ({
+      title: translate(group.titleKey),
+      items: group.items.map((item) => ({
+        ...item,
+        label: translate(item.labelKey),
+      })),
+    })
+  );
+
+  if (
+    !isWorkflowEditor &&
+    !VALID_SETTINGS_SECTIONS.includes(
+      section as (typeof VALID_SETTINGS_SECTIONS)[number]
+    )
+  ) {
     return <Navigate to={PAGE_ROUTES.SETTINGS.PROFILE} replace />;
   }
 
   const renderContent = () => {
+    if (isWorkflowEditor) {
+      return <StatusConfigEditorPage />;
+    }
+
     if (section === 'profile') {
       return <ProfileSettings />;
     }
 
     if (section === 'security') {
       return <SecuritySettings />;
+    }
+
+    if (section === 'preference') {
+      return <PreferenceSettings />;
+    }
+
+    if (section === 'notification') {
+      return <NotificationSettings />;
+    }
+
+    if (section === 'workflows') {
+      return <StatusConfigsSettings />;
     }
 
     return (
@@ -116,8 +84,10 @@ export default function SettingsPage() {
     );
   };
 
+  const activeSection = isWorkflowEditor ? 'workflows' : section;
+
   return (
-    <SettingsLayout activeSection={section} groups={settingsGroups}>
+    <SettingsLayout activeSection={activeSection} groups={settingsGroups}>
       {renderContent()}
     </SettingsLayout>
   );

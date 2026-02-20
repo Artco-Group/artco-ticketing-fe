@@ -1,8 +1,5 @@
-import { useEffect } from 'react';
-import {
-  UserRoleDisplay,
-  type UpdateUserFormData,
-} from '@artco-group/artco-ticketing-sync';
+import { useEffect, useMemo } from 'react';
+import { type UpdateUserFormData } from '@artco-group/artco-ticketing-sync';
 import { useAuth } from '@/features/auth/context';
 import { useUpdateUser } from '@/features/users/api';
 import { useUserForm, useProfilePicture } from '@/features/users/hooks';
@@ -18,11 +15,7 @@ import {
   useToast,
 } from '@/shared/components/ui';
 import { getErrorMessage } from '@/shared';
-
-const ROLE_OPTIONS = Object.values(UserRole).map((role) => ({
-  label: UserRoleDisplay[role],
-  value: role,
-}));
+import { useAppTranslation } from '@/shared/hooks';
 
 const getDefaultValues = (
   user: { name?: string; email?: string; role?: string } | null
@@ -33,9 +26,21 @@ const getDefaultValues = (
 });
 
 export function ProfileSettings() {
+  const { translate } = useAppTranslation('settings');
+  const { translate: translateCommon } = useAppTranslation('common');
+  const { translate: translateUsers } = useAppTranslation('users');
   const { user } = useAuth();
   const toast = useToast();
   const updateMutation = useUpdateUser();
+
+  const roleOptions = useMemo(
+    () =>
+      Object.values(UserRole).map((role) => ({
+        label: translateUsers(`roles.${role}`),
+        value: role,
+      })),
+    [translateUsers]
+  );
 
   const userId = user?.id as string | undefined;
   const currentAvatar = user?.profilePic;
@@ -48,7 +53,7 @@ export function ProfileSettings() {
         id: asUserId(userId),
         data,
       });
-      toast.success('Profile updated successfully');
+      toast.success(translate('messages.profileUpdated'));
     } catch (err) {
       toast.error(getErrorMessage(err));
     }
@@ -90,9 +95,11 @@ export function ProfileSettings() {
   return (
     <div className="mx-auto w-full max-w-[540px]">
       <div className="mb-8">
-        <h1 className="text-foreground text-2xl font-semibold">Profile</h1>
+        <h1 className="text-foreground text-2xl font-semibold">
+          {translate('profile.title')}
+        </h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Manage your personal information and account settings
+          {translate('profile.subtitle')}
         </p>
       </div>
 
@@ -100,7 +107,7 @@ export function ProfileSettings() {
         <form onSubmit={createSubmitHandler()} className="space-y-6">
           <div className="rounded-lg border bg-white p-6">
             <h2 className="text-foreground mb-4 text-sm font-medium">
-              Profile Picture
+              {translate('profile.avatar')}
             </h2>
             <div className="flex items-center gap-4">
               <Avatar
@@ -117,7 +124,9 @@ export function ProfileSettings() {
                     disabled={isAvatarLoading || isSubmitting}
                     onClick={openFilePicker}
                   >
-                    {isAvatarLoading ? 'Uploading...' : 'Upload Image'}
+                    {isAvatarLoading
+                      ? translate('profile.uploading')
+                      : translate('profile.uploadImage')}
                   </Button>
                   <Button
                     type="button"
@@ -126,7 +135,7 @@ export function ProfileSettings() {
                     disabled={!hasAvatar || isAvatarLoading || isSubmitting}
                     onClick={handleRemoveAvatar}
                   >
-                    Remove
+                    {translate('profile.remove')}
                   </Button>
                   <input
                     ref={fileInputRef}
@@ -134,11 +143,11 @@ export function ProfileSettings() {
                     accept="image/jpeg,image/jpg,image/png,image/gif"
                     className="hidden"
                     onChange={handleFileSelect}
-                    aria-label="Upload profile picture"
+                    aria-label={translate('profile.uploadImage')}
                   />
                 </div>
                 <p className="text-muted-foreground mt-2 text-xs">
-                  We support PNGs, JPEGs and GIFs under 10MB
+                  {translate('profile.avatarHint')}
                 </p>
               </div>
             </div>
@@ -152,8 +161,8 @@ export function ProfileSettings() {
               render={({ field, fieldState }) => (
                 <FormItem className="space-y-0">
                   <Input
-                    label="Name"
-                    placeholder="Enter your name"
+                    label={translate('profile.name')}
+                    placeholder={translate('profile.namePlaceholder')}
                     error={fieldState.error?.message}
                     required
                     {...field}
@@ -168,8 +177,8 @@ export function ProfileSettings() {
               render={({ field, fieldState }) => (
                 <FormItem className="space-y-0">
                   <Input
-                    label="Email Address"
-                    placeholder="Enter email address"
+                    label={translate('profile.email')}
+                    placeholder={translate('profile.emailPlaceholder')}
                     error={fieldState.error?.message}
                     disabled={!isAdmin}
                     {...field}
@@ -184,9 +193,9 @@ export function ProfileSettings() {
               render={({ field, fieldState }) => (
                 <FormItem className="space-y-0">
                   <Select
-                    label="Role"
-                    options={ROLE_OPTIONS}
-                    placeholder="Select a role"
+                    label={translate('profile.role')}
+                    options={roleOptions}
+                    placeholder={translate('profile.rolePlaceholder')}
                     error={fieldState.error?.message}
                     disabled={!isAdmin}
                     {...field}
@@ -203,10 +212,12 @@ export function ProfileSettings() {
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              Cancel
+              {translateCommon('buttons.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
+              {isSubmitting
+                ? translate('profile.saving')
+                : translate('profile.saveChanges')}
             </Button>
           </div>
         </form>

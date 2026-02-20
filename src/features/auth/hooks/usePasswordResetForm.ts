@@ -9,17 +9,18 @@ import {
 import { useVerifyResetToken, useResetPassword } from '../api/auth-api';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { extractAuthError } from '../utils/extract-auth-error';
+import { useTranslatedToast } from '@/shared/hooks';
 import { useToast } from '@/shared/components/ui';
 
 export function usePasswordResetForm() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
+  const translatedToast = useTranslatedToast();
   const toast = useToast();
 
   const verifyTokenQuery = useVerifyResetToken(token);
   const resetPasswordMutation = useResetPassword();
 
-  const [formError, setFormError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const form = useForm<PasswordResetFormInput>({
@@ -30,7 +31,6 @@ export function usePasswordResetForm() {
     },
   });
 
-  // Calculate token verification error from query
   const tokenError = useMemo(() => {
     if (!token) {
       return 'No reset token provided. Please use the link from your email.';
@@ -57,22 +57,18 @@ export function usePasswordResetForm() {
   const tokenValid = !!token && verifyTokenQuery.data?.valid === true;
 
   const onSubmit = async (data: PasswordResetFormInput) => {
-    setFormError('');
-
     try {
       await resetPasswordMutation.mutateAsync({
         token: token || '',
         newPassword: data.newPassword,
       });
       setSuccess(true);
-      toast.success('Password reset successfully');
+      translatedToast.success('toast.success.passwordReset');
       setTimeout(() => {
         navigate(PAGE_ROUTES.AUTH.LOGIN);
       }, 3000);
     } catch (err) {
-      const errorMsg = extractAuthError(err);
-      setFormError(errorMsg);
-      toast.error(errorMsg);
+      toast.error(extractAuthError(err));
     }
   };
 
@@ -83,7 +79,6 @@ export function usePasswordResetForm() {
     verifyingToken,
     tokenValid,
     tokenError,
-    formError,
     success,
     navigateToLogin: () => navigate(PAGE_ROUTES.AUTH.LOGIN),
   };

@@ -4,7 +4,7 @@ import {
   ALLOWED_FILE_TYPES,
 } from '@artco-group/artco-ticketing-sync';
 import { asTicketId } from '@/types';
-import { useToast } from '@/shared/components/ui';
+import { useTranslatedToast } from '@/shared/hooks';
 import {
   useUploadAttachments,
   useUploadScreenRecording,
@@ -21,7 +21,7 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
   const [isScreenRecordingModalOpen, setIsScreenRecordingModalOpen] =
     useState(false);
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
-  const toast = useToast();
+  const translatedToast = useTranslatedToast();
 
   const uploadAttachmentsMutation = useUploadAttachments();
   const uploadScreenRecordingMutation = useUploadScreenRecording();
@@ -45,15 +45,13 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
 
     for (const file of pendingFiles) {
       if (file.size > VALIDATION_RULES.FRONTEND_MAX_FILE_SIZE) {
-        toast.error(
-          `File "${file.name}" is too large. Maximum size is ${VALIDATION_RULES.FRONTEND_MAX_FILE_SIZE / (1024 * 1024)}MB.`
-        );
+        translatedToast.error('toast.error.fileTooLarge', {
+          size: String(VALIDATION_RULES.FRONTEND_MAX_FILE_SIZE / (1024 * 1024)),
+        });
         return;
       }
       if (!ALLOWED_FILE_TYPES.ATTACHMENTS.includes(file.type)) {
-        toast.error(
-          `File "${file.name}" has an unsupported type. Allowed types: images, PDFs, and documents.`
-        );
+        translatedToast.error('toast.error.unsupportedFileType');
         return;
       }
     }
@@ -68,24 +66,24 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
         ticketId: asTicketId(ticketId),
         formData,
       });
-      toast.success('Files uploaded successfully');
+      translatedToast.success('toast.success.filesUploaded');
       setPendingFiles([]);
       setIsFileUploadModalOpen(false);
     } catch {
-      toast.error('Failed to upload files');
+      translatedToast.error('toast.error.failedToUpload', { item: 'files' });
     }
   };
 
   const handleScreenRecordingComplete = async (
     file: File | null,
-    _duration: number
+    duration: number
   ) => {
     if (!file) {
       return;
     }
 
     if (!ticketId) {
-      toast.error('Cannot upload: ticket not found');
+      translatedToast.error('toast.error.notFound', { item: 'Ticket' });
       return;
     }
 
@@ -94,15 +92,18 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
 
     const formData = new FormData();
     formData.append('screenRecording', file);
+    formData.append('recordingDuration', String(Math.round(duration)));
 
     try {
       await uploadScreenRecordingMutation.mutateAsync({
         ticketId: asTicketId(ticketId),
         formData,
       });
-      toast.success('Screen recording uploaded successfully');
+      translatedToast.success('toast.success.recordingUploaded');
     } catch {
-      toast.error('Failed to upload screen recording');
+      translatedToast.error('toast.error.failedToUpload', {
+        item: 'screen recording',
+      });
     }
   };
 
@@ -114,22 +115,27 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
         ticketId: asTicketId(ticketId),
         attachmentIndex,
       });
-      toast.success('Attachment deleted');
+      translatedToast.success('toast.success.attachmentDeleted');
     } catch {
-      toast.error('Failed to delete attachment');
+      translatedToast.error('toast.error.failedToDelete', {
+        item: 'attachment',
+      });
     }
   };
 
-  const handleDeleteScreenRecording = async () => {
+  const handleDeleteScreenRecording = async (recordingIndex: number) => {
     if (!ticketId) return;
 
     try {
       await deleteScreenRecordingMutation.mutateAsync({
         ticketId: asTicketId(ticketId),
+        recordingIndex,
       });
-      toast.success('Screen recording deleted');
+      translatedToast.success('toast.success.recordingDeleted');
     } catch {
-      toast.error('Failed to delete screen recording');
+      translatedToast.error('toast.error.failedToDelete', {
+        item: 'screen recording',
+      });
     }
   };
 

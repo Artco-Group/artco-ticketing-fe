@@ -10,12 +10,14 @@ import { useLogin } from '../api/auth-api';
 import { useAuth } from '../context';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { extractAuthError } from '../utils/extract-auth-error';
+import { useTranslatedToast } from '@/shared/hooks';
 import { useToast } from '@/shared/components/ui';
 
 export function useLoginForm() {
   const loginMutation = useLogin();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const translatedToast = useTranslatedToast();
   const toast = useToast();
 
   const form = useForm<LoginFormData>({
@@ -36,7 +38,7 @@ export function useLoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       await loginMutation.mutateAsync(data);
-      toast.success({ title: 'Successfully logged in' });
+      translatedToast.success('toast.success.loggedIn');
     } catch (err) {
       toast.error({ title: extractAuthError(err), icon: 'info' });
     }

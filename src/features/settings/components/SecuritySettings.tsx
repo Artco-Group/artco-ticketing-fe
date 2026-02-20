@@ -1,11 +1,4 @@
-import { useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  changePasswordSchema,
-  type ChangePasswordFormData,
-} from '@artco-group/artco-ticketing-sync';
-import { useChangePassword } from '@/features/auth/api';
+import { useChangePasswordForm } from '@/features/auth/hooks';
 import {
   Form,
   FormControl,
@@ -15,72 +8,41 @@ import {
   Button,
   useToast,
 } from '@/shared/components/ui';
-import { getErrorMessage } from '@/shared';
+import { useAppTranslation } from '@/shared/hooks';
 
 export function SecuritySettings() {
+  const { translate } = useAppTranslation('settings');
+  const { translate: translateCommon } = useAppTranslation('common');
   const toast = useToast();
-  const changePassword = useChangePassword();
-  const [formError, setFormError] = useState<string | null>(null);
 
-  const form = useForm<ChangePasswordFormData>({
-    resolver: zodResolver(changePasswordSchema),
-    defaultValues: {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    },
-  });
-
-  const handleSubmit = form.handleSubmit(async (data) => {
-    setFormError(null);
-    try {
-      await changePassword.mutateAsync(data);
-      toast.success('Password changed successfully');
-      form.reset();
-    } catch (error) {
-      const message = getErrorMessage(error);
-      setFormError(message);
-      toast.error(message);
-    }
-  });
-
-  const handleCancel = () => {
-    form.reset();
-    setFormError(null);
-  };
-
-  const isPending = changePassword.isPending;
-  const isDirty = form.formState.isDirty;
-
-  const watchedFields = useWatch({
-    control: form.control,
-    name: ['currentPassword', 'newPassword', 'confirmPassword'],
-  });
-  const allFieldsFilled = watchedFields.every((field) => !!field);
+  const { form, onSubmit, resetForm, isPending, isDirty, allFieldsFilled } =
+    useChangePasswordForm({
+      onSuccess: () => {
+        toast.success(translate('messages.passwordChanged'));
+        resetForm();
+      },
+      onError: (message) => {
+        toast.error(message);
+      },
+    });
 
   return (
     <div className="mx-auto w-full max-w-[540px]">
       <div className="mb-8">
         <h1 className="text-foreground text-2xl font-semibold">
-          Security & Access
+          {translate('security.title')}
         </h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Manage your password, session and other
+          {translate('security.description')}
         </p>
       </div>
 
       <Form {...form}>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={onSubmit} className="space-y-6">
           <div className="rounded-lg border bg-white p-6">
             <h2 className="text-foreground mb-6 text-sm font-medium">
-              Password
+              {translate('security.password')}
             </h2>
-
-            {formError && (
-              <div className="bg-destructive/10 text-destructive mb-4 rounded-lg p-3 text-sm">
-                {formError}
-              </div>
-            )}
 
             <div className="space-y-6">
               <FormField
@@ -90,9 +52,11 @@ export function SecuritySettings() {
                   <FormItem className="space-y-0">
                     <FormControl>
                       <PasswordInput
-                        label="Current Password"
+                        label={translate('security.currentPassword')}
                         autoComplete="current-password"
-                        placeholder="Enter current password"
+                        placeholder={translate(
+                          'security.currentPasswordPlaceholder'
+                        )}
                         disabled={isPending}
                         error={fieldState.error?.message}
                         {...field}
@@ -110,9 +74,11 @@ export function SecuritySettings() {
                     <FormItem className="space-y-0">
                       <FormControl>
                         <PasswordInput
-                          label="New Password"
+                          label={translate('security.newPassword')}
                           autoComplete="new-password"
-                          placeholder="Enter new password"
+                          placeholder={translate(
+                            'security.newPasswordPlaceholder'
+                          )}
                           disabled={isPending}
                           showStrengthMeter
                           error={fieldState.error?.message}
@@ -130,9 +96,11 @@ export function SecuritySettings() {
                     <FormItem className="space-y-0">
                       <FormControl>
                         <PasswordInput
-                          label="Confirm Password"
+                          label={translate('security.confirmPassword')}
                           autoComplete="new-password"
-                          placeholder="Confirm password"
+                          placeholder={translate(
+                            'security.confirmPasswordPlaceholder'
+                          )}
                           disabled={isPending}
                           error={fieldState.error?.message}
                           {...field}
@@ -148,13 +116,15 @@ export function SecuritySettings() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={handleCancel}
+                onClick={resetForm}
                 disabled={isPending || !isDirty}
               >
-                Cancel
+                {translateCommon('buttons.cancel')}
               </Button>
               <Button type="submit" disabled={isPending || !allFieldsFilled}>
-                {isPending ? 'Saving...' : 'Save Change'}
+                {isPending
+                  ? translate('security.saving')
+                  : translate('security.saveChange')}
               </Button>
             </div>
           </div>

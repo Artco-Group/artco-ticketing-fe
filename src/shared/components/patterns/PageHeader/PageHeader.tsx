@@ -1,11 +1,12 @@
-import { useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/features/auth/context';
 import { Breadcrumbs } from '@/shared/components/composite';
 import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
 import { UserMenu } from '@/shared/components/composite/UserMenu';
-import { NotificationBell } from '@/shared/components/composite/NotificationBell';
-import type { NotificationItem } from '@/shared/components/composite/NotificationBell';
+import { Button, Icon } from '@/shared/components/ui';
+import { PAGE_ROUTES } from '@/shared/constants';
 
 export interface PageHeaderProps {
   title?: string;
@@ -23,20 +24,10 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   const { user, logout } = useAuth();
-  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const navigate = useNavigate();
 
-  const handleMarkRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-    );
-  };
-
-  const handleMarkAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-  };
-
-  const handleClearAll = () => {
-    setNotifications([]);
+  const handleNotificationClick = () => {
+    navigate(PAGE_ROUTES.DASHBOARD.ROOT);
   };
 
   return (
@@ -74,13 +65,14 @@ export function PageHeader({
           }}
           onLogout={logout}
         />
-        <NotificationBell
-          count={notifications.filter((n) => !n.isRead).length}
-          notifications={notifications}
-          onMarkRead={handleMarkRead}
-          onMarkAllRead={handleMarkAllRead}
-          onClearAll={handleClearAll}
-        />
+        <Button
+          variant="ghost"
+          className="relative h-10 w-10 rounded-full p-0 focus-visible:ring-0 focus-visible:outline-none"
+          aria-label="Notifications"
+          onClick={handleNotificationClick}
+        >
+          <Icon name="notification" size="xxl" />
+        </Button>
       </div>
     </div>
   );

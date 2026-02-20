@@ -9,3 +9,7 @@ export { useTicketInlineEdit } from './useTicketInlineEdit';
 export { useTicketFileUpload } from './useTicketFileUpload';
 export { useTicketFilters } from './useTicketFilters';
 export { useTicketTableState } from './useTicketTableState';
+export { useTranslatedOptions } from './useTranslatedOptions';
+export { useWorkflowStatusOptions } from './useWorkflowStatusOptions';
+export { getStatusIconFromDefinition } from '@/shared/utils/ticket-helpers';
+export { useProjectMembers } from './useProjectMembers';

@@ -2,9 +2,9 @@ import { useState, useMemo } from 'react';
 import {
   ProjectPriority,
   ProjectPriorityDisplay,
+  ProjectPrioritySortOrder,
 } from '@artco-group/artco-ticketing-sync';
 import { type ProjectWithProgress } from '@/types';
-import { PROJECT_PRIORITY_ORDER } from '../utils/project-helpers';
 
 type SortOption =
   | 'Name'
@@ -47,8 +47,8 @@ export function useProjectFilters<T extends ProjectWithProgress>(
             return (a.name || '').localeCompare(b.name || '');
           case 'Priority':
             return (
-              (PROJECT_PRIORITY_ORDER[b.priority || ''] || 0) -
-              (PROJECT_PRIORITY_ORDER[a.priority || ''] || 0)
+              (ProjectPrioritySortOrder[b.priority as ProjectPriority] ?? 0) -
+              (ProjectPrioritySortOrder[a.priority as ProjectPriority] ?? 0)
             );
           case 'Due Date': {
             const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0;

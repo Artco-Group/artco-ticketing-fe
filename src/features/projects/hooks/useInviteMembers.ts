@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { type User, type ProjectId } from '@/types';
 import { useAddProjectMembers } from '../api/projects-api';
+import { useTranslatedToast } from '@/shared/hooks';
 import { useToast } from '@/shared/components/ui';
 import { getErrorMessage } from '@/shared';
 
@@ -15,13 +16,13 @@ export function useInviteMembers({
   currentMembers,
   allUsers,
 }: UseInviteMembersOptions) {
+  const translatedToast = useTranslatedToast();
   const toast = useToast();
   const addMembersMutation = useAddProjectMembers();
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
-  // Only show users NOT already on the project
   const availableMembers = useMemo(() => {
     const currentMemberIds = new Set(currentMembers?.map((m) => m.id) || []);
     return allUsers.filter(
@@ -41,7 +42,6 @@ export function useInviteMembers({
   const handleInvite = async () => {
     if (!projectId || selectedMembers.length === 0) return;
 
-    // Map selected user IDs to emails for the API
     const memberEmails = selectedMembers
       .map((id) => allUsers.find((u) => u.id === id)?.email)
       .filter((email): email is string => !!email);
@@ -53,7 +53,7 @@ export function useInviteMembers({
         slug: projectId,
         data: { memberEmails },
       });
-      toast.success('Members added successfully');
+      translatedToast.success('toast.success.membersAdded');
       closeModal();
     } catch (err) {
       toast.error(getErrorMessage(err));

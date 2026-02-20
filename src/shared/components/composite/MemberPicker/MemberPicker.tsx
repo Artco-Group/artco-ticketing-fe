@@ -11,6 +11,7 @@ import {
 } from '@/shared/components/ui';
 import { MemberBadge } from './MemberBadge';
 import { MemberOption } from './MemberOption';
+import { useAppTranslation } from '@/shared/hooks';
 
 export interface MemberGroup {
   key: string;
@@ -55,13 +56,19 @@ export function MemberPicker({
   options,
   multiple = false,
   onChange,
-  placeholder = 'Select member...',
+  placeholder,
   disabled = false,
   className,
-  label = 'Member',
+  label,
   groupBy,
   groups,
 }: MemberPickerProps) {
+  const { translate } = useAppTranslation('common');
+
+  const resolvedLabel = label ?? translate('labels.member');
+  const resolvedPlaceholder =
+    placeholder ?? translate('memberPicker.selectMember');
+
   const validUsers = useMemo(
     () => options.filter((user) => user.id),
     [options]
@@ -134,7 +141,7 @@ export function MemberPicker({
       </div>
     ) : (
       <span className="text-muted-foreground flex-1 text-left">
-        {placeholder}
+        {resolvedPlaceholder}
       </span>
     );
 
@@ -153,7 +160,7 @@ export function MemberPicker({
           </div>
           <div className="ml-2 flex shrink-0 items-center gap-1">
             <span className="text-muted-foreground text-sm font-medium">
-              {label}
+              {resolvedLabel}
             </span>
             <Icon name="chevron-down" size="md" />
           </div>
@@ -166,7 +173,7 @@ export function MemberPicker({
         >
           {validUsers.length === 0 ? (
             <div className="text-muted-foreground px-2 py-4 text-center text-sm">
-              No users available
+              {translate('memberPicker.noUsersAvailable')}
             </div>
           ) : groupedUsers ? (
             groupedUsers.map((group, index) => (

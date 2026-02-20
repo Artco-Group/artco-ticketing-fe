@@ -1,12 +1,16 @@
-import {
+import React, {
   useState,
   useRef,
   useEffect,
+  useCallback,
   type ReactNode,
-  type ChangeEvent,
 } from 'react';
+import { parseISO } from 'date-fns';
+import { formatDateDisplay } from '@artco-group/artco-ticketing-sync';
 import { cn } from '@/lib/utils';
 import { Icon } from './Icon';
+import { Calendar } from './Calendar';
+import { Popover, PopoverContent, PopoverTrigger } from './Popover';
 
 export interface InlineDateEditProps {
   label: string;
@@ -16,22 +20,17 @@ export interface InlineDateEditProps {
   onChange: (date: string | null) => void;
   placeholder?: string;
   renderValue?: (value: string | Date | null | undefined) => ReactNode;
+  locale?: string;
 }
 
-function formatDateDisplay(value: string | Date | null | undefined): string {
-  if (!value) return '-';
-  const date = typeof value === 'string' ? new Date(value) : value;
-  return date.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-
-function formatDateInput(value: string | Date | null | undefined): string {
-  if (!value) return '';
-  const date = typeof value === 'string' ? new Date(value) : value;
-  return date.toISOString().split('T')[0];
+function parseValue(value: string | Date | null | undefined): Date | undefined {
+  if (!value) return undefined;
+  if (value instanceof Date) return value;
+  try {
+    return parseISO(value);
+  } catch {
+    return undefined;
+  }
 }
 
 export function InlineDateEdit({
@@ -41,43 +40,73 @@ export function InlineDateEdit({
   isLoading = false,
   onChange,
   renderValue,
+  locale,
 }: InlineDateEditProps) {
+  const dateLanguage = locale || 'en';
   const [displayValue, setDisplayValue] = useState<
     string | Date | null | undefined
   >(value);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [open, setOpen] = useState(false);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setDisplayValue(value);
   }, [value]);
 
-  const handleClick = () => {
-    if (!canEdit || isLoading) return;
-    inputRef.current?.showPicker();
-  };
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
-  const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    if (newValue) {
-      const newDate = new Date(newValue).toISOString();
-      setDisplayValue(newDate);
-      onChange(newDate);
+  // Debounced save - waits 500ms after last change before saving
+  const debouncedSave = useCallback(
+    (dateValue: string | null) => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        onChange(dateValue);
+      }, 500);
+    },
+    [onChange]
+  );
+
+  const handleSelect = (date: Date | undefined) => {
+    if (date) {
+      const isoDate = date.toISOString();
+      setDisplayValue(isoDate);
+      debouncedSave(isoDate);
     } else {
       setDisplayValue(null);
-      onChange(null);
+      debouncedSave(null);
     }
+    setOpen(false);
   };
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDisplayValue(null);
+    onChange(null);
+  };
+
+  const selectedDate = parseValue(displayValue);
 
   const displayContent = renderValue ? (
     renderValue(displayValue)
   ) : (
-    <span className="text-sm">{formatDateDisplay(displayValue)}</span>
+    <span className="text-sm whitespace-nowrap">
+      {formatDateDisplay(displayValue, dateLanguage, 'long')}
+    </span>
   );
 
   if (!canEdit) {
     return (
       <div className="flex h-8 items-center justify-start">
-        <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+        <span className="text-muted-foreground mr-3 w-28 shrink-0 text-sm whitespace-nowrap">
           {label}
         </span>
         <span className="select-none">{displayContent}</span>
@@ -87,40 +116,50 @@ export function InlineDateEdit({
 
   return (
     <div className="flex h-8 items-center justify-start">
-      <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+      <span className="text-muted-foreground mr-3 w-28 shrink-0 text-sm whitespace-nowrap">
         {label}
       </span>
-      <div className="relative">
-        <button
-          type="button"
-          onClick={handleClick}
-          disabled={isLoading}
-          className={cn(
-            'group -mx-1.5 -my-0.5 flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 text-left transition-all',
-            'hover:bg-muted/60',
-            isLoading && 'cursor-not-allowed opacity-50'
-          )}
-        >
-          {displayContent}
-          <Icon
-            name="chevron-selector"
-            size="xs"
-            className="text-muted-foreground shrink-0 opacity-0 transition-opacity group-hover:opacity-60"
-          />
-        </button>
-        {/* Hidden date input - only used to trigger the native picker */}
-        <input
-          ref={inputRef}
-          type="date"
-          value={formatDateInput(displayValue)}
-          onChange={handleDateChange}
-          className={cn(
-            'pointer-events-none absolute inset-0 h-full w-full opacity-0',
-            '[&::-webkit-calendar-picker-indicator]:pointer-events-none',
-            '[&::-webkit-calendar-picker-indicator]:opacity-0'
-          )}
-          tabIndex={-1}
-        />
+      <div className="group relative flex items-center">
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              disabled={isLoading}
+              className={cn(
+                '-mx-1.5 -my-0.5 flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 text-left transition-all',
+                'hover:bg-muted/60',
+                isLoading && 'cursor-not-allowed opacity-50'
+              )}
+            >
+              {displayContent}
+              <Icon
+                name="chevron-selector"
+                size="xs"
+                className="text-muted-foreground shrink-0 opacity-0 transition-opacity group-hover:opacity-60"
+              />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="end">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={handleSelect}
+              locale={dateLanguage}
+              autoFocus
+            />
+          </PopoverContent>
+        </Popover>
+        {displayValue && (
+          <button
+            type="button"
+            onClick={handleClear}
+            disabled={isLoading}
+            className="text-muted-foreground hover:text-destructive ml-1 rounded p-0.5 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 disabled:cursor-not-allowed"
+            title="Clear date"
+          >
+            <Icon name="close" size="xs" />
+          </button>
+        )}
       </div>
     </div>
   );

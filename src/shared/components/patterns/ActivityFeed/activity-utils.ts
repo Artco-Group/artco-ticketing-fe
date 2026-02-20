@@ -3,7 +3,7 @@ import {
   ActivityActionLabels,
   type Activity,
 } from '@artco-group/artco-ticketing-sync';
-import type { ActivityItem } from './ActivityFeed';
+import type { ActivityItem } from './types';
 
 function getTargetLink(activity: Activity): string | undefined {
   const { type, identifier } = activity.target;
@@ -12,6 +12,8 @@ function getTargetLink(activity: Activity): string | undefined {
       return `/tickets/${identifier}`;
     case 'project':
       return identifier ? `/projects/${identifier}` : undefined;
+    case 'comment':
+      return identifier ? `/tickets/${identifier}` : undefined;
     default:
       return undefined;
   }
@@ -30,7 +32,6 @@ export function transformActivity(activity: Activity): ActivityItem {
     targetSuffix = `from ${activity.metadata.oldValue} to ${activity.metadata.newValue}`;
   }
 
-  // Store template for affected user actions (will be filled in during render)
   if (activity.metadata?.affectedUserName) {
     const preposition =
       activity.action === ActivityAction.PROJECT_MEMBER_REMOVED ? 'from' : 'to';
@@ -54,5 +55,6 @@ export function transformActivity(activity: Activity): ActivityItem {
     targetSuffix,
     timestamp: activity.createdAt,
     activityAction: activity.action,
+    metadata: activity.metadata,
   };
 }

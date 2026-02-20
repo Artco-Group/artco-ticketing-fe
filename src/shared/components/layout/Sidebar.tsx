@@ -3,7 +3,6 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/shared/components/ui';
 import type { IconName } from '@/shared/components/ui/Icon/Icon';
-import { SearchBar } from '@/shared/components/composite';
 import { MenuItem } from '@/shared/components/composite/MenuItem';
 import { SIDEBAR_WIDTH } from './sidebar.config';
 
@@ -49,7 +48,6 @@ export interface SidebarProps {
   footerSections?: SidebarFooterSection[];
   promoCard?: SidebarPromoCard;
 
-  searchPlaceholder?: string;
   className?: string;
 }
 
@@ -61,19 +59,12 @@ export function Sidebar({
   onToggle,
   onNavigate,
   footerSections = [],
-  searchPlaceholder = 'Search',
   className,
 }: SidebarProps) {
-  const [searchValue, setSearchValue] = useState('');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     () =>
       Object.fromEntries(groups.map((g) => [g.id, g.defaultExpanded ?? true]))
   );
-
-  const matchesSearch = (label: string) =>
-    label.toLowerCase().includes(searchValue.toLowerCase());
-
-  const filteredItems = items.filter((item) => matchesSearch(item.label));
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }));
@@ -93,22 +84,19 @@ export function Sidebar({
       aria-label="Application sidebar"
     >
       <div className="flex flex-grow flex-col overflow-y-auto">
-        {/* Search bar + Toggle */}
+        {/* Logo + Toggle */}
         <div
           className={cn(
             'flex items-center pt-3 pb-2',
-            collapsed ? 'justify-center' : 'gap-2 pr-2 pl-3'
+            collapsed ? 'justify-center' : 'justify-between pr-2 pl-3'
           )}
         >
           {!collapsed && (
-            <div className="min-w-0 flex-1">
-              <SearchBar
-                value={searchValue}
-                placeholder={searchPlaceholder}
-                onChange={setSearchValue}
-                size="sm"
-              />
-            </div>
+            <img
+              src="/artco-group-logo-dark.svg"
+              alt="Artco"
+              className="h-6 w-auto"
+            />
           )}
           <button
             type="button"
@@ -138,7 +126,7 @@ export function Sidebar({
         >
           {/* Primary items */}
           <ul className={cn('space-y-0.5', !collapsed && 'px-0')}>
-            {filteredItems.map((item) => (
+            {items.map((item) => (
               <li key={item.id} className="relative">
                 <MenuItem
                   icon={item.icon}
@@ -154,9 +142,6 @@ export function Sidebar({
 
           {/* Groups */}
           {groups.map((group) => {
-            const filteredGroupItems = group.items.filter((item) =>
-              matchesSearch(item.label)
-            );
             const isExpanded = expandedGroups[group.id] ?? true;
 
             return (
@@ -183,7 +168,7 @@ export function Sidebar({
 
                 {isExpanded && (
                   <ul className={cn('mt-1 space-y-1', !collapsed && 'pl-2')}>
-                    {filteredGroupItems.map((item) => (
+                    {group.items.map((item) => (
                       <li key={item.id}>
                         <MenuItem
                           icon={item.icon}

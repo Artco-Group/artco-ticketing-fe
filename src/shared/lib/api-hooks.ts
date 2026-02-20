@@ -15,13 +15,15 @@ import { calculateRetryDelay } from './api-utils';
 
 /**
  * API Query options extending React Query options
+ * @template TData - The response data type
+ * @template TParams - The query parameters type (must be an object)
  */
-interface ApiQueryOptions<TData> extends Omit<
-  UseQueryOptions<TData>,
-  'queryKey' | 'queryFn'
-> {
+interface ApiQueryOptions<
+  TData,
+  TParams extends object = Record<string, unknown>,
+> extends Omit<UseQueryOptions<TData>, 'queryKey' | 'queryFn'> {
   url: string;
-  params?: Record<string, unknown>;
+  params?: TParams;
   config?: AxiosRequestConfig;
 }
 
@@ -31,10 +33,10 @@ interface ApiQueryOptions<TData> extends Omit<
  * - Smart retry logic (don't retry 4xx)
  * - Exponential backoff with jitter
  */
-export function useApiQuery<TData>(
-  queryKey: QueryKey,
-  options: ApiQueryOptions<TData>
-) {
+export function useApiQuery<
+  TData,
+  TParams extends object = Record<string, unknown>,
+>(queryKey: QueryKey, options: ApiQueryOptions<TData, TParams>) {
   const { url, params, config, ...queryOptions } = options;
 
   return useQuery({
@@ -47,7 +49,6 @@ export function useApiQuery<TData>(
         });
         return response.data.data!;
       } catch (error: unknown) {
-        // For /auth/me endpoint, 401 is expected when not logged in
         const axiosError = error as { response?: { status?: number } };
         if (url === '/auth/me' && axiosError?.response?.status === 401) {
           return null as TData;
@@ -104,7 +105,11 @@ export function useApiMutation<TData, TVariables = void, TContext = unknown>(
   return useMutation({
     mutationFn: async (variables: TVariables): Promise<TData> => {
       const resolvedUrl = typeof url === 'function' ? url(variables) : url;
-      const body = getBody ? getBody(variables) : variables;
+      const body = getBody
+        ? getBody(variables)
+        : method === 'DELETE'
+          ? undefined
+          : variables;
       const response = await apiClient.request<ApiResponse<TData>>({
         url: resolvedUrl,
         method,

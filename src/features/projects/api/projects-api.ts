@@ -4,7 +4,9 @@ import {
   API_ROUTES,
   CACHE,
   type Project,
+  type ProjectWithProgress,
   type Ticket,
+  type ProjectQueryParams,
   type CreateProjectFormData,
   type UpdateProjectFormData,
   type AddProjectMembersFormData,
@@ -13,15 +15,7 @@ import {
 import { queryClient } from '@/shared/lib/query-client';
 import type { ProjectId } from '@/types';
 
-interface ProjectWithProgress extends Project {
-  progress: {
-    totalTickets: number;
-    completedTickets: number;
-    percentage: number;
-  };
-}
-
-function useProjects(params?: Record<string, unknown>) {
+function useProjects(params?: ProjectQueryParams) {
   return useApiQuery<{ projects: ProjectWithProgress[] }>(
     QueryKeys.projects.list(params),
     {
@@ -87,15 +81,21 @@ function useDeleteProject() {
   });
 }
 
-interface BulkDeleteResult {
+interface DeleteManyResult {
   deletedCount: number;
   failedIds: string[];
 }
 
-function useBulkDeleteProjects() {
-  return useApiMutation<ApiResponse<BulkDeleteResult>, { slugs: string[] }>({
+interface ArchiveManyResult {
+  archivedCount: number;
+  failedIds: string[];
+}
+
+function useDeleteManyProjects() {
+  return useApiMutation<ApiResponse<DeleteManyResult>, { slugs: string[] }>({
     url: API_ROUTES.PROJECTS.BASE,
     method: 'DELETE',
+    getBody: (vars) => vars,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
     },
@@ -166,15 +166,30 @@ function useArchiveProject() {
   });
 }
 
+function useArchiveManyProjects() {
+  return useApiMutation<
+    ApiResponse<ArchiveManyResult>,
+    { slugs: string[]; isArchived: boolean }
+  >({
+    url: API_ROUTES.PROJECTS.ARCHIVE_MANY,
+    method: 'PATCH',
+    getBody: (vars) => vars,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
+    },
+  });
+}
+
 export {
   useProjects,
   useProject,
   useCreateProject,
   useUpdateProject,
   useDeleteProject,
-  useBulkDeleteProjects,
+  useDeleteManyProjects,
   useAddProjectMembers,
   useRemoveProjectMember,
   useProjectTickets,
   useArchiveProject,
+  useArchiveManyProjects,
 };

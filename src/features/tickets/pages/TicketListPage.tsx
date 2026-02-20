@@ -1,16 +1,27 @@
 import { useState } from 'react';
 import { UserRole } from '@/types';
-import type { ViewMode } from '@/shared/components/patterns';
+import type {
+  ViewMode,
+  Tab,
+  GroupByOption,
+} from '@/shared/components/patterns';
 import { TicketDialog, TicketListContent } from '@/features/tickets/components';
 import { EmptyState, Button } from '@/shared/components/ui';
 import { useRoleFlags } from '@/shared';
 import { useTicketList, useTicketFilters } from '../hooks';
 import { ListPageLayout } from '@/shared/components/layout/ListPageLayout';
-import { TICKET_TABS, GROUP_BY_OPTIONS } from './ticketListPage.constants';
+import { useAppTranslation } from '@/shared/hooks';
+import {
+  TICKET_TABS_CONFIG,
+  GROUP_BY_OPTIONS_CONFIG,
+} from '../utils/ticket-options';
 
 export default function TicketListPage() {
+  const { translate } = useAppTranslation('tickets');
+
   const {
     tickets,
+    allTickets,
     users = [],
     filters,
     isLoading,
@@ -30,8 +41,19 @@ export default function TicketListPage() {
 
   const { isClient, isDeveloper } = useRoleFlags(userRole as UserRole);
 
-  // Developers cannot create tickets
   const canCreateTicket = !isDeveloper;
+
+  const ticketTabs: Tab[] = TICKET_TABS_CONFIG.map(({ labelKey, ...rest }) => ({
+    ...rest,
+    label: translate(labelKey),
+  }));
+
+  const groupByOptions: GroupByOption[] = GROUP_BY_OPTIONS_CONFIG.map(
+    ({ labelKey, ...rest }) => ({
+      ...rest,
+      label: translate(labelKey),
+    })
+  );
 
   const {
     filterPanelValue,
@@ -42,33 +64,33 @@ export default function TicketListPage() {
     handleFilterPanelChange,
     handleFilterBarChange,
     handleSortChange,
-  } = useTicketFilters({ filters, users, onFilterChange });
+  } = useTicketFilters({ filters, users, tickets: allTickets, onFilterChange });
 
   if (!userRole) {
     return (
       <EmptyState
         variant="error"
-        title="Invalid Role"
-        message="Your account has an invalid role. Please contact support."
+        title={translate('errors.invalidRole')}
+        message={translate('errors.invalidRoleMessage')}
       />
     );
   }
 
   const showCards = isClient || viewMode === 'grid';
-  const currentTab = TICKET_TABS.find((tab) => tab.id === activeTab);
+  const currentTab = ticketTabs.find((tab) => tab.id === activeTab);
 
   return (
     <>
       <ListPageLayout
-        title="Tickets"
+        title={translate('title')}
         count={tickets.length}
-        tabs={TICKET_TABS}
+        tabs={ticketTabs}
         activeTab={activeTab}
         onTabChange={onTabChange}
         tabActions={
           canCreateTicket ? (
             <Button leftIcon="plus" onClick={() => setIsCreateDialogOpen(true)}>
-              Create Ticket
+              {translate('create')}
             </Button>
           ) : null
         }
@@ -77,7 +99,7 @@ export default function TicketListPage() {
         sortOptions={sortOptions}
         sortValue={sortValue}
         onSortChange={handleSortChange}
-        groupByOptions={GROUP_BY_OPTIONS}
+        groupByOptions={groupByOptions}
         groupByValue={groupByValue}
         onGroupByChange={setGroupByValue}
         filterGroups={filterGroups}
@@ -88,7 +110,7 @@ export default function TicketListPage() {
         onViewChange={setViewMode}
         showFilter
         loading={isLoading}
-        loadingMessage="Loading tickets..."
+        loadingMessage={translate('list.loading')}
       >
         <TicketListContent
           tickets={tickets}

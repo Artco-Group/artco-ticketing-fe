@@ -42,6 +42,7 @@ function getDefaultValues(
         ? new Date(ticket.dueDate).toISOString().split('T')[0]
         : '',
       assignedTo: ticket.assignedTo?.id || '',
+      engLead: ticket.engLead?.id || '',
     } as UpdateFormData;
   }
 
@@ -58,6 +59,7 @@ function getDefaultValues(
     startDate: '',
     dueDate: '',
     assignedTo: '',
+    engLead: '',
   };
 }
 

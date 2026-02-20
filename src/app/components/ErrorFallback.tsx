@@ -1,6 +1,7 @@
 import type { ErrorInfo } from 'react';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { Icon, Button } from '@/shared/components/ui';
+import { useAppTranslation } from '@/shared/hooks';
 
 interface ErrorFallbackProps {
   error: Error | null;
@@ -13,15 +14,14 @@ export function ErrorFallback({
   errorInfo,
   resetErrorBoundary: _resetErrorBoundary,
 }: ErrorFallbackProps) {
+  const { translate } = useAppTranslation('common');
   const isDevelopment = import.meta.env.DEV;
 
   const handleGoHome = () => {
-    // Full page reload to clear all state and navigate
     window.location.href = PAGE_ROUTES.DASHBOARD.ROOT;
   };
 
   const handleGoBack = () => {
-    // Go back in browser history
     window.history.back();
   };
 
@@ -47,20 +47,19 @@ export function ErrorFallback({
 
         {/* Error Title */}
         <h1 className="text-greyscale-900 mb-4 text-center text-2xl font-bold">
-          Something went wrong
+          {translate('errors.somethingWentWrong')}
         </h1>
 
         {/* Error Message */}
         <p className="text-greyscale-600 mb-6 text-center">
-          We're sorry, but something unexpected happened. Please try one of the
-          options below to continue.
+          {translate('errors.unexpectedError')}
         </p>
 
         {/* Error Details (Development Only) */}
         {isDevelopment && error && (
           <div className="bg-error-100 mb-6 rounded-lg border border-red-200 p-4">
             <h2 className="text-error-700 mb-2 text-sm font-semibold">
-              Error Details (Development Only):
+              {translate('errors.errorDetails')}
             </h2>
             <p className="text-error-600 mb-2 font-mono text-xs break-words">
               {error.toString()}
@@ -68,7 +67,7 @@ export function ErrorFallback({
             {error.stack && (
               <details className="mt-2">
                 <summary className="text-error-700 cursor-pointer text-xs font-semibold">
-                  Stack Trace
+                  {translate('errors.stackTrace')}
                 </summary>
                 <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs break-words whitespace-pre-wrap">
                   {error.stack}
@@ -78,7 +77,7 @@ export function ErrorFallback({
             {errorInfo && errorInfo.componentStack && (
               <details className="mt-2">
                 <summary className="text-error-700 cursor-pointer text-xs font-semibold">
-                  Component Stack
+                  {translate('errors.componentStack')}
                 </summary>
                 <pre className="bg-error-100 text-error-700 mt-2 max-h-48 overflow-auto rounded p-2 font-mono text-xs break-words whitespace-pre-wrap">
                   {errorInfo.componentStack}
@@ -91,20 +90,20 @@ export function ErrorFallback({
         {/* Recovery Options */}
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Button onClick={handleRetry} variant="default" size="lg">
-            Try Again
+            {translate('errors.tryAgain')}
           </Button>
           <Button onClick={handleGoBack} variant="outline" size="lg">
-            Go Back
+            {translate('errors.goBack')}
           </Button>
           <Button onClick={handleGoHome} variant="outline" size="lg">
-            Go to Dashboard
+            {translate('errors.notFound.goToDashboard')}
           </Button>
         </div>
 
         {/* Additional Help */}
         <div className="mt-6 text-center">
           <p className="text-greyscale-500 text-sm">
-            If this problem persists, please contact support.
+            {translate('errors.contactSupport')}
           </p>
         </div>
       </div>

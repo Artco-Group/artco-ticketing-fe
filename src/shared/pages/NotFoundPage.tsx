@@ -1,16 +1,19 @@
 import { Link } from 'react-router-dom';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { EmptyState, Button } from '@/shared/components/ui';
+import { useAppTranslation } from '@/shared/hooks';
 
 export default function NotFoundPage() {
+  const { translate } = useAppTranslation('common');
+
   return (
     <EmptyState
       variant="error"
-      title="404 - Page Not Found"
-      message="The page you're looking for doesn't exist."
+      title={translate('errors.notFound.title')}
+      message={translate('errors.notFound.message')}
       action={
         <Link to={PAGE_ROUTES.DASHBOARD.ROOT}>
-          <Button>Go to Dashboard</Button>
+          <Button>{translate('errors.notFound.goToDashboard')}</Button>
         </Link>
       }
     />

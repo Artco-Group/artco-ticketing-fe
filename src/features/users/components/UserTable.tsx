@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import {
-  formatDateLocalized,
-  UserRoleDisplay,
+  formatDateDisplay,
+  UserRole,
+  UserRoleTranslationKeys,
 } from '@artco-group/artco-ticketing-sync';
-import { UserRole, type UserWithStats } from '@/types';
+import { type UserWithStats } from '@/types';
 import {
   DataTable,
   EmptyState,
@@ -17,6 +18,7 @@ import {
 } from '@/shared/components/ui';
 import { StatusHeader } from '@/shared/components/patterns/StatusHeader';
 import { useGroupedData } from '@/shared/hooks/useGroupedData';
+import { useAppTranslation } from '@/shared/hooks';
 import { AddToProjectModal } from './AddToProjectModal';
 import { useUserTableState } from '../hooks/useUserTableState';
 
@@ -28,6 +30,7 @@ interface UserTableProps {
 }
 
 function UserTable({ users, onEdit, onDelete, groupByValue }: UserTableProps) {
+  const { translate, language } = useAppTranslation('users');
   const {
     selectedRows,
     setSelectedRows,
@@ -54,27 +57,28 @@ function UserTable({ users, onEdit, onDelete, groupByValue }: UserTableProps) {
   const rowActions: RowAction<UserWithStats>[] = useMemo(
     () => [
       {
-        label: 'Edit',
+        label: translate('table.rowActions.edit'),
         icon: <Icon name="edit" size="sm" />,
         onClick: (user) => onEdit(user),
       },
       {
-        label: 'Delete',
+        label: translate('table.rowActions.delete'),
         icon: <Icon name="trash" size="sm" />,
         onClick: (user) => onDelete(user),
         variant: 'destructive',
         separator: true,
       },
     ],
-    [onEdit, onDelete]
+    [onEdit, onDelete, translate]
   );
 
   const columns: Column<UserWithStats>[] = useMemo(
     () => [
       {
         key: 'name',
-        label: 'Name',
+        label: translate('table.columns.name'),
         sortable: true,
+        width: 'w-[35%]',
         render: (user) => (
           <div className="flex items-center gap-3">
             <Avatar
@@ -84,7 +88,7 @@ function UserTable({ users, onEdit, onDelete, groupByValue }: UserTableProps) {
             />
             <div className="flex flex-col">
               <span className="text-foreground font-medium">
-                {user.name || 'Unnamed User'}
+                {user.name || translate('table.unnamedUser')}
               </span>
               <span className="text-muted-foreground text-sm">
                 {user.email}
@@ -95,24 +99,29 @@ function UserTable({ users, onEdit, onDelete, groupByValue }: UserTableProps) {
       },
       {
         key: 'role',
-        label: 'Role',
+        label: translate('table.columns.role'),
         sortable: true,
+        width: 'w-[20%]',
         render: (user) => (
           <span className="text-foreground">
-            {UserRoleDisplay[user.role as UserRole] || user.role}
+            {UserRoleTranslationKeys[user.role as UserRole]
+              ? translate(UserRoleTranslationKeys[user.role as UserRole])
+              : user.role}
           </span>
         ),
       },
       {
         key: 'createdAt',
-        label: 'Joined',
+        label: translate('table.columns.joined'),
         type: 'date',
+        width: 'w-[15%]',
         sortable: true,
-        formatDate: formatDateLocalized,
+        formatDate: (date: Date | string) => formatDateDisplay(date, language),
       },
       {
         key: 'projects',
-        label: 'Projects',
+        label: translate('table.columns.projects'),
+        width: 'w-[14%]',
         render: (user) =>
           user.projects.length === 0 ? (
             <span className="text-muted-foreground">—</span>
@@ -129,23 +138,26 @@ function UserTable({ users, onEdit, onDelete, groupByValue }: UserTableProps) {
       },
       {
         key: 'assignedTicketsCount',
-        label: 'Issues',
+        label: translate('table.columns.issues'),
+        width: 'w-[10%]',
         sortable: true,
         render: (user) => (
           <span className="text-foreground">
-            {user.assignedTicketsCount} issues
+            {translate('table.issuesCount', {
+              count: user.assignedTicketsCount,
+            })}
           </span>
         ),
       },
     ],
-    []
+    [translate, language]
   );
 
   const emptyState = (
     <EmptyState
       variant="no-users"
-      title="No members found"
-      message="No members match your current search and filters."
+      title={translate('list.empty')}
+      message={translate('list.emptyDescription')}
       className="min-h-0 py-12"
     />
   );
@@ -175,9 +187,11 @@ function UserTable({ users, onEdit, onDelete, groupByValue }: UserTableProps) {
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleBulkDelete}
-        title="Delete members"
-        description={`Are you sure you want to delete ${selectedRows.length} member${selectedRows.length > 1 ? 's' : ''}? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={translate('table.deleteTitle')}
+        description={translate('table.deleteConfirm', {
+          count: selectedRows.length,
+        })}
+        confirmLabel={translate('table.deleteButton')}
         variant="destructive"
         isLoading={isDeleting}
         icon="trash"

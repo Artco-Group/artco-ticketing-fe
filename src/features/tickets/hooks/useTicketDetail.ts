@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { asTicketId, type Ticket, type TicketId, type UserId } from '@/types';
 
 import { PAGE_ROUTES, getErrorMessage } from '@/shared';
+import { useTranslatedToast } from '@/shared/hooks';
 import { useToast } from '@/shared/components/ui';
 import { useAuth } from '@/features/auth/context';
 import {
@@ -18,6 +19,7 @@ export function useTicketDetail() {
   const { ticketId: ticketIdParam } = useParams<{ ticketId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const translatedToast = useTranslatedToast();
   const toast = useToast();
 
   const [localTicket, setLocalTicket] = useState<Ticket | null>(null);
@@ -54,7 +56,7 @@ export function useTicketDetail() {
         status: newStatus,
       });
       setLocalTicket(response.ticket);
-      toast.success('Ticket status updated successfully');
+      translatedToast.success('toast.success.statusUpdated');
     } catch (error) {
       toast.error(getErrorMessage(error));
       throw error;
@@ -68,7 +70,7 @@ export function useTicketDetail() {
         developerId,
       });
       setLocalTicket(response.ticket);
-      toast.success('Ticket assigned successfully');
+      translatedToast.success('toast.success.assigneeUpdated');
     } catch (error) {
       toast.error(getErrorMessage(error));
     }
@@ -81,7 +83,7 @@ export function useTicketDetail() {
         priority: newPriority,
       });
       setLocalTicket(response.ticket);
-      toast.success('Ticket priority updated successfully');
+      translatedToast.success('toast.success.priorityUpdated');
     } catch (error) {
       toast.error(getErrorMessage(error));
     }

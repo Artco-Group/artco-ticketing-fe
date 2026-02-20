@@ -9,7 +9,7 @@ import {
   type UpdateSubtaskFormData,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
-import type { TicketId, ApiResponse } from '@/types';
+import type { TicketId } from '@/types';
 
 type SubtaskId = string;
 
@@ -19,19 +19,16 @@ interface SubtasksResponse {
 }
 
 function useSubtasks(ticketId: TicketId) {
-  return useApiQuery<ApiResponse<SubtasksResponse>>(
-    QueryKeys.subtasks.byTicket(ticketId),
-    {
-      url: API_ROUTES.SUBTASKS.BY_TICKET(ticketId),
-      enabled: !!ticketId,
-      staleTime: CACHE.SHORT_STALE_TIME,
-    }
-  );
+  return useApiQuery<SubtasksResponse>(QueryKeys.subtasks.byTicket(ticketId), {
+    url: API_ROUTES.SUBTASKS.BY_TICKET(ticketId),
+    enabled: !!ticketId,
+    staleTime: CACHE.SHORT_STALE_TIME,
+  });
 }
 
 function useCreateSubtask() {
   return useApiMutation<
-    ApiResponse<{ subtask: Subtask }>,
+    { subtask: Subtask },
     { ticketId: TicketId } & CreateSubtaskFormData
   >({
     url: (vars) => API_ROUTES.SUBTASKS.BY_TICKET(vars.ticketId),
@@ -46,7 +43,7 @@ function useCreateSubtask() {
 
 function useUpdateSubtask() {
   return useApiMutation<
-    ApiResponse<{ subtask: Subtask }>,
+    { subtask: Subtask },
     { subtaskId: SubtaskId; ticketId: TicketId } & UpdateSubtaskFormData
   >({
     url: (vars) => API_ROUTES.SUBTASKS.BY_ID(vars.subtaskId),
@@ -61,7 +58,7 @@ function useUpdateSubtask() {
 
 function useToggleSubtask() {
   return useApiMutation<
-    ApiResponse<{ subtask: Subtask }>,
+    { subtask: Subtask },
     { subtaskId: SubtaskId; ticketId: TicketId }
   >({
     url: (vars) => API_ROUTES.SUBTASKS.TOGGLE(vars.subtaskId),
@@ -88,10 +85,57 @@ function useDeleteSubtask() {
   });
 }
 
+interface ReorderContext {
+  previousData: SubtasksResponse | undefined;
+  queryKey: ReturnType<typeof QueryKeys.subtasks.byTicket>;
+}
+
+function useReorderSubtasks() {
+  return useApiMutation<
+    { subtasks: Subtask[] },
+    { ticketId: TicketId; subtaskIds: string[] },
+    ReorderContext
+  >({
+    url: (vars) => API_ROUTES.SUBTASKS.REORDER(vars.ticketId),
+    method: 'PATCH',
+    onMutate: async (variables) => {
+      const queryKey = QueryKeys.subtasks.byTicket(variables.ticketId);
+
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousData = queryClient.getQueryData<SubtasksResponse>(queryKey);
+
+      if (previousData?.subtasks) {
+        const reorderedSubtasks = variables.subtaskIds
+          .map((id) => previousData.subtasks.find((s: Subtask) => s.id === id))
+          .filter(Boolean) as Subtask[];
+
+        queryClient.setQueryData<SubtasksResponse>(queryKey, {
+          ...previousData,
+          subtasks: reorderedSubtasks,
+        });
+      }
+
+      return { previousData, queryKey };
+    },
+    onError: (_error, _variables, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(context.queryKey, context.previousData);
+      }
+    },
+    onSettled: (_, __, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.subtasks.byTicket(variables.ticketId),
+      });
+    },
+  });
+}
+
 export {
   useSubtasks,
   useCreateSubtask,
   useUpdateSubtask,
   useToggleSubtask,
   useDeleteSubtask,
+  useReorderSubtasks,
 };

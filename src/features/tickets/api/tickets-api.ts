@@ -5,12 +5,13 @@ import {
   CACHE,
   type Ticket,
   type TicketInput,
+  type TicketQueryParams,
   type ApiResponse,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
 import type { TicketId, UserId } from '@/types';
 
-function useTickets(params?: Record<string, unknown>) {
+function useTickets(params?: TicketQueryParams) {
   return useApiQuery<Ticket[] | { tickets: Ticket[] }>(
     QueryKeys.tickets.list(params),
     {
@@ -283,6 +284,7 @@ function useBulkDeleteTickets() {
     {
       url: API_ROUTES.TICKETS.BASE,
       method: 'DELETE',
+      getBody: (vars) => vars,
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
         queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
@@ -365,9 +367,13 @@ function useDeleteAttachment() {
 function useDeleteScreenRecording() {
   return useApiMutation<
     ApiResponse<{ ticket: Ticket }>,
-    { ticketId: TicketId }
+    { ticketId: TicketId; recordingIndex: number }
   >({
-    url: (vars) => API_ROUTES.TICKETS.SCREEN_RECORDING(vars.ticketId),
+    url: (vars) =>
+      API_ROUTES.TICKETS.SCREEN_RECORDING_BY_INDEX(
+        vars.ticketId,
+        vars.recordingIndex
+      ),
     method: 'DELETE',
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({

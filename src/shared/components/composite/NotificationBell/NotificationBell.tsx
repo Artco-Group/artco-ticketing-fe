@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { cn } from '@/lib/utils';
 import {
   Button,
@@ -37,8 +35,7 @@ export function NotificationBell({
   onClearAll,
 }: NotificationBellProps) {
   const hasNotifications = notifications.length > 0;
-
-  const unreadCount = useMemo(() => Math.max(0, count ?? 0), [count]);
+  const unreadCount = Math.max(0, count ?? 0);
 
   const badgeLabel =
     unreadCount > 99 ? '99+' : unreadCount > 0 ? String(unreadCount) : null;

@@ -2,6 +2,7 @@ import type { Ticket, User } from '@/types';
 import type { Tab } from '@/shared/components/patterns';
 import { EmptyState, RetryableError, Icon } from '@/shared/components/ui';
 import { StatusHeader } from '@/shared/components/patterns/StatusHeader';
+import { useAppTranslation } from '@/shared/hooks';
 import TicketCard from './TicketCard';
 import TicketTable from './TicketTable';
 
@@ -28,11 +29,13 @@ export function TicketListContent({
   onViewTicket,
   onRetry,
 }: TicketListContentProps) {
+  const { translate } = useAppTranslation('tickets');
+
   if (error) {
     return (
       <RetryableError
-        title="Failed to load tickets"
-        message="Failed to load tickets. Please try again later."
+        title={translate('list.failedToLoad')}
+        message={translate('list.failedToLoadMessage')}
         onRetry={onRetry}
       />
     );
@@ -42,8 +45,8 @@ export function TicketListContent({
     return (
       <EmptyState
         variant="no-tickets"
-        title="No tasks found"
-        message="No tasks match your current filters."
+        title={translate('list.noTasksFound')}
+        message={translate('list.noTasksMatch')}
       />
     );
   }

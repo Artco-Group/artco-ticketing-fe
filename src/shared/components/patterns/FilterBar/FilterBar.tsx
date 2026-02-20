@@ -1,6 +1,10 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { FilterButton, Button } from '@/shared/components/ui';
+import {
+  FilterButton,
+  Button,
+  type FilterOption,
+} from '@/shared/components/ui';
 import {
   FilterPanel,
   type FilterGroup,
@@ -13,12 +17,13 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
 import { Icon, type IconName } from '@/shared/components/ui/Icon/Icon';
+import { useAppTranslation } from '@/shared/hooks';
 
 export interface FilterConfig {
   id: string;
   label: string;
   icon?: IconName;
-  options?: string[];
+  options?: FilterOption[];
   value?: string | null;
 }
 
@@ -33,7 +38,7 @@ export interface GroupByOption {
 export interface FilterBarProps {
   filters?: FilterConfig[];
   onFilterChange?: (filterId: string, value: string | null) => void;
-  sortOptions?: string[];
+  sortOptions?: FilterOption[];
   sortValue?: string | null;
   onSortChange?: (value: string | null) => void;
   groupByOptions?: GroupByOption[];
@@ -73,8 +78,10 @@ export function FilterBar({
   onAddClick,
   className,
   children,
-  addButtonLabel = 'Add',
+  addButtonLabel,
 }: FilterBarProps) {
+  const { translate } = useAppTranslation('common');
+
   return (
     <div
       className={cn(
@@ -86,7 +93,7 @@ export function FilterBar({
         {/* Sort button with cycling options */}
         {sortOptions && sortOptions.length > 0 && (
           <FilterButton
-            label="Sort"
+            label={translate('actions.sort')}
             icon={<Icon name="sort" size="sm" />}
             options={sortOptions}
             value={sortValue}
@@ -121,7 +128,7 @@ export function FilterBar({
                 )}
               >
                 <Icon name="group-by" size="sm" />
-                <span>Group by</span>
+                <span>{translate('actions.groupBy')}</span>
                 {groupByValue && (
                   <>
                     <span className="bg-greyscale-200 h-3 w-px" />
@@ -138,7 +145,9 @@ export function FilterBar({
             <DropdownMenuContent align="start">
               {groupByValue && (
                 <DropdownMenuItem onClick={() => onGroupByChange?.(null)}>
-                  <span className="text-greyscale-500">No grouping</span>
+                  <span className="text-greyscale-500">
+                    {translate('actions.noGrouping')}
+                  </span>
                 </DropdownMenuItem>
               )}
               {groupByOptions.map((option) => (
@@ -163,7 +172,7 @@ export function FilterBar({
         {/* Filter panel dropdown */}
         {showFilter && filterGroups && filterGroups.length > 0 && (
           <FilterPanel
-            label="Filter"
+            label={translate('actions.filter')}
             groups={filterGroups}
             value={filterPanelValue}
             onChange={onFilterPanelChange}
@@ -205,7 +214,7 @@ export function FilterBar({
         {/* Add button */}
         {showAddButton && (
           <Button leftIcon="plus" onClick={onAddClick} size="sm">
-            {addButtonLabel}
+            {addButtonLabel || translate('actions.add')}
           </Button>
         )}
       </div>

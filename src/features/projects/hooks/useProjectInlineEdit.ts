@@ -1,4 +1,4 @@
-import { useToast } from '@/shared/components/ui';
+import { useTranslatedToast } from '@/shared/hooks';
 import { useUpdateProject } from '../api/projects-api';
 import type { ProjectId } from '@/types';
 
@@ -11,7 +11,7 @@ export function useProjectInlineEdit({
   projectId,
   canEdit,
 }: UseProjectInlineEditProps) {
-  const toast = useToast();
+  const translatedToast = useTranslatedToast();
   const updateProject = useUpdateProject();
 
   const handleStartDateChange = async (date: string | null) => {
@@ -19,11 +19,13 @@ export function useProjectInlineEdit({
     try {
       await updateProject.mutateAsync({
         slug: projectId,
-        data: { startDate: date || undefined },
+        data: { startDate: date },
       });
-      toast.success('Start date updated');
+      translatedToast.success('toast.success.startDateUpdated');
     } catch {
-      toast.error('Failed to update start date');
+      translatedToast.error('toast.error.failedToUpdate', {
+        item: 'start date',
+      });
     }
   };
 
@@ -32,11 +34,11 @@ export function useProjectInlineEdit({
     try {
       await updateProject.mutateAsync({
         slug: projectId,
-        data: { dueDate: date || undefined },
+        data: { dueDate: date },
       });
-      toast.success('Due date updated');
+      translatedToast.success('toast.success.dueDateUpdated');
     } catch {
-      toast.error('Failed to update due date');
+      translatedToast.error('toast.error.failedToUpdate', { item: 'due date' });
     }
   };
 

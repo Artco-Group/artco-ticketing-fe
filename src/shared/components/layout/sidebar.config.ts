@@ -78,3 +78,14 @@ export const FOOTER_SECTIONS: SidebarFooterSection[] = [
     ],
   },
 ];
+
+export const NAV_LABEL_KEYS: Record<string, string> = {
+  dashboard: 'navigation.dashboard',
+  tickets: 'navigation.tickets',
+  users: 'navigation.users',
+  projects: 'navigation.projects',
+  clients: 'navigation.clients',
+  reports: 'navigation.reports',
+  settings: 'navigation.settings',
+  help: 'navigation.help',
+};

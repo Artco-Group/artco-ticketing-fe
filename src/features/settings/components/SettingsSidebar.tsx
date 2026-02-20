@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useAppTranslation } from '@/shared/hooks';
 import { cn } from '@/lib/utils';
 import { Icon, Button } from '@/shared/components/ui';
 import { SearchBar } from '@/shared/components/composite';
@@ -36,6 +37,7 @@ export function SettingsSidebar({
   className,
 }: SettingsSidebarProps) {
   const location = useLocation();
+  const { translate } = useAppTranslation('common');
   const { collapsed, setCollapsed } = useSettingsSidebar();
   const [searchValue, setSearchValue] = useState('');
 
@@ -79,7 +81,7 @@ export function SettingsSidebar({
             <div className="min-w-0 flex-1">
               <SearchBar
                 value={searchValue}
-                placeholder="Search"
+                placeholder={translate('buttons.search')}
                 onChange={setSearchValue}
                 size="sm"
               />
@@ -122,7 +124,7 @@ export function SettingsSidebar({
               collapsed && 'w-full justify-center px-0'
             )}
           >
-            {!collapsed && 'Back to Top'}
+            {!collapsed && translate('navigation.backToTop')}
           </Button>
         </div>
 
@@ -173,7 +175,7 @@ export function SettingsSidebar({
           <div className={cn('flex flex-col gap-2', collapsed && 'gap-3')}>
             <MenuItem
               icon="info"
-              label="Help and first step"
+              label={translate('navigation.help')}
               collapsed={collapsed}
               className="text-sidebar-foreground/70"
             />

@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useToast } from '@/shared/components/ui';
 import { getErrorMessage } from '@/shared';
 import {
@@ -7,6 +6,7 @@ import {
   useToggleSubtask,
   useUpdateSubtask,
   useDeleteSubtask,
+  useReorderSubtasks,
 } from '../api/subtasks-api';
 import type { TicketId } from '@/types';
 
@@ -30,18 +30,15 @@ export function useSubtasksHook({ ticketId }: UseSubtasksHookProps) {
   const toggleMutation = useToggleSubtask();
   const updateMutation = useUpdateSubtask();
   const deleteMutation = useDeleteSubtask();
+  const reorderMutation = useReorderSubtasks();
 
-  const subtasks = useMemo(() => data?.subtasks || [], [data?.subtasks]);
+  const subtasks = data?.subtasks ?? [];
 
-  const progress = useMemo(
-    () =>
-      data?.progress || {
-        total: 0,
-        completed: 0,
-        percentage: 0,
-      },
-    [data?.progress]
-  );
+  const progress = data?.progress ?? {
+    total: 0,
+    completed: 0,
+    percentage: 0,
+  };
 
   /**
    * Handle creating a new subtask
@@ -99,11 +96,26 @@ export function useSubtasksHook({ ticketId }: UseSubtasksHookProps) {
     );
   };
 
+  /**
+   * Handle reordering subtasks
+   */
+  const handleReorder = (subtaskIds: string[]) => {
+    reorderMutation.mutate(
+      { ticketId, subtaskIds },
+      {
+        onError: (error) => {
+          toast.error(getErrorMessage(error));
+        },
+      }
+    );
+  };
+
   const isMutating =
     createMutation.isPending ||
     toggleMutation.isPending ||
     updateMutation.isPending ||
-    deleteMutation.isPending;
+    deleteMutation.isPending ||
+    reorderMutation.isPending;
 
   return {
     // Data
@@ -121,6 +133,7 @@ export function useSubtasksHook({ ticketId }: UseSubtasksHookProps) {
     onToggle: handleToggle,
     onUpdate: handleUpdate,
     onDelete: handleDelete,
+    onReorder: handleReorder,
 
     // Refetch function
     refetch,

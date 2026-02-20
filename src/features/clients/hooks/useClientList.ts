@@ -13,6 +13,7 @@ import {
 } from '@/features/users/api';
 import { useProjects } from '@/features/projects/api/projects-api';
 import { UserRole, asUserId, type UserWithProjects } from '@/types';
+import { useTranslatedToast } from '@/shared/hooks';
 import { useToast } from '@/shared/components/ui';
 import { getErrorMessage } from '@/shared';
 
@@ -24,6 +25,7 @@ export function useClientList() {
   const createMutation = useCreateUser();
   const updateMutation = useUpdateUser();
   const deleteMutation = useDeleteUser();
+  const translatedToast = useTranslatedToast();
   const toast = useToast();
 
   const [sortBy, setSortBy] = useState<string | null>(null);
@@ -80,7 +82,6 @@ export function useClientList() {
     });
   }, [clients, sortBy]);
 
-  // Modal handlers
   const handleAddClient = () => {
     setEditingClient(null);
     setShowFormModal(true);
@@ -102,11 +103,10 @@ export function useClientList() {
     _avatarFile?: File
   ) => {
     try {
-      // Edit existing client
       if (editingClient) {
         const { id: clientId } = editingClient;
         if (!clientId) {
-          toast.error('Invalid client data');
+          translatedToast.error('toast.error.invalidData', { item: 'client' });
           return;
         }
 
@@ -114,14 +114,13 @@ export function useClientList() {
           id: asUserId(clientId),
           data: formData as UpdateUserFormData,
         });
-        toast.success('Client updated successfully');
+        translatedToast.success('toast.success.updated', { item: 'Client' });
         handleCloseFormModal();
         return;
       }
 
-      // Create new client
       await createMutation.mutateAsync(formData as CreateUserFormData);
-      toast.success('Client created successfully');
+      translatedToast.success('toast.success.created', { item: 'Client' });
       handleCloseFormModal();
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -133,13 +132,13 @@ export function useClientList() {
 
     const { id: clientId } = clientToDelete;
     if (!clientId) {
-      toast.error('Invalid client data');
+      translatedToast.error('toast.error.invalidData', { item: 'client' });
       return;
     }
 
     try {
       await deleteMutation.mutateAsync(asUserId(clientId));
-      toast.success('Client deleted successfully');
+      translatedToast.success('toast.success.deleted', { item: 'Client' });
       setClientToDelete(null);
     } catch (err) {
       toast.error(getErrorMessage(err));

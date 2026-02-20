@@ -1,15 +1,21 @@
+import { useAppTranslation } from '@/shared/hooks';
+
 interface PasswordStrengthMeterProps {
   password: string;
 }
 
+type StrengthLevel = 'weak' | 'fair' | 'good' | 'strong';
+
 export const PasswordStrengthMeter = ({
   password,
 }: PasswordStrengthMeterProps) => {
+  const { translate } = useAppTranslation('common');
+
   const calculateStrength = (
     pwd: string
   ): {
     score: number;
-    label: string;
+    level: StrengthLevel;
     color: string;
   } => {
     let score = 0;
@@ -19,28 +25,31 @@ export const PasswordStrengthMeter = ({
     if (/\d/.test(pwd)) score++;
     if (/[^a-zA-Z\d]/.test(pwd)) score++;
 
-    if (score <= 1) return { score: 1, label: 'Weak', color: 'bg-red-500' };
-    if (score <= 3) return { score: 2, label: 'Fair', color: 'bg-orange-500' };
-    if (score <= 4) return { score: 3, label: 'Good', color: 'bg-yellow-500' };
-    return { score: 4, label: 'Strong', color: 'bg-green-500' };
+    if (score <= 1) return { score: 1, level: 'weak', color: 'bg-red-500' };
+    if (score <= 3) return { score: 2, level: 'fair', color: 'bg-orange-500' };
+    if (score <= 4) return { score: 3, level: 'good', color: 'bg-yellow-500' };
+    return { score: 4, level: 'strong', color: 'bg-green-500' };
   };
 
-  const { score, label, color } = calculateStrength(password);
+  const { score, level, color } = calculateStrength(password);
 
   return (
     <div className="mt-2">
       <div className="bg-greyscale-100 flex h-1 w-full gap-1 overflow-hidden rounded-full">
-        {[1, 2, 3, 4].map((level) => (
+        {[1, 2, 3, 4].map((lvl) => (
           <div
-            key={level}
+            key={lvl}
             className={`h-full flex-1 transition-all duration-300 ${
-              level <= score && password ? color : 'bg-greyscale-100'
+              lvl <= score && password ? color : 'bg-greyscale-100'
             }`}
           />
         ))}
       </div>
       {password && (
-        <p className="text-greyscale-500 mt-1 text-[12px]">Strength: {label}</p>
+        <p className="text-greyscale-500 mt-1 text-[12px]">
+          {translate('passwordStrength.label')}:{' '}
+          {translate(`passwordStrength.${level}`)}
+        </p>
       )}
     </div>
   );

@@ -1,10 +1,4 @@
-import { useMemo } from 'react';
-import {
-  ProjectPriority,
-  ProjectPriorityDisplay,
-  type CreateProjectFormData,
-} from '@artco-group/artco-ticketing-sync';
-import { type User } from '@/types';
+import { useState } from 'react';
 import { ProjectTable, ProjectForm } from '../components';
 import {
   RetryableError,
@@ -15,19 +9,15 @@ import {
   Button,
 } from '@/shared/components/ui';
 import { ListPageLayout } from '@/shared/components/layout/ListPageLayout';
-import type {
-  FilterGroup,
-  FilterPanelValues,
-} from '@/shared/components/patterns';
+import { StatusHeader } from '@/shared/components/patterns/StatusHeader';
 import { useProjectList } from '../hooks';
 import { useAuth } from '@/features/auth/context';
 import { useRoleFlags } from '@/shared/hooks/useRoleFlags';
-
-const PRIORITY_OPTIONS = Object.values(ProjectPriority).map(
-  (priority) => ProjectPriorityDisplay[priority]
-);
+import { useAppTranslation } from '@/shared/hooks';
 
 export default function ProjectListPage() {
+  const { translate } = useAppTranslation('projects');
+  const [groupByValue, setGroupByValue] = useState<string | null>(null);
   const { user } = useAuth();
   const { isEngLead } = useRoleFlags(user?.role);
 
@@ -37,13 +27,15 @@ export default function ProjectListPage() {
     users,
     data,
     editingProject,
+    editDefaultValues,
     projectToDelete,
     isLoading,
     error,
     refetch,
     isSubmitting,
-    priorityFilter,
-    leadFilter,
+    activeTab,
+    projectTabs,
+    onTabChange,
     sortBy,
     showFormModal,
     onCloseDeleteConfirm,
@@ -54,156 +46,99 @@ export default function ProjectListPage() {
     onCloseFormModal,
     onFormSubmit,
     onConfirmDelete,
-    onFilterChange,
+    onFilterPanelChange,
+    onFilterBarChange,
+    onSortChange,
+    sortOptions,
+    filterBarFilters,
+    filterGroups,
+    filterPanelValue,
+    groupByOptions,
   } = useProjectList();
 
-  // Get eng leads for filter
-  const engLeads = useMemo(
-    () => users.filter((u) => u.role === 'eng_lead' || u.role === 'admin'),
-    [users]
-  );
-
-  const sortOptions = useMemo(
-    () => ['Name', 'Priority', 'Due Date', 'Progress', 'Updated'],
-    []
-  );
-
-  const filterBarFilters = useMemo(
-    () => [
-      {
-        id: 'priority',
-        label: 'Priority',
-        icon: 'priority' as const,
-        options: PRIORITY_OPTIONS,
-        value: priorityFilter === 'All' ? null : priorityFilter,
-      },
-    ],
-    [priorityFilter]
-  );
-
-  const filterGroups: FilterGroup[] = useMemo(
-    () => [
-      {
-        key: 'lead',
-        label: 'Lead',
-        icon: <Icon name="user" size="sm" />,
-        options: engLeads.map((lead) => ({
-          value: lead.id as string,
-          label: lead.name || lead.email || 'Unknown',
-        })),
-        searchable: true,
-      },
-    ],
-    [engLeads]
-  );
-
-  const filterPanelValue = useMemo<FilterPanelValues>(() => {
-    const value: FilterPanelValues = {};
-    if (leadFilter) {
-      value.lead = [leadFilter];
-    }
-    return value;
-  }, [leadFilter]);
-
-  const handleFilterPanelChange = (value: FilterPanelValues) => {
-    const leadValues = value.lead;
-    if (leadValues && leadValues.length > 0) {
-      onFilterChange('lead', leadValues[0]);
-    } else {
-      onFilterChange('lead', null);
-    }
-  };
-
-  const handleFilterBarChange = (filterId: string, value: string | null) => {
-    onFilterChange(filterId, value ?? 'All');
-  };
-
-  const handleSortChange = (value: string | null) => {
-    onFilterChange('sortBy', value);
-  };
-
-  const getEditDefaultValues = ():
-    | Partial<CreateProjectFormData>
-    | undefined => {
-    if (!editingProject) return undefined;
-
-    const getUserId = (user: User | undefined): string => {
-      if (!user) return '';
-      return (user.id || '') as string;
-    };
-
-    const getUserIds = (users: User[] | undefined): string[] => {
-      if (!users) return [];
-      return users.map((u) => getUserId(u)).filter(Boolean);
-    };
-
-    return {
-      name: editingProject.name || '',
-      description: editingProject.description || '',
-      client: getUserId(editingProject.client),
-      leads: getUserIds(editingProject.leads),
-      members: getUserIds(editingProject.members),
-      startDate: editingProject.startDate || '',
-      dueDate: editingProject.dueDate || '',
-      priority:
-        (editingProject.priority as ProjectPriority) || ProjectPriority.MEDIUM,
-    };
-  };
+  const currentTab = projectTabs.find((tab) => tab.id === activeTab);
 
   return (
     <ListPageLayout
-      title="Projects"
+      title={translate('title')}
       count={filteredProjects.length}
+      tabs={projectTabs}
+      activeTab={activeTab}
+      onTabChange={onTabChange}
+      tabActions={
+        isEngLead ? (
+          <Button leftIcon="plus" onClick={onAddProject}>
+            {translate('create')}
+          </Button>
+        ) : null
+      }
       filters={filterBarFilters}
-      onFilterChange={handleFilterBarChange}
+      onFilterChange={onFilterBarChange}
       sortOptions={sortOptions}
       sortValue={sortBy}
-      onSortChange={handleSortChange}
+      onSortChange={onSortChange}
+      groupByOptions={groupByOptions}
+      groupByValue={groupByValue}
+      onGroupByChange={setGroupByValue}
       filterGroups={filterGroups}
       filterPanelValue={filterPanelValue}
-      onFilterPanelChange={handleFilterPanelChange}
+      onFilterPanelChange={onFilterPanelChange}
       filterPanelSingleSelect
       showFilter
-      showAddButton={isEngLead}
-      onAddClick={onAddProject}
-      addButtonLabel="Create Project"
       loading={isLoading}
-      loadingMessage="Loading projects..."
+      loadingMessage={translate('list.loading')}
     >
       {error ? (
         <RetryableError
-          title="Failed to load projects"
-          message="Failed to load projects. Please try again later."
+          title={translate('list.failedToLoad')}
+          message={translate('list.failedToLoadMessage')}
           onRetry={refetch}
         />
       ) : !data || filteredProjects.length === 0 ? (
         <EmptyState
           variant="no-data"
-          title="No projects found"
+          title={translate('list.empty')}
           message={
             projects.length === 0
-              ? 'Create your first project to get started.'
-              : 'No projects match your current filters.'
+              ? translate('list.emptyDescription')
+              : translate('list.emptyFiltered')
           }
         />
       ) : (
-        <ProjectTable
-          projects={filteredProjects}
-          onViewProject={onViewProject}
-          onEditProject={onEditProject}
-          onDeleteProject={onDeleteProject}
-        />
+        <>
+          {!groupByValue && currentTab && (
+            <StatusHeader
+              icon={
+                currentTab.icon ? (
+                  <Icon name={currentTab.icon} size="sm" />
+                ) : null
+              }
+              label={currentTab.label}
+            />
+          )}
+          <ProjectTable
+            projects={filteredProjects}
+            activeTab={activeTab}
+            groupByValue={groupByValue}
+            onViewProject={onViewProject}
+            onEditProject={onEditProject}
+            onDeleteProject={onDeleteProject}
+          />
+        </>
       )}
 
-      {/* Create/Edit Project Side Dialog */}
       <SideDialog
         isOpen={showFormModal}
         onClose={onCloseFormModal}
-        title={editingProject ? 'Edit Project' : 'Create Project'}
+        title={
+          editingProject
+            ? translate('dialog.editTitle')
+            : translate('dialog.createTitle')
+        }
         description={
           editingProject
-            ? 'Update the project details below.'
-            : 'Fill in the details to create a new project.'
+            ? translate('dialog.editDescription')
+            : translate('dialog.createDescription')
         }
         width="lg"
         footer={
@@ -214,14 +149,14 @@ export default function ProjectListPage() {
               onClick={onCloseFormModal}
               disabled={isSubmitting}
             >
-              Cancel
+              {translate('dialog.cancel')}
             </Button>
             <Button type="submit" form="project-form" disabled={isSubmitting}>
               {isSubmitting
-                ? 'Saving...'
+                ? translate('dialog.saving')
                 : editingProject
-                  ? 'Save Changes'
-                  : 'Create Project'}
+                  ? translate('dialog.save')
+                  : translate('create')}
             </Button>
           </div>
         }
@@ -230,7 +165,7 @@ export default function ProjectListPage() {
           key={editingProject?.id || 'new'}
           formId="project-form"
           onSubmit={onFormSubmit}
-          defaultValues={getEditDefaultValues()}
+          defaultValues={editDefaultValues}
           isEditing={!!editingProject}
           users={users}
         />
@@ -241,9 +176,11 @@ export default function ProjectListPage() {
         isOpen={!!projectToDelete}
         onClose={onCloseDeleteConfirm}
         onConfirm={onConfirmDelete}
-        title="Delete Project"
-        description={`Are you sure you want to delete "${projectToDelete?.name}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={translate('dialog.deleteTitle')}
+        description={translate('dialog.deleteConfirm', {
+          name: projectToDelete?.name || '',
+        })}
+        confirmLabel={translate('dialog.deleteButton')}
         variant="destructive"
         isLoading={isSubmitting}
         icon="trash"

@@ -13,6 +13,30 @@ export const settingsRoutes = [
     path={PAGE_ROUTES.SETTINGS.ROOT}
     element={<Navigate to={PAGE_ROUTES.SETTINGS.PROFILE} replace />}
   />,
+  // Workflow editor - new
+  <Route
+    key="settings-workflows-new"
+    path={PAGE_ROUTES.SETTINGS.WORKFLOWS_NEW}
+    element={
+      <RouteGuard requiresAuth={true}>
+        <Suspense fallback={<LoadingOverlay />}>
+          <SettingsPage />
+        </Suspense>
+      </RouteGuard>
+    }
+  />,
+  // Workflow editor - edit
+  <Route
+    key="settings-workflows-edit"
+    path={PAGE_ROUTES.SETTINGS.WORKFLOWS_EDIT}
+    element={
+      <RouteGuard requiresAuth={true}>
+        <Suspense fallback={<LoadingOverlay />}>
+          <SettingsPage />
+        </Suspense>
+      </RouteGuard>
+    }
+  />,
   // Settings with section parameter
   <Route
     key="settings-section"

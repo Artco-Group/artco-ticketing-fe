@@ -1,9 +1,4 @@
-import { useMemo } from 'react';
-import {
-  UserRoleDisplay,
-  type CreateUserFormData,
-  INTERNAL_ROLES,
-} from '@artco-group/artco-ticketing-sync';
+import { type CreateUserFormData } from '@artco-group/artco-ticketing-sync';
 import { UserRole, type UserWithStats } from '@/types';
 import { UserTable, UserForm } from '../components';
 import {
@@ -14,9 +9,12 @@ import {
   Button,
 } from '@/shared/components/ui';
 import { ListPageLayout } from '@/shared/components/layout/ListPageLayout';
-import { useUserList } from '../hooks';
+import { useUserList, useUserFilters } from '../hooks';
+import { useAppTranslation } from '@/shared/hooks';
 
 export default function UsersPage() {
+  const { translate } = useAppTranslation('users');
+  const { translate: translateCommon } = useAppTranslation('common');
   const {
     users,
     filteredUsers,
@@ -42,30 +40,13 @@ export default function UsersPage() {
     onGroupByChange,
   } = useUserList();
 
-  const sortOptions = useMemo(() => ['Name', 'Email', 'Role', 'Joined'], []);
-
-  const groupByOptions = useMemo(() => [{ label: 'Role', value: 'role' }], []);
-
-  const filterBarFilters = useMemo(
-    () => [
-      {
-        id: 'role',
-        label: 'Role',
-        icon: 'user' as const,
-        options: INTERNAL_ROLES.map((role) => UserRoleDisplay[role]),
-        value: roleFilter === 'All' ? null : roleFilter,
-      },
-    ],
-    [roleFilter]
-  );
-
-  const handleFilterBarChange = (filterId: string, value: string | null) => {
-    onFilterChange(filterId, value ?? 'All');
-  };
-
-  const handleSortChange = (value: string | null) => {
-    onFilterChange('sortBy', value);
-  };
+  const {
+    sortOptions,
+    groupByOptions,
+    filterBarFilters,
+    handleFilterBarChange,
+    handleSortChange,
+  } = useUserFilters({ roleFilter, onFilterChange });
 
   const editingUserProjectIds =
     editingUser && 'projects' in editingUser
@@ -75,7 +56,7 @@ export default function UsersPage() {
   return (
     <>
       <ListPageLayout
-        title="Members"
+        title={translate('members')}
         count={users?.length}
         filters={filterBarFilters}
         onFilterChange={handleFilterBarChange}
@@ -88,21 +69,21 @@ export default function UsersPage() {
         showFilter
         showAddButton
         onAddClick={onAddUser}
-        addButtonLabel="Invite Member"
+        addButtonLabel={translate('inviteMember')}
         loading={isLoading}
-        loadingMessage="Loading members..."
+        loadingMessage={translate('list.loading')}
       >
         {error ? (
           <RetryableError
-            title="Failed to load members"
-            message="Failed to load members. Please try again later."
+            title={translate('list.failedToLoad')}
+            message={translate('list.failedToLoadMessage')}
             onRetry={refetch}
           />
         ) : !data || filteredUsers.length === 0 ? (
           <EmptyState
             variant="no-users"
-            title="No members found"
-            message="No members match your current filters."
+            title={translate('list.noMembers')}
+            message={translate('list.noMembersMatch')}
           />
         ) : (
           <UserTable
@@ -117,7 +98,9 @@ export default function UsersPage() {
       <Modal
         isOpen={showFormModal}
         onClose={onCloseFormModal}
-        title={editingUser ? 'Edit Member' : 'Invite Member'}
+        title={
+          editingUser ? translate('editMember') : translate('inviteMember')
+        }
         size="lg"
         actions={
           <div className="flex justify-end gap-3">
@@ -127,14 +110,14 @@ export default function UsersPage() {
               onClick={onCloseFormModal}
               disabled={isSubmitting}
             >
-              Cancel
+              {translateCommon('buttons.cancel')}
             </Button>
             <Button type="submit" form="user-form" disabled={isSubmitting}>
               {isSubmitting
-                ? 'Saving...'
+                ? translate('form.saving')
                 : editingUser
-                  ? 'Save Changes'
-                  : 'Invite Member'}
+                  ? translate('form.saveChanges')
+                  : translate('inviteMember')}
             </Button>
           </div>
         }
@@ -167,9 +150,11 @@ export default function UsersPage() {
         isOpen={!!userToDelete}
         onClose={() => setUserToDelete(null)}
         onConfirm={onConfirmDelete}
-        title="Delete Member"
-        description={`Are you sure you want to delete ${userToDelete?.name}? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={translate('deleteMember')}
+        description={translate('messages.confirmDeleteMember', {
+          name: userToDelete?.name,
+        })}
+        confirmLabel={translateCommon('buttons.delete')}
         variant="destructive"
         isLoading={isSubmitting}
         icon="trash"

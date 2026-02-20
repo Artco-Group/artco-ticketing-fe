@@ -10,8 +10,10 @@ import type {
   FilterPanelValues,
   GroupByOption,
 } from '@/shared/components/patterns/FilterBar';
+import type { FilterOption } from '@/shared/components/ui';
 import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
 import { SpinnerContainer, EmptyState } from '@/shared/components/ui';
+import { useAppTranslation } from '@/shared/hooks';
 
 export interface ListPageLayoutProps {
   title: string;
@@ -26,7 +28,7 @@ export interface ListPageLayoutProps {
 
   filters?: FilterConfig[];
   onFilterChange?: (filterId: string, value: string | null) => void;
-  sortOptions?: string[];
+  sortOptions?: FilterOption[];
   sortValue?: string | null;
   onSortChange?: (value: string | null) => void;
   groupByOptions?: GroupByOption[];
@@ -85,6 +87,7 @@ export function ListPageLayout({
   loadingMessage,
   children,
 }: ListPageLayoutProps) {
+  const { translate } = useAppTranslation('common');
   const hasTabBar = tabs && activeTab !== undefined && onTabChange;
   const hasFilterBar =
     filters || sortOptions || filterGroups || onViewChange || showAddButton;
@@ -139,8 +142,8 @@ export function ListPageLayout({
         ) : empty ? (
           (emptyState ?? (
             <EmptyState
-              title="No data"
-              message="There are no items to display."
+              title={translate('messages.noData')}
+              message={translate('messages.noResults')}
               variant="no-data"
             />
           ))

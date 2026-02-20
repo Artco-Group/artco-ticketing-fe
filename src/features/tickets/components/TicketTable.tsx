@@ -3,7 +3,9 @@ import {
   TicketCategorySortOrder,
   TicketStatusSortOrder,
   TicketPrioritySortOrder,
+  formatDateDisplay,
 } from '@artco-group/artco-ticketing-sync';
+import type { StatusConfig } from '@artco-group/artco-ticketing-sync/types';
 import {
   TicketCategory,
   TicketPriority,
@@ -23,16 +25,14 @@ import {
 } from '@/shared/components/ui';
 import { StatusHeader } from '@/shared/components/patterns/StatusHeader';
 import { useGroupedData } from '@/shared/hooks/useGroupedData';
+import { useAppTranslation, useStatusLabel } from '@/shared/hooks';
 import {
   resolveAssigneeName,
   getPriorityIcon,
-  getPriorityLabel,
-  getStatusIcon,
-  getStatusLabel,
+  getDynamicStatusIcon,
   getCategoryIcon,
-  getCategoryLabel,
 } from '@/shared/utils/ticket-helpers';
-import { useTicketTableState } from '../hooks/useTicketTableState';
+import { useTicketTableState, useTranslatedOptions } from '../hooks';
 import { PrioritySelectDialog } from './PrioritySelectDialog';
 
 interface TicketTableProps {
@@ -40,6 +40,8 @@ interface TicketTableProps {
   users: User[];
   onViewTicket: (ticket: Ticket) => void;
   groupByValue?: string | null;
+  statusConfig?: StatusConfig | null;
+  showProjectColumn?: boolean;
 }
 
 function TicketTable({
@@ -47,7 +49,13 @@ function TicketTable({
   users,
   onViewTicket,
   groupByValue,
+  showProjectColumn = true,
+  statusConfig,
 }: TicketTableProps) {
+  const { translate, language } = useAppTranslation('tickets');
+  const { getPriorityLabel, getCategoryLabel } = useTranslatedOptions();
+  const { getStatusLabel } = useStatusLabel();
+
   const {
     selectedRows,
     setSelectedRows,
@@ -76,7 +84,7 @@ function TicketTable({
   const rowActions: RowAction<Ticket>[] = useMemo(
     () => [
       {
-        label: 'Delete',
+        label: translate('bulkActions.delete'),
         icon: <Icon name="trash" size="sm" />,
         onClick: (ticket) => {
           if (ticket.ticketId) {
@@ -86,19 +94,19 @@ function TicketTable({
         },
       },
     ],
-    [setSelectedRows, setShowDeleteConfirm]
+    [setSelectedRows, setShowDeleteConfirm, translate]
   );
 
-  const columns: Column<Ticket>[] = useMemo(
-    () => [
+  const columns: Column<Ticket>[] = useMemo(() => {
+    const baseColumns: Column<Ticket>[] = [
       {
         key: 'name',
-        label: 'Name',
-        width: 'w-[45%]',
+        label: translate('table.columns.name'),
+        width: showProjectColumn ? 'w-[30%]' : 'w-[34%]',
         sortable: true,
         render: (ticket) => (
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground font-mono text-sm">
+            <span className="text-muted-foreground shrink-0 font-mono text-sm">
               {ticket.ticketId}
             </span>
             <span className="text-foreground font-medium">{ticket.title}</span>
@@ -107,22 +115,31 @@ function TicketTable({
       },
       {
         key: 'status',
-        label: 'Status',
+        label: translate('table.columns.status'),
         type: 'badge',
-        width: 'w-[15%]',
+        width: 'w-[10%]',
         sortable: true,
-        sortValue: (ticket) =>
-          TicketStatusSortOrder[ticket.status as TicketStatus] ?? 0,
-        getBadgeProps: (_value, ticket) => ({
-          icon: getStatusIcon(ticket.status as TicketStatus),
-          children: getStatusLabel(ticket.status as TicketStatus),
-        }),
+        sortValue: (ticket) => {
+          const config = statusConfig ?? ticket.project?.statusConfig;
+          if (config?.statuses) {
+            const status = config.statuses.find((s) => s.id === ticket.status);
+            return status?.sortOrder ?? 999;
+          }
+          return TicketStatusSortOrder[ticket.status as TicketStatus] ?? 0;
+        },
+        getBadgeProps: (_value, ticket) => {
+          const config = statusConfig ?? ticket.project?.statusConfig;
+          return {
+            icon: getDynamicStatusIcon(ticket.status, config),
+            children: getStatusLabel(ticket.status, config),
+          };
+        },
       },
       {
         key: 'category',
-        label: 'Category',
+        label: translate('table.columns.category'),
         type: 'badge',
-        width: 'w-[10%]',
+        width: 'w-[13%]',
         sortable: true,
         sortValue: (ticket) =>
           TicketCategorySortOrder[ticket.category as TicketCategory] ?? 0,
@@ -133,9 +150,9 @@ function TicketTable({
       },
       {
         key: 'assignedTo',
-        label: 'Assignee',
+        label: translate('table.columns.assignee'),
         align: 'center',
-        width: 'w-[10%]',
+        width: 'w-[6%]',
         sortable: true,
         sortValue: (ticket) =>
           ticket.assignedTo
@@ -144,7 +161,7 @@ function TicketTable({
         render: (ticket) => {
           const assigneeName = ticket.assignedTo
             ? resolveAssigneeName(ticket.assignedTo, users)
-            : 'Unassigned';
+            : translate('table.unassigned');
           return (
             <div className="flex justify-center">
               <Avatar
@@ -156,26 +173,51 @@ function TicketTable({
           );
         },
       },
+    ];
+
+    if (showProjectColumn) {
+      baseColumns.push({
+        key: 'project',
+        label: translate('table.columns.project'),
+        align: 'center',
+        width: 'w-[6%]',
+        sortable: true,
+        sortValue: (ticket) => ticket.project?.name?.toLowerCase() ?? 'zzz',
+        render: (ticket) => {
+          const projectName = ticket.project?.name;
+          const clientName = ticket.project?.client?.name;
+          const clientPic = ticket.project?.client?.profilePic;
+          if (!projectName) {
+            return null;
+          }
+          return (
+            <div className="flex justify-center">
+              <Avatar
+                size="md"
+                src={clientPic}
+                fallback={clientName || projectName}
+                tooltip={projectName}
+              />
+            </div>
+          );
+        },
+      });
+    }
+
+    baseColumns.push(
       {
         key: 'createdAt',
-        label: 'Due date',
+        label: translate('table.columns.dueDate'),
         type: 'date',
-        width: 'w-[20%]',
+        width: 'w-[12%]',
         sortable: true,
-        formatDate: (date) => {
-          const d = date instanceof Date ? date : new Date(date);
-          return d.toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-          });
-        },
+        formatDate: (date) => formatDateDisplay(date, language, 'long'),
       },
       {
         key: 'priority',
-        label: 'Priority',
+        label: translate('table.columns.priority'),
         type: 'badge',
-        width: 'w-[15%]',
+        width: 'w-[11%]',
         sortable: true,
         sortValue: (ticket) =>
           TicketPrioritySortOrder[ticket.priority as TicketPriority] ?? 0,
@@ -183,16 +225,26 @@ function TicketTable({
           icon: getPriorityIcon(ticket.priority as TicketPriority),
           children: getPriorityLabel(ticket.priority as TicketPriority),
         }),
-      },
-    ],
-    [users]
-  );
+      }
+    );
+
+    return baseColumns;
+  }, [
+    users,
+    translate,
+    language,
+    getPriorityLabel,
+    getCategoryLabel,
+    getStatusLabel,
+    statusConfig,
+    showProjectColumn,
+  ]);
 
   const emptyState = (
     <EmptyState
       variant="no-tickets"
-      title="No tickets found"
-      message="No tickets match your current filters."
+      title={translate('list.noTasksFound')}
+      message={translate('list.noTasksMatch')}
       className="min-h-0 py-12"
     />
   );
@@ -217,9 +269,11 @@ function TicketTable({
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleBulkDelete}
-        title="Delete tickets"
-        description={`Are you sure you want to delete ${selectedRows.length} ticket${selectedRows.length > 1 ? 's' : ''}? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={translate('table.deleteTitle')}
+        description={translate('table.deleteConfirm', {
+          count: selectedRows.length,
+        })}
+        confirmLabel={translate('table.deleteButton')}
         variant="destructive"
         isLoading={isDeleting}
         icon="trash"

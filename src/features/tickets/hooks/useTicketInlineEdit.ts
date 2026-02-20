@@ -6,7 +6,7 @@ import {
   UserRole,
 } from '@/types';
 import { TicketCategory } from '@artco-group/artco-ticketing-sync';
-import { useToast } from '@/shared/components/ui';
+import { useTranslatedToast } from '@/shared/hooks';
 import {
   useUpdateTicketStatus,
   useUpdateTicketPriority,
@@ -34,7 +34,7 @@ export function useTicketInlineEdit({
   isEngLead,
   isAdmin = false,
 }: UseTicketInlineEditProps) {
-  const toast = useToast();
+  const translatedToast = useTranslatedToast();
 
   const updateStatus = useUpdateTicketStatus();
   const updatePriority = useUpdateTicketPriority();
@@ -51,8 +51,16 @@ export function useTicketInlineEdit({
   const canEditProject = canManage;
   const canEditEngLead = canManage;
 
+  // Get project member IDs for filtering
+  const projectMemberIds = new Set(
+    (ticket?.project?.members || []).map((m) => m.id)
+  );
+
+  // Filter developers to only those who are members of the ticket's project
   const developerUsers = users.filter(
-    (user) => user.role === UserRole.DEVELOPER
+    (user) =>
+      user.role === UserRole.DEVELOPER &&
+      (projectMemberIds.size === 0 || projectMemberIds.has(user.id))
   );
 
   const engLeadUsers = users.filter((user) => user.role === UserRole.ENG_LEAD);
@@ -64,9 +72,9 @@ export function useTicketInlineEdit({
         id: asTicketId(ticket.ticketId),
         status: newStatus,
       });
-      toast.success('Status updated');
+      translatedToast.success('toast.success.statusUpdated');
     } catch {
-      toast.error('Failed to update status');
+      translatedToast.error('toast.error.failedToUpdate', { item: 'status' });
     }
   };
 
@@ -77,9 +85,9 @@ export function useTicketInlineEdit({
         id: asTicketId(ticket.ticketId),
         priority: newPriority,
       });
-      toast.success('Priority updated');
+      translatedToast.success('toast.success.priorityUpdated');
     } catch {
-      toast.error('Failed to update priority');
+      translatedToast.error('toast.error.failedToUpdate', { item: 'priority' });
     }
   };
 
@@ -90,16 +98,30 @@ export function useTicketInlineEdit({
         id: asTicketId(ticket.ticketId),
         data: { category: newCategory as TicketCategory },
       });
-      toast.success('Category updated');
+      translatedToast.success('toast.success.categoryUpdated');
     } catch {
-      toast.error('Failed to update category');
+      translatedToast.error('toast.error.failedToUpdate', { item: 'category' });
     }
   };
 
-  const handleAssigneeChange = (userId: string | string[]) => {
+  const handleAssigneeChange = async (userId: string | string[]) => {
     if (!ticket?.id) return;
     const developerId = Array.isArray(userId) ? userId[0] : userId;
-    if (!developerId) return;
+
+    if (!developerId) {
+      try {
+        await updateTicket.mutateAsync({
+          id: asTicketId(ticket.ticketId),
+          data: { assignedTo: null },
+        });
+        translatedToast.success('toast.success.assigneeUpdated');
+      } catch {
+        translatedToast.error('toast.error.failedToUpdate', {
+          item: 'assignee',
+        });
+      }
+      return;
+    }
 
     assignTicket.mutate(
       {
@@ -107,8 +129,12 @@ export function useTicketInlineEdit({
         developerId: asUserId(developerId),
       },
       {
-        onSuccess: () => toast.success('Assignee updated'),
-        onError: () => toast.error('Failed to update assignee'),
+        onSuccess: () =>
+          translatedToast.success('toast.success.assigneeUpdated'),
+        onError: () =>
+          translatedToast.error('toast.error.failedToUpdate', {
+            item: 'assignee',
+          }),
       }
     );
   };
@@ -118,11 +144,13 @@ export function useTicketInlineEdit({
     try {
       await updateTicket.mutateAsync({
         id: asTicketId(ticket.ticketId),
-        data: { startDate: date || undefined },
+        data: { startDate: date },
       });
-      toast.success('Start date updated');
+      translatedToast.success('toast.success.startDateUpdated');
     } catch {
-      toast.error('Failed to update start date');
+      translatedToast.error('toast.error.failedToUpdate', {
+        item: 'start date',
+      });
     }
   };
 
@@ -131,11 +159,11 @@ export function useTicketInlineEdit({
     try {
       await updateTicket.mutateAsync({
         id: asTicketId(ticket.ticketId),
-        data: { dueDate: date || undefined },
+        data: { dueDate: date },
       });
-      toast.success('Due date updated');
+      translatedToast.success('toast.success.dueDateUpdated');
     } catch {
-      toast.error('Failed to update due date');
+      translatedToast.error('toast.error.failedToUpdate', { item: 'due date' });
     }
   };
 
@@ -146,16 +174,30 @@ export function useTicketInlineEdit({
         id: asTicketId(ticket.ticketId),
         data: { project: projectId || null },
       });
-      toast.success('Project updated');
+      translatedToast.success('toast.success.projectUpdated');
     } catch {
-      toast.error('Failed to update project');
+      translatedToast.error('toast.error.failedToUpdate', { item: 'project' });
     }
   };
 
-  const handleEngLeadChange = (userId: string | string[]) => {
+  const handleEngLeadChange = async (userId: string | string[]) => {
     if (!ticket?.id) return;
     const engLeadId = Array.isArray(userId) ? userId[0] : userId;
-    if (!engLeadId) return;
+
+    if (!engLeadId) {
+      try {
+        await updateTicket.mutateAsync({
+          id: asTicketId(ticket.ticketId),
+          data: { engLead: null },
+        });
+        translatedToast.success('toast.success.engLeadUpdated');
+      } catch {
+        translatedToast.error('toast.error.failedToUpdate', {
+          item: 'Eng Lead',
+        });
+      }
+      return;
+    }
 
     assignEngLead.mutate(
       {
@@ -163,8 +205,12 @@ export function useTicketInlineEdit({
         engLeadId: asUserId(engLeadId),
       },
       {
-        onSuccess: () => toast.success('Eng Lead updated'),
-        onError: () => toast.error('Failed to update Eng Lead'),
+        onSuccess: () =>
+          translatedToast.success('toast.success.engLeadUpdated'),
+        onError: () =>
+          translatedToast.error('toast.error.failedToUpdate', {
+            item: 'Eng Lead',
+          }),
       }
     );
   };

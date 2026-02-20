@@ -1,6 +1,10 @@
 import { useMemo, useState, useCallback } from 'react';
-import { UserRoleDisplay, ROLE_ORDER } from '@artco-group/artco-ticketing-sync';
-import { UserRole, type UserWithStats } from '@/types';
+import {
+  ROLE_ORDER,
+  UserRole,
+  UserRoleTranslationKeys,
+} from '@artco-group/artco-ticketing-sync';
+import { type UserWithStats } from '@/types';
 import {
   type SortDirection,
   type BulkAction,
@@ -8,6 +12,7 @@ import {
 } from '@/shared/components/ui';
 import { type GroupConfig } from '@/shared/hooks/useGroupedData';
 import { Icon } from '@/shared/components/ui';
+import { useTranslatedToast, useAppTranslation } from '@/shared/hooks';
 import { useBulkDeleteUsers } from '../api';
 
 interface UseUserTableStateProps {
@@ -15,6 +20,8 @@ interface UseUserTableStateProps {
 }
 
 export function useUserTableState({ users }: UseUserTableStateProps) {
+  const { translate } = useAppTranslation('users');
+  const translatedToast = useTranslatedToast();
   const toast = useToast();
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -30,7 +37,7 @@ export function useUserTableState({ users }: UseUserTableStateProps) {
     const emails = selectedRows.filter((email) => email.length > 0);
 
     if (emails.length === 0) {
-      toast.error('No valid users selected for deletion');
+      translatedToast.error('toast.error.noValidSelection', { items: 'users' });
       return;
     }
 
@@ -40,16 +47,16 @@ export function useUserTableState({ users }: UseUserTableStateProps) {
         onSuccess: () => {
           clearSelection();
           setShowDeleteConfirm(false);
-          toast.success(
-            `Deleted ${emails.length} user${emails.length > 1 ? 's' : ''}`
-          );
+          translatedToast.success('toast.success.deleted', {
+            item: `${emails.length} user${emails.length > 1 ? 's' : ''}`,
+          });
         },
         onError: (error) => {
           toast.error(error?.message || 'Failed to delete users');
         },
       }
     );
-  }, [bulkDelete, selectedRows, clearSelection, toast]);
+  }, [bulkDelete, selectedRows, clearSelection, translatedToast, toast]);
 
   const handleSort = useCallback((col: string | null, dir: SortDirection) => {
     setSortColumn(col);
@@ -71,35 +78,38 @@ export function useUserTableState({ users }: UseUserTableStateProps) {
 
     if (allSelectedAreDevelopers) {
       actions.push({
-        label: 'Add to project',
+        label: translate('bulkActions.addToProject'),
         icon: <Icon name="plus" size="sm" />,
         onClick: () => setShowAddToProjectModal(true),
       });
     }
 
     actions.push({
-      label: 'Delete member',
+      label: translate('bulkActions.deleteMember'),
       icon: <Icon name="trash" size="sm" />,
       onClick: () => setShowDeleteConfirm(true),
       variant: 'destructive' as const,
     });
 
     return actions;
-  }, [allSelectedAreDevelopers]);
+  }, [allSelectedAreDevelopers, translate]);
 
   const groupConfigs: GroupConfig<UserWithStats>[] = useMemo(
     () => [
       {
         key: 'role',
         getGroupKey: (user) => user.role || 'Unknown',
-        getLabel: (key) => UserRoleDisplay[key as UserRole] || key,
+        getLabel: (key) => {
+          const translationKey = UserRoleTranslationKeys[key as UserRole];
+          return translationKey ? translate(translationKey) : key;
+        },
         getIcon: () => (
           <Icon name="user" size="sm" className="text-muted-foreground" />
         ),
         sortOrder: ROLE_ORDER,
       },
     ],
-    []
+    [translate]
   );
 
   return {

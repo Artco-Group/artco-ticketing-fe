@@ -1,17 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context';
-import { hasRole } from '@/shared/utils/role-helpers';
+import { useResponsiveCollapse, useTranslatedNavigation } from '@/shared/hooks';
 
 import { Sidebar } from './Sidebar';
-import type { SidebarItem } from './Sidebar';
-import {
-  ROUTE_MAP,
-  NAVIGATION,
-  FOOTER_SECTIONS,
-  SIDEBAR_WIDTH,
-} from './sidebar.config';
+import { ROUTE_MAP, SIDEBAR_WIDTH } from './sidebar.config';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -21,27 +15,8 @@ export function MainLayout({ children }: MainLayoutProps) {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setCollapsed(true);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const items = useMemo(
-    () =>
-      NAVIGATION.filter(
-        (item) => !item.roles || hasRole(user, item.roles)
-      ) as SidebarItem[],
-    [user]
-  );
+  const { collapsed, setCollapsed } = useResponsiveCollapse();
+  const { items, footerSections } = useTranslatedNavigation(user);
 
   const activeItem = useMemo(() => {
     for (const [id, path] of Object.entries(ROUTE_MAP)) {
@@ -73,8 +48,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         items={items}
         activeItem={activeItem}
         onNavigate={handleNavigate}
-        footerSections={FOOTER_SECTIONS}
-        searchPlaceholder="Search"
+        footerSections={footerSections}
         collapsed={collapsed}
         onToggle={handleToggle}
       />

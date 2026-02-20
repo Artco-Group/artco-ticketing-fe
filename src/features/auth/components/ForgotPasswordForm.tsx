@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { Icon } from '@/shared/components/ui';
 import { useForgotPasswordForm } from '../hooks';
+import { useAppTranslation } from '@/shared/hooks';
 import {
   Form,
   FormControl,
@@ -12,16 +13,17 @@ import {
 } from '@/shared/components/ui';
 
 export function ForgotPasswordForm() {
+  const { translate } = useAppTranslation('auth');
   const { form, onSubmit, isPending, serverError } = useForgotPasswordForm();
 
   return (
     <div>
       <div>
         <h2 className="text-foreground max-smx:text-2xl mb-4 text-3xl font-bold tracking-tight">
-          Forgot password
+          {translate('forgotPassword.title')}
         </h2>
         <p className="text-muted-foreground max-smx:mb-6 max-smx:text-sm mb-8 text-base">
-          Enter your email and we'll send you a link to reset your password.
+          {translate('forgotPassword.subtitle')}
         </p>
       </div>
 
@@ -42,8 +44,8 @@ export function ForgotPasswordForm() {
                   <Input
                     type="email"
                     autoComplete="email"
-                    label="Email address"
-                    placeholder="your.name@company.com"
+                    label={translate('forgotPassword.email')}
+                    placeholder={translate('forgotPassword.emailPlaceholder')}
                     leftIcon={<Icon name="mail" size="md" />}
                     error={fieldState.error?.message}
                     {...field}
@@ -60,7 +62,9 @@ export function ForgotPasswordForm() {
             loading={isPending}
             rightIcon="arrow-right"
           >
-            {isPending ? 'Sending...' : 'Send link'}
+            {isPending
+              ? translate('forgotPassword.submitting')
+              : translate('forgotPassword.submit')}
           </Button>
         </form>
       </Form>
@@ -71,7 +75,7 @@ export function ForgotPasswordForm() {
           className="link inline-flex items-center gap-1 text-sm"
         >
           <Icon name="chevron-left" size="sm" />
-          Back to login
+          {translate('forgotPassword.backToLogin')}
         </Link>
       </div>
     </div>

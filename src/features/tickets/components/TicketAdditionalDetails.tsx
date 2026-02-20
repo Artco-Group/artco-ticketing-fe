@@ -1,16 +1,9 @@
 import { useState, type ReactNode } from 'react';
 import { asTicketId, type Ticket, TicketCategory } from '@/types';
-import {
-  Icon,
-  Button,
-  Modal,
-  Card,
-  CardContent,
-  Separator,
-} from '@/shared/components/ui';
-import { FileItem } from '@/shared/components/composite';
+import { Icon, Button, Modal } from '@/shared/components/ui';
 import { fileAPI } from '../api/file-api';
 import { useTicketFileUpload } from '../hooks/useTicketFileUpload';
+import { useAppTranslation } from '@/shared/hooks';
 import FileUpload from '@/shared/components/common/FileUpload';
 import ScreenRecorder from '@/shared/components/common/ScreenRecorder';
 import {
@@ -18,7 +11,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Paperclip,
-  MonitorPlay,
+  Video,
+  Image,
+  FileText,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -27,192 +22,175 @@ interface TicketAdditionalDetailsProps {
   canUploadFiles: boolean;
 }
 
+type MediaTab = 'attachments' | 'recording';
+
 function TicketAdditionalDetails({
   ticket,
   canUploadFiles,
 }: TicketAdditionalDetailsProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const { translate } = useAppTranslation('tickets');
+  const [selectedMediaTab, setSelectedMediaTab] =
+    useState<MediaTab>('attachments');
 
   const fileUpload = useTicketFileUpload({ ticketId: ticket.ticketId || '' });
 
   const isBug = ticket.category === TicketCategory.BUG;
+  const hasAttachments = ticket.attachments && ticket.attachments.length > 0;
+  const hasRecordings =
+    ticket.screenRecordings && ticket.screenRecordings.length > 0;
+
+  // Derive active tab - non-bug tickets can't show recording tab
+  const activeMediaTab =
+    !isBug && selectedMediaTab === 'recording'
+      ? 'attachments'
+      : selectedMediaTab;
 
   return (
-    <div className="border-b p-6">
-      <div className="flex-1">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Description</h3>
-          <button
-            type="button"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm transition-colors"
-          >
-            <span>Additional Details</span>
-            <Icon name={isExpanded ? 'chevron-up' : 'chevron-down'} size="sm" />
-          </button>
+    <div className="space-y-0">
+      <div className="border-b px-6 py-5">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex gap-1">
+            <TabButton
+              active={activeMediaTab === 'attachments'}
+              onClick={() => setSelectedMediaTab('attachments')}
+              icon={<Paperclip className="h-3.5 w-3.5" />}
+              label={translate('details.attachments')}
+              count={ticket.attachments?.length || 0}
+            />
+            {isBug && (
+              <TabButton
+                active={activeMediaTab === 'recording'}
+                onClick={() => setSelectedMediaTab('recording')}
+                icon={<Video className="h-3.5 w-3.5" />}
+                label={translate('details.screenRecordings')}
+                count={ticket.screenRecordings?.length || 0}
+              />
+            )}
+          </div>
+
+          {canUploadFiles && (activeMediaTab === 'attachments' || isBug) && (
+            <button
+              type="button"
+              onClick={
+                activeMediaTab === 'attachments'
+                  ? fileUpload.openFileUploadModal
+                  : fileUpload.openScreenRecordingModal
+              }
+              disabled={
+                activeMediaTab === 'attachments'
+                  ? fileUpload.isUploadingFiles
+                  : fileUpload.isUploadingScreenRecording
+              }
+              className="text-primary hover:text-primary/80 flex items-center gap-1 text-xs font-medium transition-colors disabled:opacity-50"
+            >
+              <Icon name="plus" size="xs" />
+              {activeMediaTab === 'attachments'
+                ? translate('details.addFiles')
+                : translate('details.addRecording')}
+            </button>
+          )}
         </div>
 
-        {ticket.description ? (
-          <p className="mt-2 text-sm leading-relaxed whitespace-pre-wrap">
-            {ticket.description}
-          </p>
-        ) : (
-          <p className="text-muted-foreground mt-2 text-sm">No description</p>
-        )}
-
-        {ticket.affectedModule && (
-          <p className="text-muted-foreground mt-3 text-sm">
-            <span className="font-medium">Affected Module:</span>{' '}
-            {ticket.affectedModule}
-          </p>
-        )}
-
-        {isExpanded && (
-          <div className="border-border mt-6 space-y-5 border-t pt-5">
-            {isBug && (
-              <div className="space-y-3">
-                <BugDetailCard
-                  icon={<ListOrdered className="h-4 w-4" />}
-                  label="Steps to Reproduce"
-                  value={ticket.reproductionSteps}
-                />
-                <BugDetailCard
-                  icon={<CheckCircle2 className="h-4 w-4 text-green-500" />}
-                  label="Expected Result"
-                  value={ticket.expectedResult}
-                  accentClass="border-l-4 border-l-green-400"
-                />
-                <BugDetailCard
-                  icon={<AlertCircle className="h-4 w-4 text-red-500" />}
-                  label="Actual Result"
-                  value={ticket.actualResult}
-                  accentClass="border-l-4 border-l-red-400"
-                />
-              </div>
-            )}
-
-            {isBug && <Separator className="my-2" />}
-
-            {/* Attachments & Screen Recording */}
-            <div className="grid gap-4 md:grid-cols-2">
-              {/* Attachments */}
-              <div className="bg-muted/30 rounded-lg border p-4">
-                <SectionHeader
-                  icon={<Paperclip className="h-4 w-4" />}
-                  label="Attachments"
-                  action={
-                    canUploadFiles ? (
-                      <button
-                        type="button"
-                        onClick={fileUpload.openFileUploadModal}
-                        disabled={fileUpload.isUploadingFiles}
-                        className="text-primary hover:text-primary/80 flex items-center gap-1 text-xs font-medium transition-colors disabled:opacity-50"
-                      >
-                        <Icon name="plus" size="xs" />
-                        Add Files
-                      </button>
-                    ) : undefined
+        {/* Tab Content */}
+        {activeMediaTab === 'attachments' ? (
+          hasAttachments ? (
+            <div className="flex flex-wrap gap-4">
+              {ticket.attachments!.map((attachment, index) => (
+                <MediaThumbnail
+                  key={index}
+                  name={
+                    attachment.filename || attachment.originalName || 'File'
                   }
-                />
-                {ticket.attachments && ticket.attachments.length > 0 ? (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {ticket.attachments.map((attachment, index) => (
-                      <FileItem
-                        key={index}
-                        name={
-                          attachment.filename ||
-                          attachment.originalName ||
-                          'File'
-                        }
-                        size={attachment.size}
-                        mimetype={attachment.mimetype}
-                        onDownload={() =>
-                          fileAPI.downloadAttachment(
-                            asTicketId(ticket.ticketId || ''),
-                            index,
-                            attachment.filename || attachment.originalName || ''
-                          )
-                        }
-                        onDelete={() =>
-                          fileUpload.handleDeleteAttachment(index)
-                        }
-                        canDelete={canUploadFiles}
-                        isDeleting={fileUpload.isDeletingAttachment}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground mt-3 text-sm">
-                    No attachments added
-                  </p>
-                )}
-              </div>
-
-              {/* Screen Recording */}
-              <div className="bg-muted/30 rounded-lg border p-4">
-                <SectionHeader
-                  icon={<MonitorPlay className="h-4 w-4" />}
-                  label="Screen Recording"
-                  action={
-                    canUploadFiles ? (
-                      <button
-                        type="button"
-                        onClick={fileUpload.openScreenRecordingModal}
-                        disabled={fileUpload.isUploadingScreenRecording}
-                        className="text-primary hover:text-primary/80 flex items-center gap-1 text-xs font-medium transition-colors disabled:opacity-50"
-                      >
-                        {!ticket.screenRecording?.gcsUrl && (
-                          <Icon name="plus" size="xs" />
-                        )}
-                        {ticket.screenRecording?.gcsUrl
-                          ? 'Replace'
-                          : 'Add Recording'}
-                      </button>
-                    ) : undefined
+                  size={attachment.size}
+                  mimetype={attachment.mimetype}
+                  onDownload={() =>
+                    fileAPI.downloadAttachment(
+                      asTicketId(ticket.ticketId || ''),
+                      index,
+                      attachment.filename || attachment.originalName || ''
+                    )
                   }
+                  onDelete={() => fileUpload.handleDeleteAttachment(index)}
+                  canDelete={canUploadFiles}
+                  isDeleting={fileUpload.isDeletingAttachment}
                 />
-                {ticket.screenRecording?.gcsUrl ? (
-                  <div className="mt-3">
-                    <FileItem
-                      name={
-                        ticket.screenRecording.originalName ||
-                        'Screen Recording'
-                      }
-                      duration={ticket.screenRecording.duration ?? undefined}
-                      isVideo
-                      onDownload={() =>
-                        fileAPI.downloadScreenRecording(
-                          asTicketId(ticket.ticketId || ''),
-                          ticket.screenRecording?.originalName ||
-                            'screen-recording'
-                        )
-                      }
-                      onDelete={fileUpload.handleDeleteScreenRecording}
-                      canDelete={canUploadFiles}
-                      isDeleting={fileUpload.isDeletingScreenRecording}
-                    />
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground mt-3 text-sm">
-                    No recording added
-                  </p>
-                )}
-              </div>
+              ))}
             </div>
-          </div>
+          ) : (
+            <EmptyMediaState message={translate('details.noAttachments')} />
+          )
+        ) : (
+          isBug &&
+          (hasRecordings ? (
+            <div className="flex flex-wrap gap-4">
+              {ticket.screenRecordings!.map((recording, index) => (
+                <MediaThumbnail
+                  key={index}
+                  name={
+                    recording.originalName ||
+                    `screen-recording-${index + 1}.webm`
+                  }
+                  duration={
+                    typeof recording.duration === 'number'
+                      ? recording.duration
+                      : undefined
+                  }
+                  isVideo
+                  onDownload={() =>
+                    fileAPI.downloadScreenRecording(
+                      asTicketId(ticket.ticketId || ''),
+                      index,
+                      recording.originalName ||
+                        `screen-recording-${index + 1}.webm`
+                    )
+                  }
+                  onDelete={() => fileUpload.handleDeleteScreenRecording(index)}
+                  canDelete={canUploadFiles}
+                  isDeleting={fileUpload.isDeletingScreenRecording}
+                />
+              ))}
+            </div>
+          ) : (
+            <EmptyMediaState message={translate('details.noRecordings')} />
+          ))
         )}
       </div>
+
+      {/* Bug Details Section - Only for bugs */}
+      {isBug && (
+        <div className="grid grid-cols-1 border-b lg:grid-cols-3">
+          <BugDetailSection
+            icon={<ListOrdered className="h-4 w-4" />}
+            label={translate('details.stepsToReproduce')}
+            value={ticket.reproductionSteps}
+            className="border-b lg:border-r lg:border-b-0"
+          />
+          <BugDetailSection
+            icon={<CheckCircle2 className="h-4 w-4 text-green-500" />}
+            label={translate('details.expectedResult')}
+            value={ticket.expectedResult}
+            accentColor="green"
+            className="border-b lg:border-r lg:border-b-0"
+          />
+          <BugDetailSection
+            icon={<AlertCircle className="h-4 w-4 text-red-500" />}
+            label={translate('details.actualResult')}
+            value={ticket.actualResult}
+            accentColor="red"
+          />
+        </div>
+      )}
 
       {/* File Upload Modal */}
       <Modal
         isOpen={fileUpload.isFileUploadModalOpen}
         onClose={fileUpload.closeFileUploadModal}
-        title="Upload Files"
+        title={translate('details.uploadFiles')}
         size="md"
         actions={
           <div className="flex gap-2">
             <Button variant="outline" onClick={fileUpload.closeFileUploadModal}>
-              Cancel
+              {translate('details.cancel')}
             </Button>
             <Button
               onClick={fileUpload.handleUploadFiles}
@@ -221,7 +199,9 @@ function TicketAdditionalDetails({
                 fileUpload.isUploadingFiles
               }
             >
-              {fileUpload.isUploadingFiles ? 'Uploading...' : 'Upload'}
+              {fileUpload.isUploadingFiles
+                ? translate('details.uploading')
+                : translate('details.upload')}
             </Button>
           </div>
         }
@@ -236,7 +216,7 @@ function TicketAdditionalDetails({
       <Modal
         isOpen={fileUpload.isScreenRecordingModalOpen}
         onClose={fileUpload.closeScreenRecordingModal}
-        title="Record Screen"
+        title={translate('details.recordScreen')}
         size="lg"
         preventClose
       >
@@ -250,46 +230,198 @@ function TicketAdditionalDetails({
   );
 }
 
-function SectionHeader({
-  icon,
-  label,
-  action,
-}: {
-  icon: ReactNode;
-  label: string;
-  action?: ReactNode;
-}) {
-  return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <span className="text-muted-foreground flex items-center">{icon}</span>
-        <h4 className="text-sm font-medium">{label}</h4>
-      </div>
-      {action}
-    </div>
-  );
-}
-
-function BugDetailCard({
+function BugDetailSection({
   icon,
   label,
   value,
-  accentClass,
+  accentColor,
+  className,
 }: {
   icon: ReactNode;
   label: string;
   value?: string | null;
-  accentClass?: string;
+  accentColor?: 'green' | 'red';
+  className?: string;
 }) {
   return (
-    <Card className={cn('shadow-none', accentClass)}>
-      <CardContent className="p-4">
-        <SectionHeader icon={icon} label={label} />
-        <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
-          {value || '-'}
+    <div
+      className={cn(
+        'px-6 py-4',
+        accentColor === 'green' && 'bg-green-50/50',
+        accentColor === 'red' && 'bg-red-50/50',
+        className
+      )}
+    >
+      <div className="mb-2 flex items-center gap-2">
+        <span className="text-muted-foreground flex items-center">{icon}</span>
+        <h4 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+          {label}
+        </h4>
+      </div>
+      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+        {value || '-'}
+      </p>
+    </div>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  icon,
+  label,
+  count,
+  hasContent,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: ReactNode;
+  label: string;
+  count?: number;
+  hasContent?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+        active
+          ? 'bg-primary/10 text-primary'
+          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+      )}
+    >
+      {icon}
+      <span>{label}</span>
+      {count !== undefined && count > 0 && (
+        <span
+          className={cn(
+            'rounded-full px-1.5 py-0.5 text-[10px]',
+            active ? 'bg-primary/20' : 'bg-muted-foreground/20'
+          )}
+        >
+          {count}
+        </span>
+      )}
+      {hasContent && <span className="h-1.5 w-1.5 rounded-full bg-green-500" />}
+    </button>
+  );
+}
+
+function MediaThumbnail({
+  name,
+  size,
+  mimetype,
+  duration,
+  isVideo,
+  onDownload,
+  onDelete,
+  canDelete,
+  isDeleting,
+}: {
+  name: string;
+  size?: number;
+  mimetype?: string;
+  duration?: number;
+  isVideo?: boolean;
+  onDownload: () => void;
+  onDelete: () => void;
+  canDelete: boolean;
+  isDeleting: boolean;
+}) {
+  const isImage = mimetype?.startsWith('image/');
+  const isPdf = mimetype === 'application/pdf';
+
+  const formatSize = (bytes?: number) => {
+    if (!bytes) return '';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  const formatDuration = (seconds?: number) => {
+    if (!seconds || seconds <= 0) return '';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const getIconAndColor = () => {
+    if (isVideo)
+      return {
+        icon: <Video className="h-6 w-6" />,
+        bg: 'bg-purple-50',
+        color: 'text-purple-500',
+      };
+    if (isImage)
+      return {
+        icon: <Image className="h-6 w-6" />,
+        bg: 'bg-blue-50',
+        color: 'text-blue-500',
+      };
+    if (isPdf)
+      return {
+        icon: <FileText className="h-6 w-6" />,
+        bg: 'bg-red-50',
+        color: 'text-red-500',
+      };
+    return {
+      icon: <FileText className="h-6 w-6" />,
+      bg: 'bg-muted/50',
+      color: 'text-muted-foreground',
+    };
+  };
+
+  const { icon, bg, color } = getIconAndColor();
+
+  return (
+    <div className="group inline-flex flex-col">
+      <div
+        className={cn(
+          'relative flex h-15 w-15 cursor-pointer flex-col items-center justify-center rounded-lg border transition-colors hover:opacity-80',
+          bg
+        )}
+        onClick={onDownload}
+      >
+        <span className={color}>{icon}</span>
+        {isVideo && duration && duration > 0 && (
+          <span className="text-muted-foreground mt-1 text-[10px]">
+            {formatDuration(duration)}
+          </span>
+        )}
+        {canDelete && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            disabled={isDeleting}
+            className="absolute -top-1.5 -right-1.5 hidden h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white transition-opacity group-hover:flex hover:bg-red-600 disabled:opacity-50"
+          >
+            <Icon name="close" size="xs" />
+          </button>
+        )}
+      </div>
+      <div className="mt-1 w-15">
+        <p className="truncate text-[11px] font-medium" title={name}>
+          {name}
         </p>
-      </CardContent>
-    </Card>
+        <p className="text-muted-foreground text-[10px]">
+          {isVideo && duration && duration > 0
+            ? formatDuration(duration)
+            : formatSize(size)}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function EmptyMediaState({ message }: { message: string }) {
+  return (
+    <div className="text-muted-foreground flex items-center justify-center py-8 text-sm">
+      {message}
+    </div>
   );
 }
 

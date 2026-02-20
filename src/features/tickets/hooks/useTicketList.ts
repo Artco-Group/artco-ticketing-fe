@@ -11,6 +11,7 @@ import {
   filterTickets,
   sortTickets,
   getAssigneeEmail,
+  filterTicketsByTab,
 } from '@/shared/utils/ticket-helpers';
 
 export function useTicketList() {
@@ -30,6 +31,7 @@ export function useTicketList() {
       priority: searchParams.get('priority') || 'All',
       client: searchParams.get('client') || 'All',
       assignee: searchParams.get('assignee') || 'All',
+      project: searchParams.get('project') || 'All',
       sortBy: searchParams.get('sortBy') || 'Created Date',
     }),
     [searchParams]
@@ -66,20 +68,7 @@ export function useTicketList() {
   }, [allTickets, isDeveloper, isClient, user?.email]);
 
   const tabFilteredTickets = useMemo(() => {
-    if (activeTab === 'all') {
-      return roleFilteredTickets;
-    }
-    if (activeTab === 'backlog') {
-      return roleFilteredTickets.filter(
-        (ticket) => ticket.status === 'New' || ticket.status === 'Open'
-      );
-    }
-    return roleFilteredTickets.filter(
-      (ticket) =>
-        ticket.status === 'In Progress' ||
-        ticket.status === 'Resolved' ||
-        ticket.status === 'Closed'
-    );
+    return filterTicketsByTab(roleFilteredTickets, activeTab);
   }, [roleFilteredTickets, activeTab]);
 
   const filteredTickets = useMemo(() => {
@@ -125,6 +114,7 @@ export function useTicketList() {
 
   return {
     tickets: filteredTickets,
+    allTickets,
     users: isEngLead ? users : undefined,
     filters: !isClient ? filters : undefined,
     isLoading: ticketsLoading,

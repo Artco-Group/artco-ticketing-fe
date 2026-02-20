@@ -1,7 +1,5 @@
 export { ActivityFeed } from './ActivityFeed';
 export { transformActivity } from './activity-utils';
-export type {
-  ActivityFeedProps,
-  ActivityItem,
-  ActivityColorVariant,
-} from './ActivityFeed';
+export { useActivityTranslations } from './useActivityTranslations';
+export type { ActivityFeedProps, ActivityItem } from './types';
+export type { ActivityColorVariant } from './activity-constants';

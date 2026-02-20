@@ -87,6 +87,9 @@ export const PAGE_ROUTES = {
     APPLICATION: '/settings/application',
     IMPORT_EXPORT: '/settings/import-export',
     API: '/settings/api',
+    WORKFLOWS: '/settings/workflows',
+    WORKFLOWS_NEW: '/settings/workflows/new',
+    WORKFLOWS_EDIT: '/settings/workflows/:id/edit',
   },
 
   // Utility

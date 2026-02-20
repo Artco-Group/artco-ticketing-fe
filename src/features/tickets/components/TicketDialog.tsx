@@ -1,14 +1,14 @@
-import { useMemo } from 'react';
-import {
-  type Ticket,
-  type User,
-  UserRole,
-} from '@artco-group/artco-ticketing-sync';
+import { useEffect } from 'react';
+import { type Ticket } from '@artco-group/artco-ticketing-sync';
 import { SideDialog, Button } from '@/shared/components/ui';
 import { useAuth } from '@/features/auth/context';
-import { useProjects } from '@/features/projects/api/projects-api';
 import { useRoleFlags } from '@/shared';
-import { useTicketDialogForm, useTicketDialogActions } from '../hooks';
+import { useAppTranslation } from '@/shared/hooks';
+import {
+  useTicketDialogForm,
+  useTicketDialogActions,
+  useProjectMembers,
+} from '../hooks';
 import { TicketForm } from './TicketForm';
 
 interface TicketDialogProps {
@@ -26,6 +26,7 @@ export function TicketDialog({
   projectId,
   onSuccess,
 }: TicketDialogProps) {
+  const { translate } = useAppTranslation('tickets');
   const { user } = useAuth();
   const { isEngLead, isAdmin } = useRoleFlags(user?.role);
   const isProjectLocked = !!projectId;
@@ -50,30 +51,18 @@ export function TicketDialog({
     onClose();
   };
 
-  const { data: projectsData } = useProjects();
-
-  const projectOptions = useMemo(
-    () =>
-      (projectsData?.projects || []).map((project) => ({
-        label: project.name,
-        value: (project.id || '') as string,
-      })),
-    [projectsData?.projects]
-  );
-
   const selectedProjectId = projectId || form.watch('project');
+  const { projectOptions, developerUsers, engLeadUsers } =
+    useProjectMembers(selectedProjectId);
 
-  const developerUsers = useMemo(() => {
-    if (!selectedProjectId || !projectsData?.projects) return [];
-
-    const selectedProject = projectsData.projects.find(
-      (p) => p.id === selectedProjectId
-    );
-    if (!selectedProject) return [];
-
-    const members = (selectedProject.members as User[]) || [];
-    return members.filter((u) => u.role === UserRole.DEVELOPER);
-  }, [selectedProjectId, projectsData]);
+  useEffect(() => {
+    if (!isEditing && engLeadUsers.length === 1) {
+      const currentEngLead = form.getValues('engLead');
+      if (!currentEngLead) {
+        form.setValue('engLead', engLeadUsers[0].id || '');
+      }
+    }
+  }, [engLeadUsers, isEditing, form]);
 
   const formId = 'ticket-dialog-form';
 
@@ -81,11 +70,15 @@ export function TicketDialog({
     <SideDialog
       isOpen={isOpen}
       onClose={handleClose}
-      title={isEditing ? 'Edit Ticket' : 'Create Ticket'}
+      title={
+        isEditing
+          ? translate('dialog.editTitle')
+          : translate('dialog.createTitle')
+      }
       description={
         isEditing
-          ? 'Update ticket details.'
-          : 'Fill in the details to create a new ticket.'
+          ? translate('dialog.editDescription')
+          : translate('dialog.createDescription')
       }
       width="lg"
       footer={
@@ -96,7 +89,7 @@ export function TicketDialog({
             onClick={handleClose}
             disabled={isPending}
           >
-            Cancel
+            {translate('dialog.cancel')}
           </Button>
           <Button
             type="submit"
@@ -105,11 +98,11 @@ export function TicketDialog({
           >
             {isPending
               ? isEditing
-                ? 'Saving...'
-                : 'Creating...'
+                ? translate('dialog.saving')
+                : translate('dialog.creating')
               : isEditing
-                ? 'Save Changes'
-                : 'Create Ticket'}
+                ? translate('dialog.save')
+                : translate('create')}
           </Button>
         </div>
       }
@@ -122,6 +115,7 @@ export function TicketDialog({
         projectOptions={projectOptions}
         isProjectLocked={isProjectLocked}
         developerUsers={developerUsers}
+        engLeadUsers={engLeadUsers}
         canAssign={canAssign}
       />
     </SideDialog>

@@ -4,13 +4,14 @@ import {
   API_ROUTES,
   CACHE,
   type User,
+  type UserQueryParams,
   type CreateUserFormData,
   type UpdateUserFormData,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
 import type { UserId } from '@/types';
 
-function useUsers(params?: Record<string, unknown>) {
+function useUsers(params?: UserQueryParams) {
   return useApiQuery<{ users: User[] }>(QueryKeys.users.list(params), {
     url: API_ROUTES.USERS.BASE,
     params,
@@ -82,6 +83,7 @@ function useBulkDeleteUsers() {
   return useApiMutation<BulkDeleteResult, { emails: string[] }>({
     url: API_ROUTES.USERS.BASE,
     method: 'DELETE',
+    getBody: (vars) => vars,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
     },
@@ -106,6 +108,8 @@ function useUploadAvatar() {
       });
       queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
       queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
+      // Invalidate projects since client avatars are embedded in project data
+      queryClient.invalidateQueries({ queryKey: QueryKeys.projects.lists() });
     },
   });
 }
@@ -121,6 +125,7 @@ function useRemoveAvatar() {
       });
       queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
       queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.projects.lists() });
     },
   });
 }

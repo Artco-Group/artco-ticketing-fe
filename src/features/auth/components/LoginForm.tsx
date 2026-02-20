@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { useLoginForm } from '../hooks';
+import { useAppTranslation } from '@/shared/hooks';
 import {
   Form,
   FormControl,
@@ -14,16 +15,17 @@ import {
 } from '@/shared/components/ui';
 
 export function LoginForm() {
+  const { translate } = useAppTranslation('auth');
   const { form, onSubmit, isPending } = useLoginForm();
 
   return (
     <div>
       <div>
         <h2 className="text-foreground max-smx:text-2xl mb-2 text-3xl font-bold tracking-tight">
-          Sign In
+          {translate('login.title')}
         </h2>
         <p className="text-muted-foreground max-smx:mb-6 max-smx:text-sm mb-8 text-base">
-          Welcome back. Please enter your credentials.
+          {translate('login.subtitle')}
         </p>
       </div>
 
@@ -38,8 +40,8 @@ export function LoginForm() {
                   <Input
                     type="email"
                     autoComplete="email"
-                    label="Email"
-                    placeholder="your.name@company.com"
+                    label={translate('login.email')}
+                    placeholder={translate('login.emailPlaceholder')}
                     leftIcon={<Icon name="mail" size="md" />}
                     error={fieldState.error?.message}
                     {...field}
@@ -57,8 +59,8 @@ export function LoginForm() {
                 <FormControl>
                   <PasswordInput
                     autoComplete="current-password"
-                    label="Password"
-                    placeholder="Enter your password"
+                    label={translate('login.password')}
+                    placeholder={translate('login.passwordPlaceholder')}
                     leftIcon={<Icon name="lock" size="md" />}
                     error={fieldState.error?.message}
                     {...field}
@@ -80,7 +82,7 @@ export function LoginForm() {
                         id="remember-me"
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        label="Remember me"
+                        label={translate('login.rememberMe')}
                       />
                     </div>
                   </FormControl>
@@ -91,7 +93,7 @@ export function LoginForm() {
               to={PAGE_ROUTES.AUTH.FORGOT_PASSWORD}
               className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
             >
-              Forgot Password?
+              {translate('login.forgotPassword')}
             </Link>
           </div>
 
@@ -102,21 +104,21 @@ export function LoginForm() {
             disabled={isPending}
             loading={isPending}
           >
-            Login
+            {translate('login.submit')}
           </Button>
         </form>
       </Form>
 
       <div className="mt-7 text-center">
         <p className="text-muted-foreground text-sm">
-          Don't have an account?{' '}
+          {translate('login.noAccount')}{' '}
           <a
             href="https://www.artcogroup.ba/page/contact"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:text-primary/80 font-medium transition-colors"
           >
-            Register
+            {translate('login.register')}
           </a>
         </p>
       </div>

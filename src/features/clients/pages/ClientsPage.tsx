@@ -9,10 +9,17 @@ import { ListPageLayout } from '@/shared/components/layout/ListPageLayout';
 import { ClientTable } from '../components/ClientTable';
 import UserForm from '@/features/users/components/UserForm';
 import { useClientList } from '../hooks/useClientList';
-
-const SORT_OPTIONS = ['Name', 'Email', 'Joined'];
+import { useAppTranslation } from '@/shared/hooks';
 
 export default function ClientsPage() {
+  const { translate } = useAppTranslation('clients');
+  const { translate: translateCommon } = useAppTranslation('common');
+  const sortOptions = [
+    translate('table.columns.name'),
+    translate('table.columns.email'),
+    translate('table.columns.joined'),
+  ];
+
   const {
     clients,
     sortedClients,
@@ -36,28 +43,28 @@ export default function ClientsPage() {
   return (
     <>
       <ListPageLayout
-        title="Clients"
+        title={translate('title')}
         count={clients.length}
         loading={isLoading}
-        loadingMessage="Loading clients..."
+        loadingMessage={translate('list.loading')}
         showAddButton
         onAddClick={onAddClient}
-        addButtonLabel="Add Client"
-        sortOptions={SORT_OPTIONS}
+        addButtonLabel={translate('addClient')}
+        sortOptions={sortOptions}
         sortValue={sortBy}
         onSortChange={setSortBy}
       >
         {error ? (
           <RetryableError
-            title="Failed to load clients"
-            message="Failed to load clients. Please try again later."
+            title={translate('list.failedToLoad')}
+            message={translate('list.failedToLoadMessage')}
             onRetry={refetch}
           />
         ) : clients.length === 0 ? (
           <EmptyState
             variant="no-users"
-            title="No clients found"
-            message="No clients have been added yet."
+            title={translate('list.empty')}
+            message={translate('list.emptyDescription')}
           />
         ) : (
           <ClientTable
@@ -71,7 +78,11 @@ export default function ClientsPage() {
       <Modal
         isOpen={showFormModal}
         onClose={onCloseFormModal}
-        title={editingClient ? 'Edit Client' : 'Add New Client'}
+        title={
+          editingClient
+            ? translate('form.editTitle')
+            : translate('form.addTitle')
+        }
         size="md"
         actions={
           <div className="flex justify-end gap-3">
@@ -81,14 +92,14 @@ export default function ClientsPage() {
               onClick={onCloseFormModal}
               disabled={isSubmitting}
             >
-              Cancel
+              {translateCommon('buttons.cancel')}
             </Button>
             <Button type="submit" form="client-form" disabled={isSubmitting}>
               {isSubmitting
-                ? 'Saving...'
+                ? translateCommon('buttons.saving')
                 : editingClient
-                  ? 'Save Changes'
-                  : 'Add Client'}
+                  ? translate('form.saveChanges')
+                  : translate('addClient')}
             </Button>
           </div>
         }
@@ -117,9 +128,11 @@ export default function ClientsPage() {
         isOpen={!!clientToDelete}
         onClose={() => setClientToDelete(null)}
         onConfirm={onConfirmDelete}
-        title="Delete Client"
-        description={`Are you sure you want to delete ${clientToDelete?.name}? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={translate('confirmDelete.title')}
+        description={translate('confirmDelete.description', {
+          name: clientToDelete?.name,
+        })}
+        confirmLabel={translate('confirmDelete.confirmLabel')}
         variant="destructive"
         isLoading={isSubmitting}
         icon="trash"

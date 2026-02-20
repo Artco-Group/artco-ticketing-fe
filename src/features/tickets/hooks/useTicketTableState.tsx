@@ -1,21 +1,23 @@
 import { useMemo, useState, useCallback } from 'react';
+import { format } from 'date-fns';
+import { enUS, bs } from 'date-fns/locale';
 import {
   TicketStatusSortOrder,
   TicketPrioritySortOrder,
+  TicketPriorityTranslationKeys,
 } from '@artco-group/artco-ticketing-sync';
-import { TicketPriority, TicketStatus, type Ticket, type User } from '@/types';
+import { TicketPriority, type Ticket, type User } from '@/types';
 import {
   type SortDirection,
   type BulkAction,
   useToast,
 } from '@/shared/components/ui';
 import { type GroupConfig } from '@/shared/hooks/useGroupedData';
+import { useAppTranslation, useStatusLabel } from '@/shared/hooks';
 import {
   resolveAssigneeName,
   getPriorityIcon,
-  getPriorityLabel,
-  getStatusIcon,
-  getStatusLabel,
+  getDynamicStatusIcon,
 } from '@/shared/utils/ticket-helpers';
 import { Icon } from '@/shared/components/ui/Icon';
 import { useBulkDeleteTickets, useBulkUpdatePriority } from '../api';
@@ -25,6 +27,8 @@ interface UseTicketTableStateProps {
 }
 
 export function useTicketTableState({ users }: UseTicketTableStateProps) {
+  const { translate, language } = useAppTranslation('tickets');
+  const { getStatusLabel } = useStatusLabel();
   const toast = useToast();
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -90,18 +94,18 @@ export function useTicketTableState({ users }: UseTicketTableStateProps) {
   const bulkActions: BulkAction[] = useMemo(
     () => [
       {
-        label: 'Change Priority',
+        label: translate('bulkActions.changePriority'),
         icon: <Icon name="edit" size="sm" />,
         onClick: () => setShowPriorityDialog(true),
       },
       {
-        label: 'Delete',
+        label: translate('bulkActions.delete'),
         icon: <Icon name="trash" size="sm" />,
         onClick: () => setShowDeleteConfirm(true),
         variant: 'destructive' as const,
       },
     ],
-    []
+    [translate]
   );
 
   const groupConfigs: GroupConfig<Ticket>[] = useMemo(
@@ -109,14 +113,18 @@ export function useTicketTableState({ users }: UseTicketTableStateProps) {
       {
         key: 'status',
         getGroupKey: (ticket) => ticket.status || 'Unknown',
-        getLabel: (key) => getStatusLabel(key as TicketStatus),
-        getIcon: (key) => getStatusIcon(key as TicketStatus),
+        getLabel: (key) => getStatusLabel(key),
+        getIcon: (key) => getDynamicStatusIcon(key),
         sortOrder: TicketStatusSortOrder,
       },
       {
         key: 'priority',
         getGroupKey: (ticket) => ticket.priority || 'Unknown',
-        getLabel: (key) => getPriorityLabel(key as TicketPriority),
+        getLabel: (key) => {
+          const translationKey =
+            TicketPriorityTranslationKeys[key as TicketPriority];
+          return translationKey ? translate(translationKey) : key;
+        },
         getIcon: (key) => getPriorityIcon(key as TicketPriority),
         sortOrder: TicketPrioritySortOrder,
         sortDirection: 'desc',
@@ -126,9 +134,17 @@ export function useTicketTableState({ users }: UseTicketTableStateProps) {
         getGroupKey: (ticket) =>
           ticket.assignedTo
             ? resolveAssigneeName(ticket.assignedTo, users)
-            : 'Unassigned',
+            : translate('form.unassigned'),
         getIcon: () => (
           <Icon name="user" size="sm" className="text-greyscale-500" />
+        ),
+      },
+      {
+        key: 'project',
+        getGroupKey: (ticket) =>
+          ticket.project?.name ?? translate('groupBy.noProject'),
+        getIcon: () => (
+          <Icon name="folder" size="sm" className="text-greyscale-500" />
         ),
       },
       {
@@ -136,19 +152,17 @@ export function useTicketTableState({ users }: UseTicketTableStateProps) {
         getGroupKey: (ticket) => {
           if (ticket.dueDate) {
             const date = new Date(ticket.dueDate);
-            return date.toLocaleDateString('en-US', {
-              month: 'long',
-              year: 'numeric',
-            });
+            const locale = language === 'bs' ? bs : enUS;
+            return format(date, 'LLLL yyyy', { locale });
           }
-          return 'No Due Date';
+          return translate('groupBy.noDueDate');
         },
         getIcon: () => (
           <Icon name="clock" size="sm" className="text-greyscale-500" />
         ),
       },
     ],
-    [users]
+    [users, translate, language, getStatusLabel]
   );
 
   return {

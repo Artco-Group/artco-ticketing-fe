@@ -1,5 +1,9 @@
 import { useMemo } from 'react';
-import { ProjectPriority } from '@artco-group/artco-ticketing-sync';
+import {
+  ProjectPriority,
+  ProjectPrioritySortOrder,
+  formatDateDisplay,
+} from '@artco-group/artco-ticketing-sync';
 import { type User } from '@/types';
 import {
   DataTable,
@@ -12,17 +16,22 @@ import {
   type Column,
   type RowAction,
 } from '@/shared/components/ui';
+import { StatusHeader } from '@/shared/components/patterns/StatusHeader';
 import { CompanyLogo } from '@/shared/components/composite/CompanyLogo/CompanyLogo';
 import {
-  PROJECT_PRIORITY_ORDER,
   getProjectPriorityIcon,
   getProjectPriorityLabel,
+  type ProjectTab,
 } from '../utils/project-helpers';
 import { type ProjectWithProgress } from '@/types';
 import { useProjectTableState } from '../hooks/useProjectTableState';
+import { useGroupedData } from '@/shared/hooks/useGroupedData';
+import { useAppTranslation } from '@/shared/hooks';
 
 interface ProjectTableProps {
   projects: ProjectWithProgress[];
+  activeTab?: ProjectTab;
+  groupByValue?: string | null;
   onViewProject: (project: ProjectWithProgress) => void;
   onEditProject: (project: ProjectWithProgress) => void;
   onDeleteProject: (project: ProjectWithProgress) => void;
@@ -30,10 +39,13 @@ interface ProjectTableProps {
 
 function ProjectTable({
   projects,
+  activeTab = 'active',
+  groupByValue,
   onViewProject,
   onEditProject,
   onDeleteProject,
 }: ProjectTableProps) {
+  const { translate, language } = useAppTranslation('projects');
   const {
     selectedRows,
     setSelectedRows,
@@ -45,32 +57,58 @@ function ProjectTable({
     setShowDeleteConfirm,
     handleBulkDelete,
     isDeleting,
+    showArchiveConfirm,
+    setShowArchiveConfirm,
+    handleBulkArchive,
+    handleRowArchive,
+    isArchiving,
+    isArchiveAction,
     bulkActions,
-  } = useProjectTableState();
+    groupConfigs,
+  } = useProjectTableState({ activeTab });
+
+  const groupedProjects = useGroupedData(
+    projects,
+    groupByValue ?? null,
+    groupConfigs
+  );
 
   const rowActions: RowAction<ProjectWithProgress>[] = useMemo(
     () => [
       {
-        label: 'Edit',
+        label: translate('table.rowActions.edit'),
         icon: <Icon name="edit" size="sm" />,
         onClick: (project) => onEditProject(project),
+        hidden: (project: ProjectWithProgress) => !!project.isArchived,
       },
       {
-        label: 'Delete',
+        label: translate('table.rowActions.archive'),
+        icon: <Icon name="inbox" size="sm" />,
+        onClick: (project) => handleRowArchive(project, true),
+        hidden: (project: ProjectWithProgress) => !!project.isArchived,
+      },
+      {
+        label: translate('table.rowActions.unarchive'),
+        icon: <Icon name="upload" size="sm" />,
+        onClick: (project) => handleRowArchive(project, false),
+        hidden: (project: ProjectWithProgress) => !project.isArchived,
+      },
+      {
+        label: translate('table.rowActions.delete'),
         icon: <Icon name="trash" size="sm" />,
         onClick: (project) => onDeleteProject(project),
         variant: 'destructive',
         separator: true,
       },
     ],
-    [onEditProject, onDeleteProject]
+    [onEditProject, onDeleteProject, handleRowArchive, translate]
   );
 
   const columns: Column<ProjectWithProgress>[] = useMemo(
     () => [
       {
         key: 'name',
-        label: 'Title',
+        label: translate('table.columns.title'),
         width: 'w-full',
         sortable: true,
         render: (project) => {
@@ -99,11 +137,12 @@ function ProjectTable({
       },
       {
         key: 'priority',
-        label: 'Priority',
+        label: translate('table.columns.priority'),
         type: 'badge',
+        width: 'w-[100px]',
         sortable: true,
         sortValue: (project) =>
-          PROJECT_PRIORITY_ORDER[project.priority as string] ?? 0,
+          ProjectPrioritySortOrder[project.priority as ProjectPriority] ?? 0,
         getBadgeProps: (_value, project) => ({
           icon: getProjectPriorityIcon(project.priority as ProjectPriority),
           children: getProjectPriorityLabel(
@@ -113,22 +152,17 @@ function ProjectTable({
       },
       {
         key: 'dueDate',
-        label: 'Due Date',
+        label: translate('table.columns.dueDate'),
         type: 'date',
+        width: 'w-[120px]',
         sortable: true,
-        formatDate: (date) => {
-          const d = date instanceof Date ? date : new Date(date);
-          return d.toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-          });
-        },
+        formatDate: (date) => formatDateDisplay(date, language, 'numeric'),
       },
       {
         key: 'leads',
-        label: 'Lead',
+        label: translate('table.columns.lead'),
         align: 'center',
+        width: 'w-[80px]',
         render: (project) => {
           const leads = project.leads as User[] | undefined;
           if (!leads || leads.length === 0) {
@@ -151,8 +185,9 @@ function ProjectTable({
       },
       {
         key: 'developers',
-        label: 'Developers',
+        label: translate('table.columns.developers'),
         align: 'center',
+        width: 'w-[100px]',
         render: (project) => {
           const members = project.members as User[] | undefined;
           if (!members || members.length === 0) {
@@ -175,8 +210,9 @@ function ProjectTable({
       },
       {
         key: 'progress',
-        label: 'Status',
+        label: translate('table.columns.status'),
         align: 'center',
+        width: 'w-[80px]',
         sortable: true,
         sortValue: (project) => project.progress?.percentage ?? 0,
         render: (project) => (
@@ -187,8 +223,9 @@ function ProjectTable({
       },
       {
         key: 'updatedAt',
-        label: 'Updated',
+        label: translate('table.columns.updated'),
         type: 'date',
+        width: 'w-[100px]',
         sortable: true,
         formatDate: (date) => {
           const d = date instanceof Date ? date : new Date(date);
@@ -196,60 +233,107 @@ function ProjectTable({
           const diff = now.getTime() - d.getTime();
           const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-          if (days === 0) return 'Today';
-          if (days === 1) return 'Yesterday';
-          if (days < 7) return `${days} days ago`;
-          return d.toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-          });
+          if (days === 0) return translate('time.today');
+          if (days === 1) return translate('time.yesterday');
+          if (days < 7) return translate('time.daysAgo', { count: days });
+          return formatDateDisplay(date, language, 'short');
         },
       },
     ],
-    []
+    [translate, language]
   );
+
+  const projectsWithStyling = projects.map((project) => ({
+    ...project,
+    className: project.isArchived ? 'opacity-50' : undefined,
+  }));
 
   const emptyState = (
     <EmptyState
       variant="no-data"
-      title="No projects found"
-      message="No projects match your current filters."
+      title={translate('list.empty')}
+      message={translate('list.emptyFiltered')}
       className="min-h-0 py-12"
     />
   );
 
+  const tableProps = {
+    columns,
+    onRowClick: onViewProject,
+    emptyState,
+    selectable: true,
+    selectedRows,
+    onSelect: setSelectedRows,
+    sortColumn,
+    sortDirection,
+    onSort: handleSort,
+    actions: rowActions,
+    getRowId: (project: ProjectWithProgress) => project.slug ?? '',
+  };
+
+  const renderDialogs = () => (
+    <>
+      <ConfirmationDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleBulkDelete}
+        title={translate('table.deleteTitle')}
+        description={translate('table.deleteConfirm', {
+          count: selectedRows.length,
+        })}
+        confirmLabel={translate('table.deleteButton')}
+        variant="destructive"
+        isLoading={isDeleting}
+        icon="trash"
+      />
+      <ConfirmationDialog
+        isOpen={showArchiveConfirm}
+        onClose={() => setShowArchiveConfirm(false)}
+        onConfirm={handleBulkArchive}
+        title={translate(
+          isArchiveAction ? 'table.archiveTitle' : 'table.unarchiveTitle'
+        )}
+        description={translate(
+          isArchiveAction ? 'table.archiveConfirm' : 'table.unarchiveConfirm',
+          { count: selectedRows.length }
+        )}
+        confirmLabel={translate(
+          isArchiveAction ? 'table.archiveButton' : 'table.unarchiveButton'
+        )}
+        isLoading={isArchiving}
+        icon="inbox"
+      />
+    </>
+  );
+
+  if (groupByValue && groupedProjects.length > 0) {
+    return (
+      <>
+        {groupedProjects.map((group) => (
+          <div key={group.key}>
+            <StatusHeader icon={group.icon} label={group.label} />
+            <DataTable {...tableProps} data={group.items} />
+          </div>
+        ))}
+        <BulkActionsBar
+          selectedCount={selectedRows.length}
+          actions={bulkActions}
+          onClear={clearSelection}
+        />
+        {renderDialogs()}
+      </>
+    );
+  }
+
   return (
     <>
-      <DataTable
-        columns={columns}
-        data={projects}
-        onRowClick={onViewProject}
-        emptyState={emptyState}
-        selectable
-        selectedRows={selectedRows}
-        onSelect={setSelectedRows}
-        sortColumn={sortColumn}
-        sortDirection={sortDirection}
-        onSort={handleSort}
-        actions={rowActions}
-        getRowId={(project) => project.slug ?? ''}
-      />
+      <DataTable {...tableProps} data={projectsWithStyling} />
       <BulkActionsBar
         selectedCount={selectedRows.length}
         actions={bulkActions}
         onClear={clearSelection}
       />
-      <ConfirmationDialog
-        isOpen={showDeleteConfirm}
-        onClose={() => setShowDeleteConfirm(false)}
-        onConfirm={handleBulkDelete}
-        title="Delete projects"
-        description={`Are you sure you want to delete ${selectedRows.length} project${selectedRows.length > 1 ? 's' : ''}? This action cannot be undone.`}
-        confirmLabel="Delete"
-        variant="destructive"
-        isLoading={isDeleting}
-        icon="trash"
-      />
+      {renderDialogs()}
     </>
   );
 }

@@ -1,0 +1,50 @@
+{
+  "title": "Kontrolna tabla",
+  "welcome": "Dobrodošli nazad, {{name}}!",
+  "welcomeNoName": "Dobrodošli nazad!",
+  "overview": "Pregled",
+  "recentActivity": {
+    "title": "Nedavna aktivnost",
+    "description": "Evo šta se nedavno dešavalo",
+    "empty": "Nema nedavne aktivnosti",
+    "emptyDescription": "Aktivnosti će se pojaviti ovdje dok radite na tiketima i projektima",
+    "moreActivities": "+{{count}} više aktivnosti"
+  },
+  "stats": {
+    "myProjects": "Moji projekti",
+    "totalTickets": "Ukupno tiketa",
+    "openTickets": "Otvoreni tiketi",
+    "resolvedTickets": "Riješeni tiketi",
+    "assignedTickets": "Dodijeljeni tiketi",
+    "inProgress": "U toku",
+    "completed": "Završeni",
+    "projectsLed": "Projekti koje vodim",
+    "teamMembers": "Članovi tima",
+    "pendingReview": "Čeka pregled",
+    "totalProjects": "Ukupno projekata",
+    "totalUsers": "Ukupno korisnika",
+    "backlogTickets": "Backlog tiketi"
+  },
+  "activity": {
+    "ticketCreated": "kreirao/la tiket",
+    "ticketUpdated": "ažurirao/la tiket",
+    "ticketAssigned": "dodijelio/la",
+    "ticketStatusChanged": "promijenio/la status",
+    "ticketPriorityChanged": "promijenio/la prioritet",
+    "ticketCommented": "komentarisao/la na",
+    "projectCreated": "kreirao/la projekat",
+    "projectUpdated": "ažurirao/la projekat",
+    "projectMemberAdded": "dodao/la",
+    "projectMemberRemoved": "uklonio/la",
+    "userCreated": "kreirao/la korisnika",
+    "commentAdded": "dodao/la komentar na",
+    "subtaskAdded": "dodao/la podzadatak na",
+    "subtaskCompleted": "završio/la podzadatak na"
+  },
+  "quickActions": {
+    "title": "Brze akcije",
+    "createTicket": "Kreiraj tiket",
+    "createProject": "Kreiraj projekat",
+    "inviteUser": "Pozovi korisnika"
+  }
+}

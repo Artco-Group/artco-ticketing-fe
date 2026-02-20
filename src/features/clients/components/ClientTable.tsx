@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { formatDateLocalized } from '@artco-group/artco-ticketing-sync';
+import { formatDateDisplay } from '@artco-group/artco-ticketing-sync';
 import {
   DataTable,
   EmptyState,
@@ -11,6 +11,7 @@ import {
   type Column,
   type RowAction,
 } from '@/shared/components/ui';
+import { useAppTranslation } from '@/shared/hooks';
 import type { UserWithProjects } from '@/types';
 import { useClientTableState } from '../hooks/useClientTableState';
 
@@ -21,6 +22,7 @@ interface ClientTableProps {
 }
 
 export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
+  const { translate, language } = useAppTranslation('clients');
   const {
     selectedRows,
     setSelectedRows,
@@ -40,7 +42,7 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
       ...(onEdit
         ? [
             {
-              label: 'Edit',
+              label: translate('table.rowActions.edit'),
               icon: <Icon name="edit" size="sm" />,
               onClick: (client: UserWithProjects) => onEdit(client),
             },
@@ -49,7 +51,7 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
       ...(onDelete
         ? [
             {
-              label: 'Delete',
+              label: translate('table.rowActions.delete'),
               icon: <Icon name="trash" size="sm" />,
               onClick: (client: UserWithProjects) => onDelete(client),
               variant: 'destructive' as const,
@@ -58,14 +60,14 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
           ]
         : []),
     ],
-    [onEdit, onDelete]
+    [onEdit, onDelete, translate]
   );
 
   const columns: Column<UserWithProjects>[] = useMemo(
     () => [
       {
         key: 'name',
-        label: 'Name',
+        label: translate('table.columns.name'),
         sortable: true,
         render: (client) => (
           <div className="flex items-center gap-3">
@@ -75,14 +77,14 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
               size="md"
             />
             <span className="text-foreground font-medium">
-              {client.name || 'Unnamed Client'}
+              {client.name || translate('table.unnamedClient')}
             </span>
           </div>
         ),
       },
       {
         key: 'email',
-        label: 'Email',
+        label: translate('table.columns.email'),
         sortable: true,
         render: (client) => (
           <span className="text-muted-foreground">{client.email}</span>
@@ -90,14 +92,14 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
       },
       {
         key: 'createdAt',
-        label: 'Joined',
+        label: translate('table.columns.joined'),
         type: 'date',
         sortable: true,
-        formatDate: formatDateLocalized,
+        formatDate: (date: Date | string) => formatDateDisplay(date, language),
       },
       {
         key: 'projects',
-        label: 'Projects',
+        label: translate('table.columns.projects'),
         render: (client) =>
           client.projects.length === 0 ? (
             <span className="text-muted-foreground">—</span>
@@ -113,14 +115,14 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
           ),
       },
     ],
-    []
+    [translate, language]
   );
 
   const emptyState = (
     <EmptyState
       variant="no-users"
-      title="No clients found"
-      message="No clients have been added yet."
+      title={translate('list.empty')}
+      message={translate('list.emptyDescription')}
       className="min-h-0 py-12"
     />
   );
@@ -149,9 +151,11 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleBulkDelete}
-        title="Delete clients"
-        description={`Are you sure you want to delete ${selectedRows.length} client${selectedRows.length > 1 ? 's' : ''}? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={translate('table.deleteTitle')}
+        description={translate('table.deleteConfirm', {
+          count: selectedRows.length,
+        })}
+        confirmLabel={translate('table.deleteButton')}
         variant="destructive"
         isLoading={isDeleting}
         icon="trash"

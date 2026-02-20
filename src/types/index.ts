@@ -7,17 +7,10 @@ export type {
   Comment,
   Project,
   ProjectProgress,
+  ProjectWithProgress,
 } from '@artco-group/artco-ticketing-sync/types';
 
-import type { User, Project } from '@artco-group/artco-ticketing-sync/types';
-
-export interface ProjectWithProgress extends Project {
-  progress?: {
-    totalTickets: number;
-    completedTickets: number;
-    percentage: number;
-  };
-}
+import type { User } from '@artco-group/artco-ticketing-sync/types';
 
 export interface UserWithProjects extends User {
   projects: { id: string; name: string }[];
@@ -41,6 +34,7 @@ export interface Filters {
   sortBy: string;
   client?: string;
   assignee?: string;
+  project?: string;
 }
 
 export interface PaginationParams {

@@ -4,7 +4,7 @@ import {
   ALLOWED_FILE_TYPES,
 } from '@artco-group/artco-ticketing-sync';
 import { asUserId } from '@/types';
-import { useToast } from '@/shared/components/ui';
+import { useTranslatedToast } from '@/shared/hooks';
 import { useUploadAvatar, useRemoveAvatar } from '../api';
 
 interface UseProfilePictureOptions {
@@ -18,7 +18,7 @@ export function useProfilePicture({
   currentAvatar,
   isEditing = false,
 }: UseProfilePictureOptions) {
-  const toast = useToast();
+  const translatedToast = useTranslatedToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -44,14 +44,12 @@ export function useProfilePicture({
     if (!file) return;
 
     if (!ALLOWED_FILE_TYPES.PROFILE_IMAGES.includes(file.type)) {
-      toast.error(
-        'Invalid file type. Only JPEG, PNG, and GIF images are allowed.'
-      );
+      translatedToast.error('toast.error.unsupportedFileType');
       return;
     }
 
     if (file.size > VALIDATION_RULES.MAX_PROFILE_IMAGE_SIZE) {
-      toast.error('File too large. Maximum size is 10MB.');
+      translatedToast.error('toast.error.fileTooLarge', { size: '10' });
       return;
     }
 
@@ -60,7 +58,7 @@ export function useProfilePicture({
       setAvatarPreview(e.target?.result as string);
     };
     reader.onerror = () => {
-      toast.error('Failed to read the selected file');
+      translatedToast.error('toast.error.failedToLoad', { item: 'file' });
     };
     reader.readAsDataURL(file);
 
@@ -71,9 +69,13 @@ export function useProfilePicture({
           file,
         });
         setIsRemoved(false);
-        toast.success('Profile picture uploaded successfully');
+        translatedToast.success('toast.success.uploaded', {
+          item: 'Profile picture',
+        });
       } catch {
-        toast.error('Failed to upload profile picture');
+        translatedToast.error('toast.error.failedToUpload', {
+          item: 'profile picture',
+        });
         setAvatarPreview(null);
       }
     } else {
@@ -91,9 +93,13 @@ export function useProfilePicture({
         await removeMutation.mutateAsync(asUserId(userId));
         setAvatarPreview(null);
         setIsRemoved(true);
-        toast.success('Profile picture removed successfully');
+        translatedToast.success('toast.success.removed', {
+          item: 'Profile picture',
+        });
       } catch {
-        toast.error('Failed to remove profile picture');
+        translatedToast.error('toast.error.failedToDelete', {
+          item: 'profile picture',
+        });
       }
     } else {
       setAvatarPreview(null);

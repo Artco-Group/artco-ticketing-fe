@@ -38,8 +38,8 @@ export function Progress({
   variant = 'circle',
   showLabel = true,
   label,
-  completeColor = '#22c55e',
-  progressColor = '#3b82f6',
+  completeColor = 'var(--icon-success)',
+  progressColor = 'var(--icon-core)',
   className,
 }: ProgressProps) {
   const percentage = Math.min(100, Math.max(0, value));
@@ -92,7 +92,7 @@ export function Progress({
           cy={config.circle / 2}
           r={radius}
           fill="none"
-          stroke="#e5e7eb"
+          stroke="var(--color-greyscale-200)"
           strokeWidth={config.stroke}
         />
         {/* Progress circle */}
@@ -110,7 +110,12 @@ export function Progress({
         />
       </svg>
       {showLabel && (
-        <span className={cn('font-medium', sizeConfig[size].fontSize)}>
+        <span
+          className={cn(
+            'min-w-[2.5rem] font-medium',
+            sizeConfig[size].fontSize
+          )}
+        >
           {label ?? `${Math.round(percentage)}%`}
         </span>
       )}
@@ -133,8 +138,8 @@ export function ProgressCircle({
   const percentage = Math.min(100, Math.max(0, value));
   const isComplete = percentage >= 100;
   const color = isComplete
-    ? (completeColor ?? '#22c55e')
-    : (progressColor ?? '#3b82f6');
+    ? (completeColor ?? 'var(--icon-success)')
+    : (progressColor ?? 'var(--icon-core)');
   const config = sizeConfig[size];
   const radius = (config.circle - config.stroke) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -153,7 +158,7 @@ export function ProgressCircle({
           cy={config.circle / 2}
           r={radius}
           fill="none"
-          stroke="#e5e7eb"
+          stroke="var(--color-greyscale-200)"
           strokeWidth={config.stroke}
         />
         <circle

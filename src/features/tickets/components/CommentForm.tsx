@@ -1,6 +1,7 @@
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent, type KeyboardEvent } from 'react';
 import { Button } from '@/shared/components/ui/Button';
 import { cn } from '@/lib/utils';
+import { useAppTranslation } from '@/shared/hooks';
 
 interface CommentFormProps {
   onSubmit: (text: string) => void;
@@ -15,13 +16,17 @@ interface CommentFormProps {
 export function CommentForm({
   onSubmit,
   onCancel,
-  placeholder = 'Write a reply...',
+  placeholder,
   initialValue = '',
-  submitLabel = 'Send',
+  submitLabel,
   disabled = false,
   isLoading = false,
 }: CommentFormProps) {
+  const { translate } = useAppTranslation('tickets');
   const [text, setText] = useState(initialValue);
+
+  const resolvedPlaceholder = placeholder ?? translate('comments.placeholder');
+  const resolvedSubmitLabel = submitLabel ?? translate('comments.send');
 
   // Sync with initialValue changes (for edit mode)
   useEffect(() => {
@@ -43,6 +48,17 @@ export function CommentForm({
     onCancel?.();
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const trimmedText = text.trim();
+      if (trimmedText && !disabled) {
+        onSubmit(trimmedText);
+        setText('');
+      }
+    }
+  };
+
   const isSubmitDisabled = disabled || !text.trim();
 
   return (
@@ -50,7 +66,8 @@ export function CommentForm({
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder={placeholder}
+        onKeyDown={handleKeyDown}
+        placeholder={resolvedPlaceholder}
         disabled={disabled}
         rows={3}
         className={cn(
@@ -72,7 +89,7 @@ export function CommentForm({
             disabled={disabled}
             loading={isLoading}
           >
-            Cancel
+            {translate('comments.cancel')}
           </Button>
         )}
 
@@ -83,7 +100,7 @@ export function CommentForm({
           disabled={isSubmitDisabled}
           loading={isLoading}
         >
-          {submitLabel}
+          {resolvedSubmitLabel}
         </Button>
       </div>
     </form>

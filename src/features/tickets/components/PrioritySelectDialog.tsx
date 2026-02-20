@@ -7,10 +7,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/shared/components/ui/dialog';
-import {
-  getPriorityIcon,
-  getPriorityLabel,
-} from '@/shared/utils/ticket-helpers';
+import { getPriorityIcon } from '@/shared/utils/ticket-helpers';
+import { useAppTranslation } from '@/shared/hooks';
+import { useTranslatedOptions } from '../hooks';
 
 const PRIORITY_OPTIONS: TicketPriority[] = [
   TicketPriority.CRITICAL,
@@ -34,14 +33,16 @@ export function PrioritySelectDialog({
   selectedCount,
   isLoading = false,
 }: PrioritySelectDialogProps) {
+  const { translate } = useAppTranslation('tickets');
+  const { getPriorityLabel } = useTranslatedOptions();
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-[360px]">
         <DialogHeader>
-          <DialogTitle>Change Priority</DialogTitle>
+          <DialogTitle>{translate('actions.changePriority')}</DialogTitle>
           <DialogDescription>
-            Select a new priority for {selectedCount} ticket
-            {selectedCount > 1 ? 's' : ''}.
+            {translate('dialog.selectPriority', { count: selectedCount })}
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4 flex flex-col gap-2">

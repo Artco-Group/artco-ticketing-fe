@@ -29,6 +29,7 @@ import {
   type UserId,
   type UserWithStats,
 } from '@/types';
+import { useTranslatedToast } from '@/shared/hooks';
 import { useToast } from '@/shared/components/ui';
 
 function getStatusFromRole(role: string): string {
@@ -51,6 +52,7 @@ export function useUserList() {
   const uploadAvatarMutation = useUploadAvatar();
   const addProjectMembersMutation = useAddProjectMembers();
   const removeProjectMemberMutation = useRemoveProjectMember();
+  const translatedToast = useTranslatedToast();
   const toast = useToast();
 
   // UI state
@@ -74,9 +76,9 @@ export function useUserList() {
     return [];
   }, [ticketsData]);
 
-  // Get projects array
+  // Get projects array (exclude archived projects)
   const allProjects = useMemo<Project[]>(
-    () => projectsData?.projects || [],
+    () => (projectsData?.projects || []).filter((p) => !p.isArchived),
     [projectsData]
   );
 
@@ -163,7 +165,7 @@ export function useUserList() {
   const handleUpdateUser = async (id: UserId, formData: UpdateUserFormData) => {
     try {
       await updateUserMutation.mutateAsync({ id, data: formData });
-      toast.success('User updated successfully');
+      translatedToast.success('toast.success.updated', { item: 'User' });
     } catch (err) {
       toast.error(getErrorMessage(err));
       throw err;
@@ -173,7 +175,7 @@ export function useUserList() {
   const handleDeleteUser = async (id: UserId) => {
     try {
       await deleteUserMutation.mutateAsync(id);
-      toast.success('User deleted successfully');
+      translatedToast.success('toast.success.deleted', { item: 'User' });
     } catch (err) {
       toast.error(getErrorMessage(err));
       throw err;
@@ -219,8 +221,8 @@ export function useUserList() {
             })
           )
         );
-      } catch (_err) {
-        toast.error('Failed to assign to some projects');
+      } catch (err) {
+        toast.error(getErrorMessage(err));
       }
     }
 
@@ -234,8 +236,8 @@ export function useUserList() {
             })
           )
         );
-      } catch (_err) {
-        toast.error('Failed to remove from some projects');
+      } catch (err) {
+        toast.error(getErrorMessage(err));
       }
     }
   };
@@ -249,7 +251,7 @@ export function useUserList() {
     if (editingUser) {
       const { id: userId, email: userEmail } = editingUser;
       if (!userId || !userEmail) {
-        toast.error('Invalid user data');
+        translatedToast.error('toast.error.invalidData', { item: 'user' });
         return;
       }
 
@@ -263,11 +265,12 @@ export function useUserList() {
             file: avatarFile,
           });
         } catch (_err) {
-          toast.error('Failed to upload avatar');
+          translatedToast.error('toast.error.failedToUpload', {
+            item: 'avatar',
+          });
         }
       }
 
-      // Handle project assignments for edit
       if (projectIds) {
         const currentProjectIds =
           'projects' in editingUser
@@ -286,36 +289,47 @@ export function useUserList() {
     }
 
     // Create new user
-    const result = await createUserMutation.mutateAsync(
-      formData as CreateUserFormData
-    );
-    const newUser = result?.user;
+    try {
+      const result = await createUserMutation.mutateAsync(
+        formData as CreateUserFormData
+      );
+      const newUser = result?.user;
 
-    if (!newUser?.id || !newUser?.email) {
-      toast.error('Failed to create user');
-      return;
-    }
-
-    toast.success('Member created successfully');
-
-    // Handle avatar upload for new user
-    if (avatarFile) {
-      try {
-        await uploadAvatarMutation.mutateAsync({
-          userId: asUserId(newUser.id),
-          file: avatarFile,
-        });
-      } catch (_err) {
-        toast.error('Failed to upload avatar');
+      if (!newUser?.id || !newUser?.email) {
+        translatedToast.error('toast.error.failedToCreate', { item: 'user' });
+        return;
       }
-    }
 
-    // Handle project assignments for new user
-    if (projectIds && projectIds.length > 0) {
-      await handleProjectAssignments(newUser.id, newUser.email, projectIds, []);
-    }
+      translatedToast.success('toast.success.created', { item: 'Member' });
 
-    handleCloseFormModal();
+      // Handle avatar upload for new user
+      if (avatarFile) {
+        try {
+          await uploadAvatarMutation.mutateAsync({
+            userId: asUserId(newUser.id),
+            file: avatarFile,
+          });
+        } catch (_err) {
+          translatedToast.error('toast.error.failedToUpload', {
+            item: 'avatar',
+          });
+        }
+      }
+
+      // Handle project assignments for new user
+      if (projectIds && projectIds.length > 0) {
+        await handleProjectAssignments(
+          newUser.id,
+          newUser.email,
+          projectIds,
+          []
+        );
+      }
+
+      handleCloseFormModal();
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+    }
   };
 
   const handleConfirmDelete = async () => {
@@ -323,7 +337,7 @@ export function useUserList() {
 
     const { id: userId } = userToDelete;
     if (!userId) {
-      toast.error('Invalid user data');
+      translatedToast.error('toast.error.invalidData', { item: 'user' });
       setUserToDelete(null);
       return;
     }

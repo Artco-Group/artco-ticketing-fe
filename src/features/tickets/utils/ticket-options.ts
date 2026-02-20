@@ -82,3 +82,24 @@ export const CATEGORY_FORM_OPTIONS = [
     value: TicketCategory.OTHER,
   },
 ];
+
+/**
+ * Tab configuration for ticket list page
+ */
+export const TICKET_TABS_CONFIG = [
+  { id: 'active', labelKey: 'tabs.active', icon: 'tasks' },
+  { id: 'backlog', labelKey: 'tabs.backlog', icon: 'backlog' },
+  { id: 'resolved', labelKey: 'tabs.resolved', icon: 'check' },
+  { id: 'all', labelKey: 'tabs.all', icon: 'all' },
+] as const;
+
+/**
+ * Group by options configuration for ticket list
+ */
+export const GROUP_BY_OPTIONS_CONFIG = [
+  { value: 'status', labelKey: 'groupBy.status' },
+  { value: 'priority', labelKey: 'groupBy.priority' },
+  { value: 'assignee', labelKey: 'groupBy.assignee' },
+  { value: 'project', labelKey: 'groupBy.project' },
+  { value: 'dueDate', labelKey: 'groupBy.dueDate' },
+] as const;

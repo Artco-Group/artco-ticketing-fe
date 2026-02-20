@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useTranslatedToast } from '@/shared/hooks';
 import { useToast } from '@/shared/components/ui';
 import { getErrorMessage } from '@/shared';
 import { formatDateTime } from '@artco-group/artco-ticketing-sync';
@@ -30,6 +31,7 @@ interface CommentEditState {
  * Handles all comment actions for CommentList and CommentForm components.
  */
 export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
+  const translatedToast = useTranslatedToast();
   const toast = useToast();
 
   // State for editing comments
@@ -54,17 +56,14 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
   const updateCommentMutation = useUpdateComment();
   const deleteCommentMutation = useDeleteComment();
 
-  const comments = useMemo(
-    () => commentsData?.comments || [],
-    [commentsData?.comments]
-  );
+  const comments = commentsData?.comments ?? [];
 
   /**
    * Handle adding a new comment
    */
   const handleAddComment = async (text: string) => {
     try {
-      const payload: any = {
+      const payload: { ticketId: TicketId; text: string; replyId?: string } = {
         ticketId,
         text,
       };
@@ -74,7 +73,7 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
       }
 
       await addCommentMutation.mutateAsync(payload);
-      toast.success('Komentar uspješno dodan');
+      translatedToast.success('toast.success.created', { item: 'Comment' });
       // Clear reply state after successful add
       setReplyingToCommentId(null);
     } catch (error) {
@@ -94,7 +93,7 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
         commentId: editingComment.commentId,
         text,
       });
-      toast.success('Komentar uspješno ažuriran');
+      translatedToast.success('toast.success.updated', { item: 'Comment' });
       // Clear editing state
       setEditingComment({ commentId: null, text: '' });
     } catch (error) {
@@ -109,7 +108,7 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
   const handleDeleteComment = async (commentId: CommentId) => {
     try {
       await deleteCommentMutation.mutateAsync(commentId);
-      toast.success('Komentar uspješno obrisan');
+      translatedToast.success('toast.success.deleted', { item: 'Comment' });
     } catch (error) {
       toast.error(getErrorMessage(error));
       throw error;
@@ -222,8 +221,9 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
    */
   const groupedComments = useMemo(() => {
     const groups: { [key: string]: Comment[] } = {};
+    const commentsList = commentsData?.comments ?? [];
 
-    comments.forEach((comment) => {
+    commentsList.forEach((comment) => {
       const dateKey = formatDateKey(comment.createdAt);
       if (!groups[dateKey]) {
         groups[dateKey] = [];
@@ -232,7 +232,7 @@ export function useComments({ ticketId, currentUserId }: UseCommentsProps) {
     });
 
     return groups;
-  }, [comments]);
+  }, [commentsData?.comments]);
 
   /**
    * Check if a comment was edited

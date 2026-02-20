@@ -13,6 +13,7 @@ import {
 import { MemberPicker } from '@/shared/components/composite/MemberPicker';
 import { type UseFormReturn } from 'react-hook-form';
 import { type TicketFormData } from '../hooks/useTicketDialogForm';
+import { useAppTranslation } from '@/shared/hooks';
 import {
   CATEGORY_FORM_OPTIONS,
   PRIORITY_FORM_OPTIONS,
@@ -31,6 +32,7 @@ interface TicketFormProps {
   projectOptions: ProjectOption[];
   isProjectLocked?: boolean;
   developerUsers?: User[];
+  engLeadUsers?: User[];
   canAssign?: boolean;
 }
 
@@ -42,8 +44,10 @@ export function TicketForm({
   projectOptions,
   isProjectLocked = false,
   developerUsers = [],
+  engLeadUsers = [],
   canAssign = false,
 }: TicketFormProps) {
+  const { translate, language } = useAppTranslation('tickets');
   const category = form.watch('category');
   const isBug = category === TicketCategory.BUG;
 
@@ -56,7 +60,7 @@ export function TicketForm({
           render={({ field, fieldState }) => (
             <FormItem className="space-y-0">
               <Input
-                label="Title"
+                label={translate('form.title')}
                 autoComplete="off"
                 error={fieldState.error?.message}
                 required
@@ -72,8 +76,8 @@ export function TicketForm({
           render={({ field, fieldState }) => (
             <FormItem className="space-y-0">
               <Textarea
-                label="Description"
-                placeholder="Describe the issue or request in detail"
+                label={translate('form.description')}
+                placeholder={translate('form.descriptionPlaceholder')}
                 rows={5}
                 error={fieldState.error?.message}
                 required
@@ -91,10 +95,11 @@ export function TicketForm({
               render={({ field, fieldState }) => (
                 <FormItem className="space-y-0">
                   <Select
-                    label="Category"
+                    label={translate('form.category')}
                     options={CATEGORY_FORM_OPTIONS}
-                    placeholder="Select category"
+                    placeholder={translate('form.categoryPlaceholder')}
                     error={fieldState.error?.message}
+                    required
                     {...field}
                   />
                 </FormItem>
@@ -107,9 +112,9 @@ export function TicketForm({
               render={({ field, fieldState }) => (
                 <FormItem className="space-y-0">
                   <Select
-                    label="Priority"
+                    label={translate('form.priority')}
                     options={PRIORITY_FORM_OPTIONS}
-                    placeholder="Select priority"
+                    placeholder={translate('form.priorityPlaceholder')}
                     error={fieldState.error?.message}
                     {...field}
                   />
@@ -125,9 +130,9 @@ export function TicketForm({
             render={({ field, fieldState }) => (
               <FormItem className="space-y-0">
                 <Select
-                  label="Project"
+                  label={translate('form.project')}
                   options={projectOptions}
-                  placeholder="Select project"
+                  placeholder={translate('form.projectPlaceholder')}
                   error={fieldState.error?.message}
                   disabled={isProjectLocked}
                   required
@@ -144,8 +149,8 @@ export function TicketForm({
           render={({ field, fieldState }) => (
             <FormItem className="space-y-0">
               <Input
-                label="Affected Module"
-                placeholder="e.g., Mobile App, Admin Panel"
+                label={translate('form.affectedModule')}
+                placeholder={translate('form.affectedModulePlaceholder')}
                 autoComplete="off"
                 error={fieldState.error?.message}
                 {...field}
@@ -160,7 +165,7 @@ export function TicketForm({
             name="assignedTo"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel>Assignee</FormLabel>
+                <FormLabel>{translate('form.assignee')}</FormLabel>
                 <FormControl>
                   <MemberPicker
                     value={field.value || ''}
@@ -168,7 +173,29 @@ export function TicketForm({
                     onChange={(value) =>
                       field.onChange(Array.isArray(value) ? value[0] : value)
                     }
-                    placeholder="Select assignee"
+                    placeholder={translate('form.assigneePlaceholder')}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
+
+        {engLeadUsers.length > 0 && !isEditing && (
+          <FormField
+            control={form.control}
+            name="engLead"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>{translate('form.engLead')}</FormLabel>
+                <FormControl>
+                  <MemberPicker
+                    value={field.value || ''}
+                    options={engLeadUsers}
+                    onChange={(value) =>
+                      field.onChange(Array.isArray(value) ? value[0] : value)
+                    }
+                    placeholder={translate('form.engLeadPlaceholder')}
                   />
                 </FormControl>
               </FormItem>
@@ -184,10 +211,12 @@ export function TicketForm({
               render={({ field, fieldState }) => (
                 <FormItem className="space-y-0">
                   <DatePicker
-                    label="Start Date"
+                    label={translate('form.startDate')}
+                    placeholder={translate('form.startDatePlaceholder')}
                     value={field.value}
                     onChange={field.onChange}
                     error={fieldState.error?.message}
+                    locale={language}
                   />
                 </FormItem>
               )}
@@ -199,10 +228,12 @@ export function TicketForm({
               render={({ field, fieldState }) => (
                 <FormItem className="space-y-0">
                   <DatePicker
-                    label="Due Date"
+                    label={translate('form.dueDate')}
+                    placeholder={translate('form.dueDatePlaceholder')}
                     value={field.value}
                     onChange={field.onChange}
                     error={fieldState.error?.message}
+                    locale={language}
                   />
                 </FormItem>
               )}
@@ -217,8 +248,8 @@ export function TicketForm({
               render={({ field, fieldState }) => (
                 <FormItem className="space-y-0">
                   <Textarea
-                    label="Reproduction Steps"
-                    placeholder="1. Go to...&#10;2. Click on...&#10;3. Observe..."
+                    label={translate('form.reproductionSteps')}
+                    placeholder={translate('form.reproductionStepsPlaceholder')}
                     rows={4}
                     error={fieldState.error?.message}
                     {...field}
@@ -233,8 +264,8 @@ export function TicketForm({
               render={({ field, fieldState }) => (
                 <FormItem className="space-y-0">
                   <Textarea
-                    label="Expected Result"
-                    placeholder="What should happen?"
+                    label={translate('form.expectedResult')}
+                    placeholder={translate('form.expectedResultPlaceholder')}
                     rows={2}
                     error={fieldState.error?.message}
                     {...field}
@@ -249,8 +280,8 @@ export function TicketForm({
               render={({ field, fieldState }) => (
                 <FormItem className="space-y-0">
                   <Textarea
-                    label="Actual Result"
-                    placeholder="What actually happens?"
+                    label={translate('form.actualResult')}
+                    placeholder={translate('form.actualResultPlaceholder')}
                     rows={2}
                     error={fieldState.error?.message}
                     {...field}

@@ -1,6 +1,7 @@
 import { Icon } from '../Icon';
 import { Button } from '../Button';
 import { cn } from '@/lib/utils';
+import { useAppTranslation } from '@/shared/hooks';
 
 interface RetryableErrorProps {
   title?: string;
@@ -28,12 +29,17 @@ interface RetryableErrorProps {
  * }
  */
 export function RetryableError({
-  title = 'Something went wrong',
-  message = "We couldn't load this content. Please try again.",
+  title,
+  message,
   onRetry,
   retrying = false,
   className,
 }: RetryableErrorProps) {
+  const { translate } = useAppTranslation('common');
+
+  const displayTitle = title ?? translate('errors.somethingWentWrong');
+  const displayMessage = message ?? translate('errors.couldNotLoad');
+
   return (
     <div
       role="alert"
@@ -45,12 +51,14 @@ export function RetryableError({
       <div className="bg-error-100 mb-4 rounded-full p-3">
         <Icon name="info" size="xl" className="text-error-500" />
       </div>
-      <h3 className="text-greyscale-900 mb-2 text-xl font-semibold">{title}</h3>
+      <h3 className="text-greyscale-900 mb-2 text-xl font-semibold">
+        {displayTitle}
+      </h3>
       <p className="text-greyscale-500 mb-6 max-w-md min-w-[20rem] text-sm">
-        {message}
+        {displayMessage}
       </p>
       <Button onClick={onRetry} loading={retrying}>
-        {retrying ? 'Retrying...' : 'Try Again'}
+        {retrying ? translate('errors.retrying') : translate('errors.tryAgain')}
       </Button>
     </div>
   );

@@ -14,26 +14,28 @@ export type IconVariant =
   | 'grey';
 
 const variantColors: Record<IconVariant, string> = {
-  primary: '#007BE5',
-  red: '#DC3412',
-  orange: '#FC9E24',
-  yellow: '#eab308',
-  green: '#009951',
-  blue: '#007BE5',
-  teal: '#0087A8',
-  pink: '#EA10AC',
-  violet: '#443DEB',
-  purple: '#8638E5',
-  grey: '#757575',
+  primary: 'var(--icon-core)',
+  red: 'var(--icon-danger-default)',
+  orange: 'var(--badge-orange)',
+  yellow: 'var(--badge-yellow)',
+  green: 'var(--icon-success)',
+  blue: 'var(--icon-core)',
+  teal: 'var(--icon-info)',
+  pink: 'var(--icon-support)',
+  violet: 'var(--icon-highlight)',
+  purple: 'var(--icon-component)',
+  grey: 'var(--color-greyscale-500)',
 };
 
 export const StatusIcon = ({
   fillPercent,
   variant = 'grey',
+  dotted = false,
   className,
 }: {
   fillPercent: number;
   variant?: IconVariant;
+  dotted?: boolean;
   className?: string;
 }): ReactNode => {
   const color = variantColors[variant];
@@ -86,6 +88,7 @@ export const StatusIcon = ({
         r={radius - 0.6}
         stroke={color}
         strokeWidth="1.2"
+        strokeDasharray={dotted ? '2.5 2' : undefined}
         fill="none"
       />
     </svg>

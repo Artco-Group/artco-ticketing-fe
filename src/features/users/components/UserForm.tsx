@@ -17,6 +17,7 @@ import {
 } from '@/shared/components/ui';
 import { ProjectPicker } from '@/shared/components/composite';
 import { useUserForm, useProfilePicture } from '../hooks';
+import { useAppTranslation } from '@/shared/hooks';
 
 interface UserFormProps {
   formId: string;
@@ -47,6 +48,7 @@ function UserForm({
   currentAvatar,
   isClient = false,
 }: UserFormProps) {
+  const { translate } = useAppTranslation('users');
   const {
     fileInputRef,
     pendingFile,
@@ -94,7 +96,9 @@ function UserForm({
             className="h-16 w-16"
           />
           <div>
-            <p className="text-sm font-medium">Profile Picture</p>
+            <p className="text-sm font-medium">
+              {translate('form.profilePicture')}
+            </p>
             <div className="mt-1 flex gap-2">
               <Button
                 type="button"
@@ -102,7 +106,9 @@ function UserForm({
                 disabled={isAvatarLoading || isSubmitting}
                 onClick={openFilePicker}
               >
-                {isAvatarLoading ? 'Uploading...' : 'Upload Image'}
+                {isAvatarLoading
+                  ? translate('form.uploading')
+                  : translate('form.uploadImage')}
               </Button>
               <Button
                 type="button"
@@ -111,7 +117,7 @@ function UserForm({
                 disabled={!hasAvatar || isAvatarLoading || isSubmitting}
                 onClick={handleRemoveAvatar}
               >
-                Remove
+                {translate('form.remove')}
               </Button>
               <input
                 ref={fileInputRef}
@@ -119,11 +125,11 @@ function UserForm({
                 accept="image/jpeg,image/jpg,image/png,image/gif"
                 className="hidden"
                 onChange={handleFileSelect}
-                aria-label="Upload profile picture"
+                aria-label={translate('form.uploadImage')}
               />
             </div>
             <p className="text-muted-foreground mt-1 text-xs">
-              We support PNGs, JPEGs and GIFs under 10MB
+              {translate('form.avatarHint')}
             </p>
           </div>
         </div>
@@ -136,10 +142,12 @@ function UserForm({
           render={({ field, fieldState }) => (
             <FormItem className="space-y-0">
               <Input
-                label="Name"
+                label={translate('form.name')}
                 autoComplete="name"
                 placeholder={
-                  isClient ? 'Enter client name' : 'Enter member name'
+                  isClient
+                    ? translate('form.clientNamePlaceholder')
+                    : translate('form.namePlaceholder')
                 }
                 error={fieldState.error?.message}
                 required
@@ -155,9 +163,9 @@ function UserForm({
           render={({ field, fieldState }) => (
             <FormItem className="space-y-0">
               <Input
-                label="Email Address"
+                label={translate('form.email')}
                 autoComplete="email"
-                placeholder="Enter email address"
+                placeholder={translate('form.emailPlaceholder')}
                 error={fieldState.error?.message}
                 required
                 {...field}
@@ -173,12 +181,12 @@ function UserForm({
             render={({ field, fieldState }) => (
               <FormItem className="space-y-0">
                 <Select
-                  label="Role"
+                  label={translate('form.role')}
                   options={INTERNAL_ROLES.map((role) => ({
                     label: UserRoleDisplay[role],
                     value: role,
                   }))}
-                  placeholder="Select a role"
+                  placeholder={translate('form.rolePlaceholder')}
                   error={fieldState.error?.message}
                   required
                   {...field}
@@ -193,20 +201,20 @@ function UserForm({
           (form.watch('role') === UserRole.DEVELOPER ||
             form.watch('role') === UserRole.ENG_LEAD) && (
             <ProjectPicker
-              label="Assign to project"
+              label={translate('form.assignToProject')}
               value={selectedProjectIds}
               options={projectOptions}
               onChange={setSelectedProjectIds}
-              placeholder="Select projects..."
+              placeholder={translate('form.selectProjects')}
               disabled={isSubmitting}
             />
           )}
 
         {!isEditing && (
           <p className="text-muted-foreground text-sm">
-            A temporary password will be generated and sent to the{' '}
-            {isClient ? 'client' : 'user'} via email. They will be required to
-            change it on first login.
+            {isClient
+              ? translate('form.clientPasswordInfo')
+              : translate('form.passwordInfo')}
           </p>
         )}
       </form>

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { formatDateDisplay } from '@artco-group/artco-ticketing-sync';
 import { type Ticket, type User, type Project } from '@/types';
 import {
   StatusEdit,
@@ -10,7 +11,8 @@ import {
   ProjectEdit,
   EngLeadEdit,
 } from './TicketInlineEdit';
-import { useTicketInlineEdit } from '../hooks/useTicketInlineEdit';
+import { useTicketInlineEdit, useWorkflowStatusOptions } from '../hooks';
+import { useAppTranslation } from '@/shared/hooks';
 
 interface TicketMetadataProps {
   ticket: Ticket;
@@ -29,6 +31,7 @@ function TicketMetadata({
   isEngLead,
   isAdmin = false,
 }: TicketMetadataProps) {
+  const { translate, language } = useAppTranslation('tickets');
   const inlineEdit = useTicketInlineEdit({
     ticket,
     users,
@@ -37,7 +40,9 @@ function TicketMetadata({
     isAdmin,
   });
 
-  // Get project leads as eng lead options
+  const { statusOptions, getStatusIcon, getStatusLabel, hasWorkflow } =
+    useWorkflowStatusOptions(ticket.project?.statusConfig);
+
   const projectLeads = ticket.project?.leads || [];
 
   const projectOptions = projects.map((p) => ({
@@ -54,6 +59,9 @@ function TicketMetadata({
           canEdit={inlineEdit.canEditStatus}
           isLoading={inlineEdit.isStatusUpdating}
           onChange={inlineEdit.onStatusChange}
+          workflowOptions={hasWorkflow ? statusOptions : undefined}
+          getWorkflowStatusIcon={hasWorkflow ? getStatusIcon : undefined}
+          getWorkflowStatusLabel={hasWorkflow ? getStatusLabel : undefined}
         />
         <PriorityEdit
           value={ticket.priority}
@@ -120,15 +128,9 @@ function TicketMetadata({
           onChange={inlineEdit.onDueDateChange}
         />
 
-        <MetadataRow label="Created">
+        <MetadataRow label={translate('details.created')}>
           <span className="text-sm">
-            {ticket.createdAt
-              ? new Date(ticket.createdAt).toLocaleDateString('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                })
-              : '-'}
+            {formatDateDisplay(ticket.createdAt, language, 'long')}
           </span>
         </MetadataRow>
       </div>
@@ -145,7 +147,7 @@ function MetadataRow({
 }) {
   return (
     <div className="flex h-8 items-center justify-start">
-      <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
+      <span className="text-muted-foreground mr-3 w-28 shrink-0 text-sm whitespace-nowrap">
         {label}
       </span>
       {children}

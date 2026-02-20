@@ -35,22 +35,20 @@ export function ProjectPicker({
   className,
   label = 'Projects',
 }: ProjectPickerProps) {
-  const selectedIds = useMemo(() => value || [], [value]);
-
   const selectedProjects = useMemo(
-    () => options.filter((project) => selectedIds.includes(project.id)),
-    [options, selectedIds]
+    () => options.filter((project) => value.includes(project.id)),
+    [options, value]
   );
 
   const handleOptionSelect = (projectId: string) => {
-    const newValue = selectedIds.includes(projectId)
-      ? selectedIds.filter((id) => id !== projectId)
-      : [...selectedIds, projectId];
+    const newValue = value.includes(projectId)
+      ? value.filter((id) => id !== projectId)
+      : [...value, projectId];
     onChange(newValue);
   };
 
   const handleRemoveBadge = (projectId: string) => {
-    onChange(selectedIds.filter((id) => id !== projectId));
+    onChange(value.filter((id) => id !== projectId));
   };
 
   const triggerContent =
@@ -107,7 +105,7 @@ export function ProjectPicker({
                 name={project.name}
                 clientName={project.clientName}
                 clientAvatar={project.clientAvatar}
-                isSelected={selectedIds.includes(project.id)}
+                isSelected={value.includes(project.id)}
                 onSelect={() => handleOptionSelect(project.id)}
               />
             ))

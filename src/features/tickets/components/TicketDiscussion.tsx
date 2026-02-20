@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import { CommentList } from './CommentList';
 import { CommentForm } from './CommentForm';
 import { useComments } from '../hooks/useComments';
+import { useAppTranslation } from '@/shared/hooks';
 
 interface TicketDiscussionProps {
   ticketId: string;
@@ -10,14 +11,22 @@ interface TicketDiscussionProps {
 }
 
 function TicketDiscussion({ ticketId, currentUserId }: TicketDiscussionProps) {
+  const { translate } = useAppTranslation('tickets');
+  const { translate: translateCommon } = useAppTranslation('common');
   const commentsHook = useComments({
     ticketId: asTicketId(ticketId),
     currentUserId,
   });
 
+  const replyToName =
+    commentsHook.replyingToComment?.authorId?.name ||
+    translateCommon('unknownUser');
+
   return (
     <div className="p-6">
-      <h3 className="text-lg font-semibold">Discussion</h3>
+      <h3 className="text-lg font-semibold">
+        {translate('comments.discussion')}
+      </h3>
       <CommentList
         comments={commentsHook.comments}
         groupedComments={commentsHook.groupedComments}
@@ -29,7 +38,9 @@ function TicketDiscussion({ ticketId, currentUserId }: TicketDiscussionProps) {
       />
       <div className={cn(commentsHook.isEditing && 'mt-4 border-t pt-4')}>
         {commentsHook.isEditing && (
-          <p className="text-muted-foreground mb-2 text-sm">Editing comment</p>
+          <p className="text-muted-foreground mb-2 text-sm">
+            {translate('comments.editingComment')}
+          </p>
         )}
         <CommentForm
           onSubmit={commentsHook.onSubmit}
@@ -44,8 +55,8 @@ function TicketDiscussion({ ticketId, currentUserId }: TicketDiscussionProps) {
             commentsHook.isEditing
               ? undefined
               : commentsHook.isReplying && commentsHook.replyingToComment
-                ? `Reply to ${commentsHook.replyingToComment.authorId?.name || 'Unknown'}`
-                : 'Add Comment...'
+                ? translate('comments.replyTo', { name: replyToName })
+                : translate('comments.addComment')
           }
           initialValue={
             commentsHook.isEditing
@@ -54,10 +65,10 @@ function TicketDiscussion({ ticketId, currentUserId }: TicketDiscussionProps) {
           }
           submitLabel={
             commentsHook.isEditing
-              ? 'Save'
+              ? translate('comments.save')
               : commentsHook.isReplying
-                ? 'Reply'
-                : 'Send'
+                ? translate('comments.reply')
+                : translate('comments.send')
           }
           disabled={commentsHook.isSubmitting}
           isLoading={commentsHook.isSubmitting}

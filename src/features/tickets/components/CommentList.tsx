@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
 } from '@/shared/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { useAppTranslation } from '@/shared/hooks';
 
 interface CommentListProps {
   comments: Comment[];
@@ -42,7 +43,9 @@ const CommentItem = memo(function CommentItem({
   onDelete,
   getCommentTimeDisplay,
 }: CommentItemProps) {
-  const authorName = comment.authorId?.name || 'Unknown User';
+  const { translate } = useAppTranslation('tickets');
+  const { translate: translateCommon } = useAppTranslation('common');
+  const authorName = comment.authorId?.name || translateCommon('unknownUser');
 
   return (
     <div
@@ -69,7 +72,7 @@ const CommentItem = memo(function CommentItem({
               <div className="mb-1 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold">
-                    {isCurrentUser ? 'You' : authorName}
+                    {isCurrentUser ? translateCommon('you') : authorName}
                   </span>
                   <span
                     className={cn(
@@ -90,7 +93,7 @@ const CommentItem = memo(function CommentItem({
                           ? 'hover:bg-white/20'
                           : 'hover:bg-greyscale-200'
                       )}
-                      aria-label="Options"
+                      aria-label={translateCommon('options')}
                     >
                       <Icon
                         name="more-horizontal"
@@ -103,21 +106,21 @@ const CommentItem = memo(function CommentItem({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => onReply(commentId)}>
-                      <span>Reply</span>
+                      <span>{translate('comments.reply')}</span>
                     </DropdownMenuItem>
                     {isCurrentUser && (
                       <>
                         <DropdownMenuItem
                           onClick={() => onEdit(commentId, comment.text)}
                         >
-                          <span>Edit</span>
+                          <span>{translate('comments.edit')}</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => onDelete(commentId)}
                           className="text-destructive focus:text-destructive"
                         >
-                          <span>Delete</span>
+                          <span>{translate('comments.delete')}</span>
                         </DropdownMenuItem>
                       </>
                     )}
@@ -142,7 +145,9 @@ const CommentItem = memo(function CommentItem({
                         isCurrentUser ? 'text-white/90' : 'text-greyscale-700'
                       )}
                     >
-                      Replied to {comment.replyId.authorId?.name || 'Unknown'}
+                      {translateCommon('repliedTo')}{' '}
+                      {comment.replyId.authorId?.name ||
+                        translateCommon('unknownUser')}
                     </span>
                   </div>
                   <p
@@ -178,6 +183,7 @@ export function CommentList({
   onDelete,
   getCommentTimeDisplay,
 }: CommentListProps) {
+  const { translate } = useAppTranslation('tickets');
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -189,8 +195,8 @@ export function CommentList({
   if (comments.length === 0) {
     return (
       <EmptyState
-        title="No comments"
-        message="Be the first to start discussion"
+        title={translate('comments.noComments')}
+        message={translate('comments.addFirst')}
         className="min-h-0 py-8"
       />
     );
