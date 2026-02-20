@@ -1,13 +1,14 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppTranslation } from '@/shared/hooks';
 import type { DragEndEvent } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
 import {
   DEFAULT_STATUS_CONFIG,
   type StatusDefinition,
-  type StatusGroups,
   type StatusColor,
+  createStatusConfigSchema,
   type CreateStatusConfigInput,
 } from '@artco-group/artco-ticketing-sync';
 import {
@@ -27,16 +28,6 @@ import {
   type StatusGroupType,
 } from '../utils/status-config-helpers';
 
-interface StatusConfigEditorErrors {
-  name?: string;
-  statuses?: string;
-  statusNames?: string;
-  initial?: string;
-  backlog?: string;
-  active?: string;
-  completed?: string;
-}
-
 interface GroupValidationState {
   hasBacklog: boolean;
   hasActive: boolean;
@@ -44,14 +35,7 @@ interface GroupValidationState {
   hasInitial: boolean;
 }
 
-interface FormState {
-  name: string;
-  description: string;
-  statuses: StatusDefinition[];
-  groups: StatusGroups;
-}
-
-const DEFAULT_FORM_STATE: FormState = {
+const DEFAULT_FORM_VALUES: CreateStatusConfigInput = {
   name: '',
   description: '',
   statuses: DEFAULT_STATUS_CONFIG.statuses.map((s, i) => ({
@@ -74,64 +58,41 @@ export function useStatusConfigEditor() {
   const { data: projectsData } = useProjects();
   const updateProjectMutation = useUpdateProject();
 
-  const [formState, setFormState] = useState<FormState>(DEFAULT_FORM_STATE);
+  const form = useForm<CreateStatusConfigInput>({
+    resolver: zodResolver(createStatusConfigSchema),
+    defaultValues: DEFAULT_FORM_VALUES,
+    mode: 'onSubmit',
+  });
+
+  const { append, remove, move } = useFieldArray({
+    control: form.control,
+    name: 'statuses',
+  });
+
   const [isInitialized, setIsInitialized] = useState(false);
   const [selectedProjectIds, setSelectedProjectIds] = useState<Set<string>>(
     new Set()
   );
-  const [showValidation, setShowValidation] = useState(false);
   const [projectIdsInitialized, setProjectIdsInitialized] = useState(false);
 
-  const { name, description, statuses, groups } = formState;
-
-  const setName = useCallback((value: string) => {
-    setFormState((prev) => ({ ...prev, name: value }));
-  }, []);
-
-  const setDescription = useCallback((value: string) => {
-    setFormState((prev) => ({ ...prev, description: value }));
-  }, []);
-
-  const setStatuses = useCallback(
-    (
-      updater:
-        | StatusDefinition[]
-        | ((prev: StatusDefinition[]) => StatusDefinition[])
-    ) => {
-      setFormState((prev) => ({
-        ...prev,
-        statuses:
-          typeof updater === 'function' ? updater(prev.statuses) : updater,
-      }));
-    },
-    []
-  );
-
-  const setGroups = useCallback(
-    (updater: StatusGroups | ((prev: StatusGroups) => StatusGroups)) => {
-      setFormState((prev) => ({
-        ...prev,
-        groups: typeof updater === 'function' ? updater(prev.groups) : updater,
-      }));
-    },
-    []
-  );
-
-  // Get all projects and filter those currently using this status config
+  // Get all projects
   const allProjects = useMemo(
     () => projectsData?.projects || [],
     [projectsData]
   );
 
+  // Watch groups for reactive validation state
+  const watchedGroups = form.watch('groups');
+
   // Computed validation state for group requirements (real-time feedback)
   const groupValidation = useMemo<GroupValidationState>(
     () => ({
-      hasBacklog: groups.backlog.length > 0,
-      hasActive: groups.active.length > 0,
-      hasCompleted: groups.completed.length > 0,
-      hasInitial: !!groups.initial,
+      hasBacklog: watchedGroups.backlog.length > 0,
+      hasActive: watchedGroups.active.length > 0,
+      hasCompleted: watchedGroups.completed.length > 0,
+      hasInitial: !!watchedGroups.initial,
     }),
-    [groups]
+    [watchedGroups]
   );
 
   const initialAssignedProjectIds = useMemo(() => {
@@ -141,42 +102,42 @@ export function useStatusConfigEditor() {
     );
   }, [allProjects, id]);
 
-  const errors = useMemo((): StatusConfigEditorErrors => {
-    if (!showValidation) return {};
+  // Map react-hook-form errors to our error format for backwards compatibility
+  const errors = useMemo(() => {
+    const formErrors = form.formState.errors;
+    const result: Record<string, string | undefined> = {};
 
-    const newErrors: StatusConfigEditorErrors = {};
-
-    if (!name.trim()) {
-      newErrors.name = translate('workflows.editor.nameRequired');
+    if (formErrors.name) {
+      result.name = translate('workflows.editor.nameRequired');
+    }
+    if (formErrors.statuses?.message) {
+      result.statuses = translate('workflows.editor.minStatuses');
+    }
+    if (formErrors.statuses?.root?.message) {
+      result.statuses = formErrors.statuses.root.message;
+    }
+    // Check for individual status name errors
+    if (Array.isArray(formErrors.statuses)) {
+      const hasNameError = formErrors.statuses.some((s) => s?.name);
+      if (hasNameError) {
+        result.statusNames = translate('workflows.editor.statusNameRequired');
+      }
+    }
+    if (formErrors.groups?.initial) {
+      result.initial = translate('workflows.editor.initialRequired');
+    }
+    if (formErrors.groups?.backlog) {
+      result.backlog = translate('workflows.editor.backlogRequired');
+    }
+    if (formErrors.groups?.active) {
+      result.active = translate('workflows.editor.activeRequired');
+    }
+    if (formErrors.groups?.completed) {
+      result.completed = translate('workflows.editor.completedRequired');
     }
 
-    if (statuses.length < 2) {
-      newErrors.statuses = translate('workflows.editor.minStatuses');
-    }
-
-    const emptyStatuses = statuses.filter((s) => !s.name.trim());
-    if (emptyStatuses.length > 0) {
-      newErrors.statusNames = translate('workflows.editor.statusNameRequired');
-    }
-
-    if (!groups.initial) {
-      newErrors.initial = translate('workflows.editor.initialRequired');
-    }
-
-    if (groups.backlog.length === 0) {
-      newErrors.backlog = translate('workflows.editor.backlogRequired');
-    }
-
-    if (groups.active.length === 0) {
-      newErrors.active = translate('workflows.editor.activeRequired');
-    }
-
-    if (groups.completed.length === 0) {
-      newErrors.completed = translate('workflows.editor.completedRequired');
-    }
-
-    return newErrors;
-  }, [showValidation, name, statuses, groups, translate]);
+    return result;
+  }, [form.formState.errors, translate]);
 
   // Initialize selected projects when data loads
   useEffect(() => {
@@ -186,7 +147,6 @@ export function useStatusConfigEditor() {
       !projectIdsInitialized &&
       initialAssignedProjectIds.size > 0
     ) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Valid initialization from async data
       setProjectIdsInitialized(true);
       setSelectedProjectIds(initialAssignedProjectIds);
     }
@@ -203,8 +163,7 @@ export function useStatusConfigEditor() {
 
     if (isEditMode && existingConfig?.statusConfig) {
       const config = existingConfig.statusConfig;
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Valid initialization from fetched data
-      setFormState({
+      form.reset({
         name: config.name,
         description: config.description || '',
         statuses: [...config.statuses],
@@ -212,10 +171,10 @@ export function useStatusConfigEditor() {
       });
       setIsInitialized(true);
     } else if (!isEditMode) {
-      setFormState(DEFAULT_FORM_STATE);
+      form.reset(DEFAULT_FORM_VALUES);
       setIsInitialized(true);
     }
-  }, [isEditMode, existingConfig, isInitialized]);
+  }, [isEditMode, existingConfig, isInitialized, form]);
 
   // Handlers
   const handleDragEnd = useCallback(
@@ -223,91 +182,99 @@ export function useStatusConfigEditor() {
       const { active, over } = event;
       if (!over || active.id === over.id) return;
 
-      setStatuses((prev) => {
-        const oldIndex = prev.findIndex((s) => s.id === active.id);
-        const newIndex = prev.findIndex((s) => s.id === over.id);
-        const reordered = arrayMove(prev, oldIndex, newIndex);
-        return reordered.map((s, i) => ({ ...s, sortOrder: i }));
-      });
+      const currentStatuses = form.getValues('statuses');
+      const oldIndex = currentStatuses.findIndex((s) => s.id === active.id);
+      const newIndex = currentStatuses.findIndex((s) => s.id === over.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        move(oldIndex, newIndex);
+        const updatedStatuses = form.getValues('statuses');
+        const reordered = updatedStatuses.map((s, i) => ({
+          ...s,
+          sortOrder: i,
+        }));
+        form.setValue('statuses', reordered);
+      }
     },
-    [setStatuses]
+    [move, form]
   );
 
   const handleStatusNameChange = useCallback(
     (index: number, newName: string) => {
-      setStatuses((prev) => {
-        const updated = [...prev];
-        updated[index] = { ...updated[index], name: newName };
-        return updated;
-      });
+      form.setValue(`statuses.${index}.name`, newName);
     },
-    [setStatuses]
+    [form]
   );
 
   const handleStatusColorChange = useCallback(
     (index: number, color: StatusColor) => {
-      setStatuses((prev) => {
-        const updated = [...prev];
-        updated[index] = { ...updated[index], color };
-        return updated;
-      });
+      form.setValue(`statuses.${index}.color`, color);
     },
-    [setStatuses]
+    [form]
   );
 
   const handleStatusGroupChange = useCallback(
     (statusId: string, newGroup: StatusGroupType) => {
-      setGroups((prev) => {
-        const newGroups = {
-          ...prev,
-          backlog: prev.backlog.filter((gid) => gid !== statusId),
-          active: prev.active.filter((gid) => gid !== statusId),
-          completed: prev.completed.filter((gid) => gid !== statusId),
-          cancelled: prev.cancelled.filter((gid) => gid !== statusId),
-        };
-        newGroups[newGroup] = [...newGroups[newGroup], statusId];
-        return newGroups;
-      });
+      const currentGroups = form.getValues('groups');
+      const newGroups = {
+        ...currentGroups,
+        backlog: currentGroups.backlog.filter((gid) => gid !== statusId),
+        active: currentGroups.active.filter((gid) => gid !== statusId),
+        completed: currentGroups.completed.filter((gid) => gid !== statusId),
+        cancelled: currentGroups.cancelled.filter((gid) => gid !== statusId),
+      };
+      newGroups[newGroup] = [...newGroups[newGroup], statusId];
+      form.setValue('groups', newGroups);
     },
-    [setGroups]
+    [form]
   );
 
   const handleSetInitialStatus = useCallback(
     (statusId: string) => {
-      setGroups((prev) => ({ ...prev, initial: statusId }));
+      form.setValue('groups.initial', statusId);
     },
-    [setGroups]
+    [form]
   );
 
   const handleAddStatus = useCallback(() => {
+    const currentStatuses = form.getValues('statuses');
     const newStatus: StatusDefinition = {
       id: `status-${Date.now()}`,
       name: '',
       color: 'gray',
-      sortOrder: statuses.length,
+      sortOrder: currentStatuses.length,
       icon: { fillPercent: 0, dotted: false },
     };
-    setStatuses((prev) => [...prev, newStatus]);
-    setGroups((prev) => ({
-      ...prev,
-      backlog: [...prev.backlog, newStatus.id],
-    }));
-  }, [statuses.length, setStatuses, setGroups]);
+    append(newStatus);
+
+    // Add to backlog group by default
+    const currentGroups = form.getValues('groups');
+    form.setValue('groups', {
+      ...currentGroups,
+      backlog: [...currentGroups.backlog, newStatus.id],
+    });
+  }, [form, append]);
 
   const handleRemoveStatus = useCallback(
     (index: number) => {
-      const statusId = statuses[index].id;
-      setStatuses((prev) => prev.filter((_, i) => i !== index));
-      setGroups((prev) => ({
-        ...prev,
-        initial: prev.initial === statusId ? '' : prev.initial,
-        backlog: prev.backlog.filter((gid) => gid !== statusId),
-        active: prev.active.filter((gid) => gid !== statusId),
-        completed: prev.completed.filter((gid) => gid !== statusId),
-        cancelled: prev.cancelled.filter((gid) => gid !== statusId),
-      }));
+      const currentStatuses = form.getValues('statuses');
+      const statusId = currentStatuses[index].id;
+
+      remove(index);
+
+      // Remove from all groups
+      const currentGroups = form.getValues('groups');
+      form.setValue('groups', {
+        ...currentGroups,
+        initial:
+          currentGroups.initial === statusId ? '' : currentGroups.initial,
+        backlog: currentGroups.backlog.filter((gid) => gid !== statusId),
+        active: currentGroups.active.filter((gid) => gid !== statusId),
+        completed: currentGroups.completed.filter((gid) => gid !== statusId),
+        cancelled: currentGroups.cancelled.filter((gid) => gid !== statusId),
+      });
     },
-    [statuses, setStatuses, setGroups]
+    [form, remove]
   );
 
   const handleToggleProject = useCallback((projectId: string) => {
@@ -322,35 +289,17 @@ export function useStatusConfigEditor() {
     });
   }, []);
 
-  const validate = useCallback((): boolean => {
-    setShowValidation(true);
-    // Compute errors inline for immediate return value
-    const hasNameError = !name.trim();
-    const hasStatusCountError = statuses.length < 2;
-    const hasEmptyStatusNames = statuses.some((s) => !s.name.trim());
-    const hasInitialError = !groups.initial;
-    const hasBacklogError = groups.backlog.length === 0;
-    const hasActiveError = groups.active.length === 0;
-    const hasCompletedError = groups.completed.length === 0;
-
-    return !(
-      hasNameError ||
-      hasStatusCountError ||
-      hasEmptyStatusNames ||
-      hasInitialError ||
-      hasBacklogError ||
-      hasActiveError ||
-      hasCompletedError
-    );
-  }, [name, statuses, groups]);
-
   const handleSave = useCallback(async () => {
-    if (!validate()) return;
+    const isValid = await form.trigger();
+    if (!isValid) return;
 
-    const updatedStatuses: StatusDefinition[] = statuses.map(
+    const formData = form.getValues();
+    const currentGroups = formData.groups;
+
+    const updatedStatuses: StatusDefinition[] = formData.statuses.map(
       (status, index) => {
-        const group = getGroupForStatus(status.id, groups);
-        const groupStatuses = groups[group];
+        const group = getGroupForStatus(status.id, currentGroups);
+        const groupStatuses = currentGroups[group];
         const indexInGroup = groupStatuses.indexOf(status.id);
         return {
           ...status,
@@ -364,10 +313,10 @@ export function useStatusConfigEditor() {
     );
 
     const data: CreateStatusConfigInput = {
-      name: name.trim(),
-      description: description.trim() || undefined,
+      name: formData.name.trim(),
+      description: formData.description?.trim() || undefined,
       statuses: updatedStatuses,
-      groups,
+      groups: currentGroups,
     };
 
     try {
@@ -412,11 +361,7 @@ export function useStatusConfigEditor() {
       // Error handled by mutation
     }
   }, [
-    name,
-    description,
-    statuses,
-    groups,
-    validate,
+    form,
     isEditMode,
     id,
     createMutation,
@@ -440,17 +385,12 @@ export function useStatusConfigEditor() {
     isLoadingConfig,
     isLoading,
 
-    // Form values
-    name,
-    setName,
-    description,
-    setDescription,
-    statuses,
-    groups,
+    // Form (single source of truth)
+    form,
     errors,
 
     // Validation state
-    showValidation,
+    showValidation: form.formState.isSubmitted,
     groupValidation,
 
     // Projects
