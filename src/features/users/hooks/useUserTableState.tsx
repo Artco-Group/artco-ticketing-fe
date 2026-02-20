@@ -44,12 +44,27 @@ export function useUserTableState({ users }: UseUserTableStateProps) {
     bulkDelete(
       { emails },
       {
-        onSuccess: () => {
-          clearSelection();
+        onSuccess: (result) => {
           setShowDeleteConfirm(false);
-          translatedToast.success('toast.success.deleted', {
-            item: `${emails.length} user${emails.length > 1 ? 's' : ''}`,
-          });
+
+          if (result.deletedCount === 0 && result.failedEmails.length > 0) {
+            const firstError = result.errors[result.failedEmails[0]];
+            toast.error(firstError || 'Failed to delete users');
+            return;
+          }
+
+          if (result.failedEmails.length > 0) {
+            const failedCount = result.failedEmails.length;
+            toast.warning(
+              `Deleted ${result.deletedCount} user(s). ${failedCount} could not be deleted.`
+            );
+          } else {
+            translatedToast.success('toast.success.deleted', {
+              item: `${result.deletedCount} user${result.deletedCount > 1 ? 's' : ''}`,
+            });
+          }
+
+          clearSelection();
         },
         onError: (error) => {
           toast.error(error?.message || 'Failed to delete users');
