@@ -5,26 +5,30 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   Icon,
 } from '@/shared/components/ui';
 import { MemberBadge } from './MemberBadge';
 import { MemberOption } from './MemberOption';
+import { useAppTranslation } from '@/shared/hooks';
+
+export interface MemberGroup {
+  key: string;
+  label: string;
+}
 
 export interface MemberPickerProps {
-  /** Currently selected user ID(s) */
   value?: string | string[];
-  /** Available users to select from */
   options: User[];
-  /** Enable multi-select mode */
   multiple?: boolean;
-  /** Change handler */
   onChange: (value: string | string[]) => void;
-  /** Placeholder text */
   placeholder?: string;
-  /** Whether the picker is disabled */
   disabled?: boolean;
-  /** Additional CSS classes */
   className?: string;
+  label?: string;
+  groupBy?: keyof User;
+  groups?: MemberGroup[];
 }
 
 /**
@@ -52,12 +56,21 @@ export function MemberPicker({
   options,
   multiple = false,
   onChange,
-  placeholder = 'Select member...',
+  placeholder,
   disabled = false,
   className,
+  label,
+  groupBy,
+  groups,
 }: MemberPickerProps) {
+  const { translate } = useAppTranslation('common');
+
+  const resolvedLabel = label ?? translate('labels.member');
+  const resolvedPlaceholder =
+    placeholder ?? translate('memberPicker.selectMember');
+
   const validUsers = useMemo(
-    () => options.filter((user) => user._id),
+    () => options.filter((user) => user.id),
     [options]
   );
 
@@ -70,9 +83,30 @@ export function MemberPicker({
   }, [value, multiple]);
 
   const selectedUsers = useMemo(
-    () => validUsers.filter((user) => selectedIds.includes(user._id!)),
+    () => validUsers.filter((user) => selectedIds.includes(user.id!)),
     [validUsers, selectedIds]
   );
+
+  const groupedUsers = useMemo(() => {
+    if (!groupBy || !groups) return null;
+
+    const grouped = new Map<string, User[]>();
+    groups.forEach((g) => grouped.set(g.key, []));
+
+    validUsers.forEach((user) => {
+      const key = user[groupBy] as string;
+      if (grouped.has(key)) {
+        grouped.get(key)!.push(user);
+      }
+    });
+
+    return groups
+      .map((g) => ({
+        ...g,
+        users: grouped.get(g.key) || [],
+      }))
+      .filter((g) => g.users.length > 0);
+  }, [validUsers, groupBy, groups]);
 
   const handleOptionSelect = (userId: string) => {
     if (multiple) {
@@ -98,16 +132,16 @@ export function MemberPicker({
       <div className="flex flex-wrap gap-1">
         {selectedUsers.map((user) => (
           <MemberBadge
-            key={user._id!}
+            key={user.id!}
             user={user}
             disabled={disabled}
-            onRemove={() => handleRemoveBadge(user._id!)}
+            onRemove={() => handleRemoveBadge(user.id!)}
           />
         ))}
       </div>
     ) : (
       <span className="text-muted-foreground flex-1 text-left">
-        {placeholder}
+        {resolvedPlaceholder}
       </span>
     );
 
@@ -126,23 +160,45 @@ export function MemberPicker({
           </div>
           <div className="ml-2 flex shrink-0 items-center gap-1">
             <span className="text-muted-foreground text-sm font-medium">
-              Member
+              {resolvedLabel}
             </span>
             <Icon name="chevron-down" size="md" />
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+        <DropdownMenuContent
+          className="max-h-[240px] w-[var(--radix-dropdown-menu-trigger-width)] overflow-y-auto"
+          side="bottom"
+          align="start"
+          sideOffset={4}
+        >
           {validUsers.length === 0 ? (
             <div className="text-muted-foreground px-2 py-4 text-center text-sm">
-              No members available
+              {translate('memberPicker.noUsersAvailable')}
             </div>
+          ) : groupedUsers ? (
+            groupedUsers.map((group, index) => (
+              <div key={group.key}>
+                {index > 0 && <DropdownMenuSeparator />}
+                <DropdownMenuLabel className="text-muted-foreground text-xs">
+                  {group.label}
+                </DropdownMenuLabel>
+                {group.users.map((user) => (
+                  <MemberOption
+                    key={user.id!}
+                    user={user}
+                    isSelected={selectedIds.includes(user.id!)}
+                    onSelect={() => handleOptionSelect(user.id!)}
+                  />
+                ))}
+              </div>
+            ))
           ) : (
             validUsers.map((user) => (
               <MemberOption
-                key={user._id!}
+                key={user.id!}
                 user={user}
-                isSelected={selectedIds.includes(user._id!)}
-                onSelect={() => handleOptionSelect(user._id!)}
+                isSelected={selectedIds.includes(user.id!)}
+                onSelect={() => handleOptionSelect(user.id!)}
               />
             ))
           )}

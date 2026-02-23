@@ -29,6 +29,7 @@ import MoreHorizontal from '@/assets/icons/actions/more-horizontal.svg?raw';
 import sortSvg from '@/assets/icons/actions/sort.svg?raw';
 import groupBySvg from '@/assets/icons/actions/group-by.svg?raw';
 import starSvg from '@/assets/icons/actions/star.svg?raw';
+import gripSvg from '@/assets/icons/actions/grip.svg?raw';
 
 import chevronDownSvg from '@/assets/icons/arrows/chevron-down.svg?raw';
 import chevronUpSvg from '@/assets/icons/arrows/chevron-up.svg?raw';
@@ -55,6 +56,7 @@ import doubleCheckSvg from '@/assets/icons/system/double-check.svg?raw';
 import filterSvg from '@/assets/icons/system/filter.svg?raw';
 import gridSvg from '@/assets/icons/system/grid.svg?raw';
 import listSvg from '@/assets/icons/system/list.svg?raw';
+import folderSvg from '@/assets/icons/system/folder.svg?raw';
 
 import pinSvg from '@/assets/icons/navigation/pin.svg?raw';
 import automationsSvg from '@/assets/icons/navigation/automations.svg?raw';
@@ -74,6 +76,11 @@ import arrowLeftSvg from '@/assets/icons/arrows/arrow-left.svg?raw';
 import trendUpSvg from '@/assets/icons/arrows/trend-up.svg?raw';
 import trendDownSvg from '@/assets/icons/arrows/trend-down.svg?raw';
 import commandKSvg from '@/assets/icons/system/command-k.svg?raw';
+
+import bugSvg from '@/assets/icons/category/bug.svg?raw';
+import featureSvg from '@/assets/icons/category/feature.svg?raw';
+import questionSvg from '@/assets/icons/category/question.svg?raw';
+import tagSvg from '@/assets/icons/category/tag.svg?raw';
 
 export type IconName =
   | 'dashboard'
@@ -131,6 +138,7 @@ export type IconName =
   | 'sort'
   | 'group-by'
   | 'star'
+  | 'grip'
   | 'grid'
   | 'list'
   | 'profile'
@@ -141,8 +149,13 @@ export type IconName =
   | 'preference'
   | 'application'
   | 'import-export'
-  | 'api';
-  
+  | 'api'
+  | 'bug'
+  | 'feature'
+  | 'question'
+  | 'tag'
+  | 'folder';
+
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 const iconMap: Record<IconName, string> = {
@@ -201,6 +214,7 @@ const iconMap: Record<IconName, string> = {
   sort: sortSvg,
   'group-by': groupBySvg,
   star: starSvg,
+  grip: gripSvg,
   grid: gridSvg,
   list: listSvg,
   profile: profileSvg,
@@ -211,7 +225,12 @@ const iconMap: Record<IconName, string> = {
   preference: preferenceSvg,
   application: applicationSvg,
   'import-export': importExportSvg,
-  api: apiSvg
+  api: apiSvg,
+  bug: bugSvg,
+  feature: featureSvg,
+  question: questionSvg,
+  tag: tagSvg,
+  folder: folderSvg,
 };
 
 const sizeMap: Record<IconSize, string> = {
@@ -252,11 +271,10 @@ export function Icon({
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center justify-center',
+        'inline-flex shrink-0 items-center justify-center leading-none',
         sizeMap[size],
         className
       )}
-      style={{ lineHeight: 0 }}
       aria-hidden={!ariaLabel}
       aria-label={ariaLabel}
       dangerouslySetInnerHTML={{ __html: svgWithClass }}

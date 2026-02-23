@@ -1,0 +1,197 @@
+{
+  "title": "Postavke",
+  "sidebar": {
+    "account": "Račun",
+    "profile": "Profil",
+    "notification": "Obavještenja",
+    "security": "Sigurnost i pristup",
+    "administration": "Administracija",
+    "preference": "Podešavanja",
+    "statusConfigs": "Konfiguracija statusa"
+  },
+  "sections": {
+    "account": "Račun",
+    "preferences": "Podešavanja",
+    "security": "Sigurnost",
+    "notifications": "Obavještenja"
+  },
+  "profile": {
+    "title": "Profil",
+    "description": "Upravljajte informacijama profila",
+    "subtitle": "Upravljajte vašim ličnim podacima i postavkama računa",
+    "name": "Ime",
+    "namePlaceholder": "Unesite vaše ime",
+    "email": "Email adresa",
+    "emailPlaceholder": "Unesite email adresu",
+    "role": "Uloga",
+    "rolePlaceholder": "Odaberite ulogu",
+    "avatar": "Profilna slika",
+    "avatarHint": "Podržavamo PNG, JPEG i GIF formate do 10MB",
+    "uploadImage": "Učitaj sliku",
+    "uploading": "Učitavanje...",
+    "remove": "Ukloni",
+    "changeAvatar": "Promijeni sliku",
+    "removeAvatar": "Ukloni sliku",
+    "saveChanges": "Sačuvaj promjene",
+    "saving": "Čuvanje..."
+  },
+  "preferences": {
+    "title": "Podešavanja",
+    "description": "Prilagodite svoje iskustvo",
+    "language": {
+      "label": "Jezik",
+      "description": "Odaberite željeni jezik"
+    },
+    "theme": {
+      "label": "Tema",
+      "description": "Odaberite željenu temu",
+      "light": "Svijetla",
+      "dark": "Tamna",
+      "system": "Sistemska"
+    },
+    "timezone": {
+      "label": "Vremenska zona",
+      "description": "Postavite lokalnu vremensku zonu"
+    }
+  },
+  "security": {
+    "title": "Sigurnost i pristup",
+    "description": "Upravljajte lozinkom, sesijama i ostalo",
+    "password": "Lozinka",
+    "changePassword": "Promijeni lozinku",
+    "currentPassword": "Trenutna lozinka",
+    "currentPasswordPlaceholder": "Unesite trenutnu lozinku",
+    "newPassword": "Nova lozinka",
+    "newPasswordPlaceholder": "Unesite novu lozinku",
+    "confirmPassword": "Potvrdite lozinku",
+    "confirmPasswordPlaceholder": "Potvrdite lozinku",
+    "saveChange": "Sačuvaj promjenu",
+    "saving": "Čuvanje...",
+    "twoFactor": {
+      "title": "Dvofaktorska autentifikacija",
+      "description": "Dodajte dodatni sloj sigurnosti vašem računu",
+      "enable": "Omogući",
+      "disable": "Onemogući"
+    },
+    "sessions": {
+      "title": "Aktivne sesije",
+      "description": "Upravljajte aktivnim sesijama",
+      "current": "Trenutna sesija",
+      "terminateAll": "Završi sve sesije"
+    }
+  },
+  "notifications": {
+    "title": "Obavještenja",
+    "description": "Odaberite kako želite biti obaviješteni",
+    "email": {
+      "title": "Email obavještenja",
+      "masterToggleDescription": "Primajte email obavještenja o ažuriranjima",
+      "sections": {
+        "project": "Obavještenja o projektima",
+        "ticket": "Obavještenja o tiketima",
+        "reminders": "Podsjetnici"
+      },
+      "projectCreated": "Kada je projekt kreiran za mene",
+      "addedToProject": "Kada sam dodan/a na projekt",
+      "ticketCreated": "Kada je tiket kreiran u mom projektu",
+      "ticketAssigned": "Kada mi je tiket dodijeljen",
+      "ticketStatusChanged": "Kada se promijeni status tiketa",
+      "ticketUpdated": "Kada je tiket ažuriran (prioritet, rok, fajlovi)",
+      "commentAdded": "Kada neko komentariše tiket",
+      "dueDateReminder": "Podsjetnik za rok (24 sata prije)",
+      "ticketOverdue": "Obavještenja o prekoračenim tiketima"
+    },
+    "push": {
+      "title": "Push obavještenja",
+      "enable": "Omogući push obavještenja"
+    }
+  },
+  "messages": {
+    "saved": "Postavke uspješno sačuvane",
+    "profileUpdated": "Profil uspješno ažuriran",
+    "passwordChanged": "Lozinka uspješno promijenjena",
+    "avatarUpdated": "Profilna slika ažurirana",
+    "avatarRemoved": "Profilna slika uklonjena"
+  },
+  "workflows": {
+    "title": "Konfiguracije statusa",
+    "description": "Upravljajte konfiguracijama statusa tiketa za vaše projekte",
+    "createNew": "Kreiraj konfiguraciju",
+    "default": "Zadano",
+    "edit": "Uredi",
+    "delete": "Izbriši",
+    "noConfigs": "Nema konfiguracija statusa",
+    "noConfigsMessage": "Kreirajte prilagođenu konfiguraciju da definirate statuse tiketa za vaše projekte.",
+    "errorTitle": "Greška pri učitavanju konfiguracija",
+    "errorMessage": "Nije uspjelo učitavanje konfiguracija statusa. Pokušajte ponovo.",
+    "deleteTitle": "Izbriši konfiguraciju",
+    "confirmDelete": "Jeste li sigurni da želite izbrisati ovu konfiguraciju statusa? Ova radnja se ne može poništiti.",
+    "deleteConfirm": "Izbriši",
+    "deleteCancel": "Otkaži",
+    "projectCount": "{{count}} projekt",
+    "projectCount_plural": "{{count}} projekata",
+    "noProjects": "Nema projekata",
+    "initialStatus": "Početni",
+    "groups": {
+      "backlog": "Backlog",
+      "active": "Aktivno",
+      "completed": "Završeno",
+      "cancelled": "Otkazano"
+    },
+    "colors": {
+      "gray": "Siva",
+      "slate": "Tamno siva",
+      "blue": "Plava",
+      "green": "Zelena",
+      "yellow": "Žuta",
+      "orange": "Narandžasta",
+      "red": "Crvena",
+      "purple": "Ljubičasta",
+      "pink": "Roza",
+      "teal": "Tirkizna"
+    },
+    "editor": {
+      "createTitle": "Kreiraj konfiguraciju",
+      "editTitle": "Uredi konfiguraciju",
+      "description": "Konfigurišite statuse i grupe za ovu konfiguraciju",
+      "back": "Nazad",
+      "basicInfo": "Osnovne informacije",
+      "name": "Naziv konfiguracije",
+      "namePlaceholder": "Unesite naziv konfiguracije",
+      "descriptionLabel": "Opis",
+      "descriptionPlaceholder": "Unesite opis za ovu konfiguraciju",
+      "statuses": "Statusi",
+      "statusesDescription": "Povucite za promjenu redoslijeda. Postavite boje, grupe i označite početni status.",
+      "addStatus": "Dodaj status",
+      "statusNamePlaceholder": "Naziv statusa",
+      "setAsInitial": "Postavi kao početni status",
+      "default": "Zadano",
+      "save": "Sačuvaj konfiguraciju",
+      "saving": "Čuvanje...",
+      "cancel": "Otkaži",
+      "nameRequired": "Naziv konfiguracije je obavezan",
+      "minStatuses": "Potrebna su najmanje 2 statusa",
+      "statusNameRequired": "Svi statusi moraju imati naziv",
+      "initialRequired": "Molimo odaberite početni status",
+      "backlogRequired": "Najmanje jedan status mora biti u grupi Backlog",
+      "activeRequired": "Najmanje jedan status mora biti u grupi Aktivno",
+      "completedRequired": "Najmanje jedan status mora biti u grupi Završeno",
+      "validationErrors": "Molimo ispravite sljedeće probleme:",
+      "assignedProjects": "Dodijeljeni projekti",
+      "assignedProjectsDescription": "Odaberite koji projekti trebaju koristiti ovu konfiguraciju.",
+      "selectProjects": "Odaberite projekte...",
+      "noProjects": "Nema dostupnih projekata",
+      "projectHasTickets": "Projekti sa postojećim tiketima ne mogu promijeniti konfiguraciju",
+      "initialStatus": "Početni status",
+      "deleteStatus": "Izbriši ovaj status",
+      "minStatusesTooltip": "Potrebna su najmanje 2 statusa",
+      "basicInfoHelper": "Unesite naziv i opcionalni opis konfiguracije.",
+      "groupRequirementsTitle": "Zahtjevi grupe",
+      "groupRequirementBacklog": "Najmanje jedan status u Backlog",
+      "groupRequirementActive": "Najmanje jedan status u Aktivno",
+      "groupRequirementCompleted": "Najmanje jedan status u Završeno",
+      "groupRequirementInitial": "Jedan status označen kao početni",
+      "projectRestrictionNotice": "Mogu se dodijeliti samo projekti bez postojećih tiketa."
+    }
+  }
+}

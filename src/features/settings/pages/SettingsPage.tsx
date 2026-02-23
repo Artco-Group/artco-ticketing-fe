@@ -1,99 +1,79 @@
-import { useParams, Navigate } from 'react-router-dom';
-import { SettingsLayout } from '../components';
+import { useParams, useLocation, Navigate } from 'react-router-dom';
+import { useAppTranslation } from '@/shared/hooks';
+import {
+  SettingsLayout,
+  ProfileSettings,
+  SecuritySettings,
+  PreferenceSettings,
+  NotificationSettings,
+} from '../components';
+import { StatusConfigsSettings } from '@/features/status-configs/components';
+import { StatusConfigEditorPage } from '@/features/status-configs/pages';
 import { EmptyState } from '@/shared/components/ui';
+import { PAGE_ROUTES } from '@/shared/constants/routes.constants';
 import type { SettingsSideBarGroup } from '../components/SettingsSidebar';
-
-const validSections = [
-  'profile',
-  'notification',
-  'security',
-  'connected-account',
-  'integrations',
-  'preference',
-  'billing',
-  'application',
-  'import-export',
-  'api',
-];
-
-const settingsGroups: SettingsSideBarGroup[] = [
-  {
-    title: 'Account',
-    items: [
-      {
-        id: 'profile',
-        label: 'Profile',
-        icon: 'profile',
-        href: '/settings/profile',
-      },
-      {
-        id: 'notification',
-        label: 'Notification',
-        icon: 'notification',
-        href: '/settings/notification',
-      },
-      {
-        id: 'security',
-        label: 'Security & Access',
-        icon: 'security',
-        href: '/settings/security',
-      },
-      {
-        id: 'connected-account',
-        label: 'Connected Account',
-        icon: 'connected-account',
-        href: '/settings/connected-account',
-      },
-      {
-        id: 'integrations',
-        label: 'Integrations',
-        icon: 'integrations',
-        href: '/settings/integrations',
-      },
-    ],
-  },
-  {
-    title: 'Administration',
-    items: [
-      {
-        id: 'preference',
-        label: 'Preference',
-        icon: 'preference',
-        href: '/settings/preference',
-      },
-      {
-        id: 'billing',
-        label: 'Billing',
-        icon: 'billing',
-        href: '/settings/billing',
-      },
-      {
-        id: 'application',
-        label: 'Application',
-        icon: 'application',
-        href: '/settings/application',
-      },
-      {
-        id: 'import-export',
-        label: 'Import / Export',
-        icon: 'import-export',
-        href: '/settings/import-export',
-      },
-      { id: 'api', label: 'API', icon: 'api', href: '/settings/api' },
-    ],
-  },
-];
+import {
+  SETTINGS_GROUPS_CONFIG,
+  VALID_SETTINGS_SECTIONS,
+} from '../utils/settings-config';
 
 export default function SettingsPage() {
   const { section = 'profile' } = useParams<{ section?: string }>();
+  const location = useLocation();
+  const { translate } = useAppTranslation('settings');
 
-  // Redirect to profile if section is invalid
-  if (!validSections.includes(section)) {
-    return <Navigate to="/settings/profile" replace />;
+  const isWorkflowNew =
+    location.pathname === PAGE_ROUTES.SETTINGS.WORKFLOWS_NEW;
+  const isWorkflowEdit =
+    location.pathname.includes('/workflows/') &&
+    location.pathname.endsWith('/edit');
+  const isWorkflowEditor = isWorkflowNew || isWorkflowEdit;
+
+  const settingsGroups: SettingsSideBarGroup[] = SETTINGS_GROUPS_CONFIG.map(
+    (group) => ({
+      title: translate(group.titleKey),
+      items: group.items.map((item) => ({
+        ...item,
+        label: translate(item.labelKey),
+      })),
+    })
+  );
+
+  if (
+    !isWorkflowEditor &&
+    !VALID_SETTINGS_SECTIONS.includes(
+      section as (typeof VALID_SETTINGS_SECTIONS)[number]
+    )
+  ) {
+    return <Navigate to={PAGE_ROUTES.SETTINGS.PROFILE} replace />;
   }
 
-  return (
-    <SettingsLayout activeSection={section} groups={settingsGroups}>
+  const renderContent = () => {
+    if (isWorkflowEditor) {
+      return <StatusConfigEditorPage />;
+    }
+
+    if (section === 'profile') {
+      return <ProfileSettings />;
+    }
+
+    if (section === 'security') {
+      return <SecuritySettings />;
+    }
+
+    if (section === 'preference') {
+      return <PreferenceSettings />;
+    }
+
+    if (section === 'notification') {
+      return <NotificationSettings />;
+    }
+
+    if (section === 'workflows') {
+      return <StatusConfigsSettings />;
+    }
+
+    return (
       <div className="flex justify-center py-12">
         <EmptyState
           variant="no-data"
@@ -101,6 +81,14 @@ export default function SettingsPage() {
           message={`${section.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())} settings will be available here.`}
         />
       </div>
+    );
+  };
+
+  const activeSection = isWorkflowEditor ? 'workflows' : section;
+
+  return (
+    <SettingsLayout activeSection={activeSection} groups={settingsGroups}>
+      {renderContent()}
     </SettingsLayout>
   );
 }

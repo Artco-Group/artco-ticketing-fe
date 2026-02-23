@@ -20,7 +20,12 @@ export function MemberOption({
       }}
     >
       <div className="flex flex-1 items-center gap-2">
-        <Avatar fallback={user.name || ''} size="sm" className="h-6 w-6" />
+        <Avatar
+          src={user.profilePic}
+          fallback={user.name || ''}
+          size="sm"
+          className="h-6 w-6"
+        />
         <div className="flex flex-col">
           <span className="text-sm font-medium">{user.name}</span>
           <span className="text-muted-foreground text-xs">{user.email}</span>

@@ -1,37 +1,34 @@
-import { useMemo } from 'react';
-import { UserRoleDisplay } from '@artco-group/artco-ticketing-sync';
-import { UserRole } from '@/types';
-import { UserList } from '../components';
-import { RetryableError, EmptyState } from '@/shared/components/ui';
+import { type CreateUserFormData } from '@artco-group/artco-ticketing-sync';
+import { UserRole, type UserWithStats } from '@/types';
+import { UserTable, UserForm } from '../components';
+import {
+  RetryableError,
+  EmptyState,
+  Modal,
+  ConfirmationDialog,
+  Button,
+} from '@/shared/components/ui';
 import { ListPageLayout } from '@/shared/components/layout/ListPageLayout';
-import { Icon } from '@/shared/components/ui/Icon/Icon';
-import type {
-  FilterGroup,
-  FilterPanelValues,
-} from '@/shared/components/patterns';
-import { useUserList } from '../hooks';
-
-const AVAILABLE_ROLES = [
-  UserRole.CLIENT,
-  UserRole.DEVELOPER,
-  UserRole.ENG_LEAD,
-  UserRole.ADMIN,
-];
+import { useUserList, useUserFilters } from '../hooks';
+import { useAppTranslation } from '@/shared/hooks';
 
 export default function UsersPage() {
+  const { translate } = useAppTranslation('users');
+  const { translate: translateCommon } = useAppTranslation('common');
   const {
     users,
     filteredUsers,
     data,
     editingUser,
     userToDelete,
+    allProjects,
     isLoading,
     error,
     refetch,
     isSubmitting,
     roleFilter,
-    statusFilter,
     sortBy,
+    groupBy,
     showFormModal,
     setUserToDelete,
     onAddUser,
@@ -40,126 +37,128 @@ export default function UsersPage() {
     onFormSubmit,
     onConfirmDelete,
     onFilterChange,
+    onGroupByChange,
   } = useUserList();
 
-  // --- FilterBar configuration ---
+  const {
+    sortOptions,
+    groupByOptions,
+    filterBarFilters,
+    handleFilterBarChange,
+    handleSortChange,
+  } = useUserFilters({ roleFilter, onFilterChange });
 
-  const sortOptions = useMemo(() => ['Name', 'Email', 'Role', 'Joined'], []);
-
-  const filterBarFilters = useMemo(
-    () => [
-      {
-        id: 'role',
-        label: 'Role',
-        icon: 'user' as const,
-        options: AVAILABLE_ROLES.map((role) => UserRoleDisplay[role]),
-        value: roleFilter === 'All' ? null : roleFilter,
-      },
-      {
-        id: 'status',
-        label: 'Status',
-        icon: 'user' as const,
-        options: ['Admin', 'Client', 'Member'],
-        value: statusFilter,
-      },
-    ],
-    [roleFilter, statusFilter]
-  );
-
-  const roleOptions = useMemo(
-    () =>
-      AVAILABLE_ROLES.map((role) => ({
-        value: UserRoleDisplay[role],
-        label: UserRoleDisplay[role],
-      })),
-    []
-  );
-
-  const filterGroups: FilterGroup[] = useMemo(
-    () => [
-      {
-        key: 'role',
-        label: 'Role',
-        icon: <Icon name="user" size="sm" />,
-        options: roleOptions,
-        searchable: true,
-      },
-    ],
-    [roleOptions]
-  );
-
-  const filterPanelValue = useMemo<FilterPanelValues>(() => {
-    const value: FilterPanelValues = {};
-    if (roleFilter && roleFilter !== 'All') {
-      value.role = [roleFilter];
-    }
-    return value;
-  }, [roleFilter]);
-
-  const handleFilterPanelChange = (value: FilterPanelValues) => {
-    const roleValues = value.role;
-    if (roleValues && roleValues.length > 0) {
-      onFilterChange('role', roleValues[0]);
-    } else {
-      onFilterChange('role', 'All');
-    }
-  };
-
-  const handleFilterBarChange = (filterId: string, value: string | null) => {
-    onFilterChange(filterId, value ?? 'All');
-  };
-
-  const handleSortChange = (value: string | null) => {
-    onFilterChange('sortBy', value);
-  };
+  const editingUserProjectIds =
+    editingUser && 'projects' in editingUser
+      ? (editingUser as UserWithStats).projects.map((p) => p.id)
+      : [];
 
   return (
-    <ListPageLayout
-      title="Users"
-      count={users?.length}
-      filters={filterBarFilters}
-      onFilterChange={handleFilterBarChange}
-      sortOptions={sortOptions}
-      sortValue={sortBy}
-      onSortChange={handleSortChange}
-      filterGroups={filterGroups}
-      filterPanelValue={filterPanelValue}
-      onFilterPanelChange={handleFilterPanelChange}
-      filterPanelSingleSelect
-      showFilter
-      showAddButton
-      onAddClick={onAddUser}
-      addButtonLabel="Invite Member"
-      loading={isLoading}
-      loadingMessage="Loading users..."
-    >
-      {error ? (
-        <RetryableError
-          title="Failed to load users"
-          message="Failed to load users. Please try again later."
-          onRetry={refetch}
-        />
-      ) : !data || filteredUsers.length === 0 ? (
-        <EmptyState
-          variant="no-users"
-          title="No users found"
-          message="No users match your current filters."
-        />
-      ) : (
-        <UserList
-          users={filteredUsers}
-          editingUser={editingUser}
-          userToDelete={userToDelete}
+    <>
+      <ListPageLayout
+        title={translate('members')}
+        count={users?.length}
+        filters={filterBarFilters}
+        onFilterChange={handleFilterBarChange}
+        sortOptions={sortOptions}
+        sortValue={sortBy}
+        onSortChange={handleSortChange}
+        groupByOptions={groupByOptions}
+        groupByValue={groupBy}
+        onGroupByChange={onGroupByChange}
+        showFilter
+        showAddButton
+        onAddClick={onAddUser}
+        addButtonLabel={translate('inviteMember')}
+        loading={isLoading}
+        loadingMessage={translate('list.loading')}
+      >
+        {error ? (
+          <RetryableError
+            title={translate('list.failedToLoad')}
+            message={translate('list.failedToLoadMessage')}
+            onRetry={refetch}
+          />
+        ) : !data || filteredUsers.length === 0 ? (
+          <EmptyState
+            variant="no-users"
+            title={translate('list.noMembers')}
+            message={translate('list.noMembersMatch')}
+          />
+        ) : (
+          <UserTable
+            users={filteredUsers}
+            onEdit={onEditUser}
+            onDelete={setUserToDelete}
+            groupByValue={groupBy}
+          />
+        )}
+      </ListPageLayout>
+
+      <Modal
+        isOpen={showFormModal}
+        onClose={onCloseFormModal}
+        title={
+          editingUser ? translate('editMember') : translate('inviteMember')
+        }
+        size="lg"
+        actions={
+          <div className="flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCloseFormModal}
+              disabled={isSubmitting}
+            >
+              {translateCommon('buttons.cancel')}
+            </Button>
+            <Button type="submit" form="user-form" disabled={isSubmitting}>
+              {isSubmitting
+                ? translate('form.saving')
+                : editingUser
+                  ? translate('form.saveChanges')
+                  : translate('inviteMember')}
+            </Button>
+          </div>
+        }
+      >
+        <UserForm
+          key={editingUser?.id || 'new'}
+          formId="user-form"
+          onSubmit={onFormSubmit}
+          defaultValues={
+            editingUser
+              ? {
+                  name: editingUser.name || '',
+                  email: editingUser.email || '',
+                  role:
+                    (editingUser.role as CreateUserFormData['role']) ||
+                    UserRole.DEVELOPER,
+                }
+              : undefined
+          }
+          isEditing={!!editingUser}
           isSubmitting={isSubmitting}
-          showFormModal={showFormModal}
-          onEditUser={onEditUser}
-          onDeleteUser={setUserToDelete}
-          onCloseFormModal={onCloseFormModal}
-          onFormSubmit={onFormSubmit}
-          onConfirmDelete={onConfirmDelete}
-          onCancelDelete={() => setUserToDelete(null)}
+          projects={allProjects}
+          currentUserProjectIds={editingUserProjectIds}
+          userId={editingUser?.id}
+          currentAvatar={(editingUser as { profilePic?: string })?.profilePic}
         />
-      )}
-    </ListPageLayout>
+      </Modal>
+
+      <ConfirmationDialog
+        isOpen={!!userToDelete}
+        onClose={() => setUserToDelete(null)}
+        onConfirm={onConfirmDelete}
+        title={translate('deleteMember')}
+        description={translate('messages.confirmDeleteMember', {
+          name: userToDelete?.name,
+        })}
+        confirmLabel={translateCommon('buttons.delete')}
+        variant="destructive"
+        isLoading={isSubmitting}
+        icon="trash"
+      />
+    </>
   );
 }

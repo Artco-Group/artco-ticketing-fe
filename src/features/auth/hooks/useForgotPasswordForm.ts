@@ -9,15 +9,13 @@ import {
 import { useForgotPassword } from '../api/auth-api';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { extractAuthError } from '../utils/extract-auth-error';
+import { useTranslatedToast } from '@/shared/hooks';
 import { useToast } from '@/shared/components/ui';
 
-/**
- * Custom hook for forgot password form logic.
- * Separates business logic from UI for better testability and maintainability.
- */
 export function useForgotPasswordForm() {
   const forgotPasswordMutation = useForgotPassword();
   const navigate = useNavigate();
+  const translatedToast = useTranslatedToast();
   const toast = useToast();
 
   const [serverError, setServerError] = useState('');
@@ -37,7 +35,7 @@ export function useForgotPasswordForm() {
     try {
       await forgotPasswordMutation.mutateAsync(data);
       setSuccess(true);
-      toast.success('Password reset email sent successfully');
+      translatedToast.success('toast.success.emailSent');
       navigate(PAGE_ROUTES.AUTH.CHECK_EMAIL, { state: { email: data.email } });
     } catch (err) {
       const errorMessage = extractAuthError(err);

@@ -2,15 +2,30 @@ import type { ReactNode } from 'react';
 
 export type {
   Ticket,
+  AssignedTo,
   User,
   Comment,
+  Project,
+  ProjectProgress,
+  ProjectWithProgress,
 } from '@artco-group/artco-ticketing-sync/types';
+
+import type { User } from '@artco-group/artco-ticketing-sync/types';
+
+export interface UserWithProjects extends User {
+  projects: { id: string; name: string }[];
+}
+
+export interface UserWithStats extends UserWithProjects {
+  assignedTicketsCount: number;
+}
 
 export {
   TicketStatus,
   TicketPriority,
   TicketCategory,
   UserRole,
+  ProjectPriority,
 } from '@artco-group/artco-ticketing-sync/enums';
 
 export interface Filters {
@@ -19,6 +34,7 @@ export interface Filters {
   sortBy: string;
   client?: string;
   assignee?: string;
+  project?: string;
 }
 
 export interface PaginationParams {
@@ -29,12 +45,6 @@ export interface PaginationParams {
 export interface MetaItem {
   label: string;
   value: ReactNode;
-}
-
-/** API response wrapper type */
-export interface ApiResponse<T> {
-  status: string;
-  data: T;
 }
 
 export * from './branded';

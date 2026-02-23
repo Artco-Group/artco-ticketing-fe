@@ -4,20 +4,17 @@ import {
   QueryKeys,
   API_ROUTES,
   CACHE,
-  type ApiResponse,
   type LoginFormData,
   type LoginResponse,
   type ForgotPasswordFormData,
   type ResetPasswordFormData,
+  type ChangePasswordFormData,
   type MessageResponse,
   type CurrentUserResponse,
 } from '@artco-group/artco-ticketing-sync';
 import { apiClient } from '@/shared/lib/api-client';
 import { queryClient } from '@/shared/lib/query-client';
 
-/**
- * Get current authenticated user
- */
 function useCurrentUser() {
   return useApiQuery<CurrentUserResponse>(QueryKeys.auth.currentUser(), {
     url: API_ROUTES.AUTH.ME,
@@ -31,23 +28,14 @@ function useCurrentUser() {
   });
 }
 
-/**
- * Login with email and password
- */
 function useLogin() {
-  return useApiMutation<
-    { status: string; data: { user: LoginResponse['user'] }; message: string },
-    LoginFormData
-  >({
+  return useApiMutation<{ user: LoginResponse['user'] }, LoginFormData>({
     url: API_ROUTES.AUTH.LOGIN,
     method: 'POST',
     onSuccess: async (response) => {
-      const user = response?.data?.user;
+      const user = response?.user;
       if (user) {
-        queryClient.setQueryData(QueryKeys.auth.currentUser(), {
-          status: 'success',
-          data: { user },
-        });
+        queryClient.setQueryData(QueryKeys.auth.currentUser(), { user });
       }
       queryClient.invalidateQueries({
         queryKey: QueryKeys.tickets.lists(),
@@ -56,9 +44,6 @@ function useLogin() {
   });
 }
 
-/**
- * Logout and clear session
- */
 function useLogout() {
   return useApiMutation<void>({
     url: API_ROUTES.AUTH.LOGOUT,
@@ -69,9 +54,6 @@ function useLogout() {
   });
 }
 
-/**
- * Request password reset email
- */
 function useForgotPassword() {
   return useApiMutation<MessageResponse, ForgotPasswordFormData>({
     url: API_ROUTES.AUTH.FORGOT_PASSWORD,
@@ -79,27 +61,21 @@ function useForgotPassword() {
   });
 }
 
-/**
- * Verify password reset token
- */
 function useVerifyResetToken(token: string | undefined) {
   return useQuery<{ valid: boolean }>({
     queryKey: QueryKeys.auth.verifyResetToken(token || ''),
     queryFn: async () => {
       if (!token) throw new Error('Token is required');
-      const response = await apiClient.get<ApiResponse<{ valid: boolean }>>(
+      const response = await apiClient.get<{ valid: boolean }>(
         API_ROUTES.AUTH.VERIFY_RESET_TOKEN(token)
       );
-      return response.data.data as { valid: boolean };
+      return response.data;
     },
     enabled: !!token,
     retry: false,
   });
 }
 
-/**
- * Reset password with token
- */
 function useResetPassword() {
   return useApiMutation<MessageResponse, ResetPasswordFormData>({
     url: API_ROUTES.AUTH.RESET_PASSWORD,
@@ -107,20 +83,16 @@ function useResetPassword() {
   });
 }
 
-/**
- * Namespaced API export (FMROI pattern)
- */
-export const authApi = {
-  useCurrentUser,
-  useLogin,
-  useLogout,
-  useForgotPassword,
-  useVerifyResetToken,
-  useResetPassword,
-  keys: QueryKeys.auth,
-};
+function useChangePassword() {
+  return useApiMutation<MessageResponse, ChangePasswordFormData>({
+    url: API_ROUTES.AUTH.CHANGE_PASSWORD,
+    method: 'POST',
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
+    },
+  });
+}
 
-// Individual exports for backwards compatibility
 export {
   useCurrentUser,
   useLogin,
@@ -128,4 +100,5 @@ export {
   useForgotPassword,
   useVerifyResetToken,
   useResetPassword,
+  useChangePassword,
 };

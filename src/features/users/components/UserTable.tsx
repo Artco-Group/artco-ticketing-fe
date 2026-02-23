@@ -1,168 +1,232 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import {
-  formatDateLocalized,
-  UserRoleDisplay,
+  formatDateDisplay,
+  UserRole,
+  UserRoleTranslationKeys,
 } from '@artco-group/artco-ticketing-sync';
-import { UserRole, type User } from '@/types';
+import { type UserWithStats } from '@/types';
 import {
   DataTable,
   EmptyState,
   Icon,
   Avatar,
+  AvatarGroup,
   type Column,
-  type SortDirection,
   type RowAction,
   BulkActionsBar,
-  type BulkAction,
+  ConfirmationDialog,
 } from '@/shared/components/ui';
+import { StatusHeader } from '@/shared/components/patterns/StatusHeader';
+import { useGroupedData } from '@/shared/hooks/useGroupedData';
+import { useAppTranslation } from '@/shared/hooks';
+import { AddToProjectModal } from './AddToProjectModal';
+import { useUserTableState } from '../hooks/useUserTableState';
 
 interface UserTableProps {
-  users: User[];
-  onEdit: (user: User) => void;
-  onDelete: (user: User) => void;
+  users: UserWithStats[];
+  onEdit: (user: UserWithStats) => void;
+  onDelete: (user: UserWithStats) => void;
+  groupByValue?: string | null;
 }
 
-// Map role to status (Admin/Member/Guest)
-function getStatusFromRole(role: UserRole): string {
-  if (role === UserRole.ADMIN) return 'Admin';
-  if (role === UserRole.CLIENT) return 'Client';
-  return 'Member';
-}
+function UserTable({ users, onEdit, onDelete, groupByValue }: UserTableProps) {
+  const { translate, language } = useAppTranslation('users');
+  const {
+    selectedRows,
+    setSelectedRows,
+    clearSelection,
+    sortColumn,
+    sortDirection,
+    handleSort,
+    showDeleteConfirm,
+    setShowDeleteConfirm,
+    handleBulkDelete,
+    isDeleting,
+    showAddToProjectModal,
+    setShowAddToProjectModal,
+    bulkActions,
+    groupConfigs,
+  } = useUserTableState({ users });
 
-function UserTable({ users, onEdit, onDelete }: UserTableProps) {
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const groupedUsers = useGroupedData(
+    users,
+    groupByValue ?? null,
+    groupConfigs
+  );
 
-  const rowActions: RowAction<User>[] = [
-    {
-      label: 'Edit',
-      icon: <Icon name="edit" size="sm" />,
-      onClick: (user) => onEdit(user),
-    },
-    {
-      label: 'Delete',
-      icon: <Icon name="trash" size="sm" />,
-      onClick: (user) => onDelete(user),
-      variant: 'destructive',
-      separator: true,
-    },
-  ];
-
-  const bulkActions: BulkAction[] = [
-    {
-      label: 'Add to project',
-      icon: <Icon name="plus" size="sm" />,
-      onClick: () => {
-        // TODO: Implement bulk add to project
-        console.log('Add to project:', selectedRows);
+  const rowActions: RowAction<UserWithStats>[] = useMemo(
+    () => [
+      {
+        label: translate('table.rowActions.edit'),
+        icon: <Icon name="edit" size="sm" />,
+        onClick: (user) => onEdit(user),
       },
-    },
-    {
-      label: 'Move Project',
-      icon: <Icon name="arrow-right" size="sm" />,
-      onClick: () => {
-        // TODO: Implement bulk move project
-        console.log('Move project:', selectedRows);
+      {
+        label: translate('table.rowActions.delete'),
+        icon: <Icon name="trash" size="sm" />,
+        onClick: (user) => onDelete(user),
+        variant: 'destructive',
+        separator: true,
       },
-    },
-    {
-      label: 'Delete member',
-      icon: <Icon name="trash" size="sm" />,
-      onClick: () => {
-        // TODO: Implement bulk delete
-        selectedRows.forEach((id) => {
-          const user = users.find((u) => u._id === id || u.id === id);
-          if (user) onDelete(user);
-        });
-        setSelectedRows([]);
-      },
-      variant: 'destructive',
-    },
-  ];
+    ],
+    [onEdit, onDelete, translate]
+  );
 
-  const columns: Column<User>[] = [
-    {
-      key: 'name',
-      label: 'Name',
-      width: 'w-full',
-      sortable: true,
-      render: (user) => (
-        <div className="flex items-center gap-3">
-          <Avatar fallback={user.name || user.email || ''} size="md" />
-          <div className="flex flex-col">
-            <span className="text-foreground font-medium">
-              {user.name || 'Unnamed User'}
-            </span>
-            <span className="text-muted-foreground text-sm">{user.email}</span>
+  const columns: Column<UserWithStats>[] = useMemo(
+    () => [
+      {
+        key: 'name',
+        label: translate('table.columns.name'),
+        sortable: true,
+        width: 'w-[35%]',
+        render: (user) => (
+          <div className="flex items-center gap-3">
+            <Avatar
+              src={user.profilePic}
+              fallback={user.name || user.email || ''}
+              size="md"
+            />
+            <div className="flex flex-col">
+              <span className="text-foreground font-medium">
+                {user.name || translate('table.unnamedUser')}
+              </span>
+              <span className="text-muted-foreground text-sm">
+                {user.email}
+              </span>
+            </div>
           </div>
-        </div>
-      ),
-    },
-    {
-      key: 'role',
-      label: 'Role',
-      sortable: true,
-      render: (user) => (
-        <span className="text-foreground">
-          {UserRoleDisplay[user.role as UserRole] || user.role}
-        </span>
-      ),
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      sortable: true,
-      render: (user) => {
-        const status = getStatusFromRole(user.role as UserRole);
-        return (
-          <div className="flex items-center gap-1.5">
-            <Icon name="user" size="sm" className="text-greyscale-400" />
-            <span className="text-foreground">{status}</span>
-          </div>
-        );
+        ),
       },
-    },
-    {
-      key: 'createdAt',
-      label: 'Joined',
-      type: 'date',
-      sortable: true,
-      formatDate: formatDateLocalized,
-    },
-  ];
+      {
+        key: 'role',
+        label: translate('table.columns.role'),
+        sortable: true,
+        width: 'w-[20%]',
+        render: (user) => (
+          <span className="text-foreground">
+            {UserRoleTranslationKeys[user.role as UserRole]
+              ? translate(UserRoleTranslationKeys[user.role as UserRole])
+              : user.role}
+          </span>
+        ),
+      },
+      {
+        key: 'createdAt',
+        label: translate('table.columns.joined'),
+        type: 'date',
+        width: 'w-[15%]',
+        sortable: true,
+        formatDate: (date: Date | string) => formatDateDisplay(date, language),
+      },
+      {
+        key: 'projects',
+        label: translate('table.columns.projects'),
+        width: 'w-[14%]',
+        render: (user) =>
+          user.projects.length === 0 ? (
+            <span className="text-muted-foreground">—</span>
+          ) : (
+            <AvatarGroup
+              size="sm"
+              max={3}
+              avatars={user.projects.map((project) => ({
+                fallback: project.name,
+                tooltip: project.name,
+              }))}
+            />
+          ),
+      },
+      {
+        key: 'assignedTicketsCount',
+        label: translate('table.columns.issues'),
+        width: 'w-[10%]',
+        sortable: true,
+        render: (user) => (
+          <span className="text-foreground">
+            {translate('table.issuesCount', {
+              count: user.assignedTicketsCount,
+            })}
+          </span>
+        ),
+      },
+    ],
+    [translate, language]
+  );
 
   const emptyState = (
     <EmptyState
       variant="no-users"
-      title="No users found"
-      message="No users match your current search and filters."
+      title={translate('list.empty')}
+      message={translate('list.emptyDescription')}
       className="min-h-0 py-12"
     />
   );
 
+  const tableProps = {
+    columns,
+    emptyState,
+    selectable: true,
+    selectedRows,
+    onSelect: setSelectedRows,
+    sortColumn,
+    sortDirection,
+    onSort: handleSort,
+    actions: rowActions,
+    getRowId: (user: UserWithStats) => user.email ?? '',
+  };
+
+  const renderDialogs = () => (
+    <>
+      <AddToProjectModal
+        isOpen={showAddToProjectModal}
+        onClose={() => setShowAddToProjectModal(false)}
+        userEmails={selectedRows}
+        onSuccess={clearSelection}
+      />
+      <ConfirmationDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleBulkDelete}
+        title={translate('table.deleteTitle')}
+        description={translate('table.deleteConfirm', {
+          count: selectedRows.length,
+        })}
+        confirmLabel={translate('table.deleteButton')}
+        variant="destructive"
+        isLoading={isDeleting}
+        icon="trash"
+      />
+    </>
+  );
+
+  if (groupByValue && groupedUsers.length > 0) {
+    return (
+      <>
+        {groupedUsers.map((group) => (
+          <div key={group.key}>
+            <StatusHeader icon={group.icon} label={group.label} />
+            <DataTable {...tableProps} data={group.items} />
+          </div>
+        ))}
+        <BulkActionsBar
+          selectedCount={selectedRows.length}
+          actions={bulkActions}
+          onClear={clearSelection}
+        />
+        {renderDialogs()}
+      </>
+    );
+  }
+
   return (
     <>
-      <DataTable
-        columns={columns}
-        data={users}
-        emptyState={emptyState}
-        selectable
-        selectedRows={selectedRows}
-        onSelect={setSelectedRows}
-        sortColumn={sortColumn}
-        sortDirection={sortDirection}
-        onSort={(col, dir) => {
-          setSortColumn(col);
-          setSortDirection(dir);
-        }}
-        actions={rowActions}
-      />
+      <DataTable {...tableProps} data={users} />
       <BulkActionsBar
         selectedCount={selectedRows.length}
         actions={bulkActions}
-        onClear={() => setSelectedRows([])}
+        onClear={clearSelection}
       />
+      {renderDialogs()}
     </>
   );
 }

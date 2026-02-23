@@ -3,8 +3,6 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/shared/components/ui';
 import type { IconName } from '@/shared/components/ui/Icon/Icon';
-import { Button } from '@/shared/components/ui';
-import { SearchBar } from '@/shared/components/composite';
 import { MenuItem } from '@/shared/components/composite/MenuItem';
 import { SIDEBAR_WIDTH } from './sidebar.config';
 
@@ -50,7 +48,6 @@ export interface SidebarProps {
   footerSections?: SidebarFooterSection[];
   promoCard?: SidebarPromoCard;
 
-  searchPlaceholder?: string;
   className?: string;
 }
 
@@ -62,19 +59,12 @@ export function Sidebar({
   onToggle,
   onNavigate,
   footerSections = [],
-  searchPlaceholder = 'Search',
   className,
 }: SidebarProps) {
-  const [searchValue, setSearchValue] = useState('');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     () =>
       Object.fromEntries(groups.map((g) => [g.id, g.defaultExpanded ?? true]))
   );
-
-  const matchesSearch = (label: string) =>
-    label.toLowerCase().includes(searchValue.toLowerCase());
-
-  const filteredItems = items.filter((item) => matchesSearch(item.label));
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }));
@@ -94,22 +84,19 @@ export function Sidebar({
       aria-label="Application sidebar"
     >
       <div className="flex flex-grow flex-col overflow-y-auto">
-        {/* Search bar + Toggle */}
+        {/* Logo + Toggle */}
         <div
           className={cn(
             'flex items-center pt-3 pb-2',
-            collapsed ? 'justify-center' : 'gap-2 pr-2 pl-3'
+            collapsed ? 'justify-center' : 'justify-between pr-2 pl-3'
           )}
         >
           {!collapsed && (
-            <div className="min-w-0 flex-1">
-              <SearchBar
-                value={searchValue}
-                placeholder={searchPlaceholder}
-                onChange={setSearchValue}
-                size="sm"
-              />
-            </div>
+            <img
+              src="/artco-group-logo-dark.svg"
+              alt="Artco"
+              className="h-6 w-auto"
+            />
           )}
           <button
             type="button"
@@ -139,7 +126,7 @@ export function Sidebar({
         >
           {/* Primary items */}
           <ul className={cn('space-y-0.5', !collapsed && 'px-0')}>
-            {filteredItems.map((item) => (
+            {items.map((item) => (
               <li key={item.id} className="relative">
                 <MenuItem
                   icon={item.icon}
@@ -155,9 +142,6 @@ export function Sidebar({
 
           {/* Groups */}
           {groups.map((group) => {
-            const filteredGroupItems = group.items.filter((item) =>
-              matchesSearch(item.label)
-            );
             const isExpanded = expandedGroups[group.id] ?? true;
 
             return (
@@ -184,7 +168,7 @@ export function Sidebar({
 
                 {isExpanded && (
                   <ul className={cn('mt-1 space-y-1', !collapsed && 'pl-2')}>
-                    {filteredGroupItems.map((item) => (
+                    {group.items.map((item) => (
                       <li key={item.id}>
                         <MenuItem
                           icon={item.icon}
@@ -202,30 +186,6 @@ export function Sidebar({
             );
           })}
         </nav>
-
-        {/* Promo card */}
-        {!collapsed && (
-          <div className="px-0 pt-2 pb-3">
-            <div className="bg-sidebar-accent rounded-2xl p-4 text-center">
-              <div className="bg-greyscale-900 mx-auto mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl text-white">
-                <span className="text-lg font-semibold">★</span>
-              </div>
-              <p className="text-sidebar-foreground mb-1 text-sm font-semibold">
-                Get Asset save up to 25%
-              </p>
-              <p className="text-sidebar-foreground/80 mb-3 text-xs">
-                Become a member and get your first download for free.
-              </p>
-              <Button
-                type="button"
-                size="sm"
-                className="bg-greyscale-900 hover:bg-greyscale-800 h-8 w-full rounded-lg text-xs font-medium text-white"
-              >
-                Upgrade Now
-              </Button>
-            </div>
-          </div>
-        )}
 
         {/* Footer */}
         {footerSections.length > 0 && (

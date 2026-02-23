@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { cn } from '@/lib/utils';
 import {
   Button,
@@ -10,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Icon,
+  EmptyState,
 } from '@/shared/components/ui';
 
 export interface NotificationItem {
@@ -21,15 +20,10 @@ export interface NotificationItem {
 }
 
 export interface NotificationBellProps {
-  /** Total number of unread notifications */
   count: number;
-  /** All notifications to display in the dropdown */
   notifications: NotificationItem[];
-  /** Called when a single notification is marked as read */
   onMarkRead: (id: string) => void;
-  /** Called when "Mark all as read" is clicked */
   onMarkAllRead: () => void;
-  /** Called when "Clear all" is clicked; clears the list and shows empty state */
   onClearAll?: () => void;
 }
 
@@ -41,8 +35,7 @@ export function NotificationBell({
   onClearAll,
 }: NotificationBellProps) {
   const hasNotifications = notifications.length > 0;
-
-  const unreadCount = useMemo(() => Math.max(0, count ?? 0), [count]);
+  const unreadCount = Math.max(0, count ?? 0);
 
   const badgeLabel =
     unreadCount > 99 ? '99+' : unreadCount > 0 ? String(unreadCount) : null;
@@ -64,7 +57,7 @@ export function NotificationBell({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-[380px] max-w-[380px]"
+        className="w-[320px] max-w-[320px]"
         align="end"
         sideOffset={8}
       >
@@ -74,23 +67,27 @@ export function NotificationBell({
           </span>
           {hasNotifications && (
             <div className="flex items-center gap-0.5">
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={onMarkAllRead}
                 aria-label="Mark all as read"
-                className="text-muted-foreground hover:text-foreground flex h-6 w-6 items-center justify-center rounded-full"
+                className="h-6 w-6"
               >
                 <Icon name="double-check" size="md" />
-              </button>
+              </Button>
               {onClearAll && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={onClearAll}
                   aria-label="Clear all notifications"
-                  className="text-muted-foreground hover:text-foreground flex h-5 w-5 items-center justify-center rounded-full"
+                  className="h-5 w-5"
                 >
                   <Icon name="close" size="sm" />
-                </button>
+                </Button>
               )}
             </div>
           )}
@@ -98,45 +95,38 @@ export function NotificationBell({
         <DropdownMenuSeparator />
 
         {!hasNotifications && (
-          <div className="flex flex-col items-center px-4 py-4 text-center">
-            <img
-              src="/src/assets/empty-states/no-comments.svg"
-              alt=""
-              className="mb-3 h-20 w-20"
-              aria-hidden="true"
+          <div className="px-3 py-2">
+            <EmptyState
+              variant="no-notifications"
+              title="No notifications"
+              message="We'll notify you about updates and mentions."
+              className="min-h-0"
             />
-            <p className="text-foreground mb-1 text-sm font-medium">
-              You don&apos;t have any notifications
-            </p>
-            <p className="text-muted-foreground mb-4 text-xs">
-              We&apos;ll keep you informed about key updates and any mentions of
-              you on Trackly.
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-1.5"
-            >
-              <Icon name="settings" size="sm" />
-              Notification Settings
-            </Button>
+            <div className="mt-1 text-center">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                leftIcon="settings"
+              >
+                Notification Settings
+              </Button>
+            </div>
           </div>
         )}
 
         {hasNotifications && (
           <>
-            <div className="max-h-[320px] overflow-y-auto">
+            <div className="max-h-[200px] overflow-y-auto">
               {notifications.map((notification) => (
                 <DropdownMenuItem
                   key={notification.id}
                   className={cn(
-                    'border-border-default focus:bg-accent flex items-start gap-3 border-b px-3 py-3 text-sm last:border-b-0',
+                    'border-border-default focus:bg-accent flex items-start gap-2 border-b px-3 py-2 text-sm last:border-b-0',
                     !notification.isRead && 'bg-background-light-secondary'
                   )}
                   onClick={() => onMarkRead(notification.id)}
                 >
-                  {/* Placeholder for future company logo */}
                   <div
                     className="h-6 w-6 shrink-0 rounded-full bg-teal-500"
                     aria-hidden
@@ -176,13 +166,10 @@ export function NotificationBell({
                 </DropdownMenuItem>
               ))}
             </div>
-            <div className="border-border-default border-t py-3 text-center">
-              <button
-                type="button"
-                className="text-foreground hover:text-foreground/80 text-sm font-medium transition-colors"
-              >
+            <div className="border-border-default border-t py-2 text-center">
+              <Button type="button" variant="link" size="sm">
                 See more
-              </button>
+              </Button>
             </div>
           </>
         )}

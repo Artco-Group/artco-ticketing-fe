@@ -1,0 +1,197 @@
+{
+  "title": "Settings",
+  "sidebar": {
+    "account": "Account",
+    "profile": "Profile",
+    "notification": "Notification",
+    "security": "Security & Access",
+    "administration": "Administration",
+    "preference": "Preference",
+    "statusConfigs": "Status Configuration"
+  },
+  "sections": {
+    "account": "Account",
+    "preferences": "Preferences",
+    "security": "Security",
+    "notifications": "Notifications"
+  },
+  "profile": {
+    "title": "Profile",
+    "description": "Manage your profile information",
+    "subtitle": "Manage your personal information and account settings",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "email": "Email Address",
+    "emailPlaceholder": "Enter email address",
+    "role": "Role",
+    "rolePlaceholder": "Select a role",
+    "avatar": "Profile Picture",
+    "avatarHint": "We support PNGs, JPEGs and GIFs under 10MB",
+    "uploadImage": "Upload Image",
+    "uploading": "Uploading...",
+    "remove": "Remove",
+    "changeAvatar": "Change Picture",
+    "removeAvatar": "Remove Picture",
+    "saveChanges": "Save Changes",
+    "saving": "Saving..."
+  },
+  "preferences": {
+    "title": "Preferences",
+    "description": "Customize your experience",
+    "language": {
+      "label": "Language",
+      "description": "Choose your preferred language"
+    },
+    "theme": {
+      "label": "Theme",
+      "description": "Choose your preferred theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "timezone": {
+      "label": "Timezone",
+      "description": "Set your local timezone"
+    }
+  },
+  "security": {
+    "title": "Security & Access",
+    "description": "Manage your password, session and other",
+    "password": "Password",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "currentPasswordPlaceholder": "Enter current password",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "saveChange": "Save Change",
+    "saving": "Saving...",
+    "twoFactor": {
+      "title": "Two-Factor Authentication",
+      "description": "Add an extra layer of security to your account",
+      "enable": "Enable",
+      "disable": "Disable"
+    },
+    "sessions": {
+      "title": "Active Sessions",
+      "description": "Manage your active sessions",
+      "current": "Current Session",
+      "terminateAll": "Terminate All Sessions"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Choose how you want to be notified",
+    "email": {
+      "title": "Email Notifications",
+      "masterToggleDescription": "Receive email notifications for updates",
+      "sections": {
+        "project": "Project Notifications",
+        "ticket": "Ticket Notifications",
+        "reminders": "Reminders"
+      },
+      "projectCreated": "When a project is created for me",
+      "addedToProject": "When I'm added to a project",
+      "ticketCreated": "When a ticket is created in my project",
+      "ticketAssigned": "When a ticket is assigned to me",
+      "ticketStatusChanged": "When a ticket status changes",
+      "ticketUpdated": "When a ticket is updated (priority, due date, files)",
+      "commentAdded": "When someone comments on a ticket",
+      "dueDateReminder": "Due date reminders (24 hours before)",
+      "ticketOverdue": "Overdue ticket notifications"
+    },
+    "push": {
+      "title": "Push Notifications",
+      "enable": "Enable push notifications"
+    }
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "profileUpdated": "Profile updated successfully",
+    "passwordChanged": "Password changed successfully",
+    "avatarUpdated": "Profile picture updated",
+    "avatarRemoved": "Profile picture removed"
+  },
+  "workflows": {
+    "title": "Status Configurations",
+    "description": "Manage ticket status configurations for your projects",
+    "createNew": "Create Configuration",
+    "default": "Default",
+    "edit": "Edit",
+    "delete": "Delete",
+    "noConfigs": "No status configurations",
+    "noConfigsMessage": "Create a custom configuration to define ticket statuses for your projects.",
+    "errorTitle": "Error loading configurations",
+    "errorMessage": "Failed to load status configurations. Please try again.",
+    "deleteTitle": "Delete Configuration",
+    "confirmDelete": "Are you sure you want to delete this status configuration? This action cannot be undone.",
+    "deleteConfirm": "Delete",
+    "deleteCancel": "Cancel",
+    "projectCount": "{{count}} project",
+    "projectCount_plural": "{{count}} projects",
+    "noProjects": "No projects",
+    "initialStatus": "Initial",
+    "groups": {
+      "backlog": "Backlog",
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "colors": {
+      "gray": "Gray",
+      "slate": "Slate",
+      "blue": "Blue",
+      "green": "Green",
+      "yellow": "Yellow",
+      "orange": "Orange",
+      "red": "Red",
+      "purple": "Purple",
+      "pink": "Pink",
+      "teal": "Teal"
+    },
+    "editor": {
+      "createTitle": "Create Configuration",
+      "editTitle": "Edit Configuration",
+      "description": "Configure the statuses and groups for this configuration",
+      "back": "Back",
+      "basicInfo": "Basic Information",
+      "name": "Configuration Name",
+      "namePlaceholder": "Enter configuration name",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter a description for this configuration",
+      "statuses": "Statuses",
+      "statusesDescription": "Drag to reorder. Set colors, groups, and mark the initial status.",
+      "addStatus": "Add Status",
+      "statusNamePlaceholder": "Status name",
+      "setAsInitial": "Set as initial status",
+      "default": "Default",
+      "save": "Save Configuration",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "nameRequired": "Configuration name is required",
+      "minStatuses": "At least 2 statuses are required",
+      "statusNameRequired": "All statuses must have a name",
+      "initialRequired": "Please select an initial status",
+      "backlogRequired": "At least one status must be in the Backlog group",
+      "activeRequired": "At least one status must be in the Active group",
+      "completedRequired": "At least one status must be in the Completed group",
+      "validationErrors": "Please fix the following issues:",
+      "assignedProjects": "Assigned Projects",
+      "assignedProjectsDescription": "Select which projects should use this configuration.",
+      "selectProjects": "Select projects...",
+      "noProjects": "No projects available",
+      "projectHasTickets": "Projects with existing tickets cannot change configurations",
+      "initialStatus": "Initial Status",
+      "deleteStatus": "Delete this status",
+      "minStatusesTooltip": "Minimum 2 statuses required",
+      "basicInfoHelper": "Give your configuration a name and optional description.",
+      "groupRequirementsTitle": "Group Requirements",
+      "groupRequirementBacklog": "At least one status in Backlog",
+      "groupRequirementActive": "At least one status in Active",
+      "groupRequirementCompleted": "At least one status in Completed",
+      "groupRequirementInitial": "One status marked as initial",
+      "projectRestrictionNotice": "Only projects with no existing tickets can be assigned."
+    }
+  }
+}

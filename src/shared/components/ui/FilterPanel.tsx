@@ -221,7 +221,7 @@ export const FilterPanel = ({
           <button
             type="button"
             aria-pressed={isActive}
-            className={filterPanelButtonVariants({ active: false })}
+            className={cn(filterPanelButtonVariants({ active: false }), 'h-8')}
           >
             {icon ? (
               <span className="inline-flex shrink-0 items-center">{icon}</span>

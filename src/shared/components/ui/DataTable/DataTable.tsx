@@ -30,7 +30,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../dropdown-menu';
-import { getRowId } from './utils';
 import type {
   TableRowData,
   DataTableProps,
@@ -58,6 +57,8 @@ function DataTable<T extends TableRowData>({
   sortDirection = null,
   onSort,
   actions,
+  hideHeader = false,
+  getRowId: getRowIdProp,
 }: DataTableProps<T>) {
   const sorting: SortingState = useMemo(() => {
     if (!sortColumn || !sortDirection) return [];
@@ -142,10 +143,11 @@ function DataTable<T extends TableRowData>({
         const getBadgeProps =
           'getBadgeProps' in col ? col.getBadgeProps : undefined;
         const badgeProps = getBadgeProps ? getBadgeProps(stringValue, row) : {};
+        const badgeContent = badgeProps.children ?? stringValue;
 
         return (
           <span className="whitespace-nowrap">
-            <Badge {...badgeProps}>{stringValue}</Badge>
+            <Badge {...badgeProps}>{badgeContent}</Badge>
           </span>
         );
       }
@@ -272,7 +274,7 @@ function DataTable<T extends TableRowData>({
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getRowId: (row) => getRowId(row) || String(data.indexOf(row)),
+    getRowId: getRowIdProp ?? ((row) => row.id || String(data.indexOf(row))),
   });
 
   useEffect(() => {
@@ -389,6 +391,7 @@ function DataTable<T extends TableRowData>({
               const meta = cell.column.columnDef.meta as
                 | {
                     className?: string;
+                    width?: string;
                     align?: ColumnAlign;
                   }
                 | undefined;
@@ -403,9 +406,10 @@ function DataTable<T extends TableRowData>({
                   className={cn(
                     'px-6 py-3',
                     alignClass,
-                    cell.column.id === 'select' && 'w-12',
-                    cell.column.id === 'actions' && 'w-12 text-right',
-                    meta?.className
+                    cell.column.id === 'select' && 'w-[48px]',
+                    cell.column.id === 'actions' && 'w-[48px] text-right',
+                    meta?.className,
+                    meta?.width
                   )}
                   onClick={
                     cell.column.id === 'select' || cell.column.id === 'actions'
@@ -441,7 +445,7 @@ function DataTable<T extends TableRowData>({
   return (
     <div className={cn('overflow-hidden bg-white', className)}>
       <ShadcnTable>
-        {renderHeader()}
+        {!hideHeader && renderHeader()}
         {renderRows()}
       </ShadcnTable>
     </div>

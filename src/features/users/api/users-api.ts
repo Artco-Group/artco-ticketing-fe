@@ -4,29 +4,21 @@ import {
   API_ROUTES,
   CACHE,
   type User,
+  type UserQueryParams,
   type CreateUserFormData,
   type UpdateUserFormData,
 } from '@artco-group/artco-ticketing-sync';
 import { queryClient } from '@/shared/lib/query-client';
-import type { UserId, ApiResponse } from '@/types';
+import type { UserId } from '@/types';
 
-/**
- * Get all users
- */
-function useUsers(params?: Record<string, unknown>) {
-  return useApiQuery<ApiResponse<{ users: User[] }>>(
-    QueryKeys.users.list(params),
-    {
-      url: API_ROUTES.USERS.BASE,
-      params,
-      staleTime: CACHE.SHORT_STALE_TIME,
-    }
-  );
+function useUsers(params?: UserQueryParams) {
+  return useApiQuery<{ users: User[] }>(QueryKeys.users.list(params), {
+    url: API_ROUTES.USERS.BASE,
+    params,
+    staleTime: CACHE.SHORT_STALE_TIME,
+  });
 }
 
-/**
- * Get a single user by ID
- */
 function useUser(id: UserId) {
   return useApiQuery<{ user: User }>(QueryKeys.users.detail(id), {
     url: API_ROUTES.USERS.BY_ID(id),
@@ -35,22 +27,13 @@ function useUser(id: UserId) {
   });
 }
 
-/**
- * Get all developers
- */
 function useDevelopers() {
-  return useApiQuery<ApiResponse<{ users: User[] }>>(
-    QueryKeys.users.developers(),
-    {
-      url: API_ROUTES.USERS.DEVELOPERS,
-      staleTime: CACHE.STALE_TIME,
-    }
-  );
+  return useApiQuery<{ users: User[] }>(QueryKeys.users.developers(), {
+    url: API_ROUTES.USERS.DEVELOPERS,
+    staleTime: CACHE.STALE_TIME,
+  });
 }
 
-/**
- * Create a new user
- */
 function useCreateUser() {
   return useApiMutation<{ user: User }, CreateUserFormData>({
     url: API_ROUTES.USERS.BASE,
@@ -61,9 +44,6 @@ function useCreateUser() {
   });
 }
 
-/**
- * Update an existing user
- */
 function useUpdateUser() {
   return useApiMutation<
     { user: User },
@@ -77,13 +57,11 @@ function useUpdateUser() {
         queryKey: QueryKeys.users.detail(variables.id),
       });
       queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
     },
   });
 }
 
-/**
- * Delete a user
- */
 function useDeleteUser() {
   return useApiMutation<void, UserId>({
     url: (id) => API_ROUTES.USERS.BY_ID(id),
@@ -95,20 +73,63 @@ function useDeleteUser() {
   });
 }
 
-/**
- * Namespaced API export (FMROI pattern)
- */
-export const usersApi = {
-  useUsers,
-  useUser,
-  useDevelopers,
-  useCreateUser,
-  useUpdateUser,
-  useDeleteUser,
-  keys: QueryKeys.users,
-};
+interface BulkDeleteResult {
+  deletedCount: number;
+  failedEmails: string[];
+  errors: Record<string, string>;
+}
 
-// Individual exports for backwards compatibility
+function useBulkDeleteUsers() {
+  return useApiMutation<BulkDeleteResult, { emails: string[] }>({
+    url: API_ROUTES.USERS.BASE,
+    method: 'DELETE',
+    getBody: (vars) => vars,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
+    },
+  });
+}
+
+function useUploadAvatar() {
+  return useApiMutation<{ user: User }, { userId: UserId; file: File }>({
+    url: (vars) => `${API_ROUTES.USERS.BY_ID(vars.userId)}/avatar`,
+    method: 'POST',
+    getBody: (vars) => {
+      const formData = new FormData();
+      formData.append('avatar', vars.file);
+      return formData;
+    },
+    config: {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.users.detail(variables.userId),
+      });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
+      // Invalidate projects since client avatars are embedded in project data
+      queryClient.invalidateQueries({ queryKey: QueryKeys.projects.lists() });
+    },
+  });
+}
+
+function useRemoveAvatar() {
+  return useApiMutation<{ user: User }, UserId>({
+    url: (userId) => `${API_ROUTES.USERS.BY_ID(userId)}/avatar`,
+    method: 'DELETE',
+    getBody: () => undefined,
+    onSuccess: (_, userId) => {
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.users.detail(userId),
+      });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.users.lists() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.projects.lists() });
+    },
+  });
+}
+
 export {
   useUsers,
   useUser,
@@ -116,4 +137,7 @@ export {
   useCreateUser,
   useUpdateUser,
   useDeleteUser,
+  useBulkDeleteUsers,
+  useUploadAvatar,
+  useRemoveAvatar,
 };

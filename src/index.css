@@ -205,6 +205,9 @@
   --color-border-inverse: var(--border-inverse);
   --color-border-selected: var(--border-selected);
   --color-border-component: var(--border-component);
+  /* Badge/Status icon color mappings */
+  --color-badge-orange: var(--badge-orange);
+  --color-badge-yellow: var(--badge-yellow);
 }
 
 :root {
@@ -215,8 +218,8 @@
   --card-foreground: oklch(0.145 0 0); /* Near black */
   --popover: oklch(1 0 0); /* White */
   --popover-foreground: oklch(0.145 0 0); /* Near black */
-  /* Primary: Brand Blue #004179 */
-  --primary: oklch(0.282 0.103 242.64); /* #004179 */
+  /* Primary: Greyscale-900 (Dark/Black) #1E1E1E */
+  --primary: oklch(0.22 0 0); /* #1E1E1E - greyscale-900 */
   --primary-foreground: oklch(0.985 0 0); /* White */
   /* Secondary: Light gray */
   --secondary: oklch(0.97 0 0);
@@ -292,6 +295,9 @@
   --icon-success: #009951; /* green-600 */
   --icon-danger-default: #DC3412; /* red-600 */
   --icon-danger-secondary: #F24822; /* red-500 */
+  /* Badge/Status icon colors */
+  --badge-orange: #FC9E24; /* orange-500 */
+  --badge-yellow: #eab308; /* yellow-500 */
   /* Semantic border tokens - light mode */
   --border-default: #E0E0E0; /* greyscale-200 */
   --border-secondary: #F5F5F5; /* greyscale-100 */
@@ -310,9 +316,9 @@
   --card-foreground: oklch(0.985 0 0); /* White */
   --popover: oklch(0.205 0 0); /* Darker gray */
   --popover-foreground: oklch(0.985 0 0); /* White */
-  /* Primary: Lighter brand blue for dark mode */
-  --primary: oklch(0.5 0.15 242.64); /* Lighter blue #0D99FF */
-  --primary-foreground: oklch(0.985 0 0); /* White */
+  /* Primary: Greyscale-300 for dark mode visibility */
+  --primary: oklch(0.67 0 0); /* #9D9D9D - greyscale-300 */
+  --primary-foreground: oklch(0.145 0 0); /* Dark text for contrast */
   /* Secondary */
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -384,6 +390,9 @@
   --icon-success: #85E0A3; /* green-400 */
   --icon-danger-default: #FFAFA3; /* red-400 */
   --icon-danger-secondary: #DC3412; /* red-600 */
+  /* Badge/Status icon colors - dark mode */
+  --badge-orange: #FFC470; /* orange-400 */
+  --badge-yellow: #facc15; /* yellow-400 */
   /* Semantic border tokens - dark mode */
   --border-default: #2C2C2C; /* greyscale-800 */
   --border-secondary: #383838; /* greyscale-700 */
@@ -543,16 +552,16 @@
 
   /* Modal size classes */
   .modal-sm {
-    max-width: 24rem !important;
+    max-width: 26rem !important;
   }
   .modal-md {
-    max-width: 28rem !important;
+    max-width: 30rem !important;
   }
   .modal-lg {
-    max-width: 32rem !important;
+    max-width: 36rem !important;
   }
   .modal-xl {
-    max-width: 36rem !important;
+    max-width: 44rem !important;
   }
 
 /* Layout utility classes */

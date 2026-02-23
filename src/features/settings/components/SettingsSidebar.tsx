@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useAppTranslation } from '@/shared/hooks';
 import { cn } from '@/lib/utils';
-import { Icon } from '@/shared/components/ui';
+import { Icon, Button } from '@/shared/components/ui';
 import { SearchBar } from '@/shared/components/composite';
 import { MenuItem } from '@/shared/components/composite/MenuItem';
 import { SIDEBAR_WIDTH } from '@/shared/components/layout/sidebar.config';
@@ -22,15 +23,11 @@ export interface SettingsSideBarGroup {
 
 interface SettingsSidebarProps {
   groups: SettingsSideBarGroup[];
-  /** currently-active item id (optional). If provided, takes precedence over pathname-based active detection */
   activeItem?: string;
-  /** optional navigation callback: receives `item.id` when an item is clicked. If omitted, items will render as links using `href` */
   onNavigate?: (id: string) => void;
   className?: string;
   onBackToTop?: () => void;
 }
-
-// `groups` are provided via props; default static nav groups removed to avoid unused constants.
 
 export function SettingsSidebar({
   groups,
@@ -40,12 +37,11 @@ export function SettingsSidebar({
   className,
 }: SettingsSidebarProps) {
   const location = useLocation();
+  const { translate } = useAppTranslation('common');
   const { collapsed, setCollapsed } = useSettingsSidebar();
   const [searchValue, setSearchValue] = useState('');
 
   const isActive = (href: string) => {
-    // If an explicit active id was provided, don't use href-based detection
-    if (activeItem) return false;
     return (
       location.pathname === href || location.pathname.startsWith(href + '/')
     );
@@ -85,7 +81,7 @@ export function SettingsSidebar({
             <div className="min-w-0 flex-1">
               <SearchBar
                 value={searchValue}
-                placeholder="Search"
+                placeholder={translate('buttons.search')}
                 onChange={setSearchValue}
                 size="sm"
               />
@@ -117,39 +113,32 @@ export function SettingsSidebar({
         </div>
 
         {/* Back to Top */}
-        <div className={cn('py-2', collapsed ? 'px-2' : 'px-4')}>
-          <button
-            type="button"
+        <div className={cn('py-2', collapsed ? 'px-2' : 'pr-4')}>
+          <Button
+            variant="ghost"
+            size="md"
             onClick={() => onBackToTop?.()}
+            leftIcon="chevron-left"
             className={cn(
-              'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors',
-              'hover:bg-sidebar-accent text-sidebar-foreground/70',
-              collapsed && 'justify-center px-0'
+              'text-sidebar-foreground/70 justify-start pl-2',
+              collapsed && 'w-full justify-center px-0'
             )}
           >
-            <Icon name="chevron-left" size="md" />
-            {!collapsed && <span>Back to Top</span>}
-          </button>
+            {!collapsed && translate('navigation.backToTop')}
+          </Button>
         </div>
 
-        {/* Navigation Groups */}
         <nav
-          className={cn('flex-1 space-y-4 pt-2', collapsed ? 'px-2' : 'px-2')}
+          className={cn('flex-1 space-y-4 pt-2', collapsed ? 'px-2' : 'pr-2')}
         >
           {filteredGroups.map((group, idx) => (
             <div key={group.title || idx}>
               {!collapsed && group.title && (
-                <p className="text-sidebar-foreground/50 mb-2 px-2 text-xs font-medium tracking-wide uppercase">
+                <p className="text-sidebar-foreground/50 mb-2 pl-4 text-xs font-medium tracking-wide uppercase">
                   {group.title}
                 </p>
               )}
-              <ul
-                className={cn(
-                  'space-y-0.5',
-                  !collapsed && 'px-2',
-                  collapsed && 'space-y-1'
-                )}
-              >
+              <ul className={cn('space-y-0.5', collapsed && 'space-y-1')}>
                 {group.items.map((item) => (
                   <li key={item.id} className="relative">
                     {onNavigate ? (
@@ -186,7 +175,7 @@ export function SettingsSidebar({
           <div className={cn('flex flex-col gap-2', collapsed && 'gap-3')}>
             <MenuItem
               icon="info"
-              label="Help and first step"
+              label={translate('navigation.help')}
               collapsed={collapsed}
               className="text-sidebar-foreground/70"
             />

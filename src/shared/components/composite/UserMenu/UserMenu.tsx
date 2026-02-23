@@ -53,11 +53,13 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate(PAGE_ROUTES.PROFILE)}>
+        <DropdownMenuItem
+          onClick={() => navigate(PAGE_ROUTES.SETTINGS.PROFILE)}
+        >
           <Icon name="user" size="sm" />
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate(PAGE_ROUTES.SETTINGS)}>
+        <DropdownMenuItem onClick={() => navigate(PAGE_ROUTES.SETTINGS.ROOT)}>
           <Icon name="settings" size="sm" />
           Settings
         </DropdownMenuItem>

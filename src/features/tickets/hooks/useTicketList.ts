@@ -1,15 +1,16 @@
 import { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { UserRole, type Ticket, type Filters } from '@/types';
+import { UserRole, asTicketId, type Ticket, type Filters } from '@/types';
 
 import { PAGE_ROUTES } from '@/shared/constants';
 import { useAuth } from '@/features/auth/context';
 import { useUsers } from '@/features/users/api';
+import { useRoleFlags } from '@/shared/hooks';
 import { useTickets } from '../api/tickets-api';
 import {
   filterTickets,
   sortTickets,
-  getAssigneeEmail,
+  filterTicketsByTab,
 } from '@/shared/utils/ticket-helpers';
 
 export function useTicketList() {
@@ -19,9 +20,7 @@ export function useTicketList() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const isEngLead = userRole === UserRole.ENG_LEAD;
-  const isDeveloper = userRole === UserRole.DEVELOPER;
-  const isClient = userRole === UserRole.CLIENT;
+  const { isEngLead, isDeveloper, isClient } = useRoleFlags(userRole);
 
   const activeTab = searchParams.get('tab') || 'active';
 
@@ -31,6 +30,7 @@ export function useTicketList() {
       priority: searchParams.get('priority') || 'All',
       client: searchParams.get('client') || 'All',
       assignee: searchParams.get('assignee') || 'All',
+      project: searchParams.get('project') || 'All',
       sortBy: searchParams.get('sortBy') || 'Created Date',
     }),
     [searchParams]
@@ -52,36 +52,11 @@ export function useTicketList() {
   }, [ticketsData]);
 
   const { data: usersData } = useUsers();
-  const users = usersData?.data?.users || [];
-
-  const roleFilteredTickets = useMemo(() => {
-    if (isDeveloper) {
-      return allTickets.filter(
-        (ticket) => getAssigneeEmail(ticket.assignedTo) === user?.email
-      );
-    }
-    if (isClient) {
-      return allTickets.filter((ticket) => ticket.clientEmail === user?.email);
-    }
-    return allTickets;
-  }, [allTickets, isDeveloper, isClient, user?.email]);
+  const users = usersData?.users || [];
 
   const tabFilteredTickets = useMemo(() => {
-    if (activeTab === 'all') {
-      return roleFilteredTickets;
-    }
-    if (activeTab === 'backlog') {
-      return roleFilteredTickets.filter(
-        (ticket) => ticket.status === 'New' || ticket.status === 'Open'
-      );
-    }
-    return roleFilteredTickets.filter(
-      (ticket) =>
-        ticket.status === 'In Progress' ||
-        ticket.status === 'Resolved' ||
-        ticket.status === 'Closed'
-    );
-  }, [roleFilteredTickets, activeTab]);
+    return filterTicketsByTab(allTickets, activeTab);
+  }, [allTickets, activeTab]);
 
   const filteredTickets = useMemo(() => {
     return sortTickets(
@@ -91,15 +66,15 @@ export function useTicketList() {
   }, [tabFilteredTickets, filters, isEngLead]);
 
   const handleViewTicket = (ticket: Ticket) => {
-    navigate(PAGE_ROUTES.TICKETS.detail(ticket._id || ''));
+    navigate(
+      PAGE_ROUTES.TICKETS.detail(asTicketId(ticket.ticketId || ticket.id))
+    );
   };
 
   const handleFilterChange = (filterType: string, value: string) => {
-    // Use functional update to always work with latest params (avoids race conditions)
     setSearchParams((currentParams) => {
       const params = new URLSearchParams(currentParams);
 
-      // Set or remove the filter value
       if (
         value === 'All' ||
         (filterType === 'sortBy' && value === 'Created Date')
@@ -121,13 +96,9 @@ export function useTicketList() {
     setSearchParams(params);
   };
 
-  const handleCreateTicket = () => {
-    navigate(PAGE_ROUTES.TICKETS.CREATE);
-  };
-
   return {
     tickets: filteredTickets,
-    allTickets: isEngLead ? allTickets : undefined,
+    allTickets,
     users: isEngLead ? users : undefined,
     filters: !isClient ? filters : undefined,
     isLoading: ticketsLoading,
@@ -142,7 +113,6 @@ export function useTicketList() {
     isClient,
     onViewTicket: handleViewTicket,
     onFilterChange: !isClient ? handleFilterChange : undefined,
-    onCreateTicket: handleCreateTicket,
     onTabChange: handleTabChange,
   };
 }

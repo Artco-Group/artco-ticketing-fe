@@ -36,6 +36,14 @@ export function RouteGuard({
     );
   }
 
+  if (
+    isAuthenticated &&
+    user?.mustChangePassword &&
+    location.pathname !== PAGE_ROUTES.AUTH.CHANGE_PASSWORD
+  ) {
+    return <Navigate to={PAGE_ROUTES.AUTH.CHANGE_PASSWORD} replace />;
+  }
+
   // Public route, user is authenticated - redirect to dashboard
   if (!requiresAuth && isAuthenticated) {
     return <Navigate to={PAGE_ROUTES.DASHBOARD.ROOT} replace />;

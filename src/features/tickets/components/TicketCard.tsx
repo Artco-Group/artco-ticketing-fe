@@ -1,16 +1,13 @@
-import { formatDateLocalized } from '@artco-group/artco-ticketing-sync';
 import {
-  TicketStatus,
-  TicketPriority,
-  TicketCategory,
-  type Ticket,
-} from '@/types';
+  formatDateDisplay,
+  TicketPriorityTranslationKeys,
+  TicketCategoryTranslationKeys,
+} from '@artco-group/artco-ticketing-sync';
+import { TicketPriority, TicketCategory, type Ticket } from '@/types';
 import {
   categoryBadgeConfig,
   getPriorityIcon,
-  getPriorityLabel,
-  getStatusIcon,
-  getStatusLabel,
+  getDynamicStatusIcon,
 } from '@/shared/utils/ticket-helpers';
 import {
   Card,
@@ -20,6 +17,7 @@ import {
   Badge,
   Separator,
 } from '@/shared/components/ui';
+import { useAppTranslation, useStatusLabel } from '@/shared/hooks';
 
 interface TicketCardProps {
   ticket: Ticket;
@@ -27,6 +25,9 @@ interface TicketCardProps {
 }
 
 function TicketCard({ ticket, onClick }: TicketCardProps) {
+  const { translate, language } = useAppTranslation('tickets');
+  const { getStatusLabel } = useStatusLabel();
+
   return (
     <Card
       onClick={() => onClick(ticket)}
@@ -40,11 +41,22 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
       <CardContent className="space-y-4">
         {/* Status & Category */}
         <div className="flex flex-wrap gap-2">
-          <Badge icon={getStatusIcon(ticket.status as TicketStatus)}>
-            {getStatusLabel(ticket.status as TicketStatus)}
+          <Badge
+            icon={getDynamicStatusIcon(
+              ticket.status,
+              ticket.project?.statusConfig
+            )}
+          >
+            {getStatusLabel(ticket.status, ticket.project?.statusConfig)}
           </Badge>
-          <Badge>
-            {categoryBadgeConfig[ticket.category as TicketCategory].label}
+          <Badge
+            icon={categoryBadgeConfig[
+              ticket.category as TicketCategory
+            ]?.getIcon?.()}
+          >
+            {translate(
+              TicketCategoryTranslationKeys[ticket.category as TicketCategory]
+            )}
           </Badge>
         </div>
 
@@ -53,10 +65,14 @@ function TicketCard({ ticket, onClick }: TicketCardProps) {
         {/* Priority & Date */}
         <div className="flex-between">
           <Badge icon={getPriorityIcon(ticket.priority as TicketPriority)}>
-            {getPriorityLabel(ticket.priority as TicketPriority)}
+            {translate(
+              TicketPriorityTranslationKeys[ticket.priority as TicketPriority]
+            )}
           </Badge>
           <span className="text-muted-xs">
-            {ticket.createdAt ? formatDateLocalized(ticket.createdAt) : ''}
+            {ticket.createdAt
+              ? formatDateDisplay(ticket.createdAt, language)
+              : ''}
           </span>
         </div>
       </CardContent>

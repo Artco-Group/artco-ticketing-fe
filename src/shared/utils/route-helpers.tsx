@@ -114,15 +114,6 @@ export function createAuthOnlyRoute(
 }
 
 /**
- * Helper function to generate route key from route object key
- * Converts UPPER_CASE to kebab-case for route keys
- */
-export function generateRouteKey(prefix: string, routeKey: string): string {
-  const kebabKey = routeKey.toLowerCase().replace(/_/g, '-');
-  return kebabKey === 'index' ? prefix : `${prefix}-${kebabKey}`;
-}
-
-/**
  * Maps route definitions to public routes
  * For manual route definitions that need custom keys
  */

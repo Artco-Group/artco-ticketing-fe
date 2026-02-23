@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { SCREEN_RECORDING } from '@/config';
-import { useToast } from '@/shared/components/ui';
+import { useTranslatedToast } from '@/shared/hooks/useTranslatedToast';
+import { useAppTranslation } from '@/shared/hooks/useAppTranslation';
 
 interface UseScreenRecorderOptions {
   maxDuration?: number;
@@ -24,7 +25,8 @@ export function useScreenRecorder({
   bitrate = SCREEN_RECORDING.BITRATE,
   onComplete,
 }: UseScreenRecorderOptions) {
-  const toast = useToast();
+  const { translate } = useAppTranslation();
+  const translatedToast = useTranslatedToast();
   const [recording, setRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [estimatedSize, setEstimatedSize] = useState(0);
@@ -126,7 +128,7 @@ export function useScreenRecorder({
 
       mediaRecorder.onerror = (event) => {
         console.error('MediaRecorder error:', event);
-        setError('Greška tokom snimanja');
+        setError(translate('toast.error.recordingError'));
         cleanup();
       };
 
@@ -146,7 +148,7 @@ export function useScreenRecorder({
 
           if (newTime >= maxDuration) {
             stopRecording();
-            toast.info('Snimanje automatski zaustavljeno nakon 3 minute');
+            translatedToast.info('toast.success.recordingStopped');
           }
 
           return newTime;
@@ -157,14 +159,14 @@ export function useScreenRecorder({
 
       if (err instanceof Error) {
         if (err.name === 'NotAllowedError') {
-          setError('Potrebna je dozvola za snimanje ekrana');
+          setError(translate('toast.error.permissionRequired'));
         } else if (err.name === 'NotSupportedError') {
-          setError('Vaš browser ne podržava snimanje ekrana');
+          setError(translate('toast.error.browserNotSupported'));
         } else {
-          setError('Greška pri pokretanju snimanja');
+          setError(translate('toast.error.startRecordingError'));
         }
       } else {
-        setError('Greška pri pokretanju snimanja');
+        setError(translate('toast.error.startRecordingError'));
       }
 
       cleanup();

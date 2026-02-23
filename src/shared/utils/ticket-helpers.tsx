@@ -1,9 +1,15 @@
 import type { ReactNode } from 'react';
 import {
-  TicketPriorityDisplay,
-  getStatusBadgeClasses,
-  getCategoryBadgeClasses,
+  TicketStatusSortOrder,
+  TicketPrioritySortOrder,
+  DEFAULT_STATUS_GROUPS,
+  DEFAULT_STATUSES,
 } from '@artco-group/artco-ticketing-sync';
+import type {
+  StatusConfig,
+  StatusDefinition,
+  StatusGroups,
+} from '@artco-group/artco-ticketing-sync/types';
 import {
   TicketStatus,
   TicketPriority,
@@ -12,79 +18,33 @@ import {
   type User,
   type Filters,
 } from '@/types';
-import { StatusIcon, PriorityIcon } from '@/shared/components/ui/BadgeIcons';
+import {
+  StatusIcon,
+  PriorityIcon,
+  type IconVariant,
+} from '@/shared/components/ui/BadgeIcons';
+import { Icon } from '@/shared/components/ui/Icon';
 
 /**
- * Priority order for sorting (highest first)
- */
-export const PRIORITY_ORDER: Record<string, number> = {
-  Critical: 4,
-  High: 3,
-  Medium: 2,
-  Low: 1,
-};
-
-/**
- * Status order for sorting
- */
-export const STATUS_ORDER: Record<string, number> = {
-  New: 1,
-  Open: 2,
-  'In Progress': 3,
-  Resolved: 4,
-  Closed: 5,
-};
-
-/**
- * Type for assignedTo field which can be string, User-like object, or null/undefined
- * Uses Nullable pattern to match sync package types
+ * Type for assignedTo field (always populated object from API)
  */
 export type AssignedToValue =
-  | string
-  | { _id?: string | null; email?: string | null; name?: string | null }
+  | { id?: string | null; email?: string | null; name?: string | null }
   | null
   | undefined;
-
-/**
- * Type guard to check if assignedTo is a User-like object (not a string)
- */
-export function isAssignedToObject(assignedTo: AssignedToValue): assignedTo is {
-  _id?: string | null;
-  email?: string | null;
-  name?: string | null;
-} {
-  return (
-    assignedTo !== null &&
-    assignedTo !== undefined &&
-    typeof assignedTo === 'object'
-  );
-}
-
-/**
- * Extract assignee ID from ticket.assignedTo which can be string or User object
- */
-export function getAssigneeId(assignedTo: AssignedToValue): string {
-  if (!assignedTo) return '';
-  if (typeof assignedTo === 'string') return assignedTo;
-  return assignedTo._id || '';
-}
 
 /**
  * Extract assignee email from ticket.assignedTo
  */
 export function getAssigneeEmail(assignedTo: AssignedToValue): string {
-  if (!assignedTo) return '';
-  if (typeof assignedTo === 'string') return assignedTo;
-  return assignedTo.email || '';
+  return assignedTo?.email || '';
 }
 
 /**
  * Extract assignee name from ticket.assignedTo
  */
 export function getAssigneeName(assignedTo: AssignedToValue): string {
-  if (!assignedTo) return 'Unassigned';
-  if (typeof assignedTo === 'string') return assignedTo;
-  return assignedTo.name || 'Unassigned';
+  return assignedTo?.name || 'Unassigned';
 }
 
 /**
@@ -97,17 +57,9 @@ export function resolveAssigneeName(
 ): string {
   if (!assignedTo) return 'Unassigned';
 
-  if (typeof assignedTo === 'string') {
-    // Try to find user by ID or email
-    const user = users.find(
-      (u) => u._id === assignedTo || u.email === assignedTo
-    );
-    return user?.name || assignedTo;
-  }
-
-  // assignedTo is an object - try to find matching user
+  // Try to find matching user for fresh data
   const user = users.find(
-    (u) => u._id === assignedTo._id || u.email === assignedTo.email
+    (u) => u.id === assignedTo.id || u.email === assignedTo.email
   );
   return user?.name || assignedTo.name || assignedTo.email || 'Unassigned';
 }
@@ -153,6 +105,13 @@ export function filterTickets(
           }
         }
       }
+
+      if (filters.project && filters.project !== 'All') {
+        const projectId = ticket.project?.id;
+        if (projectId !== filters.project) {
+          return false;
+        }
+      }
     }
 
     return true;
@@ -175,11 +134,15 @@ export function sortTickets(tickets: Ticket[], sortBy: string): Ticket[] {
         return (a.category || '').localeCompare(b.category || '');
 
       case 'Status':
-        return (STATUS_ORDER[a.status] ?? 0) - (STATUS_ORDER[b.status] ?? 0);
+        return (
+          (TicketStatusSortOrder[a.status as TicketStatus] ?? 0) -
+          (TicketStatusSortOrder[b.status as TicketStatus] ?? 0)
+        );
 
       case 'Priority':
         return (
-          (PRIORITY_ORDER[b.priority] ?? 0) - (PRIORITY_ORDER[a.priority] ?? 0)
+          (TicketPrioritySortOrder[b.priority as TicketPriority] ?? 0) -
+          (TicketPrioritySortOrder[a.priority as TicketPriority] ?? 0)
         );
 
       case 'Client':
@@ -201,52 +164,6 @@ export function sortTickets(tickets: Ticket[], sortBy: string): Ticket[] {
   });
 }
 
-export const statusColors: Record<string, string> = {
-  [TicketStatus.NEW]: getStatusBadgeClasses(TicketStatus.NEW),
-  [TicketStatus.OPEN]: getStatusBadgeClasses(TicketStatus.OPEN),
-  [TicketStatus.IN_PROGRESS]: getStatusBadgeClasses(TicketStatus.IN_PROGRESS),
-  [TicketStatus.RESOLVED]: getStatusBadgeClasses(TicketStatus.RESOLVED),
-  [TicketStatus.CLOSED]: getStatusBadgeClasses(TicketStatus.CLOSED),
-};
-
-interface PriorityConfigValue {
-  color: string;
-  bg: string;
-  label: string;
-}
-
-export const priorityConfig: Record<string, PriorityConfigValue> = {
-  [TicketPriority.LOW]: {
-    color: 'text-green-600',
-    bg: 'bg-green-100',
-    label: TicketPriorityDisplay[TicketPriority.LOW],
-  },
-  [TicketPriority.MEDIUM]: {
-    color: 'text-warning-500',
-    bg: 'bg-warning-100',
-    label: TicketPriorityDisplay[TicketPriority.MEDIUM],
-  },
-  [TicketPriority.HIGH]: {
-    color: 'text-orange-600',
-    bg: 'bg-orange-100',
-    label: TicketPriorityDisplay[TicketPriority.HIGH],
-  },
-  [TicketPriority.CRITICAL]: {
-    color: 'text-error-500',
-    bg: 'bg-error-100',
-    label: TicketPriorityDisplay[TicketPriority.CRITICAL],
-  },
-};
-
-export const categoryColors: Record<string, string> = {
-  [TicketCategory.BUG]: getCategoryBadgeClasses(TicketCategory.BUG),
-  [TicketCategory.FEATURE_REQUEST]: getCategoryBadgeClasses(
-    TicketCategory.FEATURE_REQUEST
-  ),
-  [TicketCategory.QUESTION]: getCategoryBadgeClasses(TicketCategory.QUESTION),
-  [TicketCategory.OTHER]: getCategoryBadgeClasses(TicketCategory.OTHER),
-};
-
 /**
  * Badge configuration interface
  */
@@ -259,24 +176,32 @@ interface BadgeConfig {
  * Status badge configuration with variants and icons
  */
 export const statusBadgeConfig: Record<TicketStatus, BadgeConfig> = {
-  [TicketStatus.NEW]: {
-    label: 'New',
-    getIcon: () => <StatusIcon fillPercent={10} variant="blue" />,
+  [TicketStatus.BACKLOG]: {
+    label: 'Backlog',
+    getIcon: () => <StatusIcon fillPercent={0} variant="grey" dotted />,
   },
-  [TicketStatus.OPEN]: {
-    label: 'Open',
-    getIcon: () => <StatusIcon fillPercent={25} variant="yellow" />,
+  [TicketStatus.IN_DESIGN]: {
+    label: 'In Design',
+    getIcon: () => <StatusIcon fillPercent={15} variant="blue" />,
   },
   [TicketStatus.IN_PROGRESS]: {
     label: 'In Progress',
-    getIcon: () => <StatusIcon fillPercent={45} variant="orange" />,
+    getIcon: () => <StatusIcon fillPercent={35} variant="yellow" />,
+  },
+  [TicketStatus.TESTING]: {
+    label: 'Testing',
+    getIcon: () => <StatusIcon fillPercent={55} variant="orange" />,
+  },
+  [TicketStatus.IN_REVIEW]: {
+    label: 'In Review',
+    getIcon: () => <StatusIcon fillPercent={75} variant="purple" />,
   },
   [TicketStatus.RESOLVED]: {
     label: 'Resolved',
-    getIcon: () => <StatusIcon fillPercent={80} variant="green" />,
+    getIcon: () => <StatusIcon fillPercent={100} variant="green" />,
   },
-  [TicketStatus.CLOSED]: {
-    label: 'Closed',
+  [TicketStatus.CANCELLED]: {
+    label: 'Cancelled',
     getIcon: () => <StatusIcon fillPercent={100} variant="grey" />,
   },
 };
@@ -304,20 +229,26 @@ export const priorityBadgeConfig: Record<TicketPriority, BadgeConfig> = {
 };
 
 /**
- * Category badge configuration with variants
+ * Category badge configuration with variants and icons
  */
 export const categoryBadgeConfig: Record<TicketCategory, BadgeConfig> = {
   [TicketCategory.BUG]: {
     label: 'Bug',
+    getIcon: () => <Icon name="bug" size="sm" className="text-red-500" />,
   },
   [TicketCategory.FEATURE_REQUEST]: {
     label: 'Feature Request',
+    getIcon: () => (
+      <Icon name="feature" size="sm" className="text-purple-500" />
+    ),
   },
   [TicketCategory.QUESTION]: {
     label: 'Question',
+    getIcon: () => <Icon name="question" size="sm" className="text-blue-500" />,
   },
   [TicketCategory.OTHER]: {
     label: 'Other',
+    getIcon: () => <Icon name="tag" size="sm" className="text-gray-500" />,
   },
 };
 
@@ -347,4 +278,209 @@ export function getPriorityLabel(priority: TicketPriority): string {
  */
 export function getStatusLabel(status: TicketStatus): string {
   return statusBadgeConfig[status]?.label ?? '';
+}
+
+/**
+ * Get the icon for a given category
+ */
+export function getCategoryIcon(category: TicketCategory): ReactNode {
+  return categoryBadgeConfig[category]?.getIcon?.() ?? null;
+}
+
+/**
+ * Get the label for a given category
+ */
+export function getCategoryLabel(category: TicketCategory): string {
+  return categoryBadgeConfig[category]?.label ?? '';
+}
+
+// ============================================================================
+// Dynamic Status Helpers (for project-based workflow configurations)
+// ============================================================================
+
+/**
+ * Map status color string to IconVariant
+ */
+export function getIconVariant(color: string): IconVariant {
+  const colorMap: Record<string, IconVariant> = {
+    grey: 'grey',
+    gray: 'grey',
+    blue: 'blue',
+    yellow: 'yellow',
+    orange: 'orange',
+    purple: 'purple',
+    green: 'green',
+    red: 'red',
+    teal: 'teal',
+    pink: 'pink',
+    violet: 'violet',
+  };
+  return colorMap[color.toLowerCase()] || 'grey';
+}
+
+/**
+ * Generate status icon from a StatusDefinition
+ */
+export function getStatusIconFromDefinition(
+  status: StatusDefinition
+): ReactNode {
+  const variant = getIconVariant(status.color);
+  return (
+    <StatusIcon
+      fillPercent={status.icon.fillPercent}
+      variant={variant}
+      dotted={status.icon.dotted}
+    />
+  );
+}
+
+/**
+ * Find a status definition by ID, checking custom config first then defaults
+ */
+function findStatusDefinition(
+  statusId: string,
+  statusConfig?: StatusConfig | null
+): StatusDefinition | undefined {
+  // Try custom config first
+  if (statusConfig?.statuses) {
+    const status = statusConfig.statuses.find((s) => s.id === statusId);
+    if (status) return status;
+  }
+  // Fall back to default statuses
+  return DEFAULT_STATUSES.find((s) => s.id === statusId);
+}
+
+/**
+ * Get dynamic status icon - uses workflow if available, falls back to defaults
+ */
+export function getDynamicStatusIcon(
+  statusId: string,
+  statusConfig?: StatusConfig | null
+): ReactNode {
+  const status = findStatusDefinition(statusId, statusConfig);
+  if (status) {
+    return getStatusIconFromDefinition(status);
+  }
+  // Last resort: try enum-based icon
+  return getStatusIcon(statusId as TicketStatus);
+}
+
+// ============================================================================
+// Status Group Helpers (for tab-based filtering with workflow configurations)
+// ============================================================================
+
+/**
+ * Get the status groups for a ticket based on its project's workflow config
+ * Falls back to DEFAULT_STATUS_GROUPS if no config is available
+ */
+export function getStatusGroups(ticket: Ticket): StatusGroups {
+  return ticket.project?.statusConfig?.groups ?? DEFAULT_STATUS_GROUPS;
+}
+
+/**
+ * Check if a ticket's status is in the "backlog" group
+ */
+export function isBacklogStatus(ticket: Ticket): boolean {
+  const groups = getStatusGroups(ticket);
+  return groups.backlog.includes(ticket.status);
+}
+
+/**
+ * Check if a ticket's status is in the "active" group
+ */
+export function isActiveStatus(ticket: Ticket): boolean {
+  const groups = getStatusGroups(ticket);
+  return groups.active.includes(ticket.status);
+}
+
+/**
+ * Check if a ticket's status is in the "completed" group
+ */
+export function isCompletedStatus(ticket: Ticket): boolean {
+  const groups = getStatusGroups(ticket);
+  return groups.completed.includes(ticket.status);
+}
+
+/**
+ * Check if a ticket's status is in the "cancelled" group
+ */
+export function isCancelledStatus(ticket: Ticket): boolean {
+  const groups = getStatusGroups(ticket);
+  return groups.cancelled.includes(ticket.status);
+}
+
+/**
+ * Filter tickets by tab using workflow-aware status groups
+ */
+export function filterTicketsByTab(tickets: Ticket[], tab: string): Ticket[] {
+  switch (tab) {
+    case 'all':
+      return tickets;
+    case 'backlog':
+      return tickets.filter(isBacklogStatus);
+    case 'active':
+      return tickets.filter(isActiveStatus);
+    case 'resolved':
+      return tickets.filter(isCompletedStatus);
+    default:
+      return tickets.filter(isActiveStatus);
+  }
+}
+
+/**
+ * Get unique status options from a list of tickets based on their workflow configs
+ * Returns a deduplicated list of status definitions across all projects
+ * Includes both custom workflow statuses AND default statuses for mixed scenarios
+ */
+export function getUniqueStatusOptions(
+  tickets: Ticket[]
+): Array<{ id: string; name: string; color: string; sortOrder: number }> {
+  const statusMap = new Map<
+    string,
+    { id: string; name: string; color: string; sortOrder: number }
+  >();
+  let hasTicketsWithoutConfig = false;
+
+  for (const ticket of tickets) {
+    const statusConfig = ticket.project?.statusConfig;
+    if (statusConfig?.statuses) {
+      // Add statuses from custom workflow config
+      for (const status of statusConfig.statuses) {
+        if (!statusMap.has(status.id)) {
+          statusMap.set(status.id, {
+            id: status.id,
+            name: status.name,
+            color: status.color,
+            sortOrder: status.sortOrder,
+          });
+        }
+      }
+    } else {
+      // Track that we have tickets using default statuses
+      hasTicketsWithoutConfig = true;
+    }
+  }
+
+  // If some tickets use default statuses, add them to the options
+  if (hasTicketsWithoutConfig) {
+    for (const status of DEFAULT_STATUSES) {
+      if (!statusMap.has(status.id)) {
+        statusMap.set(status.id, {
+          id: status.id,
+          name: status.name,
+          color: status.color,
+          sortOrder: status.sortOrder,
+        });
+      }
+    }
+  }
+
+  // If no statuses found at all (no tickets), return empty for caller to handle
+  if (statusMap.size === 0) {
+    return [];
+  }
+
+  return Array.from(statusMap.values()).sort(
+    (a, b) => a.sortOrder - b.sortOrder
+  );
 }

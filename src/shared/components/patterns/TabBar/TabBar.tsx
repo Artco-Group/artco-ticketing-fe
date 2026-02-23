@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { Icon, type IconName } from '@/shared/components/ui/Icon/Icon';
+import { Button } from '@/shared/components/ui/Button';
+import type { IconName } from '@/shared/components/ui/Icon/Icon';
 
 export interface Tab {
   id: string;
@@ -34,28 +35,21 @@ export function TabBar({
         {tabs.map((tab) => {
           const isActive = tab.id === activeTab;
           return (
-            <button
+            <Button
               key={tab.id}
-              type="button"
+              variant="ghost"
+              size="sm"
+              leftIcon={tab.icon}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                'flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
+                'rounded-lg border',
                 isActive
                   ? 'bg-background-light-secondary text-text-primary border-border-selected'
                   : 'text-text-secondary border-border-default hover:bg-background-light-secondary'
               )}
             >
-              {tab.icon && (
-                <Icon
-                  name={tab.icon}
-                  size="sm"
-                  className={
-                    isActive ? 'text-icon-primary' : 'text-icon-secondary'
-                  }
-                />
-              )}
               {tab.label}
-            </button>
+            </Button>
           );
         })}
       </div>

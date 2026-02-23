@@ -2,27 +2,36 @@ import { Link } from 'react-router-dom';
 import { PAGE_ROUTES } from '@/shared/constants';
 import { Button } from '@/shared/components/ui';
 import { useCheckEmail } from '../hooks';
+import { useAppTranslation } from '@/shared/hooks';
 
 export function CheckEmailContent() {
+  const { translate } = useAppTranslation('auth');
   const { email, isResending, cooldown, canResend, handleResend } =
     useCheckEmail();
 
   const getButtonText = () => {
-    if (isResending) return 'Sending...';
-    if (cooldown > 0) return `Resend email (${cooldown}s)`;
-    return 'Resend email';
+    if (isResending) return translate('checkEmail.resending');
+    if (cooldown > 0)
+      return translate('checkEmail.resendCooldown', {
+        seconds: cooldown.toString(),
+      });
+    return translate('checkEmail.resend');
   };
 
   return (
     <div className="text-center">
       <h2 className="text-foreground max-smx:text-2xl mb-2 text-3xl font-bold tracking-tight">
-        Check your email
+        {translate('checkEmail.title')}
       </h2>
 
       <p className="text-muted-foreground max-smx:text-sm mb-6 text-base">
-        We've sent a password reset link to{' '}
-        {email ? <strong>{email}</strong> : 'your email address'}. Please check
-        your inbox and follow the instructions.
+        {translate('checkEmail.messagePart1')}
+        {email ? (
+          <strong>{email}</strong>
+        ) : (
+          translate('checkEmail.messagePart2')
+        )}
+        . {translate('checkEmail.messagePart3')}
       </p>
 
       <div className="space-y-3">
@@ -44,7 +53,9 @@ export function CheckEmailContent() {
           asChild
           leftIcon="chevron-left"
         >
-          <Link to={PAGE_ROUTES.AUTH.LOGIN}>Back to login</Link>
+          <Link to={PAGE_ROUTES.AUTH.LOGIN}>
+            {translate('checkEmail.backToLogin')}
+          </Link>
         </Button>
       </div>
     </div>

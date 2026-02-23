@@ -5,7 +5,6 @@ import { Button } from '@/shared/components/ui/Button';
 export interface StatusHeaderProps {
   icon: ReactNode;
   label: string;
-  count?: number;
   onAdd?: () => void;
   className?: string;
 }
@@ -13,23 +12,19 @@ export interface StatusHeaderProps {
 export function StatusHeader({
   icon,
   label,
-  count,
   onAdd,
   className,
 }: StatusHeaderProps) {
   return (
     <div
       className={cn(
-        'border-border-default flex items-center justify-between border-b px-4 py-2',
+        'border-greyscale-200 bg-greyscale-100 sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3',
         className
       )}
     >
       <div className="flex items-center gap-2">
         {icon}
         <span className="text-text-primary text-sm font-medium">{label}</span>
-        {count !== undefined && (
-          <span className="text-text-secondary text-xs">{count}</span>
-        )}
       </div>
 
       {onAdd && (

@@ -2,8 +2,10 @@ import { Route, Navigate } from 'react-router-dom';
 import { lazy } from 'react';
 import { authRoutes } from '@/features/auth/routes';
 import { userRoutes } from '@/features/users/routes';
+import { clientRoutes } from '@/features/clients/routes';
 import { dashboardRoutes } from '@/features/dashboard/routes';
 import { ticketRoutes } from '@/features/tickets/routes';
+import { projectRoutes } from '@/features/projects/routes';
 import { sharedRoutes } from '@/shared/routes';
 import { inboxRoutes } from '@/features/inbox/routes';
 import { notesRoutes } from '@/features/notes/routes';
@@ -33,7 +35,9 @@ export const allRoutes = [
   ...authRoutes,
   ...dashboardRoutes,
   ...ticketRoutes,
+  ...projectRoutes,
   ...userRoutes,
+  ...clientRoutes,
   ...sharedRoutes,
   ...inboxRoutes,
   ...notesRoutes,
@@ -60,7 +64,9 @@ export {
   authRoutes,
   dashboardRoutes,
   ticketRoutes,
+  projectRoutes,
   userRoutes,
+  clientRoutes,
   sharedRoutes,
   inboxRoutes,
   notesRoutes,

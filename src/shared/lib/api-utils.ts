@@ -1,4 +1,5 @@
 import type { AxiosError } from 'axios';
+import i18n from '@/lib/i18n';
 
 /**
  * Error types for classification
@@ -122,10 +123,12 @@ export function calculateRetryDelay(
 }
 
 /**
- * Extract a user-friendly error message from any error type
+ * Extract a user-friendly, localized error message from any error type
  * Handles ClassifiedError, AxiosError, Error, and string errors
  */
 export function getErrorMessage(error: unknown): string {
+  const t = i18n.getFixedT(i18n.language, 'errors');
+
   // Handle string errors
   if (typeof error === 'string') {
     return error;
@@ -138,21 +141,33 @@ export function getErrorMessage(error: unknown): string {
 
   // Handle AxiosError with response
   if (error && typeof error === 'object' && 'response' in error) {
-    const axiosError = error as AxiosError<{ message?: string }>;
-
-    // Try to get message from response data
+    const axiosError = error as AxiosError<{ message?: string; code?: string }>;
+    const errorCode = axiosError.response?.data?.code;
     const responseMessage = axiosError.response?.data?.message;
+
+    if (errorCode?.startsWith('GEN_') && responseMessage) {
+      return responseMessage;
+    }
+
+    if (errorCode && i18n.exists(`errors:${errorCode}`)) {
+      return t(errorCode);
+    }
+
     if (responseMessage) {
       return responseMessage;
     }
 
-    // Map common HTTP status codes to user-friendly messages
     const status = axiosError.response?.status;
-    if (status === 401) return 'Sesija je istekla. Molimo prijavite se ponovo.';
-    if (status === 403) return 'Nemate dozvolu za ovu akciju.';
-    if (status === 404) return 'Traženi resurs nije pronađen.';
-    if (status === 422) return 'Podaci nisu validni.';
-    if (status && status >= 500) return 'Došlo je do greške na serveru.';
+    if (status === 401) return t('AUTH_004');
+    if (status === 403) return t('AUTH_003');
+    if (status === 404) return t('GEN_001');
+    if (status === 422) return t('VAL_001');
+    if (status && status >= 500) return t('GEN_002');
+  }
+
+  // Handle network errors
+  if (error && typeof error === 'object' && !('response' in error)) {
+    return t('NETWORK_ERROR');
   }
 
   // Handle standard Error objects
@@ -161,5 +176,5 @@ export function getErrorMessage(error: unknown): string {
   }
 
   // Fallback for unknown error types
-  return 'Došlo je do neočekivane greške.';
+  return t('UNKNOWN_ERROR');
 }

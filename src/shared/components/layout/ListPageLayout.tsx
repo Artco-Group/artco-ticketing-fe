@@ -8,9 +8,12 @@ import type {
   ViewMode,
   FilterGroup,
   FilterPanelValues,
+  GroupByOption,
 } from '@/shared/components/patterns/FilterBar';
+import type { FilterOption } from '@/shared/components/ui';
 import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
 import { SpinnerContainer, EmptyState } from '@/shared/components/ui';
+import { useAppTranslation } from '@/shared/hooks';
 
 export interface ListPageLayoutProps {
   title: string;
@@ -25,9 +28,12 @@ export interface ListPageLayoutProps {
 
   filters?: FilterConfig[];
   onFilterChange?: (filterId: string, value: string | null) => void;
-  sortOptions?: string[];
+  sortOptions?: FilterOption[];
   sortValue?: string | null;
   onSortChange?: (value: string | null) => void;
+  groupByOptions?: GroupByOption[];
+  groupByValue?: string | null;
+  onGroupByChange?: (value: string | null) => void;
   filterGroups?: FilterGroup[];
   filterPanelValue?: FilterPanelValues;
   onFilterPanelChange?: (value: FilterPanelValues) => void;
@@ -62,6 +68,9 @@ export function ListPageLayout({
   sortOptions,
   sortValue,
   onSortChange,
+  groupByOptions,
+  groupByValue,
+  onGroupByChange,
   filterGroups,
   filterPanelValue,
   onFilterPanelChange,
@@ -78,6 +87,7 @@ export function ListPageLayout({
   loadingMessage,
   children,
 }: ListPageLayoutProps) {
+  const { translate } = useAppTranslation('common');
   const hasTabBar = tabs && activeTab !== undefined && onTabChange;
   const hasFilterBar =
     filters || sortOptions || filterGroups || onViewChange || showAddButton;
@@ -98,7 +108,7 @@ export function ListPageLayout({
             activeTab={activeTab}
             onTabChange={onTabChange}
             actions={tabActions}
-            className="px-4 py-3"
+            className="px-4 py-2"
           />
         )}
 
@@ -109,6 +119,9 @@ export function ListPageLayout({
             sortOptions={sortOptions}
             sortValue={sortValue}
             onSortChange={onSortChange}
+            groupByOptions={groupByOptions}
+            groupByValue={groupByValue}
+            onGroupByChange={onGroupByChange}
             filterGroups={filterGroups}
             filterPanelValue={filterPanelValue}
             onFilterPanelChange={onFilterPanelChange}
@@ -123,14 +136,14 @@ export function ListPageLayout({
         )}
       </header>
 
-      <main className="overflow-x-auto" style={{ width: '100%', minWidth: 0 }}>
+      <main className="w-full min-w-0 overflow-x-auto">
         {loading ? (
           <SpinnerContainer message={loadingMessage} />
         ) : empty ? (
           (emptyState ?? (
             <EmptyState
-              title="No data"
-              message="There are no items to display."
+              title={translate('messages.noData')}
+              message={translate('messages.noResults')}
               variant="no-data"
             />
           ))

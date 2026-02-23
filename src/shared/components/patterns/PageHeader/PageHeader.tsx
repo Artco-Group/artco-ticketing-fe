@@ -1,17 +1,15 @@
-import { useState } from 'react';
-import type { ReactNode } from 'react';
-import { useAuth } from '@/features/auth/context';
+import { type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import {
-  NotificationBell,
-  Breadcrumbs,
-  UserMenu,
-} from '@/shared/components/composite';
-import type { NotificationItem } from '@/shared/components/composite/NotificationBell/NotificationBell';
+import { useAuth } from '@/features/auth/context';
+import { Breadcrumbs } from '@/shared/components/composite';
 import type { BreadcrumbItem } from '@/shared/components/composite/Breadcrumbs/Breadcrumbs';
+import { UserMenu } from '@/shared/components/composite/UserMenu';
+import { Button, Icon } from '@/shared/components/ui';
+import { PAGE_ROUTES } from '@/shared/constants';
 
 export interface PageHeaderProps {
-  title: string;
+  title?: string;
   count?: number;
   breadcrumbs?: BreadcrumbItem[];
   actions?: ReactNode;
@@ -26,41 +24,35 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   const { user, logout } = useAuth();
-  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const navigate = useNavigate();
 
-  const handleMarkRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-    );
-  };
-
-  const handleMarkAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-  };
-
-  const handleClearAll = () => {
-    setNotifications([]);
+  const handleNotificationClick = () => {
+    navigate(PAGE_ROUTES.DASHBOARD.ROOT);
   };
 
   return (
     <div
       className={cn(
-        'border-border-default flex h-14 flex-1 items-center justify-between border-b px-4',
+        'border-border-default flex h-16 shrink-0 items-center justify-between border-b px-4',
         className
       )}
     >
       <div className="flex flex-col justify-center">
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <Breadcrumbs items={breadcrumbs} className="mb-0.5" />
+          <Breadcrumbs items={breadcrumbs} className={title ? 'mb-0.5' : ''} />
         )}
-        <div className="flex items-center gap-3">
-          <h1 className="text-foreground text-xl font-semibold">{title}</h1>
-          {count !== undefined && count > 0 && (
-            <span className="bg-background-light-secondary text-text-tertiary rounded-lg px-3 py-1 text-base font-medium">
-              {count}
-            </span>
-          )}
-        </div>
+        {(title || (count !== undefined && count > 0)) && (
+          <div className="flex items-center gap-3">
+            {title && (
+              <h1 className="text-foreground text-xl font-semibold">{title}</h1>
+            )}
+            {count !== undefined && count > 0 && (
+              <span className="bg-background-light-secondary text-text-tertiary rounded-lg px-3 py-1 text-base font-medium">
+                {count}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="ml-4 flex items-center gap-2 md:ml-6">
@@ -69,16 +61,18 @@ export function PageHeader({
           user={{
             name: user?.name ?? '',
             email: user?.email,
+            avatarUrl: user?.profilePic,
           }}
           onLogout={logout}
         />
-        <NotificationBell
-          count={notifications.filter((n) => !n.isRead).length}
-          notifications={notifications}
-          onMarkRead={handleMarkRead}
-          onMarkAllRead={handleMarkAllRead}
-          onClearAll={handleClearAll}
-        />
+        <Button
+          variant="ghost"
+          className="relative h-10 w-10 rounded-full p-0 focus-visible:ring-0 focus-visible:outline-none"
+          aria-label="Notifications"
+          onClick={handleNotificationClick}
+        >
+          <Icon name="notification" size="xxl" />
+        </Button>
       </div>
     </div>
   );

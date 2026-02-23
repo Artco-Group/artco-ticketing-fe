@@ -2,12 +2,11 @@ import type { ReactNode } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
-  DialogHeader,
   DialogTitle,
+  DialogClose,
 } from './dialog';
-import { Button } from './Button';
+import { Icon } from './Icon';
 
 interface ModalProps {
   isOpen: boolean;
@@ -16,19 +15,17 @@ interface ModalProps {
   description?: string;
   children: ReactNode;
   actions?: ReactNode;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  preventClose?: boolean;
 }
 
-const maxWidthClasses = {
+const sizesClasses = {
   sm: 'modal-sm',
   md: 'modal-md',
   lg: 'modal-lg',
   xl: 'modal-xl',
 };
 
-/**
- * Reusable modal/dialog component using shadcn Dialog
- */
 export function Modal({
   isOpen,
   onClose,
@@ -36,66 +33,37 @@ export function Modal({
   description,
   children,
   actions,
-  maxWidth = 'md',
+  size = 'md',
+  preventClose,
 }: ModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={maxWidthClasses[maxWidth]}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
-        </DialogHeader>
-        <div className="py-4">{children}</div>
-        {actions && <DialogFooter>{actions}</DialogFooter>}
+      <DialogContent className={sizesClasses[size]} preventClose={preventClose}>
+        <div
+          className={`flex justify-between ${description ? 'items-start' : 'items-center'}`}
+        >
+          <div>
+            <DialogTitle>{title}</DialogTitle>
+            {description && (
+              <p className="text-muted-foreground mt-2 text-sm">
+                {description}
+              </p>
+            )}
+          </div>
+          <DialogClose className="text-greyscale-500 hover:text-greyscale-700 -mr-2 rounded-sm p-1 transition-colors focus:outline-none">
+            <Icon name="close" size="md" />
+            <span className="sr-only">Close</span>
+          </DialogClose>
+        </div>
+        <div className="border-border -mx-6 mt-3 border-t" />
+        <div className="mt-4">{children}</div>
+        {actions && (
+          <>
+            <div className="border-border -mx-6 mt-6 border-t" />
+            <DialogFooter className="pt-5">{actions}</DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
-  );
-}
-
-interface ConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  title: string;
-  message: string;
-  confirmText?: string;
-  cancelText?: string;
-  confirmVariant?: 'primary' | 'danger';
-}
-
-/**
- * Confirmation modal with standard confirm/cancel actions
- */
-export function ConfirmModal({
-  isOpen,
-  onClose,
-  onConfirm,
-  title,
-  message,
-  confirmText = 'Continue',
-  cancelText = 'Cancel',
-  confirmVariant = 'primary',
-}: ConfirmModalProps) {
-  return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-      actions={
-        <>
-          <Button variant="outline" onClick={onClose}>
-            {cancelText}
-          </Button>
-          <Button
-            variant={confirmVariant === 'danger' ? 'destructive' : 'default'}
-            onClick={onConfirm}
-          >
-            {confirmText}
-          </Button>
-        </>
-      }
-    >
-      <p className="text-muted-foreground">{message}</p>
-    </Modal>
   );
 }

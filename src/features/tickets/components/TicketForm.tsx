@@ -1,304 +1,298 @@
+import { TicketCategory, type User } from '@artco-group/artco-ticketing-sync';
 import {
-  type CreateTicketFormData,
-  TicketCategory,
-  TicketPriority,
-  TicketCategoryDisplay,
-  TicketPriorityDisplay,
-} from '@artco-group/artco-ticketing-sync';
-import {
-  FileUpload,
-  ScreenRecorder,
+  Input,
+  Textarea,
+  Select,
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-  Input,
-  Button,
-  Textarea,
-  Select,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/shared';
-import { useTicketForm } from '../hooks/useTicketForm';
+  FormControl,
+  DatePicker,
+} from '@/shared/components/ui';
+import { MemberPicker } from '@/shared/components/composite/MemberPicker';
+import { type UseFormReturn } from 'react-hook-form';
+import { type TicketFormData } from '../hooks/useTicketDialogForm';
+import { useAppTranslation } from '@/shared/hooks';
+import {
+  CATEGORY_FORM_OPTIONS,
+  PRIORITY_FORM_OPTIONS,
+} from '../utils/ticket-options';
 
-interface TicketFormProps {
-  onSubmit: (
-    data: CreateTicketFormData,
-    files: File[],
-    screenRecording: { file: File; duration: number } | null
-  ) => void;
-  onCancel: () => void;
-  isSubmitting?: boolean;
+interface ProjectOption {
+  label: string;
+  value: string;
 }
 
-function TicketForm({
+interface TicketFormProps {
+  form: UseFormReturn<TicketFormData>;
+  formId: string;
+  onSubmit: () => void;
+  isEditing?: boolean;
+  projectOptions: ProjectOption[];
+  isProjectLocked?: boolean;
+  developerUsers?: User[];
+  engLeadUsers?: User[];
+  canAssign?: boolean;
+}
+
+export function TicketForm({
+  form,
+  formId,
   onSubmit,
-  onCancel,
-  isSubmitting = false,
+  isEditing = false,
+  projectOptions,
+  isProjectLocked = false,
+  developerUsers = [],
+  engLeadUsers = [],
+  canAssign = false,
 }: TicketFormProps) {
-  const {
-    form,
-    files,
-    setFiles,
-    handleScreenRecordingChange,
-    handleFormSubmit,
-  } = useTicketForm({ onSubmit });
+  const { translate, language } = useAppTranslation('tickets');
+  const category = form.watch('category');
+  const isBug = category === TicketCategory.BUG;
 
   return (
-    <div
-      className="p-6 mx-auto"
-      style={{
-        width: '100%',
-        maxWidth: '56rem',
-        minWidth: '20rem',
-        boxSizing: 'border-box',
-      }}
-    >
-      <h1 className="text-foreground mb-6 text-2xl font-bold">
-        Kreiraj novi tiket
-      </h1>
-      <Card>
-        <CardHeader>
-          <CardTitle className="sr-only">Forma za kreiranje tiketa</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={handleFormSubmit} className="space-y-6">
-              {/* Title */}
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <Input
-                      label="Naslov"
-                      placeholder="Kratak opis problema"
-                      autoComplete="off"
-                      error={fieldState.error?.message}
-                      {...field}
-                    />
-                  </FormItem>
-                )}
+    <Form {...form}>
+      <form id={formId} onSubmit={onSubmit} className="space-y-5">
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field, fieldState }) => (
+            <FormItem className="space-y-0">
+              <Input
+                label={translate('form.title')}
+                autoComplete="off"
+                error={fieldState.error?.message}
+                required
+                {...field}
               />
-      
+            </FormItem>
+          )}
+        />
 
-              {/* Category */}
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <Select
-                      label="Kategorija *"
-                      options={[
-                        {
-                          label: TicketCategoryDisplay[TicketCategory.BUG],
-                          value: TicketCategory.BUG,
-                        },
-                        {
-                          label:
-                            TicketCategoryDisplay[
-                              TicketCategory.FEATURE_REQUEST
-                            ],
-                          value: TicketCategory.FEATURE_REQUEST,
-                        },
-                        {
-                          label: TicketCategoryDisplay[TicketCategory.QUESTION],
-                          value: TicketCategory.QUESTION,
-                        },
-                        {
-                          label: TicketCategoryDisplay[TicketCategory.OTHER],
-                          value: TicketCategory.OTHER,
-                        },
-                      ]}
-                      placeholder="Odaberite kategoriju"
-                      error={fieldState.error?.message}
-                      {...field}
-                    />
-                  </FormItem>
-                )}
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field, fieldState }) => (
+            <FormItem className="space-y-0">
+              <Textarea
+                label={translate('form.description')}
+                placeholder={translate('form.descriptionPlaceholder')}
+                rows={5}
+                error={fieldState.error?.message}
+                required
+                {...field}
               />
+            </FormItem>
+          )}
+        />
 
-              {/* Affected Module */}
-              <FormField
-                control={form.control}
-                name="affectedModule"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <Input
-                      label="Pogođeni proizvod/modul"
-                      placeholder="npr. Mobile App, Admin Panel"
-                      autoComplete="off"
-                      error={fieldState.error?.message}
-                      {...field}
-                    />
-                  </FormItem>
-                )}
-              />
+        {!isEditing && (
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field, fieldState }) => (
+                <FormItem className="space-y-0">
+                  <Select
+                    label={translate('form.category')}
+                    options={CATEGORY_FORM_OPTIONS}
+                    placeholder={translate('form.categoryPlaceholder')}
+                    error={fieldState.error?.message}
+                    required
+                    {...field}
+                  />
+                </FormItem>
+              )}
+            />
 
-              {/* Description */}
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Opis <span className="text-destructive">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Detaljno opišite problem ili zahtjev"
-                        rows={10}
-                        className="resize-y"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Reproduction Steps */}
-              <FormField
-                control={form.control}
-                name="reproductionSteps"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Koraci za reprodukciju (ako je primjenjivo)
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="1. Idite na...&#10;2. Kliknite na...&#10;3. Primijetite..."
-                        rows={5}
-                        className="resize-y"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Expected Result */}
-              <FormField
-                control={form.control}
-                name="expectedResult"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Očekivani rezultat</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Šta bi se trebalo desiti?"
-                        rows={3}
-                        className="resize-y"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Actual Result */}
-              <FormField
-                control={form.control}
-                name="actualResult"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stvarni rezultat</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Šta se zapravo dešava?"
-                        rows={3}
-                        className="resize-y"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Attachments */}
-              <div className="space-y-2">
-                <span className="text-sm leading-none font-medium">
-                  Prilozi
-                </span>
-                <FileUpload files={files} onFilesChange={setFiles} />
-              </div>
-
-              {/* Screen Recording */}
-              <div className="space-y-2">
-                <span className="text-sm leading-none font-medium">
-                  Snimak Ekrana (Opciono)
-                </span>
-                <ScreenRecorder
-                  onRecordingComplete={handleScreenRecordingChange}
-                  disabled={false}
+            <FormField
+              control={form.control}
+              name="priority"
+              render={({ field, fieldState }) => (
+                <FormItem className="space-y-0">
+                  <Select
+                    label={translate('form.priority')}
+                    options={PRIORITY_FORM_OPTIONS}
+                    placeholder={translate('form.priorityPlaceholder')}
+                    error={fieldState.error?.message}
+                    {...field}
+                  />
+                </FormItem>
+              )}
+            />
+          </div>
+        )}
+        {!isEditing && (
+          <FormField
+            control={form.control}
+            name="project"
+            render={({ field, fieldState }) => (
+              <FormItem className="space-y-0">
+                <Select
+                  label={translate('form.project')}
+                  options={projectOptions}
+                  placeholder={translate('form.projectPlaceholder')}
+                  error={fieldState.error?.message}
+                  disabled={isProjectLocked}
+                  required
+                  {...field}
                 />
-                <p className="text-muted-xs">
-                  Snimite ekran da pokažete problem (maksimalno 3 minute)
-                </p>
-              </div>
+              </FormItem>
+            )}
+          />
+        )}
 
-              {/* Priority */}
-              <FormField
-                control={form.control}
-                name="priority"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <Select
-                      label="Prioritet"
-                      options={[
-                        {
-                          label: TicketPriorityDisplay[TicketPriority.LOW],
-                          value: TicketPriority.LOW,
-                        },
-                        {
-                          label: TicketPriorityDisplay[TicketPriority.MEDIUM],
-                          value: TicketPriority.MEDIUM,
-                        },
-                        {
-                          label: TicketPriorityDisplay[TicketPriority.HIGH],
-                          value: TicketPriority.HIGH,
-                        },
-                        {
-                          label: TicketPriorityDisplay[TicketPriority.CRITICAL],
-                          value: TicketPriority.CRITICAL,
-                        },
-                      ]}
-                      placeholder="Odaberite prioritet"
-                      error={fieldState.error?.message}
-                      {...field}
-                    />
-                  </FormItem>
-                )}
+        <FormField
+          control={form.control}
+          name="affectedModule"
+          render={({ field, fieldState }) => (
+            <FormItem className="space-y-0">
+              <Input
+                label={translate('form.affectedModule')}
+                placeholder={translate('form.affectedModulePlaceholder')}
+                autoComplete="off"
+                error={fieldState.error?.message}
+                {...field}
               />
+            </FormItem>
+          )}
+        />
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-4 border-t pt-6">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={onCancel}
-                  disabled={isSubmitting}
-                >
-                  Odustani
-                </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Slanje...' : 'Pošalji tiket'}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+        {canAssign && developerUsers.length > 0 && !isEditing && (
+          <FormField
+            control={form.control}
+            name="assignedTo"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>{translate('form.assignee')}</FormLabel>
+                <FormControl>
+                  <MemberPicker
+                    value={field.value || ''}
+                    options={developerUsers}
+                    onChange={(value) =>
+                      field.onChange(Array.isArray(value) ? value[0] : value)
+                    }
+                    placeholder={translate('form.assigneePlaceholder')}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
+
+        {engLeadUsers.length > 0 && !isEditing && (
+          <FormField
+            control={form.control}
+            name="engLead"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>{translate('form.engLead')}</FormLabel>
+                <FormControl>
+                  <MemberPicker
+                    value={field.value || ''}
+                    options={engLeadUsers}
+                    onChange={(value) =>
+                      field.onChange(Array.isArray(value) ? value[0] : value)
+                    }
+                    placeholder={translate('form.engLeadPlaceholder')}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
+
+        {!isEditing && (
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="startDate"
+              render={({ field, fieldState }) => (
+                <FormItem className="space-y-0">
+                  <DatePicker
+                    label={translate('form.startDate')}
+                    placeholder={translate('form.startDatePlaceholder')}
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={fieldState.error?.message}
+                    locale={language}
+                  />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="dueDate"
+              render={({ field, fieldState }) => (
+                <FormItem className="space-y-0">
+                  <DatePicker
+                    label={translate('form.dueDate')}
+                    placeholder={translate('form.dueDatePlaceholder')}
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={fieldState.error?.message}
+                    locale={language}
+                  />
+                </FormItem>
+              )}
+            />
+          </div>
+        )}
+        {isBug && (
+          <>
+            <FormField
+              control={form.control}
+              name="reproductionSteps"
+              render={({ field, fieldState }) => (
+                <FormItem className="space-y-0">
+                  <Textarea
+                    label={translate('form.reproductionSteps')}
+                    placeholder={translate('form.reproductionStepsPlaceholder')}
+                    rows={4}
+                    error={fieldState.error?.message}
+                    {...field}
+                  />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="expectedResult"
+              render={({ field, fieldState }) => (
+                <FormItem className="space-y-0">
+                  <Textarea
+                    label={translate('form.expectedResult')}
+                    placeholder={translate('form.expectedResultPlaceholder')}
+                    rows={2}
+                    error={fieldState.error?.message}
+                    {...field}
+                  />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="actualResult"
+              render={({ field, fieldState }) => (
+                <FormItem className="space-y-0">
+                  <Textarea
+                    label={translate('form.actualResult')}
+                    placeholder={translate('form.actualResultPlaceholder')}
+                    rows={2}
+                    error={fieldState.error?.message}
+                    {...field}
+                  />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
+      </form>
+    </Form>
   );
 }
 

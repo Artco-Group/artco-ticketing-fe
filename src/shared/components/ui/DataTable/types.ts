@@ -78,7 +78,6 @@ export type Column<T> =
 
 export interface TableRowData {
   id?: string;
-  _id?: string;
   className?: string;
 }
 
@@ -95,6 +94,9 @@ export interface DataTableProps<T extends TableRowData> {
   sortDirection?: SortDirection;
   onSort?: (column: string, direction: SortDirection) => void;
   actions?: RowAction<T>[];
+  hideHeader?: boolean;
+  /** Custom function to get row ID. Defaults to row.id or array index */
+  getRowId?: (row: T) => string;
 }
 
 // TanStack Table re-exports for advanced usage

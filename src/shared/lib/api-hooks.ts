@@ -10,22 +10,20 @@ import type {
 } from '@tanstack/react-query';
 import { apiClient } from './api-client';
 import type { AxiosRequestConfig } from 'axios';
-import { CACHE } from '@artco-group/artco-ticketing-sync';
-import {
-  type ClassifiedError,
-  ErrorType,
-  calculateRetryDelay,
-} from './api-utils';
+import { CACHE, type ApiResponse } from '@artco-group/artco-ticketing-sync';
+import { calculateRetryDelay } from './api-utils';
 
 /**
  * API Query options extending React Query options
+ * @template TData - The response data type
+ * @template TParams - The query parameters type (must be an object)
  */
-interface ApiQueryOptions<TData> extends Omit<
-  UseQueryOptions<TData>,
-  'queryKey' | 'queryFn'
-> {
+interface ApiQueryOptions<
+  TData,
+  TParams extends object = Record<string, unknown>,
+> extends Omit<UseQueryOptions<TData>, 'queryKey' | 'queryFn'> {
   url: string;
-  params?: Record<string, unknown>;
+  params?: TParams;
   config?: AxiosRequestConfig;
 }
 
@@ -35,20 +33,22 @@ interface ApiQueryOptions<TData> extends Omit<
  * - Smart retry logic (don't retry 4xx)
  * - Exponential backoff with jitter
  */
-export function useApiQuery<TData>(
-  queryKey: QueryKey,
-  options: ApiQueryOptions<TData>
-) {
+export function useApiQuery<
+  TData,
+  TParams extends object = Record<string, unknown>,
+>(queryKey: QueryKey, options: ApiQueryOptions<TData, TParams>) {
   const { url, params, config, ...queryOptions } = options;
 
   return useQuery({
     queryKey: params ? [...queryKey, params] : queryKey,
     queryFn: async (): Promise<TData> => {
       try {
-        const response = await apiClient.get<TData>(url, { params, ...config });
-        return response.data;
+        const response = await apiClient.get<ApiResponse<TData>>(url, {
+          params,
+          ...config,
+        });
+        return response.data.data!;
       } catch (error: unknown) {
-        // For /auth/me endpoint, 401 is expected when not logged in
         const axiosError = error as { response?: { status?: number } };
         if (url === '/auth/me' && axiosError?.response?.status === 401) {
           return null as TData;
@@ -59,15 +59,13 @@ export function useApiQuery<TData>(
     staleTime: CACHE.STALE_TIME,
     gcTime: CACHE.GC_TIME,
     retry: (failureCount, error) => {
-      const classifiedError = error as ClassifiedError;
-      // Don't retry client errors (4xx except 429)
-      if (classifiedError.errorType === ErrorType.CLIENT_ERROR) {
+      const axiosError = error as { response?: { status?: number } };
+      const status = axiosError?.response?.status;
+
+      if (status && status >= 400 && status < 500 && status !== 429) {
         return false;
       }
-      // Don't retry auth errors
-      if (classifiedError.errorType === ErrorType.AUTH_ERROR) {
-        return false;
-      }
+
       return failureCount < 3;
     },
     retryDelay: (attemptIndex) => calculateRetryDelay(attemptIndex),
@@ -107,14 +105,18 @@ export function useApiMutation<TData, TVariables = void, TContext = unknown>(
   return useMutation({
     mutationFn: async (variables: TVariables): Promise<TData> => {
       const resolvedUrl = typeof url === 'function' ? url(variables) : url;
-      const body = getBody ? getBody(variables) : variables;
-      const response = await apiClient.request<TData>({
+      const body = getBody
+        ? getBody(variables)
+        : method === 'DELETE'
+          ? undefined
+          : variables;
+      const response = await apiClient.request<ApiResponse<TData>>({
         url: resolvedUrl,
         method,
         data: body,
         ...config,
       });
-      return response.data;
+      return response.data.data!;
     },
     onError: (error: Error) => {
       if (import.meta.env.DEV) {

@@ -1,19 +1,23 @@
 import { useState } from 'react';
 import { Video } from 'lucide-react';
 import { useScreenRecorder } from '@/shared/hooks/useScreenRecorder';
-import { Icon } from '@/shared/components/ui';
+import { Button, Icon } from '@/shared/components/ui';
 import { formatTime } from '@artco-group/artco-ticketing-sync';
 import { SCREEN_RECORDING } from '@/config';
+import { cn } from '@/lib/utils';
 
 interface ScreenRecorderProps {
   onRecordingComplete: (file: File | null, duration: number) => void;
   disabled?: boolean;
+  variant?: 'standalone' | 'modal';
 }
 
 export default function ScreenRecorder({
   onRecordingComplete,
   disabled,
+  variant = 'standalone',
 }: ScreenRecorderProps) {
+  const isModal = variant === 'modal';
   const [recordedVideo, setRecordedVideo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
@@ -34,7 +38,7 @@ export default function ScreenRecorder({
       setRecordedVideo(file);
       setDuration(actualDuration);
       setPreviewUrl(URL.createObjectURL(file));
-      setConfirmed(false); // Reset confirmation state
+      setConfirmed(false);
     },
   });
 
@@ -63,102 +67,120 @@ export default function ScreenRecorder({
   // State 3: Recording confirmed - show compact preview with remove button
   if (confirmed && previewUrl && recordedVideo) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-        <div className="flex-between mb-3">
+      <div
+        className={cn(
+          !isModal && 'border-border bg-muted/50 rounded-lg border p-4'
+        )}
+      >
+        <div className="mb-3 flex items-center justify-between">
           <div>
-            <p className="text-greyscale-900 text-sm font-medium">
-              🎥 Snimak Ekrana
+            <p className="text-foreground text-sm font-medium">
+              {disabled ? 'Uploading...' : 'Screen Recording'}
             </p>
-            <p className="text-greyscale-500 text-xs">
+            <p className="text-muted-foreground text-xs">
               {(recordedVideo.size / (1024 * 1024)).toFixed(2)} MB •{' '}
               {formatTime(duration)}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={handleRemove}
-            className="text-error-500 hover:text-error-600 transition-colors"
-          >
-            <Icon name="close" size="lg" />
-          </button>
+          {!disabled && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={handleRemove}
+              className="text-destructive hover:text-destructive/80"
+            >
+              <Icon name="close" size="lg" />
+            </Button>
+          )}
         </div>
 
         <video
           src={previewUrl}
           controls
-          className="w-full rounded-lg"
-          style={{ maxHeight: '300px' }}
+          className="max-h-[300px] w-full rounded-lg"
         />
       </div>
     );
   }
 
-  // State 2: Recording finished - show preview with confirm/discard buttons
   if (!confirmed && previewUrl && recordedVideo && !recording) {
     return (
-      <div className="border-brand-primary rounded-lg border-2 bg-blue-100 p-4">
-        <p className="text-greyscale-900 mb-3 text-sm font-medium">
-          Pregled snimka ({(recordedVideo.size / (1024 * 1024)).toFixed(2)} MB)
+      <div
+        className={cn(
+          !isModal && 'border-primary bg-primary/5 rounded-lg border-2 p-4'
+        )}
+      >
+        <p className="text-foreground mb-3 text-sm font-medium">
+          Recording preview ({(recordedVideo.size / (1024 * 1024)).toFixed(2)}{' '}
+          MB)
         </p>
 
         <video
           src={previewUrl}
           controls
-          className="mb-3 w-full rounded-lg"
-          style={{ maxHeight: '300px' }}
+          className="mb-3 max-h-[300px] w-full rounded-lg"
         />
 
         <div className="flex gap-2">
-          <button
+          <Button
             type="button"
             onClick={handleConfirm}
-            className="btn-primary flex-1"
+            disabled={disabled}
+            className="flex-1"
           >
-            ✓ Potvrdi
-          </button>
-          <button
+            {disabled ? 'Uploading...' : 'Confirm'}
+          </Button>
+          <Button
             type="button"
+            variant="secondary"
             onClick={handleDiscard}
-            className="btn-secondary flex-1"
+            disabled={disabled}
+            className="flex-1"
           >
-            ✗ Odbaci
-          </button>
+            Discard
+          </Button>
         </div>
       </div>
     );
   }
 
-  // State 1b: Recording in progress
   if (recording) {
     return (
-      <div className="border-error-500 bg-error-100 rounded-lg border-2 p-4">
-        <div className="flex-between mb-3">
+      <div
+        className={cn(
+          !isModal &&
+            'border-destructive bg-destructive/10 rounded-lg border-2 p-4'
+        )}
+      >
+        <div className="mb-3 flex items-center justify-between">
           <div>
-            <p className="text-error-700 flex items-center text-sm font-medium">
-              <span className="bg-error-500 mr-2 inline-block h-2 w-2 animate-pulse rounded-full"></span>
-              Snimanje u toku...
+            <p className="text-destructive flex items-center text-sm font-medium">
+              <span className="bg-destructive mr-2 inline-block h-2 w-2 animate-pulse rounded-full"></span>
+              Recording in progress...
             </p>
-            <p className="text-greyscale-600 text-xs">
+            <p className="text-muted-foreground text-xs">
               {formatTime(recordingTime)} / {formatTime(maxDuration)}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-greyscale-900 text-sm font-medium">
+            <p className="text-foreground text-sm font-medium">
               ~{estimatedSize.toFixed(1)} MB
             </p>
           </div>
         </div>
 
-        <button
+        <Button
           type="button"
+          variant="destructive"
           onClick={stopRecording}
-          className="btn-destructive w-full"
+          className="w-full"
         >
-          ⏹️ Zaustavi Snimanje
-        </button>
+          Stop Recording
+        </Button>
 
-        <p className="text-greyscale-500 mt-2 text-xs">
-          Kliknite na dugme ili zatvorite dijeljenje ekrana za zaustavljanje
+        <p className="text-muted-foreground mt-2 text-xs">
+          Click the button or stop screen sharing to finish
         </p>
       </div>
     );
@@ -166,28 +188,32 @@ export default function ScreenRecorder({
 
   // State 1a: Ready to record
   return (
-    <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-4">
-      <div className="text-center">
-        <Video className="text-greyscale-400 mx-auto h-12 w-12" />
+    <div
+      className={cn(
+        'text-center',
+        !isModal &&
+          'rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-4'
+      )}
+    >
+      <Video className="text-muted-foreground mx-auto h-12 w-12" />
 
-        <p className="text-greyscale-900 mt-2 text-sm font-medium">
-          Snimite Problem
-        </p>
-        <p className="text-greyscale-500 mt-1 text-xs">
-          Maksimalno 3 minute • ~22 MB
-        </p>
+      <p className="text-foreground mt-2 text-sm font-medium">
+        Record the Issue
+      </p>
+      <p className="text-muted-foreground mt-1 text-xs">
+        Maximum 3 minutes • ~22 MB
+      </p>
 
-        <button
-          type="button"
-          onClick={startRecording}
-          disabled={disabled}
-          className="btn-primary mt-3"
-        >
-          Započni Snimanje
-        </button>
+      <Button
+        type="button"
+        onClick={startRecording}
+        disabled={disabled}
+        className="mt-3"
+      >
+        Start Recording
+      </Button>
 
-        {error && <p className="text-error-500 mt-2 text-xs">{error}</p>}
-      </div>
+      {error && <p className="text-destructive mt-2 text-xs">{error}</p>}
     </div>
   );
 }
