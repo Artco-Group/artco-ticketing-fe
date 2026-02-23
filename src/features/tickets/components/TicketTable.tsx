@@ -166,6 +166,7 @@ function TicketTable({
             <div className="flex justify-center">
               <Avatar
                 size="md"
+                src={ticket.assignedTo?.profilePic ?? undefined}
                 fallback={assigneeName}
                 tooltip={assigneeName}
               />
