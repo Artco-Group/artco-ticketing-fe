@@ -2,18 +2,18 @@ import type { ReactNode } from 'react';
 import { Card, CardContent } from './card';
 import { cn } from '@/lib/utils';
 
-// Map variant names to SVG file paths
+// Map variant names to SVG file paths (in public folder)
 const illustrations = {
-  'no-data': '/src/assets/empty-states/no-data.svg',
-  'no-tickets': '/src/assets/empty-states/no-tickets.svg',
-  'no-results': '/src/assets/empty-states/no-results.svg',
-  'no-comments': '/src/assets/empty-states/no-comments.svg',
-  'no-users': '/src/assets/empty-states/no-users.svg',
-  error: '/src/assets/empty-states/error.svg',
-  'no-notifications': '/src/assets/empty-states/no-notifications.svg',
-  maintenance: '/src/assets/empty-states/maintenance.svg',
-  success: '/src/assets/empty-states/success.svg',
-  'coming-soon': '/src/assets/empty-states/coming-soon.svg',
+  'no-data': '/assets/empty-states/no-data.svg',
+  'no-tickets': '/assets/empty-states/no-tickets.svg',
+  'no-results': '/assets/empty-states/no-results.svg',
+  'no-comments': '/assets/empty-states/no-comments.svg',
+  'no-users': '/assets/empty-states/no-users.svg',
+  error: '/assets/empty-states/error.svg',
+  'no-notifications': '/assets/empty-states/no-notifications.svg',
+  maintenance: '/assets/empty-states/maintenance.svg',
+  success: '/assets/empty-states/success.svg',
+  'coming-soon': '/assets/empty-states/coming-soon.svg',
 } as const;
 
 type Variant = keyof typeof illustrations;
