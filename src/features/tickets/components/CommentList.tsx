@@ -55,7 +55,13 @@ const CommentItem = memo(function CommentItem({
       )}
     >
       <div className="flex max-w-[70%] items-start gap-2">
-        {!isCurrentUser && <Avatar size="md" alt={authorName} />}
+        {!isCurrentUser && (
+          <Avatar
+            size="md"
+            src={comment.authorId?.profilePic ?? undefined}
+            alt={authorName}
+          />
+        )}
 
         <div className="flex-1">
           <div
@@ -64,7 +70,6 @@ const CommentItem = memo(function CommentItem({
               isCurrentUser
                 ? 'bg-brand-primary/75 rounded-br-sm text-white'
                 : 'text-greyscale-900 rounded-bl-sm bg-gray-100',
-              // White gradient overlay
               'before:pointer-events-none before:absolute before:inset-0 before:z-1'
             )}
           >
@@ -168,7 +173,13 @@ const CommentItem = memo(function CommentItem({
           </div>
         </div>
 
-        {isCurrentUser && <Avatar size="md" alt={authorName} />}
+        {isCurrentUser && (
+          <Avatar
+            size="md"
+            src={comment.authorId?.profilePic ?? undefined}
+            alt={authorName}
+          />
+        )}
       </div>
     </div>
   );
