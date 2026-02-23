@@ -39,7 +39,7 @@ export default function TicketListPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [groupByValue, setGroupByValue] = useState<string | null>(null);
 
-  const { isClient, isDeveloper } = useRoleFlags(userRole as UserRole);
+  const { isDeveloper } = useRoleFlags(userRole as UserRole);
 
   const canCreateTicket = !isDeveloper;
 
@@ -76,7 +76,7 @@ export default function TicketListPage() {
     );
   }
 
-  const showCards = isClient || viewMode === 'grid';
+  const showCards = viewMode === 'grid';
   const currentTab = ticketTabs.find((tab) => tab.id === activeTab);
 
   return (

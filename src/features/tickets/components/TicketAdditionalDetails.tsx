@@ -97,7 +97,7 @@ function TicketAdditionalDetails({
             <div className="flex flex-wrap gap-4">
               {ticket.attachments!.map((attachment, index) => (
                 <MediaThumbnail
-                  key={index}
+                  key={attachment.id || attachment.gcsUrl || index}
                   name={
                     attachment.filename || attachment.originalName || 'File'
                   }
@@ -112,7 +112,7 @@ function TicketAdditionalDetails({
                   }
                   onDelete={() => fileUpload.handleDeleteAttachment(index)}
                   canDelete={canUploadFiles}
-                  isDeleting={fileUpload.isDeletingAttachment}
+                  isDeleting={fileUpload.deletingAttachmentIndex === index}
                 />
               ))}
             </div>
@@ -125,7 +125,7 @@ function TicketAdditionalDetails({
             <div className="flex flex-wrap gap-4">
               {ticket.screenRecordings!.map((recording, index) => (
                 <MediaThumbnail
-                  key={index}
+                  key={recording.id || recording.gcsUrl || index}
                   name={
                     recording.originalName ||
                     `screen-recording-${index + 1}.webm`
@@ -146,7 +146,7 @@ function TicketAdditionalDetails({
                   }
                   onDelete={() => fileUpload.handleDeleteScreenRecording(index)}
                   canDelete={canUploadFiles}
-                  isDeleting={fileUpload.isDeletingScreenRecording}
+                  isDeleting={fileUpload.deletingRecordingIndex === index}
                 />
               ))}
             </div>

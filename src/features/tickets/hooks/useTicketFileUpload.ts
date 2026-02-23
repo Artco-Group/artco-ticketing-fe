@@ -21,6 +21,12 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
   const [isScreenRecordingModalOpen, setIsScreenRecordingModalOpen] =
     useState(false);
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [deletingRecordingIndex, setDeletingRecordingIndex] = useState<
+    number | null
+  >(null);
+  const [deletingAttachmentIndex, setDeletingAttachmentIndex] = useState<
+    number | null
+  >(null);
   const translatedToast = useTranslatedToast();
 
   const uploadAttachmentsMutation = useUploadAttachments();
@@ -108,8 +114,9 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
   };
 
   const handleDeleteAttachment = async (attachmentIndex: number) => {
-    if (!ticketId) return;
+    if (!ticketId || deletingAttachmentIndex !== null) return;
 
+    setDeletingAttachmentIndex(attachmentIndex);
     try {
       await deleteAttachmentMutation.mutateAsync({
         ticketId: asTicketId(ticketId),
@@ -120,12 +127,15 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
       translatedToast.error('toast.error.failedToDelete', {
         item: 'attachment',
       });
+    } finally {
+      setDeletingAttachmentIndex(null);
     }
   };
 
   const handleDeleteScreenRecording = async (recordingIndex: number) => {
-    if (!ticketId) return;
+    if (!ticketId || deletingRecordingIndex !== null) return;
 
+    setDeletingRecordingIndex(recordingIndex);
     try {
       await deleteScreenRecordingMutation.mutateAsync({
         ticketId: asTicketId(ticketId),
@@ -136,6 +146,8 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
       translatedToast.error('toast.error.failedToDelete', {
         item: 'screen recording',
       });
+    } finally {
+      setDeletingRecordingIndex(null);
     }
   };
 
@@ -163,5 +175,7 @@ export function useTicketFileUpload({ ticketId }: UseTicketFileUploadProps) {
     isUploadingScreenRecording: uploadScreenRecordingMutation.isPending,
     isDeletingAttachment: deleteAttachmentMutation.isPending,
     isDeletingScreenRecording: deleteScreenRecordingMutation.isPending,
+    deletingAttachmentIndex,
+    deletingRecordingIndex,
   };
 }
