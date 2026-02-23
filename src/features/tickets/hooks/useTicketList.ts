@@ -10,7 +10,6 @@ import { useTickets } from '../api/tickets-api';
 import {
   filterTickets,
   sortTickets,
-  getAssigneeEmail,
   filterTicketsByTab,
 } from '@/shared/utils/ticket-helpers';
 
@@ -55,21 +54,9 @@ export function useTicketList() {
   const { data: usersData } = useUsers();
   const users = usersData?.users || [];
 
-  const roleFilteredTickets = useMemo(() => {
-    if (isDeveloper) {
-      return allTickets.filter(
-        (ticket) => getAssigneeEmail(ticket.assignedTo) === user?.email
-      );
-    }
-    if (isClient) {
-      return allTickets.filter((ticket) => ticket.clientEmail === user?.email);
-    }
-    return allTickets;
-  }, [allTickets, isDeveloper, isClient, user?.email]);
-
   const tabFilteredTickets = useMemo(() => {
-    return filterTicketsByTab(roleFilteredTickets, activeTab);
-  }, [roleFilteredTickets, activeTab]);
+    return filterTicketsByTab(allTickets, activeTab);
+  }, [allTickets, activeTab]);
 
   const filteredTickets = useMemo(() => {
     return sortTickets(
@@ -79,18 +66,15 @@ export function useTicketList() {
   }, [tabFilteredTickets, filters, isEngLead]);
 
   const handleViewTicket = (ticket: Ticket) => {
-    // Use human-readable ticketId (e.g., ART-123) for URL
     navigate(
       PAGE_ROUTES.TICKETS.detail(asTicketId(ticket.ticketId || ticket.id))
     );
   };
 
   const handleFilterChange = (filterType: string, value: string) => {
-    // Use functional update to always work with latest params (avoids race conditions)
     setSearchParams((currentParams) => {
       const params = new URLSearchParams(currentParams);
 
-      // Set or remove the filter value
       if (
         value === 'All' ||
         (filterType === 'sortBy' && value === 'Created Date')
