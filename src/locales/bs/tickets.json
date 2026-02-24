@@ -58,6 +58,7 @@
     "descriptionPlaceholder": "Opišite problem ili zahtjev detaljno",
     "project": "Projekat",
     "projectPlaceholder": "Odaberite projekat",
+    "noProjectsHint": "Nema dostupnih projekata. Molimo prvo kreirajte projekat.",
     "category": "Kategorija",
     "categoryPlaceholder": "Odaberite kategoriju",
     "status": "Status",

@@ -58,6 +58,7 @@
     "descriptionPlaceholder": "Describe the issue or request in detail",
     "project": "Project",
     "projectPlaceholder": "Select project",
+    "noProjectsHint": "No projects available. Please create a project first.",
     "category": "Category",
     "categoryPlaceholder": "Select category",
     "status": "Status",

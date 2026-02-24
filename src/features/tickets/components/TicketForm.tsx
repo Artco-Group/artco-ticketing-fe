@@ -50,6 +50,7 @@ export function TicketForm({
   const { translate, language } = useAppTranslation('tickets');
   const category = form.watch('category');
   const isBug = category === TicketCategory.BUG;
+  const hasNoProjects = projectOptions.length === 0;
 
   return (
     <Form {...form}>
@@ -134,7 +135,10 @@ export function TicketForm({
                   options={projectOptions}
                   placeholder={translate('form.projectPlaceholder')}
                   error={fieldState.error?.message}
-                  disabled={isProjectLocked}
+                  helperText={
+                    hasNoProjects ? translate('form.noProjectsHint') : undefined
+                  }
+                  disabled={isProjectLocked || hasNoProjects}
                   required
                   {...field}
                 />

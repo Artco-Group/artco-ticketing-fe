@@ -16,6 +16,7 @@ export function useActivityTranslations() {
     const now = new Date();
     const timestamp = typeof date === 'string' ? new Date(date) : date;
     const diffMs = now.getTime() - timestamp.getTime();
+    if (diffMs < 0) return translate('time.justNow');
     const diffSecs = Math.floor(diffMs / 1000);
     const diffMins = Math.floor(diffSecs / 60);
     const diffHours = Math.floor(diffMins / 60);

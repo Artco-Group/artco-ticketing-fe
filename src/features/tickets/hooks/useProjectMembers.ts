@@ -21,10 +21,12 @@ export function useProjectMembers(
 
   const projectOptions = useMemo(
     () =>
-      (projectsData?.projects || []).map((project) => ({
-        label: project.name,
-        value: (project.id || '') as string,
-      })),
+      (projectsData?.projects || [])
+        .filter((project) => !project.isArchived)
+        .map((project) => ({
+          label: project.name,
+          value: (project.id || '') as string,
+        })),
     [projectsData?.projects]
   );
 
