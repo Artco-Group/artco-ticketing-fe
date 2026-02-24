@@ -1,9 +1,256 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {},
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Consolas', 'monospace'],
+      },
+      fontSize: {
+        // Headings (font-size, { lineHeight, letterSpacing, fontWeight })
+        'heading-h1': [
+          '48px',
+          { lineHeight: '56px', letterSpacing: '-0.02em', fontWeight: '700' },
+        ],
+        'heading-h2': [
+          '40px',
+          { lineHeight: '48px', letterSpacing: '-0.02em', fontWeight: '700' },
+        ],
+        'heading-h3': [
+          '32px',
+          { lineHeight: '40px', letterSpacing: '-0.01em', fontWeight: '700' },
+        ],
+        'heading-h4': [
+          '24px',
+          { lineHeight: '32px', letterSpacing: '-0.01em', fontWeight: '600' },
+        ],
+        'heading-h5': ['20px', { lineHeight: '28px', fontWeight: '600' }],
+        'heading-h6': ['18px', { lineHeight: '24px', fontWeight: '600' }],
+
+        // Body
+        'body-lg': ['18px', { lineHeight: '28px' }],
+        'body-md': ['16px', { lineHeight: '24px' }],
+        'body-sm': ['14px', { lineHeight: '20px' }],
+        'body-xs': ['12px', { lineHeight: '16px' }],
+
+        // Labels & captions
+        'label-lg': ['16px', { lineHeight: '24px', fontWeight: '500' }],
+        'label-md': ['14px', { lineHeight: '20px', fontWeight: '500' }],
+        'label-sm': ['12px', { lineHeight: '16px', fontWeight: '500' }],
+        caption: ['11px', { lineHeight: '14px' }],
+      },
+      spacing: {
+        // Figma design system spacing scale
+        none: '0px', // 0rem
+        xxs: '2px', // 0.125rem
+        xs: '4px', // 0.25rem
+        sm: '6px', // 0.375rem
+        md: '8px', // 0.5rem
+        lg: '12px', // 0.75rem
+        xl: '16px', // 1rem
+        '2xl': '20px', // 1.25rem
+        '3xl': '24px', // 1.5rem
+        '4xl': '32px', // 2rem
+        '5xl': '40px', // 2.5rem
+        '6xl': '48px', // 3rem
+        '7xl': '64px', // 4rem
+
+        // Component-specific custom spacing values (outside standard scale)
+        2.5: '10px', // Between 2 (8px) and 3 (12px)
+        4.5: '18px', // Between 4 (16px) and 5 (20px)
+        11.5: '46px', // For input icon padding (used in LoginForm, ForgotPasswordForm, PasswordResetPage)
+        13: '52px', // Custom spacing for larger layouts
+        15: '60px', // Custom spacing for larger layouts
+        18: '72px', // Custom spacing for larger layouts
+        22: '88px', // Custom spacing for larger layouts
+      },
+      borderRadius: {
+        // Figma design system border radius scale
+        none: '0px', // 0rem
+        xs: '2px', // 0.125rem
+        sm: '4px', // 0.25rem
+        DEFAULT: '8px', // 0.5rem - Default border radius
+        md: '8px', // 0.5rem
+        lg: '10px', // 0.625rem
+        xl: '12px', // 0.75rem
+        '2xl': '16px', // 1rem
+        '3xl': '20px', // 1.25rem
+        '4xl': '24px', // 1.5rem
+        full: '999px', // 62.438rem - Fully rounded corners
+      },
+      boxShadow: {
+        'ring-primary': '0 0 0 3px rgba(0, 65, 121, 0.1)',
+        'ring-primary-strong': '0 0 0 3px rgba(0, 65, 121, 0.3)',
+        'ring-error': '0 0 0 3px rgba(239, 68, 68, 0.2)',
+        'button-hover': '0 6px 20px rgba(0, 65, 121, 0.35)',
+        'card-glass':
+          '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+        'card-glass-hover': '0 12px 40px rgba(0, 0, 0, 0.3)',
+        'card-icon-blue': '0 4px 12px rgba(59, 130, 246, 0.4)',
+        'card-icon-warm': '0 4px 12px rgba(245, 158, 11, 0.4)',
+        'card-button-md': '0 4px 12px rgba(0, 0, 0, 0.15)',
+        'floating-bar':
+          '0px 4px 12px -2px var(--effectgeneral3), 0px 4px 8px -4px var(--effectgeneral5), 0px 0px 0px 1px var(--effectgeneral3) inset',
+      },
+      colors: {
+        // Brand primary (Blue from Figma - mapped to primary)
+        primary: {
+          50: '#F2F9FF',
+          100: '#E5F4FF',
+          200: '#BBE3FF',
+          300: '#80CAFF',
+          400: '#0D99FF',
+          500: '#004179', // Base brand color
+          600: '#007BE5',
+          700: '#0768CF',
+          800: '#034AC1',
+          900: '#093077',
+          1000: '#0D193F',
+        },
+        // Greyscale (from Figma)
+        greyscale: {
+          0: '#FFFFFF',
+          100: '#F5F5F5',
+          200: '#E0E0E0',
+          300: '#9D9D9D',
+          400: '#8C8C8C',
+          500: '#757575',
+          600: '#444444',
+          700: '#383838',
+          800: '#2C2C2C',
+          900: '#1E1E1E',
+          1000: '#111111',
+        },
+        // Teal (from Figma)
+        teal: {
+          100: '#EBF6FF',
+          200: '#CEF0F8',
+          300: '#B6ECF7',
+          400: '#75D7F0',
+          500: '#00A2C2',
+          600: '#0087A8',
+          700: '#047195',
+          800: '#085A78',
+          900: '#093C53',
+          1000: '#0E2F43',
+        },
+        // Pink (from Figma)
+        pink: {
+          100: '#FFF0FE',
+          200: '#FFE0FC',
+          300: '#FFBDF2',
+          400: '#FF99E0',
+          500: '#FF24BD',
+          600: '#EA10AC',
+          700: '#C80B96',
+          800: '#971172',
+          900: '#5F114C',
+          1000: '#451138',
+        },
+        // Red (from Figma)
+        red: {
+          100: '#FFF5F5',
+          200: '#FFE2E0',
+          300: '#FFC7C2',
+          400: '#FFAFA3',
+          500: '#F24822',
+          600: '#DC3412',
+          700: '#BD2915',
+          800: '#9F1F18',
+          900: '#771208',
+          1000: '#660E0B',
+        },
+        // Orange (from Figma)
+        orange: {
+          100: '#FFF4E5',
+          200: '#FFE0C2',
+          300: '#FCD19C',
+          400: '#FFC470',
+          500: '#FFAB29',
+          600: '#FC9E24',
+          700: '#F79722',
+          800: '#DD7C0E',
+          900: '#CE7012',
+          1000: '#8A480F',
+        },
+        // Violet (from Figma)
+        violet: {
+          100: '#F5F5FF',
+          200: '#EBEBFF',
+          300: '#D3D1FF',
+          400: '#B4B2FF',
+          500: '#4D49FC',
+          600: '#443DEB',
+          700: '#3D32E2',
+          800: '#3620DF',
+          900: '#2F15AC',
+          1000: '#1D1254',
+        },
+        // Purple (from Figma)
+        purple: {
+          100: '#F9F5FF',
+          200: '#F1E5FF',
+          300: '#E4CCFF',
+          400: '#D9BBFF',
+          500: '#9747FF',
+          600: '#8638E5',
+          700: '#7C2BDA',
+          800: '#681ABB',
+          900: '#4B0D97',
+          1000: '#2D0F46',
+        },
+        // Green (from Figma)
+        green: {
+          100: '#EBFFEE',
+          200: '#CFF7D3',
+          300: '#AFF4C6',
+          400: '#85E0A3',
+          500: '#14AE5C',
+          600: '#009951',
+          700: '#008043',
+          800: '#036838',
+          900: '#024626',
+          1000: '#084A23',
+        },
+        // Blue (from Figma)
+        blue: {
+          100: '#F2F9FF',
+          200: '#E5F4FF',
+          300: '#BBE3FF',
+          400: '#80CAFF',
+          500: '#0D99FF',
+          600: '#007BE5',
+          700: '#0768CF',
+          800: '#034AC1',
+          900: '#093077',
+          1000: '#0D193F',
+        },
+        // Semantic colors
+        error: {
+          100: '#FFF5F5',
+          500: '#F24822',
+          600: '#DC3412',
+          700: '#BD2915',
+        },
+        warning: {
+          100: '#FFF4E5',
+          500: '#FFAB29',
+          600: '#FC9E24',
+        },
+
+        success: {
+          100: '#EBFFEE',
+          500: '#14AE5C',
+          600: '#009951',
+        },
+        info: {
+          100: '#F2F9FF',
+          500: '#0D99FF',
+          600: '#007BE5',
+        },
+      },
+    },
+  },
   plugins: [],
-}
+};

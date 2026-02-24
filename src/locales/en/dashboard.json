@@ -1,0 +1,50 @@
+{
+  "title": "Dashboard",
+  "welcome": "Welcome back, {{name}}!",
+  "welcomeNoName": "Welcome back!",
+  "overview": "Overview",
+  "recentActivity": {
+    "title": "Recent Activity",
+    "description": "Here's what's been happening recently",
+    "empty": "No recent activity",
+    "emptyDescription": "Activities will appear here as you work on tickets and projects",
+    "moreActivities": "+{{count}} more activities"
+  },
+  "stats": {
+    "myProjects": "My Projects",
+    "totalTickets": "Total Tickets",
+    "openTickets": "Open Tickets",
+    "resolvedTickets": "Resolved Tickets",
+    "assignedTickets": "Assigned Tickets",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "projectsLed": "Projects Led",
+    "teamMembers": "Team Members",
+    "pendingReview": "Pending Review",
+    "totalProjects": "Total Projects",
+    "totalUsers": "Total Users",
+    "backlogTickets": "Backlog Tickets"
+  },
+  "activity": {
+    "ticketCreated": "created ticket",
+    "ticketUpdated": "updated ticket",
+    "ticketAssigned": "assigned",
+    "ticketStatusChanged": "changed status of",
+    "ticketPriorityChanged": "changed priority of",
+    "ticketCommented": "commented on",
+    "projectCreated": "created project",
+    "projectUpdated": "updated project",
+    "projectMemberAdded": "added",
+    "projectMemberRemoved": "removed",
+    "userCreated": "created user",
+    "commentAdded": "added a comment to",
+    "subtaskAdded": "added subtask to",
+    "subtaskCompleted": "completed subtask on"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "createTicket": "Create Ticket",
+    "createProject": "Create Project",
+    "inviteUser": "Invite User"
+  }
+}

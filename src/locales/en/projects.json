@@ -1,0 +1,181 @@
+{
+  "title": "Projects",
+  "singular": "Project",
+  "plural": "Projects",
+  "create": "Create Project",
+  "edit": "Edit Project",
+  "delete": "Delete Project",
+  "view": "View Project",
+  "list": {
+    "title": "All Projects",
+    "empty": "No projects found",
+    "emptyDescription": "Create your first project to get started.",
+    "emptyFiltered": "No projects match your current filters.",
+    "searchPlaceholder": "Search projects...",
+    "loading": "Loading projects...",
+    "failedToLoad": "Failed to load projects",
+    "failedToLoadMessage": "Failed to load projects. Please try again later."
+  },
+  "dialog": {
+    "createTitle": "Create Project",
+    "editTitle": "Edit Project",
+    "createDescription": "Fill in the details to create a new project.",
+    "editDescription": "Update the project details below.",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "creating": "Creating...",
+    "saving": "Saving...",
+    "deleteTitle": "Delete Project",
+    "deleteConfirm": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+    "deleteButton": "Delete"
+  },
+  "form": {
+    "name": "Project Name",
+    "namePlaceholder": "Enter project name",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the project",
+    "prefix": "Prefix",
+    "prefixPlaceholder": "e.g., PRJ",
+    "prefixHelp": "Used for ticket IDs (e.g., PRJ-001)",
+    "client": "Client",
+    "clientPlaceholder": "Select client",
+    "leads": "Project Leads",
+    "leadsPlaceholder": "Select project leads",
+    "members": "Team Members",
+    "membersPlaceholder": "Select team members",
+    "startDate": "Start Date",
+    "startDatePlaceholder": "Select start date",
+    "dueDate": "Due Date",
+    "dueDatePlaceholder": "Select due date",
+    "priority": "Priority",
+    "priorityPlaceholder": "Select priority"
+  },
+  "filters": {
+    "priority": "Priority",
+    "lead": "Lead"
+  },
+  "groupBy": {
+    "dueDate": "Due Date",
+    "client": "Client",
+    "noDueDate": "No Due Date",
+    "noClient": "No Client"
+  },
+  "sort": {
+    "name": "Name",
+    "priority": "Priority",
+    "dueDate": "Due Date",
+    "progress": "Progress",
+    "updated": "Updated"
+  },
+  "priority": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "critical": "Critical"
+  },
+  "status": {
+    "active": "Active",
+    "archived": "Archived",
+    "completed": "Completed"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "tickets": "Tickets",
+    "members": "Members",
+    "settings": "Settings"
+  },
+  "listTabs": {
+    "active": "Active",
+    "archived": "Archived",
+    "all": "All"
+  },
+  "actions": {
+    "archive": "Archive Project",
+    "restore": "Restore Project",
+    "addMember": "Add Member",
+    "removeMember": "Remove Member",
+    "addLead": "Add Lead",
+    "removeLead": "Remove Lead"
+  },
+  "messages": {
+    "created": "Project created successfully",
+    "updated": "Project updated successfully",
+    "deleted": "Project deleted successfully",
+    "archived": "Project archived successfully",
+    "restored": "Project restored successfully",
+    "memberAdded": "Member added successfully",
+    "memberRemoved": "Member removed successfully",
+    "confirmDelete": "Are you sure you want to delete this project?",
+    "confirmArchive": "Are you sure you want to archive this project?"
+  },
+  "stats": {
+    "totalTickets": "Total Tickets",
+    "openTickets": "Open Tickets",
+    "completedTickets": "Completed",
+    "members": "Members"
+  },
+  "table": {
+    "columns": {
+      "title": "Title",
+      "priority": "Priority",
+      "dueDate": "Due Date",
+      "lead": "Lead",
+      "developers": "Engineers",
+      "status": "Status",
+      "updated": "Updated"
+    },
+    "rowActions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "archive": "Archive",
+      "unarchive": "Unarchive"
+    },
+    "deleteTitle": "Delete projects",
+    "deleteConfirm": "Are you sure you want to delete {{count}} project(s)? This action cannot be undone.",
+    "deleteButton": "Delete",
+    "archiveTitle": "Archive projects",
+    "archiveConfirm": "Are you sure you want to archive {{count}} project(s)?",
+    "archiveButton": "Archive",
+    "unarchiveTitle": "Unarchive projects",
+    "unarchiveConfirm": "Are you sure you want to unarchive {{count}} project(s)?",
+    "unarchiveButton": "Unarchive"
+  },
+  "time": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "{{count}} days ago"
+  },
+  "picker": {
+    "placeholder": "Select projects...",
+    "disabledTooltip": "Projects with existing tickets cannot change workflows",
+    "noProjects": "No projects available",
+    "tickets": "tickets"
+  },
+  "detail": {
+    "loading": "Loading project...",
+    "failedToLoad": "Failed to load project",
+    "failedToLoadMessage": "Could not load the project details. Please try again.",
+    "progress": "Progress",
+    "ofTickets": "of {{count}} tickets",
+    "team": "Team",
+    "inviteMembers": "Invite Members",
+    "engineeringLeads": "Engineering Leads",
+    "developers": "Engineers",
+    "noLeadsAssigned": "No leads assigned",
+    "noMembersYet": "No members yet",
+    "timeline": "Timeline",
+    "startDate": "Start Date",
+    "dueDate": "Due Date",
+    "tickets": "Tickets",
+    "createTicket": "Create Ticket",
+    "loadingTickets": "Loading tickets...",
+    "noTicketsYet": "No tickets yet",
+    "noTicketsMessage": "Create tickets to track work for this project.",
+    "inviteTitle": "Invite Team Members",
+    "inviteDescription": "Select engineers or engineering leads to add to this project.",
+    "selectMembers": "Select team members...",
+    "cancel": "Cancel",
+    "adding": "Adding...",
+    "addMembers": "Add Members"
+  }
+}

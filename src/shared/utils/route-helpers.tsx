@@ -1,0 +1,130 @@
+import { Route } from 'react-router-dom';
+import {
+  Suspense,
+  type LazyExoticComponent,
+  type ComponentType,
+  type JSX,
+} from 'react';
+import { MainLayout } from '@/shared/components/layout/MainLayout';
+import { RouteGuard } from '@/features/auth/components/RouteGuard';
+import { LoadingOverlay } from '@/shared/components/ui';
+
+/**
+ * Route helper utilities to eliminate repetition in route definitions
+ * These functions provide consistent patterns for creating routes across features
+ */
+
+/**
+ * Creates a private route with MainLayout and suspense
+ * Each page provides its own layout (e.g. ListPageLayout, DashboardLayout)
+ * Renders: RouteGuard > Suspense > MainLayout > Component
+ */
+export function createPrivateRoute(
+  key: string,
+  path: string,
+  Component: LazyExoticComponent<ComponentType<object>>
+) {
+  return (
+    <Route
+      key={key}
+      path={path}
+      element={
+        <RouteGuard requiresAuth={true}>
+          <Suspense fallback={<LoadingOverlay />}>
+            <MainLayout>
+              <Component />
+            </MainLayout>
+          </Suspense>
+        </RouteGuard>
+      }
+    />
+  );
+}
+
+/**
+ * Creates a public route with suspense (no layout wrapper)
+ * Used for public routes like login, register, password reset, etc.
+ * Redirects authenticated users to dashboard
+ */
+export function createPublicRoute(
+  key: string,
+  path: string,
+  Component: LazyExoticComponent<ComponentType<object>>
+) {
+  return (
+    <Route
+      key={key}
+      path={path}
+      element={
+        <RouteGuard requiresAuth={false}>
+          <Suspense fallback={<LoadingOverlay />}>
+            <Component />
+          </Suspense>
+        </RouteGuard>
+      }
+    />
+  );
+}
+
+/**
+ * Creates a simple route with suspense only
+ * Used for routes that don't need layout wrapper but still need lazy loading
+ */
+export function createSimpleRoute(
+  key: string,
+  path: string,
+  Component: LazyExoticComponent<ComponentType<object>>
+) {
+  return (
+    <Route
+      key={key}
+      path={path}
+      element={
+        <Suspense fallback={<LoadingOverlay />}>
+          <Component />
+        </Suspense>
+      }
+    />
+  );
+}
+
+/**
+ * Creates an auth-only route without layout wrapper
+ * Used for routes that require authentication but should not show the main layout
+ * Example: Force password change page (user must change password before accessing app)
+ */
+export function createAuthOnlyRoute(
+  key: string,
+  path: string,
+  Component: LazyExoticComponent<ComponentType<object>>
+) {
+  return (
+    <Route
+      key={key}
+      path={path}
+      element={
+        <RouteGuard requiresAuth={true}>
+          <Suspense fallback={<LoadingOverlay />}>
+            <Component />
+          </Suspense>
+        </RouteGuard>
+      }
+    />
+  );
+}
+
+/**
+ * Maps route definitions to public routes
+ * For manual route definitions that need custom keys
+ */
+export function mapToPublicRoutes(
+  routeDefinitions: Array<{
+    key: string;
+    path: string;
+    component: LazyExoticComponent<ComponentType<object>>;
+  }>
+): JSX.Element[] {
+  return routeDefinitions.map(({ key, path, component }) =>
+    createPublicRoute(key, path, component)
+  );
+}

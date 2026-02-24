@@ -1,0 +1,107 @@
+{
+  "title": "Korisnici",
+  "singular": "Korisnik",
+  "plural": "Korisnici",
+  "members": "Članovi",
+  "invite": "Pozovi korisnika",
+  "inviteMember": "Pozovi člana",
+  "editMember": "Uredi člana",
+  "edit": "Uredi korisnika",
+  "delete": "Obriši korisnika",
+  "deleteMember": "Obriši člana",
+  "view": "Prikaži korisnika",
+  "list": {
+    "title": "Svi korisnici",
+    "empty": "Nema pronađenih korisnika",
+    "emptyDescription": "Pozovite prvog člana tima za početak",
+    "searchPlaceholder": "Pretraži korisnike...",
+    "loading": "Učitavanje članova...",
+    "failedToLoad": "Neuspješno učitavanje članova",
+    "failedToLoadMessage": "Neuspješno učitavanje članova. Pokušajte ponovo kasnije.",
+    "noMembers": "Nema pronađenih članova",
+    "noMembersMatch": "Nema članova koji odgovaraju filterima."
+  },
+  "form": {
+    "name": "Ime",
+    "namePlaceholder": "Unesite ime člana",
+    "clientNamePlaceholder": "Unesite ime klijenta",
+    "email": "Email adresa",
+    "emailPlaceholder": "Unesite email adresu",
+    "role": "Uloga",
+    "rolePlaceholder": "Odaberite ulogu",
+    "assignToProject": "Dodijeli projektu",
+    "selectProjects": "Odaberite projekte...",
+    "profilePicture": "Profilna slika",
+    "uploadImage": "Učitaj sliku",
+    "uploading": "Učitavanje...",
+    "remove": "Ukloni",
+    "avatarHint": "Podržavamo PNG, JPEG i GIF formate do 10MB",
+    "passwordInfo": "Privremena lozinka će biti generirana i poslana korisniku putem emaila. Morat će je promijeniti pri prvoj prijavi.",
+    "clientPasswordInfo": "Privremena lozinka će biti generirana i poslana klijentu putem emaila. Morat će je promijeniti pri prvoj prijavi.",
+    "saveChanges": "Sačuvaj promjene",
+    "saving": "Čuvanje..."
+  },
+  "roles": {
+    "admin": "Administrator",
+    "engLead": "Tehnički voditelj",
+    "developer": "Inžinjer",
+    "client": "Klijent"
+  },
+  "rolesDescription": {
+    "admin": "Puni pristup svim funkcijama i postavkama",
+    "engLead": "Upravljanje projektima, tiketima i članovima tima",
+    "developer": "Rad na dodijeljenim tiketima i projektima",
+    "client": "Pregled i kreiranje tiketa za svoje projekte"
+  },
+  "status": {
+    "active": "Aktivan",
+    "inactive": "Neaktivan",
+    "pending": "Na čekanju"
+  },
+  "actions": {
+    "changeRole": "Promijeni ulogu",
+    "resetPassword": "Resetuj lozinku",
+    "deactivate": "Deaktiviraj",
+    "activate": "Aktiviraj",
+    "resendInvite": "Ponovo pošalji poziv"
+  },
+  "messages": {
+    "invited": "Korisnik uspješno pozvan",
+    "updated": "Korisnik uspješno ažuriran",
+    "deleted": "Korisnik uspješno obrisan",
+    "roleChanged": "Uloga uspješno promijenjena",
+    "passwordReset": "Email za resetovanje lozinke poslan",
+    "confirmDelete": "Da li ste sigurni da želite obrisati ovog korisnika?",
+    "confirmDeleteMember": "Da li ste sigurni da želite obrisati {{name}}? Ova akcija se ne može poništiti.",
+    "cannotDeleteSelf": "Ne možete obrisati svoj račun"
+  },
+  "profile": {
+    "title": "Profil",
+    "avatar": "Profilna slika",
+    "changeAvatar": "Promijeni sliku",
+    "removeAvatar": "Ukloni sliku",
+    "uploadAvatar": "Učitaj sliku"
+  },
+  "table": {
+    "columns": {
+      "name": "Ime",
+      "role": "Uloga",
+      "joined": "Pridružen",
+      "projects": "Projekti",
+      "issues": "Tiketi"
+    },
+    "unnamedUser": "Neimenovani korisnik",
+    "issuesCount": "{{count}} tiketa",
+    "rowActions": {
+      "edit": "Uredi",
+      "delete": "Obriši"
+    },
+    "deleteTitle": "Obriši članove",
+    "deleteConfirm": "Da li ste sigurni da želite obrisati {{count}} člana/članova? Ova akcija se ne može poništiti.",
+    "deleteButton": "Obriši"
+  },
+  "bulkActions": {
+    "addToProject": "Dodaj u projekat",
+    "deleteMember": "Obriši člana"
+  }
+}

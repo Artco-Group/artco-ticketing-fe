@@ -1,0 +1,52 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  loginSchema,
+  type LoginFormData,
+} from '@artco-group/artco-ticketing-sync';
+import { useLogin } from '../api/auth-api';
+import { useAuth } from '../context';
+import { PAGE_ROUTES } from '@/shared/constants';
+import { extractAuthError } from '../utils/extract-auth-error';
+import { useTranslatedToast } from '@/shared/hooks';
+import { useToast } from '@/shared/components/ui';
+
+export function useLoginForm() {
+  const loginMutation = useLogin();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const translatedToast = useTranslatedToast();
+  const toast = useToast();
+
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      rememberMe: false,
+    },
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(PAGE_ROUTES.DASHBOARD.ROOT, { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      await loginMutation.mutateAsync(data);
+      translatedToast.success('toast.success.loggedIn');
+    } catch (err) {
+      toast.error({ title: extractAuthError(err), icon: 'info' });
+    }
+  };
+
+  return {
+    form,
+    onSubmit: form.handleSubmit(onSubmit),
+    isPending: loginMutation.isPending,
+  };
+}
