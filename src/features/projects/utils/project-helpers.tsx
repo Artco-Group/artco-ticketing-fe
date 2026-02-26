@@ -114,6 +114,8 @@ export const PROJECT_SORT_CONFIG = [
   { value: 'Updated', labelKey: 'sort.updated' },
 ] as const;
 
+export type ProjectSortKey = (typeof PROJECT_SORT_CONFIG)[number]['value'];
+
 export const PROJECT_GROUP_BY_CONFIG = [
   { value: 'dueDate', labelKey: 'groupBy.dueDate' },
   { value: 'client', labelKey: 'groupBy.client' },

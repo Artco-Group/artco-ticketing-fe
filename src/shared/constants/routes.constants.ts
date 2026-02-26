@@ -74,6 +74,11 @@ export const PAGE_ROUTES = {
   CLIENTS: {
     ROOT: '/clients',
   },
+
+  // Sub-Clients
+  SUB_CLIENTS: {
+    ROOT: '/team',
+  },
   // Settings
   SETTINGS: {
     ROOT: '/settings',

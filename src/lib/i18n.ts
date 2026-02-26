@@ -12,6 +12,7 @@ import enUsers from '@/locales/en/users.json';
 import enSettings from '@/locales/en/settings.json';
 import enDashboard from '@/locales/en/dashboard.json';
 import enClients from '@/locales/en/clients.json';
+import enSubClients from '@/locales/en/sub-clients.json';
 
 import bsCommon from '@/locales/bs/common.json';
 import bsAuth from '@/locales/bs/auth.json';
@@ -22,6 +23,7 @@ import bsUsers from '@/locales/bs/users.json';
 import bsSettings from '@/locales/bs/settings.json';
 import bsDashboard from '@/locales/bs/dashboard.json';
 import bsClients from '@/locales/bs/clients.json';
+import bsSubClients from '@/locales/bs/sub-clients.json';
 
 export const resources = {
   en: {
@@ -34,6 +36,7 @@ export const resources = {
     settings: enSettings,
     dashboard: enDashboard,
     clients: enClients,
+    subClients: enSubClients,
   },
   bs: {
     common: bsCommon,
@@ -45,6 +48,7 @@ export const resources = {
     settings: bsSettings,
     dashboard: bsDashboard,
     clients: bsClients,
+    subClients: bsSubClients,
   },
 } as const;
 
@@ -76,6 +80,7 @@ i18n
       'settings',
       'dashboard',
       'clients',
+      'subClients',
     ],
 
     detection: {

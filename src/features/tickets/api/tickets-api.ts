@@ -57,7 +57,7 @@ interface OptimisticContext {
 function useUpdateTicketStatus() {
   return useApiMutation<
     { ticket: Ticket },
-    { id: TicketId; status: string },
+    { id: TicketId; status: string; resolution?: string },
     OptimisticContext
   >({
     url: (vars) => API_ROUTES.TICKETS.STATUS(vars.id),

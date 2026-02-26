@@ -28,10 +28,12 @@ export function useProjectForm({
       description: defaultValues?.description || '',
       client: defaultValues?.client || '',
       leads: defaultValues?.leads || [],
+      projectManagers: defaultValues?.projectManagers || [],
       members: defaultValues?.members || [],
       startDate: defaultValues?.startDate || '',
       dueDate: defaultValues?.dueDate || '',
       priority: defaultValues?.priority || ProjectPriority.MEDIUM,
+      contractNumber: defaultValues?.contractNumber || '',
     },
   });
 

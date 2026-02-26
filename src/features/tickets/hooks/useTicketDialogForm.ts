@@ -41,6 +41,12 @@ function getDefaultValues(
       dueDate: ticket.dueDate
         ? new Date(ticket.dueDate).toISOString().split('T')[0]
         : '',
+      tempSolutionDate: ticket.tempSolutionDate
+        ? new Date(ticket.tempSolutionDate).toISOString().split('T')[0]
+        : '',
+      finalSolutionDate: ticket.finalSolutionDate
+        ? new Date(ticket.finalSolutionDate).toISOString().split('T')[0]
+        : '',
       assignedTo: ticket.assignedTo?.id || '',
       engLead: ticket.engLead?.id || '',
     } as UpdateFormData;
@@ -50,7 +56,7 @@ function getDefaultValues(
     title: '',
     description: '',
     category: '' as CreateFormData['category'],
-    priority: TicketPriority.MEDIUM as CreateFormData['priority'],
+    priority: TicketPriority.MINOR as CreateFormData['priority'],
     affectedModule: '',
     project: projectId || '',
     reproductionSteps: '',
@@ -58,6 +64,8 @@ function getDefaultValues(
     actualResult: '',
     startDate: '',
     dueDate: '',
+    tempSolutionDate: '',
+    finalSolutionDate: '',
     assignedTo: '',
     engLead: '',
   };

@@ -28,9 +28,10 @@ export function TicketDialog({
 }: TicketDialogProps) {
   const { translate } = useAppTranslation('tickets');
   const { user } = useAuth();
-  const { isEngLead, isAdmin } = useRoleFlags(user?.role);
+  const { isEngLead, isAdmin, isDeveloper } = useRoleFlags(user?.role);
   const isProjectLocked = !!projectId;
   const canAssign = isEngLead || isAdmin;
+  const canSetSolutionDates = isEngLead || isAdmin || isDeveloper;
 
   const { handleSubmit, isPending } = useTicketDialogActions({
     ticket,
@@ -117,6 +118,7 @@ export function TicketDialog({
         developerUsers={developerUsers}
         engLeadUsers={engLeadUsers}
         canAssign={canAssign}
+        canSetSolutionDates={canSetSolutionDates}
       />
     </SideDialog>
   );

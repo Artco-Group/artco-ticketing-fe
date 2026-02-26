@@ -76,8 +76,11 @@
     "startDatePlaceholder": "Select start date",
     "dueDate": "Due Date",
     "dueDatePlaceholder": "Select due date",
-    "affectedModule": "Affected Module",
-    "affectedModulePlaceholder": "e.g., Mobile App, Admin Panel",
+    "tempSolutionDate": "Temporary Solution",
+    "tempSolutionDatePlaceholder": "Select temporary solution date",
+    "finalSolutionDate": "Final Solution",
+    "finalSolutionDatePlaceholder": "Select final solution date",
+    "affectedModule": "Affected Element",
     "reproductionSteps": "Reproduction Steps",
     "reproductionStepsPlaceholder": "1. Go to...\n2. Click on...\n3. Observe...",
     "expectedResult": "Expected Result",
@@ -97,11 +100,11 @@
     "cancelled": "Cancelled"
   },
   "priority": {
-    "low": "Low",
-    "medium": "Medium",
-    "high": "High",
+    "minor": "Minor",
+    "major": "Major",
     "critical": "Critical",
-    "urgent": "Urgent"
+    "warning": "Warning",
+    "technicalRequest": "Technical Request"
   },
   "type": {
     "bug": "Bug",
@@ -146,10 +149,14 @@
     "notFoundMessage": "The ticket you're looking for doesn't exist or you don't have access to it.",
     "backToDashboard": "Back to Dashboard",
     "created": "Created",
+    "daysToTempSolution": "{{days}} days",
+    "daysToFinalSolution": "{{days}} days",
+    "daysToTempSolutionLabel": "Temp Solution",
+    "daysToFinalSolutionLabel": "Final Solution",
     "description": "Description",
     "additionalDetails": "Additional Details",
     "noDescription": "No description",
-    "affectedModule": "Affected Module",
+    "affectedModule": "Affected Element",
     "stepsToReproduce": "Steps to Reproduce",
     "expectedResult": "Expected Result",
     "actualResult": "Actual Result",
@@ -226,5 +233,13 @@
   "bulkActions": {
     "delete": "Delete",
     "changePriority": "Change Priority"
+  },
+  "resolution": {
+    "title": "Resolution",
+    "description": "Provide a summary of what was done to resolve this ticket. This will be sent to stakeholders via email.",
+    "placeholder": "Describe what was done to resolve this ticket...",
+    "skip": "Skip",
+    "save": "Save",
+    "label": "Resolution"
   }
 }

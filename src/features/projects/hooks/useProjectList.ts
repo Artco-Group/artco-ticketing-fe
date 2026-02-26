@@ -62,6 +62,9 @@ export function useProjectList() {
 
   // Filter/sort options
   const engLeads = users.filter((u) => u.role === UserRole.ENG_LEAD);
+  const projectManagers = users.filter(
+    (u) => u.role === UserRole.PROJECT_MANAGER
+  );
 
   const sortOptions = PROJECT_SORT_CONFIG.map((opt) => ({
     value: opt.value,
@@ -91,11 +94,24 @@ export function useProjectList() {
       })),
       searchable: true,
     },
+    {
+      key: 'projectManager',
+      label: translate('filters.projectManager'),
+      icon: React.createElement(Icon, { name: 'user', size: 'sm' }),
+      options: projectManagers.map((pm) => ({
+        value: pm.id as string,
+        label: pm.name || pm.email || 'Unknown',
+      })),
+      searchable: true,
+    },
   ];
 
-  const filterPanelValue: FilterPanelValues = filters.leadFilter
-    ? { lead: [filters.leadFilter] }
-    : {};
+  const filterPanelValue: FilterPanelValues = {
+    ...(filters.leadFilter ? { lead: [filters.leadFilter] } : {}),
+    ...(filters.projectManagerFilter
+      ? { projectManager: [filters.projectManagerFilter] }
+      : {}),
+  };
 
   const groupByOptions: GroupByOption[] = PROJECT_GROUP_BY_CONFIG.map(
     ({ labelKey, ...rest }) => ({
@@ -193,6 +209,13 @@ export function useProjectList() {
       filters.onFilterChange('lead', leadValues[0]);
     } else {
       filters.onFilterChange('lead', null);
+    }
+
+    const pmValues = value.projectManager;
+    if (pmValues && pmValues.length > 0) {
+      filters.onFilterChange('projectManager', pmValues[0]);
+    } else {
+      filters.onFilterChange('projectManager', null);
     }
   };
 

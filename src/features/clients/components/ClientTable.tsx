@@ -5,6 +5,7 @@ import {
   EmptyState,
   Avatar,
   AvatarGroup,
+  Badge,
   Icon,
   BulkActionsBar,
   ConfirmationDialog,
@@ -19,9 +20,15 @@ interface ClientTableProps {
   clients: UserWithProjects[];
   onEdit?: (client: UserWithProjects) => void;
   onDelete?: (client: UserWithProjects) => void;
+  onManageContracts?: (client: UserWithProjects) => void;
 }
 
-export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
+export function ClientTable({
+  clients,
+  onEdit,
+  onDelete,
+  onManageContracts,
+}: ClientTableProps) {
   const { translate, language } = useAppTranslation('clients');
   const {
     selectedRows,
@@ -48,6 +55,15 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
             },
           ]
         : []),
+      ...(onManageContracts
+        ? [
+            {
+              label: translate('table.rowActions.manageContracts'),
+              icon: <Icon name="file-text" size="sm" />,
+              onClick: (client: UserWithProjects) => onManageContracts(client),
+            },
+          ]
+        : []),
       ...(onDelete
         ? [
             {
@@ -60,7 +76,7 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
           ]
         : []),
     ],
-    [onEdit, onDelete, translate]
+    [onEdit, onDelete, onManageContracts, translate]
   );
 
   const columns: Column<UserWithProjects>[] = useMemo(
@@ -89,6 +105,23 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
         render: (client) => (
           <span className="text-muted-foreground">{client.email}</span>
         ),
+      },
+      {
+        key: 'contracts',
+        label: translate('table.columns.contracts'),
+        render: (client) => {
+          const contracts = client.contracts || [];
+          if (contracts.length === 0) {
+            return <span className="text-muted-foreground">—</span>;
+          }
+          return (
+            <div className="flex items-center gap-1">
+              <Badge variant="outline" size="sm">
+                {contracts.length}
+              </Badge>
+            </div>
+          );
+        },
       },
       {
         key: 'createdAt',

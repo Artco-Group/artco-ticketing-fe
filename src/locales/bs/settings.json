@@ -93,6 +93,8 @@
       },
       "projectCreated": "Kada je projekt kreiran za mene",
       "addedToProject": "Kada sam dodan/a na projekt",
+      "removedFromProject": "Kada sam uklonjen/a sa projekta",
+      "projectUpdated": "Kada su detalji projekta ažurirani",
       "ticketCreated": "Kada je tiket kreiran u mom projektu",
       "ticketAssigned": "Kada mi je tiket dodijeljen",
       "ticketStatusChanged": "Kada se promijeni status tiketa",

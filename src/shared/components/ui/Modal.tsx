@@ -42,10 +42,10 @@ export function Modal({
         <div
           className={`flex justify-between ${description ? 'items-start' : 'items-center'}`}
         >
-          <div>
+          <div className="pr-8">
             <DialogTitle>{title}</DialogTitle>
             {description && (
-              <p className="text-muted-foreground mt-2 text-sm">
+              <p className="text-muted-foreground mt-3 text-sm">
                 {description}
               </p>
             )}

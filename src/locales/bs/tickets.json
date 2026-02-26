@@ -76,8 +76,11 @@
     "startDatePlaceholder": "Odaberite datum početka",
     "dueDate": "Rok završetka",
     "dueDatePlaceholder": "Odaberite rok završetka",
-    "affectedModule": "Pogođeni modul",
-    "affectedModulePlaceholder": "npr. Mobilna aplikacija, Admin panel",
+    "tempSolutionDate": "Privremeno rješenje",
+    "tempSolutionDatePlaceholder": "Odaberite datum privremenog rješenja",
+    "finalSolutionDate": "Konačno rješenje",
+    "finalSolutionDatePlaceholder": "Odaberite datum konačnog rješenja",
+    "affectedModule": "Afektirani Element",
     "reproductionSteps": "Koraci za reprodukciju",
     "reproductionStepsPlaceholder": "1. Idite na...\n2. Kliknite na...\n3. Uočite...",
     "expectedResult": "Očekivani rezultat",
@@ -97,11 +100,11 @@
     "cancelled": "Otkazano"
   },
   "priority": {
-    "low": "Nizak",
-    "medium": "Srednji",
-    "high": "Visok",
-    "critical": "Kritičan",
-    "urgent": "Hitan"
+    "minor": "Minor",
+    "major": "Major",
+    "critical": "Critical",
+    "warning": "Upozorenje",
+    "technicalRequest": "Tehnički Upit"
   },
   "type": {
     "bug": "Bug",
@@ -146,10 +149,14 @@
     "notFoundMessage": "Tiket koji tražite ne postoji ili nemate pristup.",
     "backToDashboard": "Nazad na kontrolnu tablu",
     "created": "Kreirano",
+    "daysToTempSolution": "{{days}} dana",
+    "daysToFinalSolution": "{{days}} dana",
+    "daysToTempSolutionLabel": "Privremeno rješenje",
+    "daysToFinalSolutionLabel": "Konačno rješenje",
     "description": "Opis",
     "additionalDetails": "Dodatni detalji",
     "noDescription": "Nema opisa",
-    "affectedModule": "Pogođeni modul",
+    "affectedModule": "Afektirani Element",
     "stepsToReproduce": "Koraci za reprodukciju",
     "expectedResult": "Očekivani rezultat",
     "actualResult": "Stvarni rezultat",
@@ -226,5 +233,13 @@
   "bulkActions": {
     "delete": "Obriši",
     "changePriority": "Promijeni prioritet"
+  },
+  "resolution": {
+    "title": "Zaključak",
+    "description": "Unesite sažetak onoga što je urađeno za rješavanje ovog tiketa. Ovo će biti poslano zainteresiranim stranama putem e-maila.",
+    "placeholder": "Opišite šta je urađeno za rješavanje ovog tiketa...",
+    "skip": "Preskoči",
+    "save": "Sačuvaj",
+    "label": "Zaključak"
   }
 }

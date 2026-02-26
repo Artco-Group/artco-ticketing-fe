@@ -21,12 +21,14 @@
     "columns": {
       "name": "Name",
       "email": "Email",
+      "contracts": "Contracts",
       "joined": "Joined",
       "projects": "Projects"
     },
     "unnamedClient": "Unnamed Client",
     "rowActions": {
       "edit": "Edit",
+      "manageContracts": "Manage Contracts",
       "delete": "Delete"
     },
     "deleteTitle": "Delete clients",
@@ -37,7 +39,16 @@
   "form": {
     "editTitle": "Edit Client",
     "addTitle": "Add New Client",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "contracts": "Contract Numbers",
+    "contractsPlaceholder": "Enter contract number",
+    "addContract": "Add",
+    "noContracts": "No contracts added",
+    "canCreateSubClients": "Allow this client to manage team members",
+    "canCreateSubClientsDescription": "Client will be able to create and manage their own team members"
+  },
+  "contracts": {
+    "title": "Manage Contracts — {{name}}"
   },
   "confirmDelete": {
     "title": "Delete Client",

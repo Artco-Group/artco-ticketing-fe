@@ -42,24 +42,12 @@ export const CATEGORY_OPTIONS = Object.values(TicketCategory).map(
 /**
  * Priority options for forms (using display names)
  */
-export const PRIORITY_FORM_OPTIONS = [
-  {
-    label: TicketPriorityDisplay[TicketPriority.LOW],
-    value: TicketPriority.LOW,
-  },
-  {
-    label: TicketPriorityDisplay[TicketPriority.MEDIUM],
-    value: TicketPriority.MEDIUM,
-  },
-  {
-    label: TicketPriorityDisplay[TicketPriority.HIGH],
-    value: TicketPriority.HIGH,
-  },
-  {
-    label: TicketPriorityDisplay[TicketPriority.CRITICAL],
-    value: TicketPriority.CRITICAL,
-  },
-];
+export const PRIORITY_FORM_OPTIONS = Object.values(TicketPriority).map(
+  (priority) => ({
+    label: TicketPriorityDisplay[priority],
+    value: priority,
+  })
+);
 
 /**
  * Category options for forms (using display names)

@@ -51,10 +51,31 @@ function ProjectForm({
     [translate]
   );
 
+  const selectedClientId = form.watch('client');
   const clientUsers = users.filter((user) => user.role === UserRole.CLIENT);
+  const selectedClient = clientUsers.find((u) => u.id === selectedClientId);
+  const clientContracts = useMemo(
+    () => selectedClient?.contracts || [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stable on client identity
+    [selectedClient?.id]
+  );
+
+  const contractOptions = useMemo(
+    () =>
+      clientContracts.map((contract) => ({
+        label: contract,
+        value: contract,
+      })),
+    [clientContracts]
+  );
+
   const leadUsers = users.filter((user) => user.role === UserRole.ENG_LEAD);
+  const pmUsers = users.filter(
+    (user) => user.role === UserRole.PROJECT_MANAGER
+  );
   const developerUsers = users.filter(
-    (user) => user.role === UserRole.DEVELOPER
+    (user) =>
+      user.role === UserRole.DEVELOPER || user.role === UserRole.TECHNICIAN
   );
 
   return (
@@ -120,6 +141,25 @@ function ProjectForm({
           )}
         />
 
+        {clientContracts.length > 0 && (
+          <FormField
+            control={form.control}
+            name="contractNumber"
+            render={({ field, fieldState }) => (
+              <FormItem className="space-y-0">
+                <Select
+                  label={translate('form.contractNumber')}
+                  options={contractOptions}
+                  placeholder={translate('form.contractNumberPlaceholder')}
+                  error={fieldState.error?.message}
+                  {...field}
+                  value={field.value || ''}
+                />
+              </FormItem>
+            )}
+          />
+        )}
+
         <FormField
           control={form.control}
           name="leads"
@@ -138,6 +178,32 @@ function ProjectForm({
                     field.onChange(Array.isArray(value) ? value : [value])
                   }
                   placeholder={translate('form.leadsPlaceholder')}
+                />
+              </FormControl>
+              {fieldState.error?.message && (
+                <p className="text-destructive text-xs font-medium">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="projectManagers"
+          render={({ field, fieldState }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>{translate('form.projectManagers')}</FormLabel>
+              <FormControl>
+                <MemberPicker
+                  value={field.value}
+                  options={pmUsers}
+                  multiple
+                  onChange={(value) =>
+                    field.onChange(Array.isArray(value) ? value : [value])
+                  }
+                  placeholder={translate('form.projectManagersPlaceholder')}
                 />
               </FormControl>
               {fieldState.error?.message && (

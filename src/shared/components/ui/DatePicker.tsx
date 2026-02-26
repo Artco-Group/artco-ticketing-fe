@@ -13,6 +13,11 @@ const localeMap: Record<string, Locale> = {
   bs: bs,
 };
 
+const placeholderMap: Record<string, string> = {
+  en: 'Pick a date',
+  bs: 'Odaberite datum',
+};
+
 export interface DatePickerProps {
   label?: string;
   error?: string;
@@ -54,7 +59,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
       onChange,
       clearable = false,
       disabled,
-      placeholder = 'Pick a date',
+      placeholder,
       locale = 'en',
     },
     ref
@@ -62,6 +67,8 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
     const [open, setOpen] = React.useState(false);
     const selectedDate = parseValue(value);
     const dateFnsLocale = localeMap[locale] || enUS;
+    const resolvedPlaceholder =
+      placeholder || placeholderMap[locale] || placeholderMap.en;
 
     const sizeClasses = {
       sm: 'h-8 text-sm px-3',
@@ -121,7 +128,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                 {selectedDate ? (
                   format(selectedDate, 'PPP', { locale: dateFnsLocale })
                 ) : (
-                  <span>{placeholder}</span>
+                  <span>{resolvedPlaceholder}</span>
                 )}
               </Button>
             </PopoverTrigger>

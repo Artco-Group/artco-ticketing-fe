@@ -288,6 +288,48 @@ export function DueDateEdit({
   );
 }
 
+export function TempSolutionDateEdit({
+  value,
+  canEdit,
+  isLoading,
+  onChange,
+}: DateEditProps) {
+  const { translate, language } = useAppTranslation('tickets');
+
+  return (
+    <InlineDateEdit
+      label={translate('form.tempSolutionDate')}
+      value={value}
+      canEdit={canEdit}
+      isLoading={isLoading}
+      onChange={onChange}
+      locale={language}
+      labelClassName="w-36"
+    />
+  );
+}
+
+export function FinalSolutionDateEdit({
+  value,
+  canEdit,
+  isLoading,
+  onChange,
+}: DateEditProps) {
+  const { translate, language } = useAppTranslation('tickets');
+
+  return (
+    <InlineDateEdit
+      label={translate('form.finalSolutionDate')}
+      value={value}
+      canEdit={canEdit}
+      isLoading={isLoading}
+      onChange={onChange}
+      locale={language}
+      labelClassName="w-36"
+    />
+  );
+}
+
 interface EngLeadEditProps {
   value: AssignedToValue;
   users: User[];

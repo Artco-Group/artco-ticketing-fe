@@ -34,6 +34,7 @@ interface TicketFormProps {
   developerUsers?: User[];
   engLeadUsers?: User[];
   canAssign?: boolean;
+  canSetSolutionDates?: boolean;
 }
 
 export function TicketForm({
@@ -46,6 +47,7 @@ export function TicketForm({
   developerUsers = [],
   engLeadUsers = [],
   canAssign = false,
+  canSetSolutionDates = false,
 }: TicketFormProps) {
   const { translate, language } = useAppTranslation('tickets');
   const category = form.watch('category');
@@ -154,7 +156,6 @@ export function TicketForm({
             <FormItem className="space-y-0">
               <Input
                 label={translate('form.affectedModule')}
-                placeholder={translate('form.affectedModulePlaceholder')}
                 autoComplete="off"
                 error={fieldState.error?.message}
                 {...field}
@@ -216,7 +217,6 @@ export function TicketForm({
                 <FormItem className="space-y-0">
                   <DatePicker
                     label={translate('form.startDate')}
-                    placeholder={translate('form.startDatePlaceholder')}
                     value={field.value}
                     onChange={field.onChange}
                     error={fieldState.error?.message}
@@ -233,7 +233,41 @@ export function TicketForm({
                 <FormItem className="space-y-0">
                   <DatePicker
                     label={translate('form.dueDate')}
-                    placeholder={translate('form.dueDatePlaceholder')}
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={fieldState.error?.message}
+                    locale={language}
+                  />
+                </FormItem>
+              )}
+            />
+          </div>
+        )}
+        {!isEditing && canSetSolutionDates && (
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="tempSolutionDate"
+              render={({ field, fieldState }) => (
+                <FormItem className="space-y-0">
+                  <DatePicker
+                    label={translate('form.tempSolutionDate')}
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={fieldState.error?.message}
+                    locale={language}
+                  />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="finalSolutionDate"
+              render={({ field, fieldState }) => (
+                <FormItem className="space-y-0">
+                  <DatePicker
+                    label={translate('form.finalSolutionDate')}
                     value={field.value}
                     onChange={field.onChange}
                     error={fieldState.error?.message}

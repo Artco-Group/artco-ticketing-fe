@@ -50,7 +50,7 @@ function TicketDetail({
         onEdit={onEdit}
       />
 
-      <div className="border-b p-6">
+      <div className="bg-muted/30 border-b p-6">
         <TicketMetadata
           ticket={ticket}
           users={users}
@@ -58,6 +58,7 @@ function TicketDetail({
           isClient={isClient}
           isEngLead={isEngLead}
           isAdmin={isAdmin}
+          isDeveloper={isDeveloper}
         />
       </div>
 
@@ -74,10 +75,12 @@ function TicketDetail({
         />
       </div>
 
-      <TicketDiscussion
-        ticketId={ticket.ticketId || ''}
-        currentUserId={currentUser?.id || ''}
-      />
+      {!isClient && (
+        <TicketDiscussion
+          ticketId={ticket.ticketId || ''}
+          currentUserId={currentUser?.id || ''}
+        />
+      )}
     </div>
   );
 }

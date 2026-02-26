@@ -5,14 +5,28 @@ import {
   ProjectPrioritySortOrder,
 } from '@artco-group/artco-ticketing-sync';
 import { type ProjectWithProgress } from '@/types';
+import { type ProjectSortKey } from '../utils/project-helpers';
+import {
+  byString,
+  byDateAsc,
+  byDateDesc,
+  byNumberDesc,
+  byRankDesc,
+} from '@/shared/utils/sort.utils';
 
-type SortOption =
-  | 'Name'
-  | 'Priority'
-  | 'Due Date'
-  | 'Progress'
-  | 'Updated'
-  | null;
+const projectSortComparators: Record<
+  ProjectSortKey,
+  (a: ProjectWithProgress, b: ProjectWithProgress) => number
+> = {
+  Name: byString((p) => p.name),
+  Priority: byRankDesc(
+    (p) => p.priority as string,
+    ProjectPrioritySortOrder as unknown as Record<string, number>
+  ),
+  'Due Date': byDateAsc((p) => p.dueDate),
+  Progress: byNumberDesc((p) => p.progress?.percentage),
+  Updated: byDateDesc((p) => p.updatedAt),
+};
 
 export function useProjectFilters<T extends ProjectWithProgress>(
   projects: T[]
@@ -20,7 +34,10 @@ export function useProjectFilters<T extends ProjectWithProgress>(
   const [priorityFilter, setPriorityFilter] = useState<string>('All');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [leadFilter, setLeadFilter] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<SortOption>(null);
+  const [projectManagerFilter, setProjectManagerFilter] = useState<
+    string | null
+  >(null);
+  const [sortBy, setSortBy] = useState<ProjectSortKey | null>(null);
 
   const filteredProjects = useMemo(() => {
     let result = projects.filter((project) => {
@@ -37,41 +54,28 @@ export function useProjectFilters<T extends ProjectWithProgress>(
       const matchesLead =
         !leadFilter || project.leads?.some((lead) => lead.id === leadFilter);
 
-      return matchesPriority && matchesStatus && matchesLead;
+      const matchesProjectManager =
+        !projectManagerFilter ||
+        project.projectManagers?.some((pm) => pm.id === projectManagerFilter);
+
+      return (
+        matchesPriority && matchesStatus && matchesLead && matchesProjectManager
+      );
     });
 
     if (sortBy) {
-      result = [...result].sort((a, b) => {
-        switch (sortBy) {
-          case 'Name':
-            return (a.name || '').localeCompare(b.name || '');
-          case 'Priority':
-            return (
-              (ProjectPrioritySortOrder[b.priority as ProjectPriority] ?? 0) -
-              (ProjectPrioritySortOrder[a.priority as ProjectPriority] ?? 0)
-            );
-          case 'Due Date': {
-            const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0;
-            const dateB = b.dueDate ? new Date(b.dueDate).getTime() : 0;
-            return dateA - dateB;
-          }
-          case 'Progress':
-            return (
-              (b.progress?.percentage || 0) - (a.progress?.percentage || 0)
-            );
-          case 'Updated': {
-            const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-            const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
-            return dateB - dateA;
-          }
-          default:
-            return 0;
-        }
-      });
+      result = [...result].sort(projectSortComparators[sortBy]);
     }
 
     return result;
-  }, [projects, priorityFilter, statusFilter, leadFilter, sortBy]);
+  }, [
+    projects,
+    priorityFilter,
+    statusFilter,
+    leadFilter,
+    projectManagerFilter,
+    sortBy,
+  ]);
 
   const handleFilterChange = (filterId: string, value: string | null) => {
     switch (filterId) {
@@ -84,8 +88,11 @@ export function useProjectFilters<T extends ProjectWithProgress>(
       case 'lead':
         setLeadFilter(!value || value === 'All' ? null : value);
         break;
+      case 'projectManager':
+        setProjectManagerFilter(!value || value === 'All' ? null : value);
+        break;
       case 'sortBy':
-        setSortBy(value as SortOption);
+        setSortBy(value as ProjectSortKey | null);
         break;
     }
   };
@@ -95,6 +102,7 @@ export function useProjectFilters<T extends ProjectWithProgress>(
     priorityFilter,
     statusFilter,
     leadFilter,
+    projectManagerFilter,
     sortBy,
     setPriorityFilter,
     onFilterChange: handleFilterChange,
