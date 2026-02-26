@@ -18,6 +18,7 @@ export const ROUTE_MAP: Record<string, string> = {
   users: PAGE_ROUTES.USERS.LIST,
   projects: PAGE_ROUTES.PROJECTS.ROOT,
   clients: PAGE_ROUTES.CLIENTS.ROOT,
+  team: PAGE_ROUTES.SUB_CLIENTS.ROOT,
   reports: PAGE_ROUTES.REPORTS.ROOT,
   profile: PAGE_ROUTES.SETTINGS.PROFILE,
   settings: PAGE_ROUTES.SETTINGS.ROOT,
@@ -61,6 +62,12 @@ export const NAVIGATION: NavItemConfig[] = [
     roles: ADMIN_ROLES,
   },
   {
+    id: 'team',
+    label: 'My Team',
+    icon: 'user',
+    roles: [UserRole.CLIENT],
+  },
+  {
     id: 'reports',
     label: 'Reports',
     icon: 'reports',
@@ -85,6 +92,7 @@ export const NAV_LABEL_KEYS: Record<string, string> = {
   users: 'navigation.users',
   projects: 'navigation.projects',
   clients: 'navigation.clients',
+  team: 'navigation.subClients',
   reports: 'navigation.reports',
   settings: 'navigation.settings',
   help: 'navigation.help',

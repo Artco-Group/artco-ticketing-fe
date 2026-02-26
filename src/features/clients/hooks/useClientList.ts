@@ -16,6 +16,19 @@ import { UserRole, asUserId, type UserWithProjects } from '@/types';
 import { useTranslatedToast } from '@/shared/hooks';
 import { useToast } from '@/shared/components/ui';
 import { getErrorMessage } from '@/shared';
+import { byString, byDateDesc } from '@/shared/utils/sort.utils';
+
+export const CLIENT_SORT_KEYS = ['name', 'email', 'joined'] as const;
+export type ClientSortKey = (typeof CLIENT_SORT_KEYS)[number];
+
+const clientSortComparators: Record<
+  ClientSortKey,
+  (a: UserWithProjects, b: UserWithProjects) => number
+> = {
+  name: byString((c) => c.name),
+  email: byString((c) => c.email),
+  joined: byDateDesc((c) => c.createdAt),
+};
 
 export function useClientList() {
   const { data, isLoading, error, refetch } = useUsers({
@@ -28,7 +41,7 @@ export function useClientList() {
   const translatedToast = useTranslatedToast();
   const toast = useToast();
 
-  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<ClientSortKey | null>(null);
   const [showFormModal, setShowFormModal] = useState(false);
   const [editingClient, setEditingClient] = useState<User | null>(null);
   const [clientToDelete, setClientToDelete] = useState<User | null>(null);
@@ -64,22 +77,7 @@ export function useClientList() {
 
   const sortedClients = useMemo(() => {
     if (!sortBy) return clients;
-
-    return [...clients].sort((a, b) => {
-      switch (sortBy) {
-        case 'Name':
-          return (a.name || '').localeCompare(b.name || '');
-        case 'Email':
-          return (a.email || '').localeCompare(b.email || '');
-        case 'Joined': {
-          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-          return dateB - dateA;
-        }
-        default:
-          return 0;
-      }
-    });
+    return [...clients].sort(clientSortComparators[sortBy]);
   }, [clients, sortBy]);
 
   const handleAddClient = () => {
@@ -127,6 +125,18 @@ export function useClientList() {
     }
   };
 
+  const handleSaveContracts = async (clientId: string, contracts: string[]) => {
+    try {
+      await updateMutation.mutateAsync({
+        id: asUserId(clientId),
+        data: { contracts } as UpdateUserFormData,
+      });
+      translatedToast.success('toast.success.updated', { item: 'Contracts' });
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+    }
+  };
+
   const handleConfirmDelete = async () => {
     if (!clientToDelete) return;
 
@@ -161,7 +171,7 @@ export function useClientList() {
     showFormModal,
 
     // State setters
-    setSortBy,
+    setSortBy: setSortBy as (value: string | null) => void,
     setClientToDelete,
 
     // Handlers
@@ -170,5 +180,6 @@ export function useClientList() {
     onCloseFormModal: handleCloseFormModal,
     onFormSubmit: handleFormSubmit,
     onConfirmDelete: handleConfirmDelete,
+    onSaveContracts: handleSaveContracts,
   };
 }

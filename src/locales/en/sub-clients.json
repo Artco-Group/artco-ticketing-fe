@@ -1,0 +1,45 @@
+{
+  "title": "My Team",
+  "addSubClient": "Add Team Member",
+  "list": {
+    "empty": "No team members found",
+    "emptyDescription": "Add team members to give them access to your projects.",
+    "loading": "Loading team members...",
+    "failedToLoad": "Failed to load team members",
+    "failedToLoadMessage": "Failed to load team members. Please try again later."
+  },
+  "form": {
+    "addTitle": "Add Team Member",
+    "editTitle": "Edit Team Member",
+    "name": "Name",
+    "namePlaceholder": "Enter name",
+    "email": "Email Address",
+    "emailPlaceholder": "Enter email address",
+    "assignProjects": "Assign Projects",
+    "selectProjects": "Select projects...",
+    "passwordInfo": "A temporary password will be generated and sent via email.",
+    "saveChanges": "Save Changes"
+  },
+  "table": {
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "projects": "Projects",
+      "joined": "Joined"
+    },
+    "rowActions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "confirmDelete": {
+    "title": "Delete Team Member",
+    "description": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "confirmLabel": "Delete"
+  },
+  "messages": {
+    "created": "Team member created successfully",
+    "updated": "Team member updated successfully",
+    "deleted": "Team member deleted successfully"
+  }
+}

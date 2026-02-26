@@ -60,7 +60,15 @@ export default function InviteMembersModal({
               key: UserRole.ENG_LEAD,
               label: translate('detail.engineeringLeads'),
             },
+            {
+              key: UserRole.PROJECT_MANAGER,
+              label: translate('detail.projectManagers'),
+            },
             { key: UserRole.DEVELOPER, label: translate('detail.developers') },
+            {
+              key: UserRole.TECHNICIAN,
+              label: translate('detail.technicians'),
+            },
           ]}
         />
       </div>

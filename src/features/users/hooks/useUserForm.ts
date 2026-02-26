@@ -40,6 +40,8 @@ export function useUserForm({
       role: isClient
         ? UserRole.CLIENT
         : defaultValues?.role || UserRole.DEVELOPER,
+      contracts: defaultValues?.contracts || [],
+      canCreateSubClients: defaultValues?.canCreateSubClients || false,
     },
   });
 

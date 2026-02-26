@@ -246,6 +246,7 @@ interface DateEditProps {
   canEdit?: boolean;
   isLoading?: boolean;
   onChange: (date: string | null) => void;
+  labelClassName?: string;
 }
 
 export function StartDateEdit({
@@ -253,6 +254,7 @@ export function StartDateEdit({
   canEdit,
   isLoading,
   onChange,
+  labelClassName,
 }: DateEditProps) {
   const { translate, language } = useAppTranslation('tickets');
 
@@ -264,6 +266,7 @@ export function StartDateEdit({
       isLoading={isLoading}
       onChange={onChange}
       locale={language}
+      labelClassName={labelClassName}
     />
   );
 }
@@ -273,6 +276,7 @@ export function DueDateEdit({
   canEdit,
   isLoading,
   onChange,
+  labelClassName,
 }: DateEditProps) {
   const { translate, language } = useAppTranslation('tickets');
 
@@ -284,6 +288,49 @@ export function DueDateEdit({
       isLoading={isLoading}
       onChange={onChange}
       locale={language}
+      labelClassName={labelClassName}
+    />
+  );
+}
+
+export function TempSolutionDateEdit({
+  value,
+  canEdit,
+  isLoading,
+  onChange,
+}: DateEditProps) {
+  const { translate, language } = useAppTranslation('tickets');
+
+  return (
+    <InlineDateEdit
+      label={translate('form.tempSolutionDate')}
+      value={value}
+      canEdit={canEdit}
+      isLoading={isLoading}
+      onChange={onChange}
+      locale={language}
+      labelClassName="w-36"
+    />
+  );
+}
+
+export function FinalSolutionDateEdit({
+  value,
+  canEdit,
+  isLoading,
+  onChange,
+}: DateEditProps) {
+  const { translate, language } = useAppTranslation('tickets');
+
+  return (
+    <InlineDateEdit
+      label={translate('form.finalSolutionDate')}
+      value={value}
+      canEdit={canEdit}
+      isLoading={isLoading}
+      onChange={onChange}
+      locale={language}
+      labelClassName="w-36"
     />
   );
 }

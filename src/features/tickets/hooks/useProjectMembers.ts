@@ -11,11 +11,13 @@ interface UseProjectMembersResult {
   projectOptions: ProjectOption[];
   developerUsers: User[];
   engLeadUsers: User[];
+  clientEmail: string;
   isLoading: boolean;
 }
 
 export function useProjectMembers(
-  selectedProjectId?: string
+  selectedProjectId?: string,
+  filterByClientEmail?: string
 ): UseProjectMembersResult {
   const { data: projectsData, isLoading } = useProjects();
 
@@ -23,40 +25,46 @@ export function useProjectMembers(
     () =>
       (projectsData?.projects || [])
         .filter((project) => !project.isArchived)
+        .filter(
+          (project) =>
+            !filterByClientEmail ||
+            project.client?.email === filterByClientEmail
+        )
         .map((project) => ({
           label: project.name,
           value: (project.id || '') as string,
         })),
-    [projectsData?.projects]
+    [projectsData?.projects, filterByClientEmail]
   );
 
-  const developerUsers = useMemo(() => {
-    if (!selectedProjectId || !projectsData?.projects) return [];
-
-    const selectedProject = projectsData.projects.find(
-      (p) => p.id === selectedProjectId
+  const selectedProject = useMemo(() => {
+    if (!selectedProjectId || !projectsData?.projects) return null;
+    return (
+      projectsData.projects.find((p) => p.id === selectedProjectId) ?? null
     );
-    if (!selectedProject) return [];
+  }, [selectedProjectId, projectsData]);
 
+  const developerUsers = useMemo(() => {
+    if (!selectedProject) return [];
     const members = (selectedProject.members as User[]) || [];
     return members.filter((u) => u.role === UserRole.DEVELOPER);
-  }, [selectedProjectId, projectsData]);
+  }, [selectedProject]);
 
   const engLeadUsers = useMemo(() => {
-    if (!selectedProjectId || !projectsData?.projects) return [];
-
-    const selectedProject = projectsData.projects.find(
-      (p) => p.id === selectedProjectId
-    );
     if (!selectedProject) return [];
-
     return (selectedProject.leads as User[]) || [];
-  }, [selectedProjectId, projectsData]);
+  }, [selectedProject]);
+
+  const clientEmail = useMemo(
+    () => selectedProject?.client?.email || '',
+    [selectedProject]
+  );
 
   return {
     projectOptions,
     developerUsers,
     engLeadUsers,
+    clientEmail,
     isLoading,
   };
 }

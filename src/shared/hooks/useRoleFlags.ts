@@ -5,6 +5,8 @@ interface RoleFlags {
   isAdmin: boolean;
   isEngLead: boolean;
   isDeveloper: boolean;
+  isProjectManager: boolean;
+  isTechnician: boolean;
   isClient: boolean;
 }
 
@@ -17,7 +19,7 @@ interface RoleFlags {
  * @returns Object with boolean flags for each role type
  *
  * @example
- * const { isAdmin, isEngLead, isDeveloper, isClient } = useRoleFlags(user?.role);
+ * const { isAdmin, isEngLead, isDeveloper, isProjectManager, isTechnician, isClient } = useRoleFlags(user?.role);
  */
 export function useRoleFlags(userRole?: string): RoleFlags {
   return useMemo(
@@ -25,6 +27,8 @@ export function useRoleFlags(userRole?: string): RoleFlags {
       isAdmin: userRole === UserRole.ADMIN,
       isEngLead: userRole === UserRole.ENG_LEAD || userRole === UserRole.ADMIN,
       isDeveloper: userRole === UserRole.DEVELOPER,
+      isProjectManager: userRole === UserRole.PROJECT_MANAGER,
+      isTechnician: userRole === UserRole.TECHNICIAN,
       isClient: userRole === UserRole.CLIENT,
     }),
     [userRole]

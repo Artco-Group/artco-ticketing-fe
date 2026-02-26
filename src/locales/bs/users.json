@@ -45,12 +45,16 @@
     "admin": "Administrator",
     "engLead": "Tehnički voditelj",
     "developer": "Inžinjer",
+    "projectManager": "Voditelj projekta",
+    "technician": "Tehničar",
     "client": "Klijent"
   },
   "rolesDescription": {
     "admin": "Puni pristup svim funkcijama i postavkama",
     "engLead": "Upravljanje projektima, tiketima i članovima tima",
     "developer": "Rad na dodijeljenim tiketima i projektima",
+    "projectManager": "Upravljanje tiketima i članovima unutar dodijeljenih projekata",
+    "technician": "Rad na dodijeljenim tiketima i projektima",
     "client": "Pregled i kreiranje tiketa za svoje projekte"
   },
   "status": {

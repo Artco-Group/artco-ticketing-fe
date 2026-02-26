@@ -45,12 +45,16 @@
     "admin": "Admin",
     "engLead": "Engineering Lead",
     "developer": "Engineer",
+    "projectManager": "Project Manager",
+    "technician": "Technician",
     "client": "Client"
   },
   "rolesDescription": {
     "admin": "Full access to all features and settings",
     "engLead": "Manage projects, tickets, and team members",
     "developer": "Work on assigned tickets and projects",
+    "projectManager": "Manage tickets and members within assigned projects",
+    "technician": "Work on assigned tickets and projects",
     "client": "View and create tickets for their projects"
   },
   "status": {

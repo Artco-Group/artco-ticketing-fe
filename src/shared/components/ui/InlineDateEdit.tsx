@@ -21,6 +21,7 @@ export interface InlineDateEditProps {
   placeholder?: string;
   renderValue?: (value: string | Date | null | undefined) => ReactNode;
   locale?: string;
+  labelClassName?: string;
 }
 
 function parseValue(value: string | Date | null | undefined): Date | undefined {
@@ -41,6 +42,7 @@ export function InlineDateEdit({
   onChange,
   renderValue,
   locale,
+  labelClassName,
 }: InlineDateEditProps) {
   const dateLanguage = locale || 'en';
   const [displayValue, setDisplayValue] = useState<
@@ -103,12 +105,15 @@ export function InlineDateEdit({
     </span>
   );
 
+  const labelCls = cn(
+    'text-muted-foreground mr-3 w-28 shrink-0 text-sm whitespace-nowrap',
+    labelClassName
+  );
+
   if (!canEdit) {
     return (
       <div className="flex h-8 items-center justify-start">
-        <span className="text-muted-foreground mr-3 w-28 shrink-0 text-sm whitespace-nowrap">
-          {label}
-        </span>
+        <span className={labelCls}>{label}</span>
         <span className="select-none">{displayContent}</span>
       </div>
     );
@@ -116,9 +121,7 @@ export function InlineDateEdit({
 
   return (
     <div className="flex h-8 items-center justify-start">
-      <span className="text-muted-foreground mr-3 w-28 shrink-0 text-sm whitespace-nowrap">
-        {label}
-      </span>
+      <span className={labelCls}>{label}</span>
       <div className="group relative flex items-center">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>

@@ -17,14 +17,17 @@ export function useTranslatedNavigation(user: User | null | undefined) {
 
   const items = useMemo(
     () =>
-      NAVIGATION.filter((item) => !item.roles || hasRole(user, item.roles)).map(
-        (item) => ({
-          ...item,
-          label: NAV_LABEL_KEYS[item.id]
-            ? translate(NAV_LABEL_KEYS[item.id])
-            : item.label,
-        })
-      ) as SidebarItem[],
+      NAVIGATION.filter((item) => {
+        if (!item.roles || !hasRole(user, item.roles)) return false;
+        // Sub-clients only visible for parent clients with canCreateSubClients flag
+        if (item.id === 'team') return !!user?.canCreateSubClients;
+        return true;
+      }).map((item) => ({
+        ...item,
+        label: NAV_LABEL_KEYS[item.id]
+          ? translate(NAV_LABEL_KEYS[item.id])
+          : item.label,
+      })) as SidebarItem[],
     [user, translate]
   );
 

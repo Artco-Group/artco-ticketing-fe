@@ -3,6 +3,7 @@ import { lazy } from 'react';
 import { authRoutes } from '@/features/auth/routes';
 import { userRoutes } from '@/features/users/routes';
 import { clientRoutes } from '@/features/clients/routes';
+import { subClientRoutes } from '@/features/sub-clients/routes';
 import { dashboardRoutes } from '@/features/dashboard/routes';
 import { ticketRoutes } from '@/features/tickets/routes';
 import { projectRoutes } from '@/features/projects/routes';
@@ -38,6 +39,7 @@ export const allRoutes = [
   ...projectRoutes,
   ...userRoutes,
   ...clientRoutes,
+  ...subClientRoutes,
   ...sharedRoutes,
   ...inboxRoutes,
   ...notesRoutes,
@@ -67,6 +69,7 @@ export {
   projectRoutes,
   userRoutes,
   clientRoutes,
+  subClientRoutes,
   sharedRoutes,
   inboxRoutes,
   notesRoutes,
