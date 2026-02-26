@@ -96,8 +96,11 @@ function TicketMetadata({
 
   return (
     <>
-      <div className="flex flex-wrap gap-x-25 gap-y-4">
-        <div className="space-y-3">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-1">
+          <p className="text-muted-foreground mb-1 text-[11px] font-medium tracking-wider uppercase">
+            {translate('details.classification')}
+          </p>
           <StatusEdit
             value={ticket.status}
             canEdit={inlineEdit.canEditStatus}
@@ -121,7 +124,10 @@ function TicketMetadata({
           />
         </div>
 
-        <div className="border-border/40 space-y-3 border-l pl-8">
+        <div className="space-y-1">
+          <p className="text-muted-foreground mb-1 text-[11px] font-medium tracking-wider uppercase">
+            {translate('details.people')}
+          </p>
           <AssigneeEdit
             value={ticket.assignedTo}
             users={users}
@@ -130,7 +136,6 @@ function TicketMetadata({
             isLoading={inlineEdit.isAssigneeUpdating}
             onChange={inlineEdit.onAssigneeChange}
           />
-
           <EngLeadEdit
             value={ticket.engLead}
             users={users}
@@ -139,7 +144,6 @@ function TicketMetadata({
             isLoading={inlineEdit.isEngLeadUpdating}
             onChange={inlineEdit.onEngLeadChange}
           />
-
           <ProjectEdit
             value={
               ticket.project
@@ -157,21 +161,24 @@ function TicketMetadata({
           />
         </div>
 
-        <div className="border-border/40 space-y-3 border-l pl-8">
+        <div className="space-y-1">
+          <p className="text-muted-foreground mb-1 text-[11px] font-medium tracking-wider uppercase">
+            {translate('details.dates')}
+          </p>
           <StartDateEdit
             value={ticket.startDate}
             canEdit={inlineEdit.canEditDates}
             isLoading={inlineEdit.isDatesUpdating}
             onChange={inlineEdit.onStartDateChange}
+            labelClassName="w-20"
           />
-
           <DueDateEdit
             value={ticket.dueDate}
             canEdit={inlineEdit.canEditDates}
             isLoading={inlineEdit.isDatesUpdating}
             onChange={inlineEdit.onDueDateChange}
+            labelClassName="w-20"
           />
-
           <MetadataRow label={translate('details.created')}>
             <span className="text-sm">
               {formatDateDisplay(ticket.createdAt, language, 'long')}
@@ -181,39 +188,44 @@ function TicketMetadata({
       </div>
 
       {!isClient && (
-        <div className="border-border/40 mt-4 grid grid-cols-2 gap-x-50 border-t pt-4">
-          <InlineDateEdit
-            label={translate('form.tempSolutionDate')}
-            value={ticket.tempSolutionDate}
-            canEdit={inlineEdit.canEditSolutionDates}
-            isLoading={inlineEdit.isDatesUpdating}
-            onChange={inlineEdit.onTempSolutionDateChange}
-            locale={language}
-            labelClassName="w-36"
-            renderValue={(val) =>
-              renderSolutionDate(
-                val,
-                'text-blue-600',
-                'details.daysToTempSolution'
-              )
-            }
-          />
-          <InlineDateEdit
-            label={translate('form.finalSolutionDate')}
-            value={ticket.finalSolutionDate}
-            canEdit={inlineEdit.canEditSolutionDates}
-            isLoading={inlineEdit.isDatesUpdating}
-            onChange={inlineEdit.onFinalSolutionDateChange}
-            locale={language}
-            labelClassName="w-36"
-            renderValue={(val) =>
-              renderSolutionDate(
-                val,
-                'text-green-600',
-                'details.daysToFinalSolution'
-              )
-            }
-          />
+        <div className="border-border/40 mt-4 border-t pt-3">
+          <p className="text-muted-foreground mb-1 text-[11px] font-medium tracking-wider uppercase">
+            {translate('details.solutionDates')}
+          </p>
+          <div className="grid grid-cols-1 gap-x-8 md:grid-cols-2">
+            <InlineDateEdit
+              label={translate('form.tempSolutionDate')}
+              value={ticket.tempSolutionDate}
+              canEdit={inlineEdit.canEditSolutionDates}
+              isLoading={inlineEdit.isDatesUpdating}
+              onChange={inlineEdit.onTempSolutionDateChange}
+              locale={language}
+              labelClassName="w-32"
+              renderValue={(val) =>
+                renderSolutionDate(
+                  val,
+                  'text-blue-600',
+                  'details.daysToTempSolution'
+                )
+              }
+            />
+            <InlineDateEdit
+              label={translate('form.finalSolutionDate')}
+              value={ticket.finalSolutionDate}
+              canEdit={inlineEdit.canEditSolutionDates}
+              isLoading={inlineEdit.isDatesUpdating}
+              onChange={inlineEdit.onFinalSolutionDateChange}
+              locale={language}
+              labelClassName="w-32"
+              renderValue={(val) =>
+                renderSolutionDate(
+                  val,
+                  'text-green-600',
+                  'details.daysToFinalSolution'
+                )
+              }
+            />
+          </div>
         </div>
       )}
 
@@ -237,7 +249,7 @@ function MetadataRow({
 }) {
   return (
     <div className="flex h-8 items-center justify-start">
-      <span className="text-muted-foreground mr-3 w-28 shrink-0 text-sm whitespace-nowrap">
+      <span className="text-muted-foreground mr-3 w-20 shrink-0 text-sm">
         {label}
       </span>
       {children}

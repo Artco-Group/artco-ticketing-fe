@@ -79,6 +79,7 @@ export const TICKET_TABS_CONFIG = [
   { id: 'backlog', labelKey: 'tabs.backlog', icon: 'backlog' },
   { id: 'resolved', labelKey: 'tabs.resolved', icon: 'check' },
   { id: 'all', labelKey: 'tabs.all', icon: 'all' },
+  { id: 'emailTickets', labelKey: 'tabs.emailTickets', icon: 'mail' },
 ] as const;
 
 /**

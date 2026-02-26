@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useApiQuery, useApiMutation } from '@/shared/lib/api-hooks';
 import {
   QueryKeys,
+  API_ROUTES,
   type CreateStatusConfigInput,
   type UpdateStatusConfigInput,
   type StatusConfigListResponse,
@@ -11,7 +12,7 @@ import {
 
 function useStatusConfigs() {
   return useApiQuery<StatusConfigListResponse>(QueryKeys.statusConfigs.list(), {
-    url: '/status-configs',
+    url: API_ROUTES.STATUS_CONFIGS.BASE,
   });
 }
 
@@ -19,7 +20,7 @@ function useStatusConfig(id: string | undefined) {
   return useApiQuery<StatusConfigResponse>(
     QueryKeys.statusConfigs.detail(id || ''),
     {
-      url: `/status-configs/${id}`,
+      url: API_ROUTES.STATUS_CONFIGS.BY_ID(id || ''),
       enabled: !!id,
     }
   );
@@ -29,7 +30,7 @@ function useProjectsUsingConfig(configId: string | undefined) {
   return useApiQuery<StatusConfigProjectsResponse>(
     QueryKeys.statusConfigs.projects(configId || ''),
     {
-      url: `/status-configs/${configId}/projects`,
+      url: API_ROUTES.STATUS_CONFIGS.PROJECTS(configId || ''),
       enabled: !!configId,
     }
   );
@@ -39,7 +40,7 @@ function useCreateStatusConfig() {
   const queryClient = useQueryClient();
 
   return useApiMutation<StatusConfigResponse, CreateStatusConfigInput>({
-    url: '/status-configs',
+    url: API_ROUTES.STATUS_CONFIGS.BASE,
     method: 'POST',
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -56,7 +57,7 @@ function useUpdateStatusConfig() {
     StatusConfigResponse,
     { id: string; data: UpdateStatusConfigInput }
   >({
-    url: (variables) => `/status-configs/${variables.id}`,
+    url: (variables) => API_ROUTES.STATUS_CONFIGS.BY_ID(variables.id),
     method: 'PATCH',
     getBody: (variables) => variables.data,
     onSuccess: (_data, variables) => {
@@ -74,7 +75,7 @@ function useDeleteStatusConfig() {
   const queryClient = useQueryClient();
 
   return useApiMutation<void, string>({
-    url: (id) => `/status-configs/${id}`,
+    url: (id) => API_ROUTES.STATUS_CONFIGS.BY_ID(id),
     method: 'DELETE',
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -92,7 +93,7 @@ function useAssignStatusConfig() {
     { projectSlug: string; statusConfigId: string | null }
   >({
     url: (variables) =>
-      `/status-configs/projects/${variables.projectSlug}/assign`,
+      API_ROUTES.PROJECTS.STATUS_CONFIG(variables.projectSlug),
     method: 'PATCH',
     getBody: (variables) => ({ statusConfigId: variables.statusConfigId }),
     onSuccess: () => {

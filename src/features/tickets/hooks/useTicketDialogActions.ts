@@ -4,6 +4,7 @@ import { useToast } from '@/shared/components/ui';
 import { getErrorMessage } from '@/shared';
 import { asTicketId } from '@/types';
 import { useCreateTicket, useUpdateTicket } from '../api/tickets-api';
+import { useConvertEmailTicket } from '@/features/email-tickets/api/email-tickets-api';
 import {
   type TicketFormData,
   type CreateFormData,
@@ -12,13 +13,15 @@ import {
 interface UseTicketDialogActionsOptions {
   ticket?: Ticket | null;
   clientEmail?: string;
+  emailTicketId?: string;
   onSuccess?: () => void;
   onClose: () => void;
 }
 
 function buildCreateFormData(
   data: CreateFormData,
-  clientEmail: string
+  clientEmail: string,
+  emailTicketId?: string
 ): FormData {
   const formData = new FormData();
   const payload = { ...data, clientEmail };
@@ -29,12 +32,17 @@ function buildCreateFormData(
     }
   });
 
+  if (emailTicketId) {
+    formData.append('emailTicketId', emailTicketId);
+  }
+
   return formData;
 }
 
 export function useTicketDialogActions({
   ticket,
   clientEmail = '',
+  emailTicketId,
   onSuccess,
   onClose,
 }: UseTicketDialogActionsOptions) {
@@ -42,9 +50,13 @@ export function useTicketDialogActions({
   const toast = useToast();
   const createMutation = useCreateTicket();
   const updateMutation = useUpdateTicket();
+  const convertMutation = useConvertEmailTicket();
 
   const isEditing = !!ticket;
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const isPending =
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    convertMutation.isPending;
 
   const handleSubmit = async (data: TicketFormData) => {
     try {
@@ -57,9 +69,23 @@ export function useTicketDialogActions({
       } else {
         const formData = buildCreateFormData(
           data as CreateFormData,
-          clientEmail
+          clientEmail,
+          emailTicketId
         );
-        await createMutation.mutateAsync(formData);
+        const result = await createMutation.mutateAsync(formData);
+
+        // If creating from an email ticket, mark it as converted
+        // useApiMutation unwraps ApiResponse, so result is { ticket: Ticket }
+        const createdTicket = (
+          result as unknown as { ticket?: Ticket } | undefined
+        )?.ticket;
+        if (emailTicketId && createdTicket?.ticketId) {
+          await convertMutation.mutateAsync({
+            id: emailTicketId,
+            ticketId: createdTicket.ticketId,
+          });
+        }
+
         translatedToast.success('toast.success.created', { item: 'Ticket' });
       }
 

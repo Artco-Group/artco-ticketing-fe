@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { QueryKeys } from '@artco-group/artco-ticketing-sync';
+import { QueryKeys, API_ROUTES } from '@artco-group/artco-ticketing-sync';
 import { useAuth } from '@/features/auth/context';
 import { apiClient } from '@/shared/lib/api-client';
 import { queryClient } from '@/shared/lib/query-client';
@@ -60,7 +60,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         localStorage.setItem(STORAGE_KEY, newLang);
 
         if (isAuthenticated) {
-          await apiClient.patch('/users/me/preferences', { language: newLang });
+          await apiClient.patch(API_ROUTES.USERS.PREFERENCES, {
+            language: newLang,
+          });
           queryClient.invalidateQueries({
             queryKey: QueryKeys.auth.currentUser(),
           });

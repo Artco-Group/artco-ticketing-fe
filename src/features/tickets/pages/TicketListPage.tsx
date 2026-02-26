@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { UserRole } from '@/types';
 import type {
   ViewMode,
@@ -15,6 +15,8 @@ import {
   TICKET_TABS_CONFIG,
   GROUP_BY_OPTIONS_CONFIG,
 } from '../utils/ticket-options';
+import { EmailTicketList } from '@/features/email-tickets/components/EmailTicketList';
+import { useEmailTicketCount } from '@/features/email-tickets/api/email-tickets-api';
 
 export default function TicketListPage() {
   const { translate } = useAppTranslation('tickets');
@@ -39,14 +41,28 @@ export default function TicketListPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [groupByValue, setGroupByValue] = useState<string | null>(null);
 
-  const { isDeveloper } = useRoleFlags(userRole as UserRole);
+  const { isDeveloper, isEngLead, isAdmin } = useRoleFlags(
+    userRole as UserRole
+  );
+  const isInternalAdmin = isEngLead || isAdmin;
 
   const canCreateTicket = !isDeveloper;
 
-  const ticketTabs: Tab[] = TICKET_TABS_CONFIG.map(({ labelKey, ...rest }) => ({
-    ...rest,
-    label: translate(labelKey),
-  }));
+  const { data: emailTicketCountData } = useEmailTicketCount();
+  const pendingEmailCount = emailTicketCountData?.count ?? 0;
+
+  const ticketTabs: Tab[] = useMemo(() => {
+    const tabs = TICKET_TABS_CONFIG.filter(
+      (tab) => tab.id !== 'emailTickets' || isInternalAdmin
+    );
+    return tabs.map(({ labelKey, ...rest }) => ({
+      ...rest,
+      label:
+        rest.id === 'emailTickets' && pendingEmailCount > 0
+          ? `${translate(labelKey)} (${pendingEmailCount})`
+          : translate(labelKey),
+    }));
+  }, [isInternalAdmin, pendingEmailCount, translate]);
 
   const groupByOptions: GroupByOption[] = GROUP_BY_OPTIONS_CONFIG.map(
     ({ labelKey, ...rest }) => ({
@@ -78,51 +94,58 @@ export default function TicketListPage() {
 
   const showCards = viewMode === 'grid';
   const currentTab = ticketTabs.find((tab) => tab.id === activeTab);
+  const isEmailTicketsTab = activeTab === 'emailTickets';
 
   return (
     <>
       <ListPageLayout
         title={translate('title')}
-        count={tickets.length}
+        count={isEmailTicketsTab ? undefined : tickets.length}
         tabs={ticketTabs}
         activeTab={activeTab}
         onTabChange={onTabChange}
         tabActions={
-          canCreateTicket ? (
+          !isEmailTicketsTab && canCreateTicket ? (
             <Button leftIcon="plus" onClick={() => setIsCreateDialogOpen(true)}>
               {translate('create')}
             </Button>
           ) : null
         }
-        filters={filterBarFilters}
-        onFilterChange={handleFilterBarChange}
-        sortOptions={sortOptions}
-        sortValue={sortValue}
-        onSortChange={handleSortChange}
-        groupByOptions={groupByOptions}
-        groupByValue={groupByValue}
-        onGroupByChange={setGroupByValue}
-        filterGroups={filterGroups}
-        filterPanelValue={filterPanelValue}
-        onFilterPanelChange={handleFilterPanelChange}
+        filters={isEmailTicketsTab ? undefined : filterBarFilters}
+        onFilterChange={isEmailTicketsTab ? undefined : handleFilterBarChange}
+        sortOptions={isEmailTicketsTab ? undefined : sortOptions}
+        sortValue={isEmailTicketsTab ? undefined : sortValue}
+        onSortChange={isEmailTicketsTab ? undefined : handleSortChange}
+        groupByOptions={isEmailTicketsTab ? undefined : groupByOptions}
+        groupByValue={isEmailTicketsTab ? null : groupByValue}
+        onGroupByChange={isEmailTicketsTab ? undefined : setGroupByValue}
+        filterGroups={isEmailTicketsTab ? undefined : filterGroups}
+        filterPanelValue={isEmailTicketsTab ? undefined : filterPanelValue}
+        onFilterPanelChange={
+          isEmailTicketsTab ? undefined : handleFilterPanelChange
+        }
         filterPanelSingleSelect
-        viewMode={viewMode}
-        onViewChange={setViewMode}
-        showFilter
-        loading={isLoading}
+        viewMode={isEmailTicketsTab ? undefined : viewMode}
+        onViewChange={isEmailTicketsTab ? undefined : setViewMode}
+        showFilter={!isEmailTicketsTab}
+        loading={isEmailTicketsTab ? false : isLoading}
         loadingMessage={translate('list.loading')}
       >
-        <TicketListContent
-          tickets={tickets}
-          users={users}
-          error={error}
-          hasData={!!ticketsData}
-          showCards={showCards}
-          groupByValue={groupByValue}
-          currentTab={currentTab}
-          onViewTicket={onViewTicket}
-          onRetry={refetch}
-        />
+        {isEmailTicketsTab ? (
+          <EmailTicketList />
+        ) : (
+          <TicketListContent
+            tickets={tickets}
+            users={users}
+            error={error}
+            hasData={!!ticketsData}
+            showCards={showCards}
+            groupByValue={groupByValue}
+            currentTab={currentTab}
+            onViewTicket={onViewTicket}
+            onRetry={refetch}
+          />
+        )}
       </ListPageLayout>
 
       <TicketDialog

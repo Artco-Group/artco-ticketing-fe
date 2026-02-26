@@ -21,7 +21,8 @@
     "active": "Active",
     "backlog": "Backlog",
     "resolved": "Resolved",
-    "all": "All"
+    "all": "All",
+    "emailTickets": "Email Tickets"
   },
   "groupBy": {
     "status": "Status",
@@ -137,6 +138,10 @@
     "confirmDelete": "Are you sure you want to delete this ticket?"
   },
   "details": {
+    "classification": "Classification",
+    "people": "People",
+    "dates": "Dates",
+    "solutionDates": "Solution Dates",
     "activity": "Activity",
     "comments": "Comments",
     "subtasks": "Subtasks",
@@ -241,5 +246,31 @@
     "skip": "Skip",
     "save": "Save",
     "label": "Resolution"
+  },
+  "emailTickets": {
+    "empty": "No email tickets to review",
+    "emptyMessage": "When clients send support emails, they will appear here for review.",
+    "convert": "Convert to Ticket",
+    "dismiss": "Dismiss",
+    "dismissConfirm": "Are you sure you want to dismiss this email ticket?",
+    "from": "From",
+    "received": "Received",
+    "subject": "Subject",
+    "body": "Message",
+    "status": "Status",
+    "converted": "Email ticket converted to ticket successfully",
+    "dismissed": "Email ticket dismissed",
+    "viewFull": "View Full Email",
+    "matchedUser": "Matched User",
+    "dismissedBy": "Dismissed by {{name}}",
+    "convertedTo": "Converted to ticket",
+    "tabPending": "Pending",
+    "tabConverted": "Converted",
+    "tabDismissed": "Dismissed",
+    "emptyConverted": "No converted email tickets",
+    "emptyConvertedMessage": "Email tickets that are converted to tickets will appear here.",
+    "emptyDismissed": "No dismissed email tickets",
+    "emptyDismissedMessage": "Email tickets that have been dismissed will appear here.",
+    "viewTicket": "View Ticket"
   }
 }

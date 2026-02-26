@@ -11,12 +11,20 @@ import {
 } from '../hooks';
 import { TicketForm } from './TicketForm';
 
+export interface TicketDefaultValues {
+  title?: string;
+  description?: string;
+  clientEmail?: string;
+  emailTicketId?: string;
+}
+
 interface TicketDialogProps {
   isOpen: boolean;
   onClose: () => void;
   ticket?: Ticket | null;
   projectId?: string;
   onSuccess?: () => void;
+  defaultValues?: TicketDefaultValues;
 }
 
 export function TicketDialog({
@@ -25,6 +33,7 @@ export function TicketDialog({
   ticket,
   projectId,
   onSuccess,
+  defaultValues,
 }: TicketDialogProps) {
   const { translate } = useAppTranslation('tickets');
   const { user } = useAuth();
@@ -32,29 +41,39 @@ export function TicketDialog({
   const isProjectLocked = !!projectId;
   const canAssign = isEngLead || isAdmin;
   const canSetSolutionDates = isEngLead || isAdmin || isDeveloper;
+  const isConverting = !!defaultValues?.emailTicketId;
+
+  const { form, isEditing, resetForm } = useTicketDialogForm({
+    ticket,
+    projectId,
+    isOpen,
+    defaultValues,
+  });
+
+  const selectedProjectId = projectId || form.watch('project');
+  const { projectOptions, developerUsers, engLeadUsers, clientEmail } =
+    useProjectMembers(
+      selectedProjectId,
+      isConverting ? defaultValues?.clientEmail : undefined
+    );
+
+  const resolvedClientEmail = isConverting ? clientEmail : user?.email || '';
 
   const { handleSubmit, isPending } = useTicketDialogActions({
     ticket,
-    clientEmail: user?.email,
+    clientEmail: resolvedClientEmail,
+    emailTicketId: defaultValues?.emailTicketId,
     onSuccess,
     onClose,
   });
 
-  const { form, isEditing, onSubmit, resetForm } = useTicketDialogForm({
-    ticket,
-    projectId,
-    isOpen,
-    onSubmit: handleSubmit,
-  });
+  // 4. Combine form validation + submit handler
+  const onSubmit = form.handleSubmit(handleSubmit);
 
   const handleClose = () => {
     resetForm();
     onClose();
   };
-
-  const selectedProjectId = projectId || form.watch('project');
-  const { projectOptions, developerUsers, engLeadUsers } =
-    useProjectMembers(selectedProjectId);
 
   useEffect(() => {
     if (!isEditing && engLeadUsers.length === 1) {

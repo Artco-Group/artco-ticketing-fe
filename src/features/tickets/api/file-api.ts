@@ -1,4 +1,5 @@
 import api from '@/shared/lib/api-client';
+import { API_ROUTES } from '@artco-group/artco-ticketing-sync';
 import type { TicketId } from '@/types';
 
 /**
@@ -27,7 +28,7 @@ export const fileAPI = {
     filename: string
   ): Promise<void> => {
     await downloadFile(
-      `/tickets/${ticketId}/attachments/${attachmentIndex}`,
+      API_ROUTES.TICKETS.ATTACHMENT(ticketId, attachmentIndex),
       filename
     );
   },
@@ -38,7 +39,7 @@ export const fileAPI = {
     filename: string
   ): Promise<void> => {
     await downloadFile(
-      `/tickets/${ticketId}/screen-recording/${recordingIndex}`,
+      API_ROUTES.TICKETS.SCREEN_RECORDING_BY_INDEX(ticketId, recordingIndex),
       filename
     );
   },
