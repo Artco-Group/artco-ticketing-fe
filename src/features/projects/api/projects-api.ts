@@ -92,7 +92,7 @@ interface ArchiveManyResult {
 }
 
 function useDeleteManyProjects() {
-  return useApiMutation<ApiResponse<DeleteManyResult>, { slugs: string[] }>({
+  return useApiMutation<DeleteManyResult, { slugs: string[] }>({
     url: API_ROUTES.PROJECTS.BASE,
     method: 'DELETE',
     getBody: (vars) => vars,
@@ -168,7 +168,7 @@ function useArchiveProject() {
 
 function useArchiveManyProjects() {
   return useApiMutation<
-    ApiResponse<ArchiveManyResult>,
+    ArchiveManyResult,
     { slugs: string[]; isArchived: boolean }
   >({
     url: API_ROUTES.PROJECTS.ARCHIVE_MANY,

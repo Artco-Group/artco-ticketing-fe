@@ -64,12 +64,25 @@ export function useProjectTableState(
     bulkDelete(
       { slugs },
       {
-        onSuccess: () => {
-          clearSelection();
+        onSuccess: (data) => {
           setShowDeleteConfirm(false);
-          translatedToast.success('toast.success.deleted', {
-            item: getItemLabel(slugs.length),
-          });
+
+          if (data.deletedCount === 0 && data.failedIds.length > 0) {
+            toast.error(translate('messages.failedToDelete'));
+            return;
+          }
+
+          if (data.failedIds.length > 0) {
+            toast.warning(
+              `${data.deletedCount} deleted, ${data.failedIds.length} failed`
+            );
+          } else {
+            translatedToast.success('toast.success.deleted', {
+              item: getItemLabel(data.deletedCount),
+            });
+          }
+
+          clearSelection();
         },
         onError: (error) => {
           toast.error(error?.message || 'Failed to delete projects');
@@ -110,13 +123,28 @@ export function useProjectTableState(
     archiveMany(
       { slugs, isArchived: isArchiveAction },
       {
-        onSuccess: () => {
-          clearSelection();
+        onSuccess: (data) => {
           setShowArchiveConfirm(false);
-          translatedToast.success(
-            `toast.success.${isArchiveAction ? 'archived' : 'unarchived'}`,
-            { item: getItemLabel(slugs.length) }
-          );
+          const action = isArchiveAction ? 'archived' : 'unarchived';
+
+          if (data.archivedCount === 0 && data.failedIds.length > 0) {
+            toast.error(
+              `Failed to ${isArchiveAction ? 'archive' : 'unarchive'} projects`
+            );
+            return;
+          }
+
+          if (data.failedIds.length > 0) {
+            toast.warning(
+              `${data.archivedCount} ${action}, ${data.failedIds.length} failed`
+            );
+          } else {
+            translatedToast.success(`toast.success.${action}`, {
+              item: getItemLabel(data.archivedCount),
+            });
+          }
+
+          clearSelection();
         },
         onError: (error) => {
           toast.error(

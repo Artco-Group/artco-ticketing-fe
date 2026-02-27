@@ -53,12 +53,25 @@ export function useTicketTableState({ users }: UseTicketTableStateProps) {
     bulkDelete(
       { ticketIds },
       {
-        onSuccess: () => {
-          clearSelection();
+        onSuccess: (data) => {
           setShowDeleteConfirm(false);
-          toast.success(
-            `Deleted ${ticketIds.length} ticket${ticketIds.length > 1 ? 's' : ''}`
-          );
+
+          if (data.deletedCount === 0 && data.failedIds.length > 0) {
+            toast.error('Failed to delete tickets');
+            return;
+          }
+
+          if (data.failedIds.length > 0) {
+            toast.warning(
+              `Deleted ${data.deletedCount} ticket(s). ${data.failedIds.length} could not be deleted.`
+            );
+          } else {
+            toast.success(
+              `Deleted ${data.deletedCount} ticket${data.deletedCount > 1 ? 's' : ''}`
+            );
+          }
+
+          clearSelection();
         },
         onError: (error) => {
           toast.error(error?.message || 'Failed to delete tickets');
