@@ -92,7 +92,7 @@ function useBulkDeleteUsers() {
 
 function useUploadAvatar() {
   return useApiMutation<{ user: User }, { userId: UserId; file: File }>({
-    url: (vars) => `${API_ROUTES.USERS.BY_ID(vars.userId)}/avatar`,
+    url: (vars) => API_ROUTES.USERS.AVATAR(vars.userId),
     method: 'POST',
     getBody: (vars) => {
       const formData = new FormData();
@@ -116,7 +116,7 @@ function useUploadAvatar() {
 
 function useRemoveAvatar() {
   return useApiMutation<{ user: User }, UserId>({
-    url: (userId) => `${API_ROUTES.USERS.BY_ID(userId)}/avatar`,
+    url: (userId) => API_ROUTES.USERS.AVATAR(userId),
     method: 'DELETE',
     getBody: () => undefined,
     onSuccess: (_, userId) => {

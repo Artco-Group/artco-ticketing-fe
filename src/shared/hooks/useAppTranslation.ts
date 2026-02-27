@@ -16,6 +16,7 @@ type Namespace =
   | 'projects'
   | 'users'
   | 'clients'
+  | 'subClients'
   | 'settings'
   | 'dashboard';
 

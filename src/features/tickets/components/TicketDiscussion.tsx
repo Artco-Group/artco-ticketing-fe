@@ -1,5 +1,6 @@
 import { asTicketId } from '@/types';
 import { cn } from '@/lib/utils';
+import { Icon } from '@/shared/components/ui';
 import { CommentList } from './CommentList';
 import { CommentForm } from './CommentForm';
 import { useComments } from '../hooks/useComments';
@@ -24,9 +25,17 @@ function TicketDiscussion({ ticketId, currentUserId }: TicketDiscussionProps) {
 
   return (
     <div className="p-6">
-      <h3 className="text-lg font-semibold">
-        {translate('comments.discussion')}
-      </h3>
+      <div className="mb-3 flex items-center gap-2">
+        <h3 className="flex items-center gap-2 text-lg font-semibold">
+          <Icon name="mail" size="md" className="text-muted-foreground" />
+          {translate('comments.discussion')}
+        </h3>
+        {commentsHook.comments.length > 0 && (
+          <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-medium">
+            {commentsHook.comments.length}
+          </span>
+        )}
+      </div>
       <CommentList
         comments={commentsHook.comments}
         groupedComments={commentsHook.groupedComments}

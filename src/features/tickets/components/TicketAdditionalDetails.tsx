@@ -91,7 +91,6 @@ function TicketAdditionalDetails({
           )}
         </div>
 
-        {/* Tab Content */}
         {activeMediaTab === 'attachments' ? (
           hasAttachments ? (
             <div className="flex flex-wrap gap-4">
@@ -181,7 +180,6 @@ function TicketAdditionalDetails({
         </div>
       )}
 
-      {/* File Upload Modal */}
       <Modal
         isOpen={fileUpload.isFileUploadModalOpen}
         onClose={fileUpload.closeFileUploadModal}
@@ -419,7 +417,7 @@ function MediaThumbnail({
 
 function EmptyMediaState({ message }: { message: string }) {
   return (
-    <div className="text-muted-foreground flex items-center justify-center py-8 text-sm">
+    <div className="text-muted-foreground flex items-center justify-center py-4 text-xs">
       {message}
     </div>
   );

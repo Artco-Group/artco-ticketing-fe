@@ -93,6 +93,8 @@
       },
       "projectCreated": "When a project is created for me",
       "addedToProject": "When I'm added to a project",
+      "removedFromProject": "When I'm removed from a project",
+      "projectUpdated": "When project details are updated",
       "ticketCreated": "When a ticket is created in my project",
       "ticketAssigned": "When a ticket is assigned to me",
       "ticketStatusChanged": "When a ticket status changes",

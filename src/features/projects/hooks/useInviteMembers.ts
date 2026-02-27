@@ -27,7 +27,10 @@ export function useInviteMembers({
     const currentMemberIds = new Set(currentMembers?.map((m) => m.id) || []);
     return allUsers.filter(
       (user) =>
-        (user.role === 'developer' || user.role === 'eng_lead') &&
+        (user.role === 'developer' ||
+          user.role === 'technician' ||
+          user.role === 'project_manager' ||
+          user.role === 'eng_lead') &&
         !currentMemberIds.has(user.id)
     );
   }, [allUsers, currentMembers]);

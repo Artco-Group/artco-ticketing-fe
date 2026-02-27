@@ -8,6 +8,7 @@ export interface CheckboxProps extends Omit<
   'checked' | 'onCheckedChange'
 > {
   label?: string;
+  description?: string;
   indeterminate?: boolean;
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -15,7 +16,15 @@ export interface CheckboxProps extends Omit<
 
 const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
   (
-    { className, label, indeterminate, checked, onCheckedChange, ...props },
+    {
+      className,
+      label,
+      description,
+      indeterminate,
+      checked,
+      onCheckedChange,
+      ...props
+    },
     ref
   ) => {
     const handleCheckedChange = (value: boolean | 'indeterminate') => {
@@ -54,11 +63,23 @@ const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
 
     if (label) {
       return (
-        <label className="flex cursor-pointer items-center gap-2">
-          {checkboxElement}
-          <span className="text-sm leading-none font-medium select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
-            {label}
-          </span>
+        <label
+          className={cn(
+            'flex cursor-pointer gap-2',
+            description ? 'items-start' : 'items-center'
+          )}
+        >
+          <span className={cn(description && 'mt-0.5')}>{checkboxElement}</span>
+          <div>
+            <span className="text-sm leading-none font-medium select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
+              {label}
+            </span>
+            {description && (
+              <p className="text-muted-foreground mt-1 text-xs select-none">
+                {description}
+              </p>
+            )}
+          </div>
         </label>
       );
     }

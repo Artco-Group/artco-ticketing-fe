@@ -21,12 +21,14 @@
     "columns": {
       "name": "Ime",
       "email": "Email",
+      "contracts": "Ugovori",
       "joined": "Pridružen",
       "projects": "Projekti"
     },
     "unnamedClient": "Neimenovani klijent",
     "rowActions": {
       "edit": "Uredi",
+      "manageContracts": "Upravljaj ugovorima",
       "delete": "Obriši"
     },
     "deleteTitle": "Obriši klijente",
@@ -37,7 +39,16 @@
   "form": {
     "editTitle": "Uredi klijenta",
     "addTitle": "Dodaj novog klijenta",
-    "saveChanges": "Sačuvaj promjene"
+    "saveChanges": "Sačuvaj promjene",
+    "contracts": "Brojevi ugovora",
+    "contractsPlaceholder": "Unesite broj ugovora",
+    "addContract": "Dodaj",
+    "noContracts": "Nema dodanih ugovora",
+    "canCreateSubClients": "Dozvoli ovom klijentu upravljanje članovima tima",
+    "canCreateSubClientsDescription": "Klijent će moći kreirati i upravljati svojim članovima tima"
+  },
+  "contracts": {
+    "title": "Upravljaj ugovorima — {{name}}"
   },
   "confirmDelete": {
     "title": "Obriši klijenta",

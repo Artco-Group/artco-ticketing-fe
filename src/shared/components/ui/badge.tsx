@@ -10,7 +10,7 @@ const badgeVariants = cva('inline-flex items-center gap-1.5 text-xs', {
       default:
         'rounded-md border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80',
       secondary:
-        'font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2rounded-md border border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        'rounded-md border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
       destructive:
         'rounded-md border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80',
       outline:

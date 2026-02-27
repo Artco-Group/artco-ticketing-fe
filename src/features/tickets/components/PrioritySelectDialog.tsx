@@ -1,22 +1,8 @@
 import { TicketPriority } from '@/types';
-import { Button } from '@/shared/components/ui';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/shared/components/ui/dialog';
+import { Button, Modal } from '@/shared/components/ui';
 import { getPriorityIcon } from '@/shared/utils/ticket-helpers';
 import { useAppTranslation } from '@/shared/hooks';
 import { useTranslatedOptions } from '../hooks';
-
-const PRIORITY_OPTIONS: TicketPriority[] = [
-  TicketPriority.CRITICAL,
-  TicketPriority.HIGH,
-  TicketPriority.MEDIUM,
-  TicketPriority.LOW,
-];
 
 interface PrioritySelectDialogProps {
   isOpen: boolean;
@@ -37,29 +23,27 @@ export function PrioritySelectDialog({
   const { getPriorityLabel } = useTranslatedOptions();
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[360px]">
-        <DialogHeader>
-          <DialogTitle>{translate('actions.changePriority')}</DialogTitle>
-          <DialogDescription>
-            {translate('dialog.selectPriority', { count: selectedCount })}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="mt-4 flex flex-col gap-2">
-          {PRIORITY_OPTIONS.map((priority) => (
-            <Button
-              key={priority}
-              variant="outline"
-              className="justify-start gap-3"
-              onClick={() => onSelect(priority)}
-              disabled={isLoading}
-            >
-              {getPriorityIcon(priority)}
-              {getPriorityLabel(priority)}
-            </Button>
-          ))}
-        </div>
-      </DialogContent>
-    </Dialog>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={translate('actions.changePriority')}
+      description={translate('dialog.selectPriority', { count: selectedCount })}
+      size="sm"
+    >
+      <div className="flex flex-col gap-2">
+        {Object.values(TicketPriority).map((priority) => (
+          <Button
+            key={priority}
+            variant="outline"
+            className="justify-start gap-3"
+            onClick={() => onSelect(priority)}
+            disabled={isLoading}
+          >
+            {getPriorityIcon(priority)}
+            {getPriorityLabel(priority)}
+          </Button>
+        ))}
+      </div>
+    </Modal>
   );
 }

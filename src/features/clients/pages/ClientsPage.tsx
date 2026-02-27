@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { type User } from '@artco-group/artco-ticketing-sync';
 import {
   RetryableError,
   EmptyState,
@@ -7,18 +9,24 @@ import {
 } from '@/shared/components/ui';
 import { ListPageLayout } from '@/shared/components/layout/ListPageLayout';
 import { ClientTable } from '../components/ClientTable';
+import { ContractsModal } from '../components/ContractsModal';
 import UserForm from '@/features/users/components/UserForm';
-import { useClientList } from '../hooks/useClientList';
+import { useClientList, CLIENT_SORT_KEYS } from '../hooks/useClientList';
 import { useAppTranslation } from '@/shared/hooks';
+
+const SORT_LABEL_KEYS: Record<(typeof CLIENT_SORT_KEYS)[number], string> = {
+  name: 'table.columns.name',
+  email: 'table.columns.email',
+  joined: 'table.columns.joined',
+};
 
 export default function ClientsPage() {
   const { translate } = useAppTranslation('clients');
   const { translate: translateCommon } = useAppTranslation('common');
-  const sortOptions = [
-    translate('table.columns.name'),
-    translate('table.columns.email'),
-    translate('table.columns.joined'),
-  ];
+  const sortOptions = CLIENT_SORT_KEYS.map((key) => ({
+    value: key,
+    label: translate(SORT_LABEL_KEYS[key]),
+  }));
 
   const {
     clients,
@@ -38,7 +46,10 @@ export default function ClientsPage() {
     onCloseFormModal,
     onFormSubmit,
     onConfirmDelete,
+    onSaveContracts,
   } = useClientList();
+
+  const [contractsClient, setContractsClient] = useState<User | null>(null);
 
   return (
     <>
@@ -71,6 +82,7 @@ export default function ClientsPage() {
             clients={sortedClients}
             onEdit={onEditClient}
             onDelete={setClientToDelete}
+            onManageContracts={setContractsClient}
           />
         )}
       </ListPageLayout>
@@ -113,6 +125,9 @@ export default function ClientsPage() {
               ? {
                   name: editingClient.name || '',
                   email: editingClient.email || '',
+                  contracts: editingClient.contracts || [],
+                  canCreateSubClients:
+                    editingClient.canCreateSubClients || false,
                 }
               : undefined
           }
@@ -121,8 +136,17 @@ export default function ClientsPage() {
           userId={editingClient?.id}
           currentAvatar={editingClient?.profilePic}
           isClient
+          showAdminFields
         />
       </Modal>
+
+      <ContractsModal
+        key={contractsClient?.id}
+        client={contractsClient}
+        onClose={() => setContractsClient(null)}
+        onSave={onSaveContracts}
+        isSubmitting={isSubmitting}
+      />
 
       <ConfirmationDialog
         isOpen={!!clientToDelete}

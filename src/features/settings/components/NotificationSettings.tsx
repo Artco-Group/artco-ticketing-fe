@@ -119,6 +119,18 @@ export function NotificationSettings() {
             disabled={masterDisabled || isUpdating}
             onChange={(checked) => handleToggle('addedToProject', checked)}
           />
+          <NotificationToggle
+            label={translate('notifications.email.removedFromProject')}
+            checked={preferences.removedFromProject}
+            disabled={masterDisabled || isUpdating}
+            onChange={(checked) => handleToggle('removedFromProject', checked)}
+          />
+          <NotificationToggle
+            label={translate('notifications.email.projectUpdated')}
+            checked={preferences.projectUpdated}
+            disabled={masterDisabled || isUpdating}
+            onChange={(checked) => handleToggle('projectUpdated', checked)}
+          />
         </NotificationSection>
 
         {/* Ticket Notifications */}

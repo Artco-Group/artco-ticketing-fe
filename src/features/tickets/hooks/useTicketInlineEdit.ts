@@ -1,3 +1,4 @@
+import { useState, useCallback } from 'react';
 import {
   asTicketId,
   asUserId,
@@ -5,7 +6,10 @@ import {
   type User,
   UserRole,
 } from '@/types';
-import { TicketCategory } from '@artco-group/artco-ticketing-sync';
+import {
+  TicketCategory,
+  DEFAULT_STATUS_GROUPS,
+} from '@artco-group/artco-ticketing-sync';
 import { useTranslatedToast } from '@/shared/hooks';
 import {
   useUpdateTicketStatus,
@@ -21,6 +25,7 @@ interface UseTicketInlineEditProps {
   isClient: boolean;
   isEngLead: boolean;
   isAdmin?: boolean;
+  isDeveloper?: boolean;
 }
 
 /**
@@ -33,6 +38,7 @@ export function useTicketInlineEdit({
   isClient,
   isEngLead,
   isAdmin = false,
+  isDeveloper = false,
 }: UseTicketInlineEditProps) {
   const translatedToast = useTranslatedToast();
 
@@ -42,12 +48,17 @@ export function useTicketInlineEdit({
   const assignEngLead = useAssignEngLead();
   const updateTicket = useUpdateTicket();
 
+  // Resolution dialog state
+  const [resolutionDialogOpen, setResolutionDialogOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<string | null>(null);
+
   const canManage = isEngLead || isAdmin;
   const canEditStatus = !isClient;
   const canEditPriority = canManage;
   const canEditAssignee = canManage;
   const canEditCategory = canManage;
   const canEditDates = canManage;
+  const canEditSolutionDates = canManage || isDeveloper;
   const canEditProject = canManage;
   const canEditEngLead = canManage;
 
@@ -65,17 +76,67 @@ export function useTicketInlineEdit({
 
   const engLeadUsers = users.filter((user) => user.role === UserRole.ENG_LEAD);
 
-  const handleStatusChange = async (newStatus: string) => {
+  /**
+   * Check if a status ID is a terminal status (completed or cancelled)
+   */
+  const isTerminalStatus = useCallback(
+    (statusId: string): boolean => {
+      const groups =
+        ticket?.project?.statusConfig?.groups ?? DEFAULT_STATUS_GROUPS;
+      return (
+        groups.completed.includes(statusId) ||
+        groups.cancelled.includes(statusId)
+      );
+    },
+    [ticket?.project?.statusConfig?.groups]
+  );
+
+  const executeStatusUpdate = async (
+    newStatus: string,
+    resolution?: string
+  ) => {
     if (!ticket?.id) return;
     try {
       await updateStatus.mutateAsync({
         id: asTicketId(ticket.ticketId),
         status: newStatus,
+        resolution,
       });
       translatedToast.success('toast.success.statusUpdated');
     } catch {
       translatedToast.error('toast.error.failedToUpdate', { item: 'status' });
     }
+  };
+
+  const handleStatusChange = async (newStatus: string) => {
+    if (!ticket?.id) return;
+
+    if (isTerminalStatus(newStatus)) {
+      setPendingStatus(newStatus);
+      setResolutionDialogOpen(true);
+      return;
+    }
+
+    await executeStatusUpdate(newStatus);
+  };
+
+  const handleResolutionSubmit = async (resolution: string) => {
+    if (!pendingStatus) return;
+    setResolutionDialogOpen(false);
+    await executeStatusUpdate(pendingStatus, resolution);
+    setPendingStatus(null);
+  };
+
+  const handleResolutionSkip = async () => {
+    if (!pendingStatus) return;
+    setResolutionDialogOpen(false);
+    await executeStatusUpdate(pendingStatus);
+    setPendingStatus(null);
+  };
+
+  const handleResolutionClose = () => {
+    setResolutionDialogOpen(false);
+    setPendingStatus(null);
   };
 
   const handlePriorityChange = async (newPriority: string) => {
@@ -167,6 +228,36 @@ export function useTicketInlineEdit({
     }
   };
 
+  const handleTempSolutionDateChange = async (date: string | null) => {
+    if (!ticket?.id) return;
+    try {
+      await updateTicket.mutateAsync({
+        id: asTicketId(ticket.ticketId),
+        data: { tempSolutionDate: date },
+      });
+      translatedToast.success('toast.success.tempSolutionDateUpdated');
+    } catch {
+      translatedToast.error('toast.error.failedToUpdate', {
+        item: 'temporary solution date',
+      });
+    }
+  };
+
+  const handleFinalSolutionDateChange = async (date: string | null) => {
+    if (!ticket?.id) return;
+    try {
+      await updateTicket.mutateAsync({
+        id: asTicketId(ticket.ticketId),
+        data: { finalSolutionDate: date },
+      });
+      translatedToast.success('toast.success.finalSolutionDateUpdated');
+    } catch {
+      translatedToast.error('toast.error.failedToUpdate', {
+        item: 'final solution date',
+      });
+    }
+  };
+
   const handleProjectChange = async (projectId: string) => {
     if (!ticket?.id) return;
     try {
@@ -221,6 +312,7 @@ export function useTicketInlineEdit({
     canEditAssignee,
     canEditCategory,
     canEditDates,
+    canEditSolutionDates,
     canEditProject,
     canEditEngLead,
 
@@ -235,12 +327,20 @@ export function useTicketInlineEdit({
     developerUsers,
     engLeadUsers,
 
+    // Resolution dialog
+    resolutionDialogOpen,
+    onResolutionSubmit: handleResolutionSubmit,
+    onResolutionSkip: handleResolutionSkip,
+    onResolutionClose: handleResolutionClose,
+
     onStatusChange: handleStatusChange,
     onPriorityChange: handlePriorityChange,
     onCategoryChange: handleCategoryChange,
     onAssigneeChange: handleAssigneeChange,
     onStartDateChange: handleStartDateChange,
     onDueDateChange: handleDueDateChange,
+    onTempSolutionDateChange: handleTempSolutionDateChange,
+    onFinalSolutionDateChange: handleFinalSolutionDateChange,
     onProjectChange: handleProjectChange,
     onEngLeadChange: handleEngLeadChange,
   };

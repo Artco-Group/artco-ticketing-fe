@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   QueryKeys,
+  API_ROUTES,
   type EmailNotificationPreferences,
 } from '@artco-group/artco-ticketing-sync';
 import { useAuth } from '@/features/auth/context';
@@ -12,10 +13,9 @@ import { DEFAULT_EMAIL_NOTIFICATION_PREFERENCES } from '@artco-group/artco-ticke
 export function useNotificationPreferences() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const toast = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Get current preferences or defaults
   const preferences: EmailNotificationPreferences = useMemo(() => {
     return (
       user?.preferences?.emailNotifications ??
@@ -23,10 +23,9 @@ export function useNotificationPreferences() {
     );
   }, [user?.preferences?.emailNotifications]);
 
-  // Mutation for updating preferences
   const updateMutation = useMutation({
     mutationFn: async (updates: Partial<EmailNotificationPreferences>) => {
-      const response = await apiClient.patch('/users/me/preferences', {
+      const response = await apiClient.patch(API_ROUTES.USERS.PREFERENCES, {
         emailNotifications: updates,
       });
       return response.data;
@@ -35,15 +34,10 @@ export function useNotificationPreferences() {
       queryClient.invalidateQueries({ queryKey: QueryKeys.auth.currentUser() });
     },
     onError: () => {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Failed to update notification preferences',
-      });
+      toast.error('Failed to update notification preferences');
     },
   });
 
-  // Update a single preference
   const updatePreference = useCallback(
     async (key: keyof EmailNotificationPreferences, value: boolean) => {
       setIsUpdating(true);
@@ -56,7 +50,6 @@ export function useNotificationPreferences() {
     [updateMutation]
   );
 
-  // Toggle the master switch
   const toggleMasterSwitch = useCallback(
     async (enabled: boolean) => {
       setIsUpdating(true);

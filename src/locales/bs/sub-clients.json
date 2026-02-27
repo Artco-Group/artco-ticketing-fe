@@ -1,0 +1,45 @@
+{
+  "title": "Moj tim",
+  "addSubClient": "Dodaj člana tima",
+  "list": {
+    "empty": "Nema članova tima",
+    "emptyDescription": "Dodajte članove tima da im omogućite pristup vašim projektima.",
+    "loading": "Učitavanje članova tima...",
+    "failedToLoad": "Greška pri učitavanju članova tima",
+    "failedToLoadMessage": "Greška pri učitavanju članova tima. Pokušajte ponovo kasnije."
+  },
+  "form": {
+    "addTitle": "Dodaj člana tima",
+    "editTitle": "Uredi člana tima",
+    "name": "Ime",
+    "namePlaceholder": "Unesite ime",
+    "email": "Email adresa",
+    "emailPlaceholder": "Unesite email adresu",
+    "assignProjects": "Dodijeli projekte",
+    "selectProjects": "Odaberite projekte...",
+    "passwordInfo": "Privremena lozinka će biti generisana i poslana putem emaila.",
+    "saveChanges": "Spremi promjene"
+  },
+  "table": {
+    "columns": {
+      "name": "Ime",
+      "email": "Email",
+      "projects": "Projekti",
+      "joined": "Pridružen"
+    },
+    "rowActions": {
+      "edit": "Uredi",
+      "delete": "Obriši"
+    }
+  },
+  "confirmDelete": {
+    "title": "Obriši člana tima",
+    "description": "Jeste li sigurni da želite obrisati {{name}}? Ova radnja se ne može poništiti.",
+    "confirmLabel": "Obriši"
+  },
+  "messages": {
+    "created": "Član tima uspješno kreiran",
+    "updated": "Član tima uspješno ažuriran",
+    "deleted": "Član tima uspješno obrisan"
+  }
+}

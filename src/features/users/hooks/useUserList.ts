@@ -6,9 +6,11 @@ import {
   type CreateUserFormData,
   type UpdateUserFormData,
   UserRoleDisplay,
+  UserSortField,
 } from '@artco-group/artco-ticketing-sync';
 
 import { getErrorMessage } from '@/shared';
+import { byString, byDateAsc } from '@/shared/utils/sort.utils';
 import {
   useUsers,
   useCreateUser,
@@ -38,6 +40,16 @@ function getStatusFromRole(role: string): string {
   return 'Member';
 }
 
+const userSortComparators: Record<
+  UserSortField,
+  (a: UserWithStats, b: UserWithStats) => number
+> = {
+  [UserSortField.NAME]: byString((u) => u.name),
+  [UserSortField.EMAIL]: byString((u) => u.email),
+  [UserSortField.ROLE]: byString((u) => UserRoleDisplay[u.role as UserRole]),
+  [UserSortField.JOINED]: byDateAsc((u) => u.createdAt),
+};
+
 /**
  * Custom hook for user list page logic.
  * Separates business logic from UI for better testability and maintainability.
@@ -59,7 +71,7 @@ export function useUserList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('All');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<UserSortField | null>(null);
   const [groupBy, setGroupBy] = useState<string | null>(null);
   const [showFormModal, setShowFormModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -137,25 +149,7 @@ export function useUserList() {
     });
 
     if (sortBy) {
-      result = [...result].sort((a, b) => {
-        switch (sortBy) {
-          case 'Name':
-            return (a.name || '').localeCompare(b.name || '');
-          case 'Email':
-            return (a.email || '').localeCompare(b.email || '');
-          case 'Role':
-            return (UserRoleDisplay[a.role as UserRole] || '').localeCompare(
-              UserRoleDisplay[b.role as UserRole] || ''
-            );
-          case 'Joined': {
-            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-            return dateA - dateB;
-          }
-          default:
-            return 0;
-        }
-      });
+      result = [...result].sort(userSortComparators[sortBy]);
     }
 
     return result;
@@ -356,7 +350,7 @@ export function useUserList() {
         setStatusFilter(!value || value === 'All' ? null : value);
         break;
       case 'sortBy':
-        setSortBy(value);
+        setSortBy(value as UserSortField | null);
         break;
     }
   };

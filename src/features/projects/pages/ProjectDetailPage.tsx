@@ -33,7 +33,8 @@ export default function ProjectDetailPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { translate, language } = useAppTranslation('projects');
-  const { isDeveloper, isEngLead, isAdmin } = useRoleFlags(user?.role);
+  const { isDeveloper, isTechnician, isProjectManager, isEngLead, isAdmin } =
+    useRoleFlags(user?.role);
 
   const projectSlug = slug ? asProjectId(slug) : undefined;
 
@@ -45,16 +46,22 @@ export default function ProjectDetailPage() {
   } = useProjectTickets(projectSlug);
   const { data: usersData } = useUsers();
 
-  const projectInlineEdit = useProjectInlineEdit({
-    projectId: projectSlug,
-    canEdit: isEngLead,
-  });
-
   const [showTicketDialog, setShowTicketDialog] = useState(false);
 
-  const canCreateTicket = !isDeveloper;
-
   const project = data?.project;
+
+  const isProjectPm = useMemo(() => {
+    if (!isProjectManager || !project) return false;
+    const pms = (project.projectManagers as User[] | undefined) || [];
+    return pms.some((pm) => pm.id === user?.id);
+  }, [isProjectManager, project, user?.id]);
+
+  const projectInlineEdit = useProjectInlineEdit({
+    projectId: projectSlug,
+    canEdit: isEngLead || isProjectPm,
+  });
+
+  const canCreateTicket = !isDeveloper && !isTechnician;
 
   // Check if current user can invite members:
   // - ADMIN can always invite
@@ -65,16 +72,18 @@ export default function ProjectDetailPage() {
       const leads = project.leads as User[];
       return leads.some((lead) => lead.id === user?.id);
     }
+    if (isProjectPm) return true;
     return false;
-  }, [isAdmin, isEngLead, project?.leads, user?.id]);
+  }, [isAdmin, isEngLead, isProjectPm, project?.leads, user?.id]);
   const tickets = ticketsData?.tickets || [];
   const users = usersData?.users || [];
 
   const currentTeamMembers = useMemo(() => {
     const leads = (project?.leads as User[] | undefined) || [];
+    const pms = (project?.projectManagers as User[] | undefined) || [];
     const members = (project?.members as User[] | undefined) || [];
-    return [...leads, ...members];
-  }, [project?.leads, project?.members]);
+    return [...leads, ...pms, ...members];
+  }, [project?.leads, project?.projectManagers, project?.members]);
 
   const inviteMembers = useInviteMembers({
     projectId: projectSlug,
@@ -98,6 +107,7 @@ export default function ProjectDetailPage() {
 
   const client = project.client as User;
   const leads = project.leads as User[];
+  const projectManagers = project.projectManagers as User[] | undefined;
   const members = project.members as User[] | undefined;
 
   return (
@@ -140,6 +150,12 @@ export default function ProjectDetailPage() {
                       : project.priority}
                   </Badge>
                 </div>
+                {project.contractNumber && (
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    {translate('detail.contractNumber')}:{' '}
+                    {project.contractNumber}
+                  </p>
+                )}
                 {project.description && (
                   <p className="text-muted-foreground mt-2">
                     {project.description}
@@ -187,7 +203,7 @@ export default function ProjectDetailPage() {
                 </Button>
               )}
             </div>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
               <div>
                 <p className="text-muted-foreground mb-2 text-xs">
                   {translate('detail.engineeringLeads')}
@@ -205,6 +221,26 @@ export default function ProjectDetailPage() {
                 ) : (
                   <p className="text-muted-foreground text-sm">
                     {translate('detail.noLeadsAssigned')}
+                  </p>
+                )}
+              </div>
+              <div>
+                <p className="text-muted-foreground mb-2 text-xs">
+                  {translate('detail.projectManagers')}
+                </p>
+                {projectManagers && projectManagers.length > 0 ? (
+                  <AvatarGroup
+                    size="md"
+                    max={4}
+                    avatars={projectManagers.map((pm) => ({
+                      src: pm.profilePic,
+                      fallback: pm.name || pm.email || '?',
+                      tooltip: pm.name || pm.email,
+                    }))}
+                  />
+                ) : (
+                  <p className="text-muted-foreground text-sm">
+                    {translate('detail.noPmsAssigned')}
                   </p>
                 )}
               </div>

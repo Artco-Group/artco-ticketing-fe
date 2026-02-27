@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import {
   TicketStatusSortOrder,
   TicketPrioritySortOrder,
+  TicketSortField,
   DEFAULT_STATUS_GROUPS,
   DEFAULT_STATUSES,
 } from '@artco-group/artco-ticketing-sync';
@@ -18,6 +19,7 @@ import {
   type User,
   type Filters,
 } from '@/types';
+import { byString, byDateDesc, byRankAsc, byRankDesc } from './sort.utils';
 import {
   StatusIcon,
   PriorityIcon,
@@ -118,50 +120,34 @@ export function filterTickets(
   });
 }
 
+const ticketSortComparators: Record<
+  TicketSortField,
+  (a: Ticket, b: Ticket) => number
+> = {
+  [TicketSortField.TITLE]: byString((t) => t.title),
+  [TicketSortField.TICKET_ID]: byString((t) => t.ticketId),
+  [TicketSortField.CATEGORY]: byString((t) => t.category),
+  [TicketSortField.STATUS]: byRankAsc(
+    (t) => t.status,
+    TicketStatusSortOrder as unknown as Record<string, number>
+  ),
+  [TicketSortField.PRIORITY]: byRankDesc(
+    (t) => t.priority,
+    TicketPrioritySortOrder as unknown as Record<string, number>
+  ),
+  [TicketSortField.CLIENT]: byString((t) => t.clientEmail),
+  [TicketSortField.ASSIGNEE]: byString((t) => getAssigneeName(t.assignedTo)),
+  [TicketSortField.CREATED_DATE]: byDateDesc((t) => t.createdAt),
+};
+
 /**
  * Sort tickets based on sortBy field
  */
 export function sortTickets(tickets: Ticket[], sortBy: string): Ticket[] {
-  return [...tickets].sort((a, b) => {
-    switch (sortBy) {
-      case 'Title':
-        return (a.title || '').localeCompare(b.title || '');
-
-      case 'Ticket ID':
-        return (a.ticketId || '').localeCompare(b.ticketId || '');
-
-      case 'Category':
-        return (a.category || '').localeCompare(b.category || '');
-
-      case 'Status':
-        return (
-          (TicketStatusSortOrder[a.status as TicketStatus] ?? 0) -
-          (TicketStatusSortOrder[b.status as TicketStatus] ?? 0)
-        );
-
-      case 'Priority':
-        return (
-          (TicketPrioritySortOrder[b.priority as TicketPriority] ?? 0) -
-          (TicketPrioritySortOrder[a.priority as TicketPriority] ?? 0)
-        );
-
-      case 'Client':
-        return (a.clientEmail || '').localeCompare(b.clientEmail || '');
-
-      case 'Assignee': {
-        const aName = getAssigneeName(a.assignedTo);
-        const bName = getAssigneeName(b.assignedTo);
-        return aName.localeCompare(bName);
-      }
-
-      case 'Created Date':
-      default:
-        return (
-          new Date(b.createdAt || '').getTime() -
-          new Date(a.createdAt || '').getTime()
-        );
-    }
-  });
+  const comparator =
+    ticketSortComparators[sortBy as TicketSortField] ??
+    ticketSortComparators[TicketSortField.CREATED_DATE];
+  return [...tickets].sort(comparator);
 }
 
 /**
@@ -210,21 +196,25 @@ export const statusBadgeConfig: Record<TicketStatus, BadgeConfig> = {
  * Priority badge configuration with variants and icons
  */
 export const priorityBadgeConfig: Record<TicketPriority, BadgeConfig> = {
-  [TicketPriority.LOW]: {
-    label: 'Low',
+  [TicketPriority.MINOR]: {
+    label: 'Minor',
     getIcon: () => <PriorityIcon filledBars={1} variant="green" />,
   },
-  [TicketPriority.MEDIUM]: {
-    label: 'Medium',
+  [TicketPriority.WARNING]: {
+    label: 'Warning',
     getIcon: () => <PriorityIcon filledBars={2} variant="yellow" />,
   },
-  [TicketPriority.HIGH]: {
-    label: 'High',
+  [TicketPriority.MAJOR]: {
+    label: 'Major',
     getIcon: () => <PriorityIcon filledBars={3} variant="orange" />,
   },
   [TicketPriority.CRITICAL]: {
     label: 'Critical',
     getIcon: () => <PriorityIcon filledBars={4} variant="red" />,
+  },
+  [TicketPriority.TECHNICAL_REQUEST]: {
+    label: 'Technical Request',
+    getIcon: () => <PriorityIcon filledBars={1} variant="blue" />,
   },
 };
 
