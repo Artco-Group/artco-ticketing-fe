@@ -41,19 +41,20 @@ export default function TicketListPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [groupByValue, setGroupByValue] = useState<string | null>(null);
 
-  const { isDeveloper, isEngLead, isAdmin } = useRoleFlags(
+  const { isDeveloper, isEngLead, isAdmin, isProjectManager } = useRoleFlags(
     userRole as UserRole
   );
-  const isInternalAdmin = isEngLead || isAdmin;
+  const canViewEmailTickets = isEngLead || isAdmin || isProjectManager;
 
   const canCreateTicket = !isDeveloper;
 
-  const { data: emailTicketCountData } = useEmailTicketCount();
+  const { data: emailTicketCountData } =
+    useEmailTicketCount(canViewEmailTickets);
   const pendingEmailCount = emailTicketCountData?.count ?? 0;
 
   const ticketTabs: Tab[] = useMemo(() => {
     const tabs = TICKET_TABS_CONFIG.filter(
-      (tab) => tab.id !== 'emailTickets' || isInternalAdmin
+      (tab) => tab.id !== 'emailTickets' || canViewEmailTickets
     );
     return tabs.map(({ labelKey, ...rest }) => ({
       ...rest,
@@ -62,7 +63,7 @@ export default function TicketListPage() {
           ? `${translate(labelKey)} (${pendingEmailCount})`
           : translate(labelKey),
     }));
-  }, [isInternalAdmin, pendingEmailCount, translate]);
+  }, [canViewEmailTickets, pendingEmailCount, translate]);
 
   const groupByOptions: GroupByOption[] = GROUP_BY_OPTIONS_CONFIG.map(
     ({ labelKey, ...rest }) => ({
