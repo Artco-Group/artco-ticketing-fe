@@ -20,10 +20,11 @@ export function useEmailTickets(status?: EmailTicketStatus) {
   );
 }
 
-export function useEmailTicketCount() {
+export function useEmailTicketCount(enabled = true) {
   return useApiQuery<{ count: number }>(QueryKeys.emailTickets.count(), {
     url: API_ROUTES.EMAIL_TICKETS.COUNT,
     staleTime: CACHE.SHORT_STALE_TIME,
+    enabled,
   });
 }
 
