@@ -41,12 +41,27 @@ export function useClientTableState({
     bulkDelete(
       { emails },
       {
-        onSuccess: () => {
-          clearSelection();
+        onSuccess: (data) => {
           setShowDeleteConfirm(false);
-          translatedToast.success('toast.success.deleted', {
-            item: `${emails.length} client${emails.length > 1 ? 's' : ''}`,
-          });
+
+          if (data.deletedCount === 0 && data.failedEmails.length > 0) {
+            const reasons = Object.values(data.errors);
+            toast.error(reasons[0] || translate('messages.failedToDelete'));
+            return;
+          }
+
+          if (data.failedEmails.length > 0) {
+            const reasons = Object.values(data.errors);
+            toast.warning(
+              `${data.deletedCount} deleted, ${data.failedEmails.length} failed: ${reasons[0] || translate('messages.failedToDelete')}`
+            );
+          } else {
+            translatedToast.success('toast.success.deleted', {
+              item: `${data.deletedCount} client${data.deletedCount > 1 ? 's' : ''}`,
+            });
+          }
+
+          clearSelection();
         },
         onError: (error) => {
           toast.error(error?.message || translate('messages.failedToDelete'));
