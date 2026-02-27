@@ -280,22 +280,20 @@ interface BulkUpdatePriorityResult {
 }
 
 function useBulkDeleteTickets() {
-  return useApiMutation<ApiResponse<BulkDeleteResult>, { ticketIds: string[] }>(
-    {
-      url: API_ROUTES.TICKETS.BASE,
-      method: 'DELETE',
-      getBody: (vars) => vars,
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
-        queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
-      },
-    }
-  );
+  return useApiMutation<BulkDeleteResult, { ticketIds: string[] }>({
+    url: API_ROUTES.TICKETS.BASE,
+    method: 'DELETE',
+    getBody: (vars) => vars,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.tickets.all() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.projects.all() });
+    },
+  });
 }
 
 function useBulkUpdatePriority() {
   return useApiMutation<
-    ApiResponse<BulkUpdatePriorityResult>,
+    BulkUpdatePriorityResult,
     { ids: string[]; priority: string }
   >({
     url: API_ROUTES.TICKETS.BULK_PRIORITY,
